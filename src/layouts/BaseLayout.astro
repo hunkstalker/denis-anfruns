@@ -1,6 +1,7 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
-import Header from '../components/Header.astro';
+import NavigationTabs from '../components/NavigationTabs.astro';
+import LanguageSelector from "../components/LanguageSelector.astro";
+import SocialLinks from "../components/SocialLinks.astro";
 import SideMenu from '../components/SideMenu.astro';
 import '../styles/global.css';
 const { pageTitle } = Astro.props;
@@ -15,11 +16,15 @@ const { pageTitle } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
-		<ViewTransitions />
 	</head>
 	<body class="container mx-auto px-48">
-		<Header/>
-		<SideMenu/>
+		<nav class="">
+			<NavigationTabs/>
+			<!-- <LanguageSelector> -->
+			<SocialLinks/>
+		</nav>
 		<slot class="grid grid-cols-1"/>
+		<footer></footer>
 	</body>
 </html>
+
