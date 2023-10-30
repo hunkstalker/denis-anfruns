@@ -1,7 +1,4 @@
 ---
-import NavigationTabs from '../components/NavigationTabs.astro';
-import LanguageSelector from "../components/LanguageSelector.astro";
-import SocialLinks from "../components/SocialLinks.astro";
 import SideMenu from '../components/SideMenu.astro';
 import '../styles/global.css';
 const { pageTitle } = Astro.props;
@@ -18,11 +15,6 @@ const { pageTitle } = Astro.props;
 		<title>{pageTitle}</title>
 	</head>
 	<body class="container mx-auto px-48">
-		<nav class="">
-			<NavigationTabs/>
-			<!-- <LanguageSelector> -->
-			<SocialLinks/>
-		</nav>
 		<slot class="grid grid-cols-1"/>
 		<footer></footer>
 	</body>
