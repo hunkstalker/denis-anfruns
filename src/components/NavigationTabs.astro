@@ -3,9 +3,9 @@
 ---
 <ul>
   <li><span>&lt;/&gt;</span></li>
-  <li><a href="/" title="Página Principal">Denis Anfruns Millán</a></li>
-  <!-- <li><a href="/proyectos/" title="Mis Videojuegos">video games</a></li> -->
-  <!-- <li><a href="/blog/" title="Blog de Desarrollo">dev blog</a></li> -->
+  <li><a class="anim-brightness" href="/" title="Página Principal">projects</a></li>
+  <li><a class="disabled" href="/proyectos/" title="Mis Videojuegos">video games</a></li>
+  <li><a class="disabled" href="/blog/" title="Blog de Desarrollo">dev blog</a></li>
 </ul>
 <style>
   li:first-child {
@@ -16,16 +16,26 @@
     list-style-type: none;
   }
   a {
+    font-family: 'Montserrat', sans-serif;
     color: white;
-    font-weight: bold;
     padding: 10px 20px 10px 20px;
     text-decoration: none;
 	}
   li a {
-		transition: color .25s ease, transform .25s ease;
+    transition: text-shadow .25s ease;
   }
-	li:hover a {
-    color: orange;
-    transform: translateY(25px);
+	.anim-brightness:hover {
+    text-shadow: 
+      1px 0 var(--color-shadow), 
+      -1px 0 var(--color-shadow), 
+      0 1px var(--color-shadow), 
+      0 -1px var(--color-shadow);
 	}
+
+  .disabled {
+    color: grey;
+    pointer-events: none;
+    cursor: default;
+  }
+
 </style>

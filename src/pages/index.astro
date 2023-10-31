@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NavigationTabs from '../components/NavigationTabs.astro';
-import LanguageSelector from "../components/LanguageSelector.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 ---
 
@@ -9,13 +8,12 @@ import SocialLinks from "../components/SocialLinks.astro";
 	<header class="mt-6">
 		<nav>
 			<NavigationTabs/>
-			<!-- <LanguageSelector> -->
 			<SocialLinks/>
 		</nav>
 	</header>
 	<main>
 		<h1 class="text-gradient mt-16 text-5xl 2xl:text-5xl md:text-4xl sm:text-2xl font-bold text-center leading-loose">Denis Anfruns</h1>
-		<h2 class="2xl:text-2xl lg:text-xl text-center">Power Platform Developer &nbsp; | &nbsp; Mobile, Desktop, Web technologies and FOSS enthusiast.</h2>
+		<h2 class="2xl:text-2xl lg:text-xl text-center">Power Platform Developer &nbsp;|&nbsp; Mobile, Desktop, Web technologies and FOSS enthusiast</h2>
 		
 	</main>
 </BaseLayout>
@@ -26,6 +24,12 @@ import SocialLinks from "../components/SocialLinks.astro";
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+	}
+	h1 {
+		font-family: 'Montserrat', sans-serif;
+	}
+	h2{
+		font-family: 'Inter', sans-serif;
 	}
 	.text-gradient {
 		background-image: var(--accent-gradient);
