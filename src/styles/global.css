@@ -8,6 +8,13 @@
   src: url('/fonts/Inter') format('woff2');
 }
 
+h1 {
+  font-family: 'Montserrat', sans-serif;
+}
+h2{
+  font-family: 'Inter', sans-serif;
+}
+
 :root {
   --accent: 136, 58, 234;
   --accent-light: 224, 204, 250;
