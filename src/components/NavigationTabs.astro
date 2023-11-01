@@ -1,21 +1,19 @@
-<ul>
-  <li><span>&lt;/&gt;</span></li>
-  <li><a class="anim-brightness" href="/" title="Mis Proyectos">projects</a></li>
-  <li><a class="disabled" href="/blog/" title="Blog de Desarrollo">dev blog</a></li>
-  <li><a class="disabled" href="/proyectos/" title="Mis Videojuegos">video games</a></li>
+<ul class="grid grid-cols-3 gap-1 mx-auto lg:mx-0 lg:flex">
+    <span class="hidden mx-4 lg:block">&lt;/&gt;</span>
+    <li><a class="mx-4 anim-brightness" href="/" title="Mis Proyectos">projects</a></li>
+    <li><a class="mx-4 disabled" href="/proyectos/" title="Mis Videojuegos">video games</a></li>
+    <li><a class="mx-4 disabled" href="/blog/" title="Blog de Desarrollo">dev blog</a></li>
 </ul>
 <style>
   li:first-child {
     user-select: none;
   }
   li {
-    display: inline-block;
     list-style-type: none;
   }
   a {
     font-family: 'Montserrat', sans-serif;
     color: white;
-    padding: 10px 20px 10px 20px;
     text-decoration: none;
 	}
   li a {
