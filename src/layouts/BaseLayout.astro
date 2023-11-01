@@ -1,7 +1,8 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
+import SocialLinks from "../components/SocialLinks.astro";
+const year = new Date().getFullYear();
 const { pageTitle } = Astro.props;
 ---
 
@@ -18,6 +19,13 @@ const { pageTitle } = Astro.props;
 	<body class="container mx-auto lg:px-32">
 		<Nav/>
 		<slot/>
-		<Footer/>
+		<footer class="text-center">
+			<SocialLinks/>
+			<p class="mt-2 mx-20 mb-24">&copy; {year} Denis Anfruns Millán. Todos los derechos reservados.</p>
+			<a class="flex justify-center" href="https://astro.build/" target="_blank">
+				<p class="mb-8">Powered by <span class="text-[#e63ba9] font-bold">Astro</span></p>
+				<img class="h-5 mt-1 mx-2" src="../../public/astroLogoDark.svg" alt="Astro logo"/>
+			</a>
+		</footer>
 	</body>
 </html>

@@ -51,6 +51,6 @@ body {
 h1 {
   font-family: 'Montserrat', sans-serif, system-ui;
 }
-h2{
+h2, a, p{
   font-family: 'Inter', sans-serif, system-ui;
 }
