@@ -11,6 +11,9 @@ module.exports = {
       '4xl': '2.441rem',
       '5xl': '4rem',
     },
+    container: {
+      center: true,
+    },
 		extend: {},
 	},
   plugins: [],
