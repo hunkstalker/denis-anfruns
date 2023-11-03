@@ -1,20 +1,10 @@
-<ul class="grid grid-cols-3 gap-1 mx-auto md:gap-6 md:mx-12 md:mr-0 md:flex md:text-xl">
-    <li class="hidden xl:block"><span class="mx-4 xl:block">&lt;/&gt;</span></li>
-    <li><a class="px-2 xs:px-4 text-sm xs:text-md md:text-lg anim-brightness " href="/" title="Mis Proyectos">projects</a></li>
-    <li><a class="px-2 xs:px-4 text-sm xs:text-md md:text-lg disabled text-gray-500" href="/proyectos/" title="Mis Videojuegos">video games</a></li>
-    <li><a class="px-2 xs:px-4 text-sm xs:text-md md:text-lg disabled text-gray-500" href="/blog/" title="Blog de Desarrollo">dev blog</a></li>
+<ul class="list-none grid grid-cols-3 gap-1 mx-auto md:gap-6 md:mx-12 md:mr-0 md:flex md:text-xl">
+    <li class="hidden select-none xl:block"><span class="mx-4 xl:block">&lt;/&gt;</span></li>
+    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md md:text-lg anim-brightness" href="/" title="Mis Proyectos">projects</a></li>
+    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md md:text-lg    text-gray-500 pointer-events-none cursor-default" href="/proyectos/" title="Mis Videojuegos">video games</a></li>
+    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md md:text-lg    text-gray-500 pointer-events-none cursor-default" href="/blog/" title="Blog de Desarrollo">dev blog</a></li>
 </ul>
 <style>
-  li:first-child {
-    user-select: none;
-  }
-  li {
-    list-style-type: none;
-  }
-  a {
-    font-family: 'Montserrat', sans-serif;
-    text-decoration: none;
-	}
   li a {
     transition: text-shadow .19s ease;
   }
@@ -25,10 +15,4 @@
       0 1.2px var(--color-shadow), 
       0 -1.2px var(--color-shadow);
 	}
-
-  .disabled {
-    pointer-events: none;
-    cursor: default;
-  }
-
 </style>
