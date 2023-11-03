@@ -1,8 +1,8 @@
-<ul class="grid grid-cols-3 gap-1 mx-auto md:mx-0 md:flex md:text-xl">
-    <li class="hidden md:block"><span class="mx-4 md:block">&lt;/&gt;</span></li>
-    <li><a class="px-4 anim-brightness" href="/" title="Mis Proyectos">projects</a></li>
-    <li><a class="px-4 disabled" href="/proyectos/" title="Mis Videojuegos">video games</a></li>
-    <li><a class="px-4 disabled" href="/blog/" title="Blog de Desarrollo">dev blog</a></li>
+<ul class="grid grid-cols-3 gap-1 mx-auto md:gap-6 md:mx-12 md:mr-0 md:flex md:text-xl">
+    <li class="hidden xl:block"><span class="mx-4 xl:block">&lt;/&gt;</span></li>
+    <li><a class="px-2 xs:px-4 text-sm xs:text-md md:text-lg anim-brightness " href="/" title="Mis Proyectos">projects</a></li>
+    <li><a class="px-2 xs:px-4 text-sm xs:text-md md:text-lg disabled text-gray-500" href="/proyectos/" title="Mis Videojuegos">video games</a></li>
+    <li><a class="px-2 xs:px-4 text-sm xs:text-md md:text-lg disabled text-gray-500" href="/blog/" title="Blog de Desarrollo">dev blog</a></li>
 </ul>
 <style>
   li:first-child {
@@ -16,18 +16,17 @@
     text-decoration: none;
 	}
   li a {
-    transition: text-shadow .25s ease;
+    transition: text-shadow .19s ease;
   }
 	.anim-brightness:hover {
     text-shadow: 
-      1px 0 var(--color-shadow), 
-      -1px 0 var(--color-shadow), 
-      0 1px var(--color-shadow), 
-      0 -1px var(--color-shadow);
+      1.2px 0 var(--color-shadow), 
+      -1.2px 0 var(--color-shadow), 
+      0 1.2px var(--color-shadow), 
+      0 -1.2px var(--color-shadow);
 	}
 
   .disabled {
-    color: grey;
     pointer-events: none;
     cursor: default;
   }
