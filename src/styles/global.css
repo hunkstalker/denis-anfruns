@@ -30,7 +30,14 @@
 :root {
   --accent: 136, 58, 234;
   --accent-light: 224, 204, 250;
-  --accent-gradient: linear-gradient(
+  --accent-dark: 179, 130, 194;
+  --light-accent-gradient: linear-gradient(
+    45deg,
+    rgb(var(--accent)),
+    rgb(var(--accent-dark)) 30%,
+    white 60%
+  );
+  --dark-accent-gradient: linear-gradient(
     45deg,
     rgb(var(--accent)),
     rgb(var(--accent-light)) 30%,
@@ -41,11 +48,7 @@
 
 html {
   font-family: system-ui, sans-serif;
-  background: #13151a;
-}
-
-body {
-  color: white;
+  background-color: #f1f5f9;
 }
 
 * {
@@ -57,4 +60,9 @@ h1 {
 }
 h2, a, p{
   font-family: 'Inter', sans-serif, system-ui;
+}
+
+html.dark {
+  background-color: #13151a;
+  color: #fff;
 }
