@@ -3,8 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout pageTitle="Denis Anfruns">
 	<header class="mt-16 text-center">
-		<h1 id="title" class="light-text-gradient px-18 my-4 text-3xl sm:text-4xl lg:text-5xl leading-none font-bold">Denis Anfruns</h1>
-		<!-- <h1 id="darkTitle" class="hidden text-slate-800 px-18 my-4 text-3xl sm:text-4xl lg:text-5xl leading-none font-bold">Denis Anfruns</h1> -->
+		<h1 class="text-gradient px-18 my-4 text-3xl sm:text-4xl lg:text-5xl leading-none font-bold">Denis Anfruns</h1>
 		<h2 class="mx-12 my-4 sm:mt-4 sm:mb-6 lg:text-xl 2xl:text-2xl">Power Platform Developer<p class="hidden lg:inline">&nbsp; | &nbsp;</p><br class="block lg:hidden">Mobile, Desktop, Web technologies and FOSS enthusiast</h2>
 	</header>
 	<main>
@@ -13,15 +12,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 <style>
 	
-	.light-text-gradient {
-		background-image: var(--light-accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 200%;
-		background-position: 0%;
-	}
-	.dark-text-gradient {
-		background-image: var(--dark-accent-gradient);
+	.text-gradient {
+		background-image: var(--accent-gradient);
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		background-size: 200%;
