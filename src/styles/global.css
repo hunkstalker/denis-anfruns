@@ -61,6 +61,18 @@ h2, a, p{
 html.dark {
   color: #fff;
   background-color: rgba(18, 21, 26, 1);
-  --btn-color-hover: rgba(49, 49, 51, 1);
   --color-highlight: rgba(255, 255, 255, 0.5);
+  --btn-color-hover: rgba(123, 136, 158, 0.5);
+}
+
+html.dark::before {
+  content: "";
+  position: absolute;
+  top: 0%;
+  bottom: 0%;
+  width: 100%;
+  left: 0%;
+  background: radial-gradient(ellipse 200% 200% at 50% 20%, rgba(18, 21, 26, 1), rgb(90, 12, 53) 100%);
+  mask-image: radial-gradient(ellipse 90% 65% at 50% 30%, transparent 0%, black 0%, white 50%, transparent 100%);
+  z-index: -1;
 }
