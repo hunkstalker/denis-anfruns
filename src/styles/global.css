@@ -31,13 +31,15 @@
   --accent: 136, 58, 234;
   --accent-light: 224, 204, 250;
   --accent-dark: 179, 130, 194;
-  --accent-gradient: linear-gradient(
+  --light-accent-gradient: linear-gradient(
     45deg,
     rgb(var(--accent)),
     rgb(var(--accent-dark)) 30%,
     white 60%
   );
-  --color-shadow: rgba(255, 255, 255, 0.5);
+  color: #222222;
+  --color-highlight: rgba(48, 42, 42, 0.25);
+  --btn-color-hover: rgba(140, 138, 138, 0.5);
 }
 
 html {
@@ -57,6 +59,8 @@ h2, a, p{
 }
 
 html.dark {
-  background-color: #13151a;
   color: #fff;
+  background-color: rgba(18, 21, 26, 1);
+  --btn-color-hover: rgba(49, 49, 51, 1);
+  --color-highlight: rgba(255, 255, 255, 0.5);
 }
