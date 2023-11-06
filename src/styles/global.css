@@ -38,16 +38,17 @@
     white 60%
   );
   color: #222222;
-  --color-highlight: rgba(48, 42, 42, 0.25);
-  --btn-color-hover: rgba(140, 138, 138, 0.5);
-  --background-color: #16161a;
+  --color-highlight: rgba(36, 31, 31, 0.2);
+  --btn-color-hover: rgba(214, 214, 214, 1);
+  --light-bg-color: rgb(230, 230, 240);
+  --dark-bg-color: rgb(20, 20, 25);
   --primary-bg-color: #16161a;
   --secondary-bg-color: #4e3d46;
 }
 
 html {
   font-family: system-ui, sans-serif;
-  background-color: #f1f5f9;
+  background-color: var(--light-bg-color)
 }
 
 * {
@@ -63,10 +64,9 @@ h2, a, p{
 
 html.dark {
   color: #fff;
-  /* background-color: rgba(18, 21, 26, 1); */
-  background-color: var(--background-color);
+  background-color: var(--dark-bg-color);
   --color-highlight: rgba(255, 255, 255, 0.5);
-  --btn-color-hover: rgba(123, 136, 158, 0.5);
+  --btn-color-hover: rgba(75, 60, 61, 0.5);
 }
 
 html.dark::before {
