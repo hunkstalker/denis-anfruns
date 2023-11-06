@@ -1,9 +1,7 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
-import SocialLinks from "../components/SocialLinks.astro";
-import PoweredAstro from '../components/PoweredAstro.astro';
-const year = new Date().getFullYear();
+import Footer from '../components/Footer.astro';
 const { pageTitle } = Astro.props;
 ---
 <!doctype html>
@@ -19,10 +17,12 @@ const { pageTitle } = Astro.props;
 	<body class="container mx-auto lg:px-32">
 		<Nav/>
 		<slot/>
-		<footer class="text-center">
-			<SocialLinks/>
-      <p class="mt-6 mx-16 sm:mx-20 mb-24 leading-6">&copy; {year} Denis Anfruns Millán.<br class="block md:hidden">&nbsp;All rights reserved.</p>
-      <PoweredAstro/>
-		</footer>
+		<Footer/>
 	</body>
+	<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const theme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    });
+  </script>
 </html>

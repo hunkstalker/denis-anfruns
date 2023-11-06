@@ -1,8 +1,8 @@
 ---
 import NavigationTabs from './NavigationTabs.astro';
-import SwitchDarkMode from './SwitchDarkMode.astro';
+import SwitchThemeMode from './SwitchThemeMode';
 ---
 <nav class="mt-8 flex justify-between">
   <NavigationTabs/>
-  <SwitchDarkMode/>
+  <SwitchThemeMode client:only client:media="(min-width: 769px)"/>
 </nav>
