@@ -1,13 +1,6 @@
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/montserrat-latin-400-normal.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
   font-weight: 700;
   src: url('/fonts/montserrat-latin-700-normal.woff2') format('woff2');
   font-display: swap;
@@ -17,13 +10,6 @@
   font-style: normal;
   font-weight: 400;
   src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  src: url('/fonts/inter-latin-700-normal.woff2') format('woff2');
   font-display: swap;
 }
 
@@ -39,7 +25,7 @@
   );
   color: #222222;
   --color-highlight: rgba(36, 31, 31, 0.2);
-  --btn-color-hover: rgba(214, 214, 214, 1);
+  --btn-color-hover: #d6d6d6;
   --light-bg-color: rgb(230, 230, 240);
   --dark-bg-color: rgb(20, 20, 25);
   --primary-bg-color: #16161a;
@@ -47,7 +33,7 @@
 }
 
 html {
-  font-family: system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   background-color: var(--light-bg-color)
 }
 
@@ -66,7 +52,7 @@ html.dark {
   color: #fff;
   background-color: var(--dark-bg-color);
   --color-highlight: rgba(255, 255, 255, 0.5);
-  --btn-color-hover: rgba(75, 60, 61, 0.5);
+  --btn-color-hover: #4b3c3d;
 }
 
 html.dark::before {
