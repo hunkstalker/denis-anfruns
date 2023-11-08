@@ -3,14 +3,14 @@
   font-style: normal;
   font-weight: 700;
   src: url('/fonts/montserrat-latin-700-normal.woff2') format('woff2');
-  font-display: swap;
+  font-display: block;
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
-  font-display: swap;
+  font-display: block;
 }
 
 :root {
@@ -43,11 +43,8 @@ html {
 
 h1 {
   font-family: 'Montserrat', sans-serif, system-ui;
-}
-h2, a, p{
-  font-family: 'Inter', sans-serif, system-ui;
-}
 
+}
 html.dark {
   color: #fff;
   background-color: var(--dark-bg-color);
