@@ -6,10 +6,22 @@
         {
           "type": "header",
           "key": "Accept-Language",
-          "value": "(es).*"
+          "value": "(es-ES).*"
         }
       ],
-      "destination": "/es",
+      "destination": "/es-ES",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(ca-ES).*"
+        }
+      ],
+      "destination": "/ca-ES",
       "permanent": false
     },
     {
