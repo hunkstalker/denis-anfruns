@@ -14,7 +14,7 @@ export const ui = {
     'nav.videogames': 'video games',
   },
   es: {
-    'dev': 'Desarrollador de Power Developer',
+    'dev': 'Desarrollador de Power Platform',
     'descr': 'móvil, escritorio, tecnologías web y entusiasta del software libre de código abierto',
     'nav.projects': 'proyectos',
     'nav.videogames': 'videojuegos',
