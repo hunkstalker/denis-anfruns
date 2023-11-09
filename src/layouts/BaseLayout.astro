@@ -2,16 +2,18 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-const { pageTitle } = Astro.props;
+const { pageTitle, lang } = Astro.props;
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Denis Anfruns' Web" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="alternate" hreflang="en" href="https://denis-anfruns.dev/en/" />
+		<link rel="alternate" hreflang="es" href="https://denis-anfruns.dev/es/" />
 		<title>{pageTitle}</title>
 	</head>
 	<body class="container mx-auto lg:px-32">
@@ -21,7 +23,7 @@ const { pageTitle } = Astro.props;
 	</body>
 	<script>
     document.addEventListener('DOMContentLoaded', () => {
-      const theme = localStorage.getItem('theme') || 'dark';
+      const theme = localStorage.getItem('theme');
       document.documentElement.classList.toggle('dark', theme === 'dark');
     });
   </script>

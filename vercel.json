@@ -1,0 +1,28 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(es).*"
+        }
+      ],
+      "destination": "/es",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "Accept-Language",
+          "value": "(en).*"
+        }
+      ],
+      "destination": "/en",
+      "permanent": false
+    }
+  ]
+}

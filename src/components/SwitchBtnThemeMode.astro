@@ -19,14 +19,9 @@
   }
   .sun { fill: black; }
   .moon { fill: transparent; }
-
   :global(.dark) .sun { fill: transparent; }
   :global(.dark) .moon { fill: white; }
-
-  
-
 </style>
-
 <script is:inline>
   const theme = (() => {
     if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -35,11 +30,10 @@
     return 'dark';
   })();
 
-  if (theme === 'light') {
-    document.documentElement.classList.remove('dark');
-  } else {
-    document.documentElement.classList.add('dark');
-  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const theme = localStorage.getItem('theme');
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  });
 
   window.localStorage.setItem('theme', theme);
 
