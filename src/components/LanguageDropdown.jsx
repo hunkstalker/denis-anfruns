@@ -9,33 +9,26 @@ export default function App() {
     [selectedKeys]
   );
 
-  const containerStyle = {
-    display: 'flex',
-    alignItems: 'center', // Centra verticalmente
-    justifyContent: 'center', // Centra horizontalmente
-    height: '100vh', // Altura del viewport para que el centro sea realmente el centro de la pantalla
-  };
-
   return (
-    <Dropdown style={containerStyle}>
+    <Dropdown>
       <DropdownTrigger>
         <Button 
-          variant="bordered"
-          >
+          variant="bordered">
           {selectedValue}
         </Button>
       </DropdownTrigger>
       <DropdownMenu 
-        aria-label="Single selection example"
-        variant="bordered"
+        aria-label="Multiple selection example"
+        variant="flat"
+        closeOnSelect={true}
         disallowEmptySelection
         selectionMode="single"
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
       >
-        <DropdownItem key="text">Español</DropdownItem>
-        <DropdownItem key="text">Català</DropdownItem>
-        <DropdownItem key="text">English</DropdownItem>
+        <DropdownItem key="🇪🇸&nbsp; Español">🇪🇸 &nbsp;Español</DropdownItem>
+        <DropdownItem key="Català">Català</DropdownItem>
+        <DropdownItem key="🇬🇧&nbsp; English">🇬🇧 &nbsp;English</DropdownItem>
       </DropdownMenu>
     </Dropdown>
   );
