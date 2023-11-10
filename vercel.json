@@ -1,13 +1,43 @@
 {
   "redirects": [
     {
-      "source": "/(es)(-ES)?(/.*)?",
-      "destination": "/es-ES$3",
+      "source": "/es(/.*)?",
+      "destination": "/es-ES$1",
       "permanent": false
     },
     {
-      "source": "/(ca)(-ES)?(/.*)?",
-      "destination": "/ca-ES$3",
+      "source": "/ES(/.*)?",
+      "destination": "/es-ES$1",
+      "permanent": false
+    },
+    {
+      "source": "/Es(/.*)?",
+      "destination": "/es-ES$1",
+      "permanent": false
+    },
+    {
+      "source": "/eS(/.*)?",
+      "destination": "/es-ES$1",
+      "permanent": false
+    },
+    {
+      "source": "/ca(/.*)?",
+      "destination": "/ca-ES$1",
+      "permanent": false
+    },
+    {
+      "source": "/CA(/.*)?",
+      "destination": "/ca-ES$1",
+      "permanent": false
+    },
+    {
+      "source": "/Ca(/.*)?",
+      "destination": "/ca-ES$1",
+      "permanent": false
+    },
+    {
+      "source": "/cA(/.*)?",
+      "destination": "/ca-ES$1",
       "permanent": false
     },
     {
@@ -48,4 +78,3 @@
     }
   ]
 }
-
