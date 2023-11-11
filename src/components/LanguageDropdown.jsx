@@ -10,7 +10,7 @@ export default function App() {
     const languageSegment = pathSegments[0];
 
     let URLLanguage;
-    switch(languageSegment === '' ? 'en' : languageSegment) {
+    switch (languageSegment) {
       case 'es-es':
         URLLanguage = 'Español';
         break;
@@ -19,10 +19,29 @@ export default function App() {
         break;
       default:
         URLLanguage = 'English';
+        break;
     }
 
     setLanguage(URLLanguage);
   }, []);
+
+
+  function handleLanguageSelection(keys) {
+    const key = Array.from(keys)[0];
+    let newPath;
+    switch (key) {
+      case 'Español':
+        newPath = '/es-es';
+        break;
+      case 'Català':
+        newPath = '/ca-es';
+        break;
+      default:
+        newPath = '/en';
+        break;
+    }
+    window.location.assign(newPath); 
+  }
 
   return (
     <Dropdown>
@@ -33,13 +52,13 @@ export default function App() {
         </Button>
       </DropdownTrigger>
       <DropdownMenu 
-        aria-label="Multiple selection example"
+        aria-label="Language dropdown button selector"
         variant="flat"
         closeOnSelect={true}
         disallowEmptySelection
         selectionMode="single"
         selectedKeys={language}
-        onSelectionChange={setLanguage}
+        onSelectionChange={handleLanguageSelection}
       >
         <DropdownItem key="Español">🇪🇸 &nbsp;Español</DropdownItem>
         <DropdownItem key="Català">Català</DropdownItem>
