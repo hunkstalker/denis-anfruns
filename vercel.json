@@ -2,42 +2,12 @@
   "redirects": [
     {
       "source": "/es(/.*)?",
-      "destination": "/es-ES$1",
-      "permanent": false
-    },
-    {
-      "source": "/ES(/.*)?",
-      "destination": "/es-ES$1",
-      "permanent": false
-    },
-    {
-      "source": "/Es(/.*)?",
-      "destination": "/es-ES$1",
-      "permanent": false
-    },
-    {
-      "source": "/eS(/.*)?",
-      "destination": "/es-ES$1",
+      "destination": "/es-es$1",
       "permanent": false
     },
     {
       "source": "/ca(/.*)?",
-      "destination": "/ca-ES$1",
-      "permanent": false
-    },
-    {
-      "source": "/CA(/.*)?",
-      "destination": "/ca-ES$1",
-      "permanent": false
-    },
-    {
-      "source": "/Ca(/.*)?",
-      "destination": "/ca-ES$1",
-      "permanent": false
-    },
-    {
-      "source": "/cA(/.*)?",
-      "destination": "/ca-ES$1",
+      "destination": "/ca-es$1",
       "permanent": false
     },
     {
@@ -46,10 +16,10 @@
         {
           "type": "header",
           "key": "Accept-Language",
-          "value": "(es-ES).*"
+          "value": "(es-es).*"
         }
       ],
-      "destination": "/es-ES",
+      "destination": "/es-es",
       "permanent": false
     },
     {
@@ -58,10 +28,10 @@
         {
           "type": "header",
           "key": "Accept-Language",
-          "value": "(ca-ES).*"
+          "value": "(ca-es).*"
         }
       ],
-      "destination": "/ca-ES",
+      "destination": "/ca-es",
       "permanent": false
     },
     {

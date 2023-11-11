@@ -1,20 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
 
 export default function App() {
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(["language"]));
+  const [language, setLanguage] = React.useState('');
 
-  const selectedValue = React.useMemo(
-    () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
-    [selectedKeys]
-  );
+  useEffect(() => {
+    const path = window.location.pathname;
+    const pathSegments = path.split('/').filter(Boolean);
+    const languageSegment = pathSegments[0];
+
+    let URLLanguage;
+    switch(languageSegment === '' ? 'en' : languageSegment) {
+      case 'es-es':
+        URLLanguage = 'Español';
+        break;
+      case 'ca-es':
+        URLLanguage = 'Català';
+        break;
+      default:
+        URLLanguage = 'English';
+    }
+
+    setLanguage(URLLanguage);
+  }, []);
 
   return (
     <Dropdown>
       <DropdownTrigger>
         <Button 
           variant="bordered">
-          {selectedValue}
+          {language}
         </Button>
       </DropdownTrigger>
       <DropdownMenu 
@@ -23,12 +38,12 @@ export default function App() {
         closeOnSelect={true}
         disallowEmptySelection
         selectionMode="single"
-        selectedKeys={selectedKeys}
-        onSelectionChange={setSelectedKeys}
+        selectedKeys={language}
+        onSelectionChange={setLanguage}
       >
-        <DropdownItem key="🇪🇸&nbsp; Español">🇪🇸 &nbsp;Español</DropdownItem>
+        <DropdownItem key="Español">🇪🇸 &nbsp;Español</DropdownItem>
         <DropdownItem key="Català">Català</DropdownItem>
-        <DropdownItem key="🇬🇧&nbsp; English">🇬🇧 &nbsp;English</DropdownItem>
+        <DropdownItem key="English">🇬🇧 &nbsp;English</DropdownItem>
       </DropdownMenu>
     </Dropdown>
   );
