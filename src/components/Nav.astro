@@ -3,8 +3,10 @@ import NavigationTabs from './NavigationTabs.astro';
 import LanguageDropdown from './LanguageDropdown.jsx';
 import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro';
 ---
-<nav class="mt-8 flex justify-between">
+<nav class="mt-8 text-center flex justify-between">
   <NavigationTabs/>
-  <LanguageDropdown client:visible/>
+    <div class="hidden md:block" role="Dropdown button" aria-label="Language Selection">
+      <LanguageDropdown client:load/>
+    </div>
   <SwitchBtnThemeMode/>
 </nav>

@@ -45,6 +45,11 @@
       ],
       "destination": "/en",
       "permanent": false
+    },
+    {
+      "source": "/(/.*)?",
+      "destination": "/en$1",
+      "permanent": false
     }
   ]
 }

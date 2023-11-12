@@ -63,3 +63,12 @@ html.dark::before {
   mask-image: radial-gradient(ellipse 90% 65% at 50% 30%, transparent 0%, black 10%, white 50%, transparent 100%);
   z-index: -1;
 }
+
+.text-gradient {
+  background-image: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200%;
+  background-position: 0%;
+}

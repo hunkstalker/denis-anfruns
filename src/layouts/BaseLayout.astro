@@ -1,32 +1,32 @@
 ---
-import '../styles/global.css';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
-const { pageTitle, lang } = Astro.props;
+import '../styles/global.css'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+const { pageTitle, lang } = Astro.props
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} transition:animate='slide'>
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Denis Anfruns' Web" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="alternate" hreflang="x-default" href="https://denis-anfruns.dev/"/>
-		<link rel="alternate" hreflang="en" href="https://denis-anfruns.dev/en/"/>
-		<link rel="alternate" hreflang="es" href="https://denis-anfruns.dev/es-ES/"/>
-		<link rel="alternate" hreflang="ca" href="https://denis-anfruns.dev/ca-ES/"/>
+		<meta charset='UTF-8' />
+		<meta name='description' content="Denis Anfruns' Web" />
+		<meta name='viewport' content='width=device-width' />
+		<meta name='generator' content={Astro.generator} />
+		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+		<link rel='alternate' hreflang='x-default' href='https://denis-anfruns.dev/' />
+		<link rel='alternate' hreflang='en' href='https://denis-anfruns.dev/en/' />
+		<link rel='alternate' hreflang='es' href='https://denis-anfruns.dev/es-ES/' />
+		<link rel='alternate' hreflang='ca' href='https://denis-anfruns.dev/ca-ES/' />
 		<title>{pageTitle}</title>
 	</head>
-	<body class="container text-center lg:px-32">
-		<Nav/>
-		<slot/>
-		<Footer/>
+	<body class="container flex flex-col min-h-screen lg:px-32">
+		<Nav />
+		<slot />
+		<Footer class='mt-auto'/>
 	</body>
 	<script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const theme = localStorage.getItem('theme');
-      document.documentElement.classList.toggle('dark', theme === 'dark');
-    });
-  </script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const theme = localStorage.getItem('theme')
+			document.documentElement.classList.toggle('dark', theme === 'dark')
+		})
+	</script>
 </html>
