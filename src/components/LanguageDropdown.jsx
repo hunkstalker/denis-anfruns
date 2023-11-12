@@ -79,7 +79,7 @@ export default function LanguageDropdown() {
 					<FlagES /> &nbsp;Español
 				</DropdownItem>
 				<DropdownItem key='Català'>
-					<FlagCA/>	&nbsp;Català
+					<FlagCA />	&nbsp;Català
 				</DropdownItem>
 				<DropdownItem key='English'>
 					<FlagUK /> &nbsp;English

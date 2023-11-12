@@ -25,7 +25,7 @@
   );
   color: #222222;
   --color-highlight: rgba(36, 31, 31, 0.2);
-  --btn-color-hover: #d6d6d6;
+  --btn-color-hover: #D4D4D8;
   --light-bg-color: rgb(230, 230, 240);
   --dark-bg-color: rgb(20, 20, 25);
   --primary-bg-color: #16161a;
@@ -49,7 +49,7 @@ html.dark {
   color: #fff;
   background-color: var(--dark-bg-color);
   --color-highlight: rgba(255, 255, 255, 0.5);
-  --btn-color-hover: #4b3c3d;
+  --btn-color-hover: #52525B;
 }
 
 html.dark::before {

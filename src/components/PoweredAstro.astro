@@ -1,6 +1,12 @@
+---
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
 <div class="flex justify-center">
   <a class="flex" href="https://astro.build/" target="_blank">
-    <p>Powered by <span class="text-[#e63ba9] font-bold">Astro</span></p>
+    <p>{t('footer.astro')}<span class="text-[#e63ba9] font-bold">Astro</span></p>
     <svg
       class="ml-1 mt-1"
       width="24"
