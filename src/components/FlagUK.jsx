@@ -1,6 +1,4 @@
 // FlagOfCatalonia.jsx
-import React from 'react';
-
 const FlagUK = () => (
   <svg class='inline mr-1' xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 36 36'>
     <path
