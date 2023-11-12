@@ -1,14 +1,12 @@
 ---
-import { getLangFromUrl } from '../i18n/utils';
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
 import '../styles/global.css'
 
-const lang = getLangFromUrl(Astro.url);
 const { pageTitle } = Astro.props
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang='es'>
 	<head>
 		<meta charset='UTF-8' />
 		<meta name='description' content="Denis Anfruns' Web" />
@@ -16,9 +14,6 @@ const { pageTitle } = Astro.props
 		<meta name='generator' content={Astro.generator} />
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
 		<link rel='alternate' hreflang='x-default' href='https://denis-anfruns.dev/' />
-		<link rel='alternate' hreflang='en' href='https://denis-anfruns.dev/en/' />
-		<link rel='alternate' hreflang='es' href='https://denis-anfruns.dev/es-ES/' />
-		<link rel='alternate' hreflang='ca' href='https://denis-anfruns.dev/ca-ES/' />
 		<title>{pageTitle}</title>
 	</head>
 	<body class="container flex flex-col min-h-screen lg:px-32">
