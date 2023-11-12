@@ -1,13 +1,10 @@
 ---
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
 ---
 <ul class="list-none grid grid-cols-3 gap-1 mx-auto md:gap-6 md:mx-12 md:mr-0 md:flex md:text-xl">
     <li class="hidden select-none xl:block"><span class="mx-4 xl:block">&lt;/&gt;</span></li>
-    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md md:text-lg anim-brightness" href="/" title="My projects">{t('nav.projects')}</a></li>
-    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md disabled md:text-lg pointer-events-none cursor-default" href="/proyectos/" title="My video games">{t('nav.videogames')}</a></li>
-    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md disabled md:text-lg pointer-events-none cursor-default" href="/blog/" title="My development blog">{t('nav.devblog')}</a></li>
+    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md md:text-lg anim-brightness" href="/" title="My projects">proyectos web/apps</a></li>
+    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md disabled md:text-lg pointer-events-none cursor-default" href="/proyectos/" title="My video games">videojuegos</a></li>
+    <li><a class="Monsterrat px-2 xs:px-4 text-sm xs:text-md disabled md:text-lg pointer-events-none cursor-default" href="/blog/" title="My development blog">dev blog</a></li>
 </ul>
 <style>
   li a {
