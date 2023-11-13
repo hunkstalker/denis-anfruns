@@ -1,8 +1,19 @@
 ---
-import NavigationTabs from './NavigationTabs.astro';
+import NavButton from './NavButton.astro';
 import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro';
 ---
-<nav class="mt-8 text-center flex justify-between">
-  <NavigationTabs/>
-  <SwitchBtnThemeMode/>
+<nav class="mt-5 grid grid-cols-3 md:grid-cols-6 xl:grid-cols-8 text-center">
+  <p class="col-start-1 hidden select-none xl:inline"><span class="mx-4 xl:inline">&lt;/&gt;</span></p>
+  <div class='col-start-1 md:col-start-2'>
+    <NavButton text='proyectos' enabledBtn={true}/>
+  </div>
+  <div class='col-start-2 md:col-start-3'>
+    <NavButton text='videojuegos' enabledBtn={false}>videojuegos</NavButton>
+  </div>
+  <div class='col-start-3 md:col-start-4'>
+    <NavButton text='dev blog' enabledBtn={false}>dev blog</NavButton>
+  </div>
+  <div class='md:col-start-6 xl:col-start-10'>
+    <SwitchBtnThemeMode />
+  </div>
 </nav>
