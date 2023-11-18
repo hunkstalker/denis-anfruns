@@ -1,9 +1,10 @@
 ---
 interface Props {
   text: string;
+  link: string;
   enabledBtn: boolean;
 }
-const { text, enabledBtn } = Astro.props;
+const { text, link, enabledBtn } = Astro.props;
 ---
 <a class:list=
   {[
@@ -12,7 +13,7 @@ const { text, enabledBtn } = Astro.props;
       'focus': enabledBtn, 'text-gray-500 md:text-lg pointer-events-none cursor-default': !enabledBtn
     }
   ]}
-  href="/" title='Mis proyectos'>{text}</a>
+  href={link} title='Mis proyectos'>{text}</a>
 
 <style>
 	.focus:hover {

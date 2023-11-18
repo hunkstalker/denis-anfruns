@@ -1,12 +1,9 @@
 ---
 import SocialLinks from "../components/SocialLinks.astro";
-import PoweredAstro from '../components/PoweredAstro.astro';
-
-const year = new Date().getFullYear();
+import Author from './Author.astro';
 ---
 <footer class="text-center mb-16">
   <SocialLinks />
-  <p class="mt-6 mx-16 sm:mx-20 mb-24 leading-6">&copy; {year} Denis Anfruns Millán.<br class="block md:hidden"><span class="hidden sm:inline">&nbsp;</span>Todos los derechos reservados.</p>
-  <PoweredAstro />
+  <Author />
   <slot />
 </footer>
