@@ -2,14 +2,14 @@
   font-family: 'Montserrat';
   font-style: normal;
   font-weight: 700;
-  src: url('/fonts/montserrat-latin-700-normal.woff2') format('woff2');
+  src: url('/fonts/monts.woff2') format('woff2');
   font-display: block;
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
+  src: url('/fonts/inter.woff2') format('woff2');
   font-display: block;
 }
 
