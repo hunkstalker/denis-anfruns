@@ -1,28 +1,20 @@
 ---
-import NavButton from './NavButton.astro';
-import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro';
+import NavButton from './NavButton.astro'
+import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
 ---
-<nav class="mt-5 grid grid-cols-3 md:grid-cols-6 xl:grid-cols-8 text-center">
-  <img src="/logo.svg" alt="" class="col-start-1 hidden xl:inline w-10">
-  <div class='col-start-1 md:col-start-2'>
-    <NavButton
-    text='proyectos'
-    link='/'
-    enabledBtn={true}/>
-  </div>
-  <div class='col-start-2 md:col-start-3'>
-    <NavButton
-    text='videojuegos'
-    link='/videogames'
-    enabledBtn={true}/>
-  </div>
-  <div class='col-start-3 md:col-start-4'>
-    <NavButton
-    text='dev blog'
-    link='/'
-    enabledBtn={false}/>
-  </div>
-  <div class='md:col-start-6 xl:col-start-10'>
-    <SwitchBtnThemeMode />
-  </div>
+
+<nav class='mt-5 grid grid-cols-3 md:grid-cols-6 xl:grid-cols-8 text-center'>
+	<img src='/logo.svg' alt="Denis Anfruns' web logo" width='40' height='40' class='col-start-1 hidden xl:inline w-10' />
+	<div class='col-start-1 md:col-start-2'>
+		<NavButton text='proyectos' link='/' enabledBtn={true} />
+	</div>
+	<div class='col-start-2 md:col-start-3'>
+		<NavButton text='videojuegos' link='/videogames' enabledBtn={true} />
+	</div>
+	<div class='col-start-3 md:col-start-4'>
+		<NavButton text='dev blog' link='/' enabledBtn={false} />
+	</div>
+	<div class='md:col-start-6 xl:col-start-10'>
+		<SwitchBtnThemeMode />
+	</div>
 </nav>
