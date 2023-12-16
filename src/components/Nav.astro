@@ -2,18 +2,16 @@
 import NavButton from './NavButton.astro'
 import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
 ---
-
-<nav class='mt-5 grid grid-cols-3 md:grid-cols-6 xl:grid-cols-8 text-center'>
-	<div class='col-start-1 md:col-start-2'>
-		<NavButton text='proyectos' link='/' enabledBtn={true} />
+<nav class='ml-10 md:ml-0 inline-flex mt-5 items-center justify-between'>
+	<div class="inline-flex gap-5">
+		<div>
+			<NavButton text='proyectos' link='/' enabledBtn={true} />
+		</div>
+		<div>
+			<NavButton text='dev blog' link='/' enabledBtn={false} />
+		</div>
 	</div>
-	<div class='col-start-2 md:col-start-3'>
-		<NavButton text='videojuegos' link='/videogames' enabledBtn={false} />
-	</div>
-	<div class='col-start-3 md:col-start-4'>
-		<NavButton text='dev blog' link='/' enabledBtn={false} />
-	</div>
-	<div class='md:col-start-6 xl:col-start-10'>
+	<div class="flex">
 		<SwitchBtnThemeMode />
 	</div>
 </nav>
