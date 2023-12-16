@@ -3,14 +3,18 @@
   font-style: normal;
   font-weight: 700;
   src: url('/fonts/monts.woff2') format('woff2');
-  font-display: block;
+  font-display: swap;
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   src: url('/fonts/inter.woff2') format('woff2');
-  font-display: block;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 :root {
@@ -25,32 +29,28 @@
   );
   color: #222222;
   --color-highlight: rgba(36, 31, 31, 0.2);
-  --light-bg-color: rgb(230, 230, 240);
-  --dark-bg-color: rgb(20, 20, 25);
+  --bg-color-light: rgb(230, 230, 240);
+  --bg-color-dark: rgb(29, 29, 39);
   --primary-bg-color: #16161a;
   --secondary-bg-color: #4e3d46;
 }
 
 html {
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--light-bg-color)
-}
-
-* {
-  box-sizing: border-box;
+  font-family: 'Inter', sans-serif,system-ui;
+  background-color: var(--bg-color-light);
 }
 
 h1 {
-  font-family: 'Montserrat', sans-serif, system-ui;
+  font-family: 'Montserrat', system-ui, sans-serif;
 
 }
 html.dark {
   color: #fff;
-  background-color: var(--dark-bg-color);
+  background-color: var(--bg-color-dark);
   --color-highlight: #ffffff80;
 }
 
-html.dark::before {
+/* html.dark::before {
   content: "";
   position: absolute;
   top: 0%;
@@ -60,7 +60,7 @@ html.dark::before {
   background: radial-gradient(ellipse 300% 100% at 50% 20%, var(--primary-bg-color), var(--secondary-bg-color));
   mask-image: radial-gradient(ellipse 90% 65% at 50% 30%, transparent 0%, black 10%, white 50%, transparent 100%);
   z-index: -1;
-}
+} */
 
 .text-gradient {
   background-image: var(--accent-gradient);
