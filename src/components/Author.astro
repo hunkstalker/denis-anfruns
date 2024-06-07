@@ -3,12 +3,8 @@ const year = new Date().getFullYear();
 
 export const prerender = false;
 ---
-<div class="grid grid-cols-1 lg:grid-cols-2">
-  <div class="inline-flex justify-center lg:mr-2 lg:justify-end">
-    <p class="">{year} Denis Anfruns Millán</p>
-    <p class="invisible lg:visible">.</p>
-  </div>
-  <a class="inline-flex justify-center lg:ml-2 lg:justify-start" href="https://astro.build/" target="_blank">
+<div class="grid grid-cols-1">
+  <a class="inline-flex justify-center" href="https://astro.build/" target="_blank">
     <p>Web impulsada por&nbsp;<span class="text-[#e63ba9] font-bold">Astro</span></p>
     <svg
       class="ml-2 my-auto mt-1"
@@ -27,5 +23,8 @@ export const prerender = false;
         </linearGradient>
       </defs>
     </svg>
+    <div class="inline-flex ml-2">
+      <p class="">{year}</p>
+    </div>
   </a>
 </div>

@@ -8,19 +8,16 @@ const { text, link, enabledBtn } = Astro.props;
 ---
 <a class:list=
   {[
-    'Monsterrat text-sm xs:text-md md:text-lg',
+    'Monsterrat text-sm xs:text-md md:text-lg py-4 px-5 rounded-lg',
     {
-      'focus': enabledBtn, 'text-gray-500 md:text-lg pointer-events-none cursor-default': !enabledBtn
+      'focus': enabledBtn, 'text-gray-500 md:text-lg pointer-events-none cursor-default':!enabledBtn
     }
   ]}
   href={link} title='Mis proyectos'>{text}</a>
 
 <style>
 	.focus:hover {
-    text-shadow: 
-      1.2px 0 var(--color-highlight), 
-      -1.2px 0 var(--color-highlight), 
-      0 1.2px var(--color-highlight), 
-      0 -1.2px var(--color-highlight);
+    background-color: #52525B;
+    color: white;
 	}
 </style>

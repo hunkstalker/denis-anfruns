@@ -1,22 +1,18 @@
 @font-face {
   font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
   src: url('/fonts/monts.woff2') format('woff2');
   font-display: swap;
 }
 @font-face {
   font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  src: url('/fonts/inter.woff2') format('woff2');
+  src: url('/fonts/inter.ttf') format('truetype');
   font-display: swap;
 }
 
 * {
   box-sizing: border-box;
 }
-
+  
 :root {
   --accent: 136, 58, 234;
   --accent-light: 224, 204, 250;
@@ -27,23 +23,23 @@
     rgb(var(--accent-dark)) 30%,
     white 60%
   );
-  color: #222222;
-  --color-highlight: rgba(36, 31, 31, 0.2);
-  --bg-color-light: rgb(230, 230, 240);
-  --bg-color-dark: rgb(29, 29, 39);
+  
+  --color-highlight: rgba(52 211 153);
+  --bg-color-light: rgba(230, 230, 240);
+  --bg-color-dark: rgb(19, 19, 24);
   --primary-bg-color: #16161a;
   --secondary-bg-color: #4e3d46;
 }
 
 html {
-  font-family: 'Inter', sans-serif,system-ui;
+  font-family: 'Inter', sans-serif, system-ui;
   background-color: var(--bg-color-light);
 }
 
 h1 {
-  font-family: 'Montserrat', system-ui, sans-serif;
-
+  font-family: 'Inter', system-ui, sans-serif;
 }
+
 html.dark {
   color: #fff;
   background-color: var(--bg-color-dark);

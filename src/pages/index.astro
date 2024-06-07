@@ -1,13 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SocialLinks from "../components/SocialLinks.astro";
-const pageTitle = 'Denis Anfruns - Web portfolio'
+
+const pageTitle = 'Denis Anfruns Millán'
 const language = 'es';
+
+const expYears: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1);
 ---
 <BaseLayout pageTitle={pageTitle} lang={language}>
-	<header class="mt-16 text-center">
-		<h1 class="text-gradient drop-shadow-md px-18 my-4 text-3xl sm:text-4xl lg:text-5xl leading-none font-bold">Denis Anfruns</h1>
-		<h2 class="mx-4 flex-wrap lg:text-xl 2xl:text-2xl">Desarrollador de Power Platform<p class="hidden lg:inline">&nbsp; | &nbsp;</p><br class="block lg:hidden">Móvil, escritorio, tecnologías web y entusiasta del FLOSS</h2>
+	<header class="text-center relative top-[10rem]">
+		<h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold">DENIS ANFRUNS</h1>
+		<p class="lg:text-3xl">Desarrollador Full Stack con<span class="font-black text-emerald-600"> +{expYears} años</span> de experiencia</p>	
+		<p class="lg:text-xl mt-[3rem] text-neutral-400 font-medium">{"Power Apps | React & Astro"}</p>
 		<SocialLinks />
 	</header>
 	<main class="flex-grow">
