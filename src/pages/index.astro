@@ -4,13 +4,30 @@ import SocialLinks from "../components/SocialLinks.astro";
 
 const pageTitle = 'Denis Anfruns Millán'
 const language = 'es';
+const fechaEspecifica = new Date('2021-09-01');
 
-const expYears: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1);
+function calculoDeferenciaAnios(fechaEspecifica: Date)
+{
+	const fechaActual = new Date();
+	const fechaInicio = new Date(fechaEspecifica);
+
+	let diferencia = fechaActual.getFullYear() - fechaInicio.getFullYear();
+
+	if(fechaActual.getMonth() < fechaInicio.getMonth() || (fechaActual.getMonth() === fechaInicio.getMonth() && fechaActual.getDate() < fechaInicio.getDate()))
+	{
+		diferencia--;
+	}
+	return diferencia;
+}
+
+const diferenciaAnios = calculoDeferenciaAnios(fechaEspecifica);
+
+//const expYears: number = Math.abs( - new Date('2021-09-01').getFullYear() -1);
 ---
 <BaseLayout pageTitle={pageTitle} lang={language}>
 	<header class="text-center relative top-[10rem]">
 		<h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold">DENIS ANFRUNS</h1>
-		<p class="lg:text-3xl">Desarrollador Full Stack con<span class="font-black text-emerald-600"> +{expYears} años</span> de experiencia</p>	
+		<p class="lg:text-3xl">Desarrollador Full Stack con<span class="font-black text-emerald-600"> +{diferenciaAnios} años</span> de experiencia</p>	
 		<p class="lg:text-xl mt-[3rem] text-neutral-400 font-medium">Power Apps | React + Astro</p>
 		<SocialLinks />
 	</header>
