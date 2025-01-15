@@ -1,18 +1,18 @@
 ---
 import NavButton from './NavButton.astro'
 import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
-
 ---
 <nav class='mt-5 inline-flex items-center justify-center md:justify-between'>
 	<div class="inline-flex gap-5 md:gap-1">
+		<p class="Monsterrat text-sm xs:text-md md:text-lg px-5 rounded-lg">Próximamente &gt;</p>
 		<div>
-			<NavButton text='proyectos' link='/' enabledBtn={true} />
+			<NavButton text='proyectos' link='/' enabledBtn={false} />
 		</div>
 		<div>
 			<NavButton text='dev blog' link='/' enabledBtn={false} />
 		</div>
 	</div>
-	<div class="flex">
+	<div class="flex ">
 		<SwitchBtnThemeMode />
 	</div>
 </nav>
