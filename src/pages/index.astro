@@ -21,7 +21,7 @@ function calculoDeferenciaAnios(fechaEspecifica: Date)
 	return diferencia;
 }
 
-const expYears: number = Math.abs( - new Date('2021-09-01').getFullYear() -1);
+const expYears: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1);
 ---
 <BaseLayout pageTitle={pageTitle} lang={language}>
 	<header class="text-center mt-40">
