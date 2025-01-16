@@ -26,7 +26,7 @@ const expYears: number = Math.abs(new Date(Date()).getFullYear() - new Date('202
 export const prerender = false;
 ---
 
-<BaseLayout pageTitle={pageTitle} lang={language}>
+<BaseLayout pageTitle={pageTitle} expYears={expYears} lang={language}>
 	<header class="text-center mt-40">
 		<h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold">DENIS ANFRUNS</h1>
 		<p class="lg:text-3xl">Desarrollador Full Stack con<span class="font-black text-emerald-600"> +{expYears} años</span> de experiencia</p>	

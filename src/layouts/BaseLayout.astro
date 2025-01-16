@@ -3,16 +3,16 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
-const { pageTitle } = Astro.props
+const { pageTitle, expYears } = Astro.props
 ---
 
 <!doctype html>
 <html lang='es'>
 	<head>
 		<meta charset='UTF-8' />
-		<meta name='description' content="Denis Anfruns - Web portfolio. Desarrollador de Power Platform | Móvil, escritorio, tecnologías web y entusiasta del FLOSS" />
-		<meta name='description' lang="ca" content="Denis Anfruns - Web portfolio. Desenvolupador de Power Platform | Móbil, escritori, tecnologies web i entusiasta del FLOSS" />
-		<meta name='description' lang="en" content="Denis Anfruns - Web portfolio. Power Platform Developer | Mobile, Desktop, Web technologies and FLOSS enthusiast" />
+		<meta name='description' content={`Web portfolio. Desarrollador multiplataforma Full Stack con +${expYears} años de experiencia`} />
+		<meta name='description' lang="ca" content={`Web portfolio. Desenvolupador multiplataforma Full Stack amb +${expYears} anys d'experiencia`} />
+		<meta name='description' lang="en" content={`Web portfolio. Full Stack multiplatform developer with +${expYears} years experiencie`} />
 		<meta name='viewport' content='width=device-width' />
 		<meta name='generator' content={Astro.generator} />
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
