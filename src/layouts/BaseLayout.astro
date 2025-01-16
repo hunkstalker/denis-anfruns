@@ -18,12 +18,20 @@ const { pageTitle } = Astro.props
 		<link rel='alternate' hreflang='x-default' href='https://denis-anfruns.dev/' />
 		<title>{pageTitle}</title>
 	</head>
-	<body class="container flex flex-col min-h-screen">
+	<body class="flex flex-col min-h-screen">
 		<Nav />
 		<slot />
 		<Footer />
 	</body>
+
 	<script>
+		const theme = (() => {
+			if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+				return localStorage.getItem('theme');
+			}
+			return 'dark';
+		})();
+
 		document.addEventListener('DOMContentLoaded', () => {
 			const theme = localStorage.getItem('theme')
 			document.documentElement.classList.toggle('dark', theme === 'dark')
