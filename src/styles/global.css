@@ -36,10 +36,9 @@
 html {
   font-family: 'Inter', sans-serif, system-ui;
   background-color: var(--bg-color-light);
-}
-
-html nav {
-  background-color: var(--bg-color-nav-light);
+  nav {
+    background-color: var(--bg-color-nav-light);
+  }
 }
 
 h1 {
@@ -50,10 +49,9 @@ html.dark {
   color: #fff;
   background-color: var(--bg-color-dark);
   --color-highlight: #ffffff80;
-}
-
-html.dark nav {
-  background-color: var(--bg-color-nav-dark);
+  nav {
+    background-color: var(--bg-color-nav-dark);
+  }
 }
 
 /* html.dark::before {
