@@ -22,6 +22,8 @@ function calculoDeferenciaAnios(fechaEspecifica: Date)
 // TODO: Actualizar a Astro 5.0
 
 const expYears: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1);
+
+export const prerender = false;
 ---
 
 <BaseLayout pageTitle={pageTitle} lang={language}>
