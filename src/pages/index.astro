@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SocialLinks from "../components/SocialLinks.astro";
 
-const pageTitle = 'Denis Anfruns Millán'
+const pageTitle = 'Denis Anfruns Millán';
 const language = 'es';
 
 function calculoDeferenciaAnios(fechaEspecifica: Date)
@@ -23,6 +23,7 @@ function calculoDeferenciaAnios(fechaEspecifica: Date)
 
 const expYears: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1);
 ---
+
 <BaseLayout pageTitle={pageTitle} lang={language}>
 	<header class="text-center mt-40">
 		<h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold">DENIS ANFRUNS</h1>
