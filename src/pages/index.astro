@@ -4,34 +4,22 @@ import SocialLinks from "../components/SocialLinks.astro";
 
 const pageTitle = 'Denis Anfruns Millán';
 const language = 'es';
-
-function calculoDeferenciaAnios(fechaEspecifica: Date)
-{
-	const fechaActual = new Date();
-	const fechaInicio = new Date(fechaEspecifica);
-
-	let diferencia = fechaActual.getFullYear() - fechaInicio.getFullYear();
-
-	if(fechaActual.getMonth() < fechaInicio.getMonth() || (fechaActual.getMonth() === fechaInicio.getMonth() && fechaActual.getDate() < fechaInicio.getDate()))
-	{
-		diferencia--;
-	}
-	return diferencia;
-}
+const prevYearsExpGameDev: number = 1;
+const actualYearsExpFullStackDev: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1) + prevYearsExpGameDev;
 
 // TODO: Actualizar a Astro 5.0
 
-const expYears: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1);
-
 export const prerender = false;
 ---
-<BaseLayout pageTitle={pageTitle} expYears={expYears} lang={language}>
+<BaseLayout pageTitle={pageTitle} expYears={actualYearsExpFullStackDev} lang={language}>
 	<header class="text-center mt-40">
 		<h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold">DENIS ANFRUNS</h1>
-		<p class="lg:text-3xl mx-14 sm:mx-0">Desarrollador Full Stack con<span class="font-black text-emerald-600"> +{expYears} años</span> de experiencia</p>
-		<p class="lg:text-xl mt-6 text-neutral-500 font-medium">Power Apps & Automate + Sharepoint</p>	
+		<p class="lg:text-3xl mx-14 sm:mx-0">Desarrollador Full Stack con<span class="font-black text-emerald-600"> +{actualYearsExpFullStackDev} años</span> de experiencia</p>
+		<p class="lg:text-xl mt-6 text-neutral-500 font-medium">Power Apps & Automate + Sharepoint</p>
 		<p class="lg:text-xl text-neutral-500 font-medium">React + Astro</p>	
-		<p class="lg:text-xl mt-24 font-medium">encuéntrame en mis redes</p> <SocialLinks />
+		<p class="lg:text-xl text-neutral-500 font-medium">.NET</p>	
+		<p class="lg:text-xl text-neutral-500 font-medium">Godot & Unity</p>	
+		<p class="lg:text-xl mt-20 font-medium">encuéntrame en mis redes</p> <SocialLinks />
 	</header>
 	<main>
 		<!-- <Card></Card> -->
