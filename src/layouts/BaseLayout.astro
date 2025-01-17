@@ -26,7 +26,7 @@ const { pageTitle, expYears } = Astro.props
 	</body>
 
 	<script>
-		const theme = (() => {
+		let theme = (() => {
 			if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
 				return localStorage.getItem('theme');
 			}
@@ -34,7 +34,7 @@ const { pageTitle, expYears } = Astro.props
 		})();
 
 		document.addEventListener('DOMContentLoaded', () => {
-			const theme = localStorage.getItem('theme')
+			theme = localStorage.getItem('theme')
 			document.documentElement.classList.toggle('dark', theme === 'dark')
 		})
 	</script>
