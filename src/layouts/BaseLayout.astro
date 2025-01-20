@@ -9,12 +9,13 @@ Astro.response.headers.set('Strict-Transport-Security', 'max-age=31536000; inclu
 Astro.response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 Astro.response.headers.set('X-XSS-Protection', '1; mode=block');
 Astro.response.headers.set('Content-Security-Policy', 
-  "default-src 'self'; " +
+  "default-src 'none'; " +
   "script-src 'self' 'unsafe-inline'; " +
   "object-src 'none'; " +
   "base-uri 'self'; " +
   "frame-src 'self'; " +
-  "frame-ancestors 'none'"
+  "frame-ancestors 'none'" +
+	"form-action 'self'; "
 );
 
 const { pageTitle, expYears } = Astro.props
