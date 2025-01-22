@@ -6,8 +6,6 @@ const pageTitle = 'Denis Anfruns Millán';
 const language = 'es';
 const prevYearsExpGameDev: number = 1;
 const actualYearsExpFullStackDev: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1) + prevYearsExpGameDev;
-
-export const prerender = false;
 ---
 <BaseLayout pageTitle={pageTitle} expYears={actualYearsExpFullStackDev} lang={language}>
 	<header class="text-center mt-16 sm:mt-40">
