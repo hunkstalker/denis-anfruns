@@ -24,18 +24,4 @@ const { pageTitle, expYears } = Astro.props
 		<slot />
 		<Footer />
 	</body>
-
-	<script>
-		let theme = (() => {
-			if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-				return localStorage.getItem('theme');
-			}
-			return 'dark';
-		})();
-
-		document.addEventListener('DOMContentLoaded', () => {
-			theme = localStorage.getItem('theme')
-			document.documentElement.classList.toggle('dark', theme === 'dark')
-		})
-	</script>
 </html>
