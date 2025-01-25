@@ -9,14 +9,14 @@ const { text, link, enabledBtn } = Astro.props;
 <div class="m-5">
   <a class:list=
     {[
-      'Monsterrat text-sm xs:text-md md:text-lg rounded-lg',
+      'Montserrat text-sm xs:text-md md:text-lg rounded-lg',
       {
         'focus': enabledBtn, 'text-gray-400 md:text-lg pointer-events-none cursor-default':!enabledBtn
       }
     ]}
     href={link} title='Mis proyectos'>{text}
   </a>
-  {!enabledBtn && (<p class="mt-2 ml-5 italic Monsterrat text-xs xs:text-xs md:text-md rounded-lg">¡Próximamente!</p>)}
+  {!enabledBtn && (<p class="mt-2 ml-5 italic Montserrat text-xs xs:text-xs md:text-md rounded-lg">¡Próximamente!</p>)}
 </div>
 
 <style>
@@ -25,7 +25,7 @@ const { text, link, enabledBtn } = Astro.props;
     color: white;
 	}
 
-  .italic.Monsterrat {
+  .italic.Montserrat {
     color: var(--tangerine);
   }
 </style>
