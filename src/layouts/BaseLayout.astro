@@ -1,5 +1,7 @@
 ---
 import Nav from '../components/Nav.astro';
+import Cookies from '../components/Cookies.astro';
+import CookieNoticeModal from '../components/CookieNoticeModal.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 
@@ -26,6 +28,8 @@ const { pageTitle, expYears } = Astro.props
 	<body class="flex flex-col min-h-screen">
 		<Nav />
 		<slot />
+		<CookieNoticeModal />
+		<Cookies />
 		<Footer />
 	</body>
 </html>
