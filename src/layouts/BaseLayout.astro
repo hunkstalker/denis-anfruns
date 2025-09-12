@@ -2,17 +2,18 @@
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+import experiencieYears from '../utils/experiencieYears';
 
-const { pageTitle, expYears } = Astro.props
+const { pageTitle } = Astro.props
 ---
 
 <!doctype html>
 <html lang='es'>
 	<head>
 		<meta charset='UTF-8' />
-		<meta name='description' content={`Web portfolio. Desarrollador multiplataforma Full Stack con +${expYears} años de experiencia`} />
-		<meta name='description' lang="ca" content={`Web portfolio. Desenvolupador multiplataforma Full Stack amb +${expYears} anys d'experiencia`} />
-		<meta name='description' lang="en" content={`Web portfolio. Full Stack multiplatform developer with +${expYears} years experiencie`} />
+		<meta name='description' content={`Web portfolio. Desarrollador multiplataforma Full Stack con +${experiencieYears} años de experiencia`} />
+		<meta name='description' lang="ca" content={`Web portfolio. Desenvolupador multiplataforma Full Stack amb +${experiencieYears} anys d'experiencia`} />
+		<meta name='description' lang="en" content={`Web portfolio. Full Stack multiplatform developer with +${experiencieYears} years experiencie`} />
 		<meta name='viewport' content='width=device-width' />
 		<meta name='generator' content={Astro.generator} />
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />

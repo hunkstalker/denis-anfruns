@@ -4,13 +4,11 @@ import SocialLinks from '../components/SocialLinks.astro';
 
 const pageTitle = 'Denis Anfruns Millán';
 const language = 'es';
-const prevYearsExpGameDev: number = 1;
-const actualYearsExpFullStackDev: number = Math.abs(new Date(Date()).getFullYear() - new Date('2021-09-01').getFullYear() - 1) + prevYearsExpGameDev;
 ---
-<BaseLayout pageTitle={pageTitle} expYears={actualYearsExpFullStackDev} lang={language}>
+<BaseLayout pageTitle={pageTitle} lang={language}>
 	<header class="text-center mt-16 sm:mt-40">
 		<h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold">DENIS ANFRUNS</h1>
-		<p class="lg:text-3xl mx-14 sm:mx-0">Desarrollador Full Stack con<span class="font-black text-emerald-600"> +{actualYearsExpFullStackDev} años</span> de experiencia</p>
+		<p class="lg:text-3xl mx-14 sm:mx-0">Desarrollador Full Stack con<span id="experience" class="font-black text-emerald-600"></span> de experiencia</p>
 		<p class="lg:text-xl mt-6 text-neutral-400 font-medium">Power Apps & Automate + Sharepoint</p>
 		<p class="lg:text-xl text-neutral-400 font-medium">React + Astro</p>	
 		<p class="lg:text-xl text-neutral-400 font-medium">.NET</p>	
@@ -20,3 +18,13 @@ const actualYearsExpFullStackDev: number = Math.abs(new Date(Date()).getFullYear
 		<SocialLinks />
 	</main>
 </BaseLayout>
+
+<script>
+	import experiencieYears from '../utils/experiencieYears.ts';
+
+	const years = experiencieYears();
+	const experienceElem = document.getElementById('experience');
+	if (experienceElem) {
+		experienceElem.textContent = ` +${years} años`;
+	}
+</script>
