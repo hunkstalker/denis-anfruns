@@ -1,14 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SocialLinks from '../components/SocialLinks.astro';
+import experiencieYears from '../utils/experiencieYears';
 
+const years = experiencieYears();
 const pageTitle = 'Denis Anfruns Millán';
 const language = 'es';
 ---
 <BaseLayout pageTitle={pageTitle} lang={language}>
 	<header class="text-center mt-16 sm:mt-40">
 		<h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold tracking-wide">DENIS ANFRUNS</h1>
-		<p class="lg:text-3xl mx-14 sm:mx-0 tracking-wide">Desarrollador Full Stack con<span id="experience" class="font-black text-emerald-600"></span> de experiencia</p>
+		<p class="lg:text-3xl mx-14 sm:mx-0 tracking-wide">Desarrollador Full Stack con<span id="experience" class="font-black text-emerald-600">{years}</span> de experiencia</p>
 		<p class="lg:text-xl mt-6 text-neutral-400 font-medium tracking-normal">Power Apps & Automate + Sharepoint</p>
 		<p class="lg:text-xl text-neutral-400 font-medium tracking-normal">React + Astro</p>	
 		<p class="lg:text-xl text-neutral-400 font-medium tracking-normal">.NET</p>	
@@ -18,13 +20,3 @@ const language = 'es';
 		<SocialLinks />
 	</main>
 </BaseLayout>
-
-<script>
-	import experiencieYears from '../utils/experiencieYears.ts';
-
-	const years = experiencieYears();
-	const experienceElem = document.getElementById('experience');
-	if (experienceElem) {
-		experienceElem.textContent = ` +${years} años`;
-	}
-</script>
