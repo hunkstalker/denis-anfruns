@@ -5,15 +5,16 @@ import '../styles/global.css';
 import experiencieYears from '../utils/experiencieYears';
 
 const { pageTitle } = Astro.props
+const years = experiencieYears();
 ---
 
 <!doctype html>
 <html lang='es'>
 	<head>
 		<meta charset='UTF-8' />
-		<meta name='description' content={`Web portfolio. Desarrollador multiplataforma Full Stack con +${experiencieYears} años de experiencia`} />
-		<meta name='description' lang="ca" content={`Web portfolio. Desenvolupador multiplataforma Full Stack amb +${experiencieYears} anys d'experiencia`} />
-		<meta name='description' lang="en" content={`Web portfolio. Full Stack multiplatform developer with +${experiencieYears} years experiencie`} />
+		<meta name='description' content={`Web portfolio. Desarrollador multiplataforma Full Stack con +${years} años de experiencia`} />
+		<meta name='description' lang="ca" content={`Web portfolio. Desenvolupador multiplataforma Full Stack amb +${years} anys d'experiencia`} />
+		<meta name='description' lang="en" content={`Web portfolio. Full Stack multiplatform developer with +${years} years experiencie`} />
 		<meta name='viewport' content='width=device-width' />
 		<meta name='generator' content={Astro.generator} />
 		<link rel="preload" href="/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
