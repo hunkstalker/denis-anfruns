@@ -12,12 +12,16 @@ const years = experiencieYears();
 <html lang='es'>
 	<head>
 		<meta charset='UTF-8' />
+		<meta name='title' property='og:title' content={pageTitle} />
+		<meta name='type' property='og:type' content='website' />
+		<meta name='image' property='og:image' content='public/denis-anfruns-millan.png' />
+		<meta name='url' property='og:url' content='https://denis-anfruns.dev/' />
 		<meta name='description' content={`Web portfolio. Desarrollador multiplataforma Full Stack con +${years} años de experiencia`} />
-		<meta name='description' lang="ca" content={`Web portfolio. Desenvolupador multiplataforma Full Stack amb +${years} anys d'experiencia`} />
-		<meta name='description' lang="en" content={`Web portfolio. Full Stack multiplatform developer with +${years} years experiencie`} />
+		<meta name='description' lang='ca' content={`Web portfolio. Desenvolupador multiplataforma Full Stack amb +${years} anys d'experiencia`} />
+		<meta name='description' lang='en' content={`Web portfolio. Full Stack multiplatform developer with +${years} years experiencie`} />
 		<meta name='viewport' content='width=device-width' />
 		<meta name='generator' content={Astro.generator} />
-		<link rel="preload" href="/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
+		<link rel='preload' href='/fonts/inter-variable.woff2' as='font' type='font/woff2' crossorigin>
 		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
 		<link rel='alternate' hreflang='x-default' href='https://denis-anfruns.dev/' />
 		<title>{pageTitle}</title>
@@ -26,7 +30,7 @@ const years = experiencieYears();
 			document.documentElement.classList.toggle('dark', theme === 'dark');
 		</script>
 	</head>
-	<body class="flex flex-col min-h-screen">
+	<body class='flex flex-col min-h-screen'>
 		<Nav />
 		<slot />
 		<Footer />
