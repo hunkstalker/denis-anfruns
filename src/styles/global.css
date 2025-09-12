@@ -5,7 +5,7 @@
 }
 @font-face {
   font-family: 'Inter';
-  src: url('/fonts/inter.ttf') format('truetype');
+  src: url('/fonts/inter-variable.woff2') format('truetype');
   font-display: swap;
 }
 
@@ -43,10 +43,6 @@ html nav {
   background-color: var(--bg-color-nav-light);
 }
 
-h1 {
-  font-family: 'Inter', system-ui, sans-serif;
-}
-
 html.dark {
   color: #fff;
   background-color: var(--bg-color-dark);
@@ -56,18 +52,6 @@ html.dark {
 html.dark nav {
   background-color: var(--bg-color-nav-dark);
 }
-
-/* html.dark::before {
-  content: "";
-  position: absolute;
-  top: 0%;
-  bottom: 0%;
-  width: 100%;
-  left: 0%;
-  background: radial-gradient(ellipse 300% 100% at 50% 20%, var(--primary-bg-color), var(--secondary-bg-color));
-  mask-image: radial-gradient(ellipse 90% 65% at 50% 30%, transparent 0%, black 10%, white 50%, transparent 100%);
-  z-index: -1;
-} */
 
 .text-gradient {
   background-image: var(--accent-gradient);
