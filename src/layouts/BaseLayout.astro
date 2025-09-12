@@ -21,18 +21,19 @@ const image = `${url}/denis-anfruns-millan.png`;
   	<meta name="description" content={description} />
 
 		<!-- Twitter Cards -->
-		<meta name="twitter:card" content="player" />
+		<meta name="twitter:site" content={url}>
 		<meta name="twitter:title" content={siteTitle} />
 		<meta name="twitter:description" content={description} />
+		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:image" content={image} />
 		<meta name="twitter:image:width" content="1200" />
 		<meta name="twitter:image:height" content="630" />
-		<meta name="twitter:player" content={url} />
 
 		<!-- Open Graph -->
 		<meta property="og:locale" content="es_ES" />
 		<meta property="og:title" content={siteTitle} />
 		<meta property="og:image" content={image} />
+		<meta property="og:image:type" content="image/png">
 		<meta property="og:image:width" content="1200" />
 		<meta property="og:image:height" content="630" />
 		<meta property="og:image:alt" content="Vista previa de Denis Anfruns Millán - Web portfolio" />
