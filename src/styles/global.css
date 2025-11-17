@@ -48,6 +48,15 @@ html.dark nav {
   background-color: var(--bg-color-nav-dark);
 }
 
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 0.5rem;
+  @media (max-width: 640px) {
+    padding: 0 1rem;
+  }
+}
+
 .text-gradient {
   background-image: var(--accent-gradient);
   -webkit-background-clip: text;
