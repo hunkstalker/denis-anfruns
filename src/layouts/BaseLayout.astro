@@ -1,7 +1,6 @@
 ---
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+import Footer from '../components/Footer.astro';
 import experiencieYears from '../utils/experiencieYears';
 
 interface Props {
@@ -63,9 +62,10 @@ const image = `${url}/denis-anfruns-millan.png`;
 			document.documentElement.classList.toggle('dark', theme === 'dark');
 		</script>
 	</head>
-	<body class='flex flex-col min-h-screen'>
-		<Nav />
-		<slot />
+	<body class='flex flex-col min-h-screen' >
+		<main class='flex-1'>
+			<slot />
+		</main>
 		<Footer />
 	</body>
 </html>

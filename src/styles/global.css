@@ -32,7 +32,6 @@
 html {
   font-family: 'Inter', sans-serif, system-ui;
   background-color: var(--bg-color-light);
-  scrollbar-gutter: stable;
 }
 
 html nav {

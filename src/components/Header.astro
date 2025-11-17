@@ -1,0 +1,21 @@
+---
+import experiencieYears from '../utils/experiencieYears';
+
+const years = experiencieYears();
+---
+<header class="text-center mt-16 sm:mt-40">
+    <h1 class="text-gradient drop-shadow-md text-[4rem] sm:text-[4rem] lg:text-[4rem] leading-[80px] font-bold tracking-wide">DENIS ANFRUNS MILLÁN</h1>
+
+    <p class="lg:text-3xl mx-14 sm:mx-0 tracking-wide">Desarrollador Full Stack con<span id="experience" class="font-black text-emerald-600"> +{years} años</span> de experiencia</p>
+    <ul class="flex flex-wrap gap-2 justify-center mt-10">
+        <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-xl-300 rounded">Power Apps</li>
+        <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-xl-300 rounded">Power Automate</li>
+        <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-xl-300 rounded">Astro</li>
+        <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-xl-300 rounded">React</li>
+        <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-xl-300 rounded">SharePoint</li>
+        <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-xl-300 rounded">APIs Web nativas</li>
+        <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-xl-300 rounded">.NET MAUI</li>
+    </ul>
+
+    <p class="lg:text-xl mt-20 font-medium tracking-normal">Encuéntrame en mis redes</p>
+</header>
