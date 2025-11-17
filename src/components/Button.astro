@@ -6,22 +6,38 @@ interface Props {
 }
 const { text, link, enabledBtn } = Astro.props;
 ---
-<button class='m-5 cursor-default' type="button">
+<button class='m-5 cursor-default relative' type="button">
   <a class:list=
     {[
-      'text-sm xs:text-md md:text-lg rounded-lg',
+      'text-sm xs:text-md md:text-lg rounded-lg inline-block relative',
       {
-        'focus': enabledBtn, 'text-gray-400 md:text-lg pointer-events-none cursor-default':!enabledBtn
+        'focus': enabledBtn,
+        'text-gray-400 font-bold md:text-lg pointer-events-none cursor-default': !enabledBtn
       }
     ]}
-    href={link} title='Mis proyectos'>{text}
+    href={link} title='Mis proyectos'>
+    <span class="relative inline-flex items-center">
+      <span class="z-10">{text}</span>
+
+      {!enabledBtn && (
+        <svg
+          class="left w-6 h-6 z-20 fill-current text-black dark:text-orange-500"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          role="img"
+        >
+          <path d="M17 8h-1V6a4 4 0 10-8 0v2H7a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2v-8a2 2 0 00-2-2zm-7-2a2 2 0 014 0v2h-4V6zm7 12H7v-8h10v8z"/>
+          <path d="M11 13h2v4h-2z" />
+        </svg>
+      )}
+    </span>
   </a>
-  {!enabledBtn && (<p class="mt-2 ml-5 italic text-xs xs:text-xs md:text-md rounded-lg">¡Próximamente!</p>)}
 </button>
 
 <style>
-	.focus:hover {
+    .focus:hover {
     background-color: #52525B;
     color: white;
-	}
+    }
 </style>

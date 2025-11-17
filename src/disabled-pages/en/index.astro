@@ -1,13 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const pageTitle = 'Denis Anfruns - Projects'
-const language = 'en';
+import Nav from '../../components/Nav.astro';
+import Header from '../../components/Header.astro';
+import SocialLinks from '../../components/SocialLinks.astro';
+
+const siteTitle = `Denis A. M. Portfolio`;
+const lang = 'en';
 ---
-<BaseLayout pageTitle={pageTitle} lang={language}>
-	<header class="mt-16 text-center">
-		<h1 class="text-gradient drop-shadow-md px-18 my-4 text-3xl sm:text-4xl lg:text-5xl leading-none font-bold">Denis Anfruns</h1>
-		<h2 class="mx-12 my-4 sm:mt-4 sm:mb-6 md:text-lg lg:text-xl 2xl:text-2xl">Power Platform Developer<p class="hidden lg:inline">&nbsp; | &nbsp;</p><br class="block lg:hidden">Mobile, Desktop, Web technologies and FLOSS enthusiast</h2>
-	</header>
-	<main class="flex-grow">
-	</main>
+<BaseLayout siteTitle={siteTitle} lang={lang}>
+  <Nav />
+  <div class='flex-1 container'>
+    <Header />
+    <SocialLinks />
+  </div>
 </BaseLayout>
