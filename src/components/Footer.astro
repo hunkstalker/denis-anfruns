@@ -3,7 +3,8 @@ interface Props {
 	currentPath?: string
 }
 
-const currentPath = typeof Astro !== 'undefined' && Astro.request ? new URL(Astro.request.url).pathname : '/'
+const rawPath = typeof Astro !== 'undefined' && Astro.request ? new URL(Astro.request.url).pathname : '/';
+const currentPath = rawPath.replace(/\/+$/, '') || '/';
 ---
 <footer class='flex place-content-center mb-10 mt-auto'>
 	<div class='flex flex-col'>
@@ -51,10 +52,10 @@ const currentPath = typeof Astro !== 'undefined' && Astro.request ? new URL(Astr
 				</defs>
 			</svg>
 		</div>
-		{
+		{ 
 			currentPath !== '/PrivacyPolicy' && (
 				<div class='flex flex-row mt-2 mb-4 text-sm text-gray-500 place-content-center'>
-					<a href='/PrivacyPolicy'>
+					<a href='/PrivacyPolicy/'>
 						<p>Política de Privacidad</p>
 					</a>
 				</div>
