@@ -6,7 +6,7 @@ interface Props {
 }
 const { text, link, enabledBtn } = Astro.props;
 ---
-<div class="m-5">
+<button class='m-5 cursor-default' type="button">
   <a class:list=
     {[
       'text-sm xs:text-md md:text-lg rounded-lg',
@@ -17,7 +17,7 @@ const { text, link, enabledBtn } = Astro.props;
     href={link} title='Mis proyectos'>{text}
   </a>
   {!enabledBtn && (<p class="mt-2 ml-5 italic text-xs xs:text-xs md:text-md rounded-lg">¡Próximamente!</p>)}
-</div>
+</button>
 
 <style>
 	.focus:hover {

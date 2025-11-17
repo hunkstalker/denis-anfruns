@@ -4,7 +4,12 @@ import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 import experiencieYears from '../utils/experiencieYears';
 
-const { siteTitle } = Astro.props
+interface Props {
+	siteTitle: string;
+	lang?: string;
+}
+
+const { siteTitle, lang } = Astro.props as Props;
 const url = 'https://denis-anfruns.dev';
 const description = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
 const image = `${url}/denis-anfruns-millan.png`;
