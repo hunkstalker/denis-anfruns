@@ -63,3 +63,48 @@
   updateUI();
 })();
 </script>
+
+<style>
+  /* transición corta y suave */
+  #themeToggle {
+    transition: transform .5s cubic-bezier(.2,.8,.2,1.7);
+    will-change: transform;
+  }
+  #themeToggle.pressed {
+    transform: scale(0.5);
+  }
+</style>
+
+<!-- Reemplaza el script de detección táctil por este: no quitamos la transición y usamos rAF -->
+<script is:inline>
+(() => {
+  const isTouch = typeof window !== 'undefined' &&
+    (window.matchMedia && (window.matchMedia('(hover: none)').matches || window.matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window);
+
+  if (!isTouch) return;
+
+  document.querySelectorAll('[data-disable-hover-on-touch]').forEach(el => {
+    // eliminar utilidades hover para evitar efectos inconsistentes en táctil
+    const classes = [...el.classList].filter(c => !c.includes('hover:'));
+    el.className = classes.join(' ');
+
+    // efecto de pulsación (press) para táctil - usar rAF para garantizar transición
+    const press = () => requestAnimationFrame(() => el.classList.add('pressed'));
+    const release = () => {
+      // pequeña demora para que la animación tenga tiempo de reproducirse si es necesario
+      requestAnimationFrame(() => el.classList.remove('pressed'));
+    };
+
+    el.addEventListener('pointerdown', press, { passive: true });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => el.addEventListener(ev, release, { passive: true }));
+
+    // soporte teclado accesible
+    el.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') press();
+    });
+    el.addEventListener('keyup', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') release();
+    });
+  });
+})();
+</script>
