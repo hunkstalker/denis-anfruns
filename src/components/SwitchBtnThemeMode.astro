@@ -5,22 +5,27 @@
 <!-- Script inicial: aplicar tema por defecto (dark) antes del render para evitar FOUC -->
 <script is:inline>
 (() => {
-  try {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'light') {
-      document.documentElement.classList.remove('dark');
+  const safeGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+  const safeSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+  
+  const applyTheme = (theme) => {
+    const el = document.documentElement;
+    if (theme === 'light') {
+      el.classList.remove('dark');
     } else {
-      document.documentElement.classList.add('dark');
-      if (stored === null) {
-        try { localStorage.setItem('theme', 'dark'); } catch {}
-      }
+      el.classList.add('dark');
     }
-  } catch (e) { /* localStorage no accesible -> mantener comportamiento por defecto */ }
+  };
+
+  const stored = safeGet('theme');
+  const theme = stored || 'dark';
+  applyTheme(theme);
+  if (!stored) safeSet('theme', 'dark');
 })();
 </script>
 
 <button id="themeToggle" data-disable-hover-on-touch="true"
-        class="hover:bg-[#D4D4D8] border-none dark:hover:bg-[#52525B] rounded-lg transition-all duration-75 ease-in-out hover:opacity-100 hover:scale-110 me-5"
+        class="border-none rounded-lg transition-all duration-75 ease-in-out me-5 md:hover:bg-[#D4D4D8] md:dark:hover:bg-[#52525B] md:hover:opacity-100 md:hover:scale-110"
         type="button"
         aria-label="Theme toggle"
         aria-pressed="true">
@@ -39,7 +44,6 @@
   if (!btn) return;
 
   const el = document.documentElement;
-
   const safeGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
   const safeSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
 
@@ -49,17 +53,34 @@
     btn.setAttribute('title', isDark ? 'Cambiar a claro' : 'Cambiar a oscuro');
   };
 
+  // Detectar si es móvil (ancho < 768px, breakpoint md de Tailwind)
+  const isMobile = () => window.innerWidth < 768;
+
+  // Añadir animación de feedback en móvil con efecto de pulsación
+  const addTapFeedback = () => {
+    if (!isMobile()) return;
+    
+    // Añadir clase para animación de feedback
+    btn.style.transform = 'scale(0.5)';
+    btn.style.transition = 'transform 0.15s ease-out';
+    
+    setTimeout(() => {
+      btn.style.transform = 'scale(1)';
+      setTimeout(() => {
+        btn.style.transition = '';
+        btn.style.transform = '';
+      }, 150);
+    }, 100);
+  };
+
   btn.addEventListener('click', () => {
+    addTapFeedback();
     const isDark = el.classList.toggle('dark');
     safeSet('theme', isDark ? 'dark' : 'light');
     updateUI();
   }, { passive: true });
 
-  // Asegurar estado inicial del botón (coincide con script inicial)
-  const stored = safeGet('theme');
-  if (stored === 'light') el.classList.remove('dark');
-  else el.classList.add('dark');
-
+  // Sincronizar UI con el estado actual (ya aplicado por el script inicial)
   updateUI();
 })();
 </script>
