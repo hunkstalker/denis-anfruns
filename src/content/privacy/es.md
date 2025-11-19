@@ -1,0 +1,48 @@
+---
+title: 'Política de Privacidad - Denis Anfruns Millán'
+lastUpdated: '17/11/2025'
+---
+
+# Política de Privacidad
+
+Última actualización: 17/11/2025
+
+## 1. Responsable del Tratamiento
+
+Responsable: **Denis Anfruns Millán**  
+Correo de contacto: **[anfruns.denis@gmail.com](mailto:anfruns.denis@gmail.com)**
+
+## 2. Datos que Recopilamos
+
+Esta web personal no recopila datos personales de los visitantes. No existen formularios, no hay registro de usuarios y no se solicita información identificativa de ningún tipo.
+
+## 3. Uso de Cookies
+
+Este sitio utiliza únicamente **cookies técnicas de Cloudflare** con la finalidad de proteger la web frente a bots y ataques. Estas cookies son:
+
+*   `__cf_bm`: distingue tráfico legítimo de bots.
+*   `cf_clearance`: permite que Cloudflare mantenga validado el acceso.
+
+Estas cookies:
+
+*   Son necesarias para el funcionamiento seguro del sitio.
+*   No sirven para seguimiento ni publicidad.
+*   No almacenan información personal identificable.
+*   Están exentas de consentimiento según la normativa vigente.
+
+## 4. Enlaces Externos
+
+Esta web puede contener enlaces hacia sitios externos. No somos responsables de sus políticas de privacidad. Te recomendamos revisarlas antes de navegar por ellas.
+
+## 5. Derechos del Usuario
+
+Aunque esta web no recoge datos personales, si deseas realizar cualquier consulta o solicitar información adicional puedes contactar a: **[anfruns.denis@gmail.com](mailto:anfruns.denis@gmail.com)**
+
+## 6. Cambios en esta Política
+
+Podemos actualizar esta Política de Privacidad en cualquier momento. Publicaremos los cambios aquí, indicando la fecha de actualización.
+
+## 7. Contacto
+
+Para cualquier cuestión relativa a esta política, puedes escribir a:  
+**[anfruns.denis@gmail.com](mailto:anfruns.denis@gmail.com)**

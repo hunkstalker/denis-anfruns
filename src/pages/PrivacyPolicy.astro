@@ -1,85 +1,20 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const siteTitle = 'Privacy Policy - Denis Anfruns Millán';
+const page = await getEntry('privacy', 'es');
+if (!page) throw new Error('Spanish privacy policy not found');
+
+const { Content } = await page.render();
 ---
 
-<BaseLayout siteTitle={siteTitle}>
+<BaseLayout siteTitle={page.data.title} lang="es">
   <main class="privacy">
-    <h1 class="font-bold">Política de Privacidad</h1>
-    <p>Última actualización: 17/11/2025</p>
-    
-    <h2 class="font-bold">1. Responsable del Tratamiento</h2>
-    <p>
-      Responsable: <strong>Denis Anfruns Millán</strong><br />
-      Correo de contacto:
-      <strong>
-        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
-      </strong>
-    </p>
-
-    <h2 class="font-bold">2. Datos que Recogemos</h2>
-    <p>
-      Esta web personal no recoge datos personales de los visitantes.
-      No existen formularios, no hay registro de usuarios y no se solicita
-      información identificativa de ningún tipo.
-    </p>
-
-    <h2>3. Uso de Cookies</h2>
-    <p>
-      Este sitio utiliza únicamente <strong>cookies técnicas de Cloudflare</strong>
-      con el fin de proteger la web frente a bots y ataques. Estas cookies son:
-    </p>
-
-    <ul>
-      <li><code>__cf_bm</code>: distingue tráfico legítimo de bots.</li>
-      <li><code>cf_clearance</code>: permite que Cloudflare mantenga validado el acceso.</li>
-    </ul>
-
-    <p>
-      Estas cookies:
-    </p>
-
-    <ul>
-      <li>Son necesarias para el funcionamiento seguro del sitio.</li>
-      <li>No sirven para seguimiento ni publicidad.</li>
-      <li>No almacenan información personal identificable.</li>
-      <li>Están exentas de consentimiento según la normativa vigente.</li>
-    </ul>
-
-    <h2>4. Enlaces Externos</h2>
-    <p>
-      Esta web puede contener enlaces hacia sitios externos. No somos responsables
-      de sus políticas de privacidad. Te recomendamos revisarlas antes de navegar
-      por ellas.
-    </p>
-
-    <h2>5. Derechos del Usuario</h2>
-    <p>
-      Aunque esta web no recoge datos personales, si deseas realizar cualquier 
-      consulta o solicitar información adicional puedes contactar en:
-      <strong>
-        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
-      </strong>
-    </p>
-
-    <h2>6. Cambios en esta Política</h2>
-    <p>
-      Podemos actualizar esta Política de Privacidad en cualquier momento.
-      Publicaremos los cambios aquí, indicando la fecha de actualización.
-    </p>
-
-    <h2>7. Contacto</h2>
-    <p>
-      Para cualquier cuestión relativa a esta política, puedes escribir a:<br />
-      <strong>
-        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
-      </strong>
-    </p>
-    <a href="/" class='inline-block text-base text-black hover:bg-slate-400 mt-5 px-10 py-2 bg-slate-300 rounded-md text-center'>Ir al inicio</a>
+    <Content />
+    <a href="/" class="inline-block px-6 py-3 mt-8 text-sm font-bold text-white uppercase transition-colors duration-200 transform bg-emerald-600 rounded-lg hover:bg-emerald-500">Ir al inicio</a>
   </main>
 
-  <style>
+  <style is:global>
     .privacy {
       max-width: 800px;
       margin: 2rem auto;
@@ -87,7 +22,12 @@ const siteTitle = 'Privacy Policy - Denis Anfruns Millán';
       line-height: 1.7;
       font-size: 1.05rem;
     }
-    h1, h2 { font-weight: 700; margin-top: 1.6rem; } /* alternativa CSS */
-    .email-oklch { color: oklch(75% 0.183 55.934); text-decoration: none; }
+    .privacy h1 { font-weight: 700; margin-top: 1.6rem; font-size: 2rem; }
+    .privacy h2 { font-weight: 700; margin-top: 1.6rem; font-size: 1.5rem; }
+    .privacy p { margin-bottom: 1rem; }
+    .privacy ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+    .privacy a { color: oklch(75% 0.183 55.934); text-decoration: none; font-weight: bold; }
+    /* Override button style specifically since it's an anchor tag inside .privacy */
+    .privacy a.inline-block { color: white; font-weight: bold; text-decoration: none; }
   </style>
 </BaseLayout>
