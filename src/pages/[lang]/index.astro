@@ -4,8 +4,15 @@ import Nav from '../../components/Nav.astro';
 import Header from '../../components/Header.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
 
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'ca' } },
+    { params: { lang: 'en' } }
+  ];
+}
+
+const { lang } = Astro.params;
 const siteTitle = `Denis A. M. Portfolio`;
-const lang = 'ca';
 ---
 <BaseLayout siteTitle={siteTitle} lang={lang}>
   <Nav lang={lang} />
