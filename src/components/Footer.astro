@@ -61,8 +61,8 @@ const privacyPath = lang === 'es' ? '/PrivacyPolicy' : `/${lang}/PrivacyPolicy`;
 		</div>
 		{ 
 			currentPath !== privacyPath && (
-				<div class='flex flex-row mt-2 mb-4 text-md text-gray-500 place-content-center'>
-					<a href={`${privacyPath}/`}>
+				<div class='flex flex-row mt-2 mb-4 text-md place-content-center'>
+					<a class='transition-all duration-200 text-zinc-500 hover:text-black dark:text-zinc-500 dark:hover:text-zinc-200' href={`${privacyPath}/`}>
 						<p>{t('footer.privacy')}</p>
 					</a>
 				</div>

@@ -45,7 +45,7 @@ function getPathForLang(lang: string) {
       class:list={[
         "text-xs sm:text-sm font-bold transition-all duration-200 language-link",
         {
-          "text-emerald-600 dark:text-emerald-400 scale-110 cursor-default pointer-events-none": lang === currentLang,
+          "text-[var(--tangerine-hover)] dark:text-[var(--tangerine)] scale-110 cursor-default pointer-events-none": lang === currentLang,
           "text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200": lang !== currentLang
         }
       ]}
