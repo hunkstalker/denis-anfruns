@@ -2,6 +2,7 @@
 import experiencieYears from '../utils/experiencieYears';
 import { SKILLS } from '../consts';
 import { useTranslations } from '../i18n/utils';
+import '../styles/header-effects.css';
 
 interface Props {
   lang?: 'es' | 'en' | 'ca';
@@ -12,7 +13,7 @@ const t = useTranslations(lang);
 const years = experiencieYears();
 ---
 <header class="text-center mt-10 sm:mt-40">
-    <h1 class="text-left md:text-center text-gradient mx-6 md:mx-0 drop-shadow-md text-[3.95rem] sm:text-[4rem] lg:text-[5rem] leading-[80px] font-bold tracking-wide">DENIS ANFRUNS MILLÁN</h1>
+    <h1 class="text-left md:text-center header-style-masked mx-6 md:mx-0 drop-shadow-md text-[3.95rem] sm:text-[4rem] lg:text-[5rem] leading-[80px] font-bold tracking-wide">DENIS ANFRUNS MILLÁN</h1>
 
     <p class="xl:text-3xl lg:text-2xl text-xl  mx-8 sm:mx-0 tracking-wide mt-5">{t('header.role')}<span id="experience" class="font-black text-emerald-600"> +{years} {t('header.years')}</span> <span> {t('header.experience')}</span></p>
     <ul class="flex flex-wrap gap-2 justify-center mt-10">
@@ -23,3 +24,10 @@ const years = experiencieYears();
 
     <p class=" lg:text-xl md:mt-20 mt-10 font-medium tracking-normal">{t('header.socials')}</p>
 </header>
+
+<script>
+    const header = document.querySelector('.header-style-masked') as HTMLElement;
+    if (header) {
+        header.style.setProperty('--random-factor', Math.random().toString());
+    }
+</script>
