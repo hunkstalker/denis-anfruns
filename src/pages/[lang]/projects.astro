@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { useTranslations } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  return [
+    { params: { lang: 'ca' } },
+    { params: { lang: 'en' } }
+  ];
+}
+
+const { lang } = Astro.params;
+const t = useTranslations(lang as 'ca' | 'en');
+
+// Obtener proyectos según el idioma
+const allProjects = await getCollection('projects', ({ id }) => {
+  return id.endsWith(`.${lang}.md`);
+});
+
+const projects = allProjects.sort((a, b) => 
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))];
+---
+
+<Layout title={t('projects.title')} description={t('site.description')}>
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-8 text-center">
+      {t('projects.title')}
+    </h1>
+
+    <!-- Mismo componente Alpine.js que en la versión española -->
+    <div x-data="{ selectedFilter: 'all' }">
+      
+      <div class="mb-8 flex flex-wrap gap-3 justify-center">
+        <button
+          @click="selectedFilter = 'all'"
+          :class="selectedFilter === 'all' 
+            ? 'bg-emerald-600 text-white' 
+            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'"
+          class="px-4 py-2 rounded-lg font-medium transition-colors"
+        >
+          {t('projects.filter.all')}
+        </button>
+
+        {allTechnologies.slice(0, 8).map(tech => (
+          <button
+            @click={`selectedFilter = '${tech}'`}
+            :class={`selectedFilter === '${tech}' 
+              ? 'bg-emerald-600 text-white' 
+              : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'`}
+            class="px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            {tech}
+          </button>
+        ))}
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map(project => (
+          <div 
+            x-show={`selectedFilter === 'all' || ${JSON.stringify(project.data.technologies)}.includes(selectedFilter)`}
+            x-transition
+          >
+            <ProjectCard
+              title={project.data.title}
+              shortDescription={project.data.shortDescription}
+              technologies={project.data.technologies}
+              image={project.data.image}
+              github={project.data.github}
+              demo={project.data.demo}
+              slug={project.slug}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div 
+        x-show={`selectedFilter !== 'all' && ${JSON.stringify(projects.map(p => ({ technologies: p.data.technologies })))}.filter(p => p.technologies.includes(selectedFilter)).length === 0`}
+        x-transition
+        class="text-center py-12"
+      >
+        <p class="text-zinc-600 dark:text-zinc-400 text-lg">
+          {t('projects.empty')}
+        </p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import Alpine from 'alpinejs';
+  Alpine.start();
+</script>

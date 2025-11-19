@@ -1,11 +1,20 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import Header from '../components/Header.astro';
 import SocialLinks from '../components/SocialLinks.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { useTranslations } from '../i18n/utils';
 
 const siteTitle = `Denis A. M. Portfolio`;
 const lang = 'es';
+const t = useTranslations(lang);
+
+// Obtener proyectos destacados en español
+const featuredProjects = await getCollection('projects', ({ id, data }) => {
+  return id.endsWith('.es.md') && data.featured === true;
+});
 ---
 <script is:inline>
   const userLang = navigator.language || navigator.userLanguage; 
@@ -35,5 +44,40 @@ const lang = 'es';
   <div class='flex-1 container'>
     <Header lang={lang} />
     <SocialLinks />
+    
+    <!-- Sección de proyectos destacados -->
+    {featuredProjects.length > 0 && (
+      <section class="mt-16 mb-12">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-white">
+            {t('projects.featured')}
+          </h2>
+          <a 
+            href="/projects"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors"
+          >
+            {t('projects.viewAll')}
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+        
+        <!-- Grid de proyectos destacados (2x2 en desktop) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {featuredProjects.slice(0, 4).map(project => (
+            <ProjectCard
+              title={project.data.title}
+              shortDescription={project.data.shortDescription}
+              technologies={project.data.technologies}
+              image={project.data.image}
+              github={project.data.github}
+              demo={project.data.demo}
+              slug={project.slug}
+            />
+          ))}
+        </div>
+      </section>
+    )}
   </div>
 </BaseLayout>

@@ -13,16 +13,19 @@ importers:
         version: 4.4.2(@types/node@24.3.1)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(jiti@1.21.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yaml@2.7.0)
       '@astrojs/tailwind':
         specifier: ^6.0.2
-        version: 6.0.2(astro@5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0))(tailwindcss@3.4.17)
+        version: 6.0.2(astro@5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0))(tailwindcss@3.4.17)
       '@types/react':
         specifier: ^18.3.18
         version: 18.3.18
       '@types/react-dom':
         specifier: ^18.3.5
         version: 18.3.5(@types/react@18.3.18)
+      alpinejs:
+        specifier: ^3.15.2
+        version: 3.15.2
       astro:
         specifier: ^5.15.8
-        version: 5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0)
+        version: 5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -35,7 +38,7 @@ importers:
     devDependencies:
       '@playform/inline':
         specifier: ^0.1.2
-        version: 0.1.2(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0)
+        version: 0.1.2(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0)
       eslint:
         specifier: ^9.20.0
         version: 9.20.0(jiti@1.21.7)
@@ -50,10 +53,13 @@ importers:
         version: 1.8.0
       stylelint-config-astro:
         specifier: ^1.0.4
-        version: 1.0.4(postcss-html@1.8.0)(stylelint@16.13.2(typescript@4.9.5))
+        version: 1.0.4(postcss-html@1.8.0)(stylelint@16.13.2(typescript@5.9.3))
       stylelint-config-html:
         specifier: ^1.1.0
-        version: 1.1.0(postcss-html@1.8.0)(stylelint@16.13.2(typescript@4.9.5))
+        version: 1.1.0(postcss-html@1.8.0)(stylelint@16.13.2(typescript@5.9.3))
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 
@@ -848,6 +854,12 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
+  '@vue/reactivity@3.1.5':
+    resolution: {integrity: sha512-1tdfLmNjWG6t/CsPldh+foumYFo3cpyCHgBYQ34ylaMsJ+SNHQ1kApMIa8jN+i593zQuaw3AdWH0nJTARzCFhg==}
+
+  '@vue/shared@3.1.5':
+    resolution: {integrity: sha512-oJ4F3TnvpXaQwZJNF3ZK+kLPHKarDmJjJ6jyzVNDKH9md1dptjC7lWR//jrGuLdek/U6iltWxqAnYOu8gCiOvA==}
+
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
@@ -868,6 +880,9 @@ packages:
 
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
+
+  alpinejs@3.15.2:
+    resolution: {integrity: sha512-2kYF2aG+DTFkE6p0rHG5XmN4VEb6sO9b02aOdU4+i8QN6rL0DbRZQiypDE1gBcGO65yDcqMz5KKYUYgMUxgNkw==}
 
   ansi-align@3.0.1:
     resolution: {integrity: sha512-IOfwwBF5iczOjp/WeY4YxyjqAFMQoZufdQWDd19SEExbVLNXqvpzSJ/M7Za4/sCPmQ0+GRquoA7bGcINcxew6w==}
@@ -2798,6 +2813,11 @@ packages:
     engines: {node: '>=4.2.0'}
     hasBin: true
 
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   ufo@1.6.1:
     resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
 
@@ -3154,9 +3174,9 @@ snapshots:
       - tsx
       - yaml
 
-  '@astrojs/tailwind@6.0.2(astro@5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0))(tailwindcss@3.4.17)':
+  '@astrojs/tailwind@6.0.2(astro@5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0))(tailwindcss@3.4.17)':
     dependencies:
-      astro: 5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0)
+      astro: 5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0)
       autoprefixer: 10.4.21(postcss@8.5.6)
       postcss: 8.5.6
       postcss-load-config: 4.0.2(postcss@8.5.6)
@@ -3614,10 +3634,10 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@playform/inline@0.1.2(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0)':
+  '@playform/inline@0.1.2(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0)':
     dependencies:
       '@playform/pipe': 0.1.3
-      astro: 5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0)
+      astro: 5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0)
       beasties: 0.2.0
       deepmerge-ts: 7.1.5
     transitivePeerDependencies:
@@ -3867,6 +3887,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@vue/reactivity@3.1.5':
+    dependencies:
+      '@vue/shared': 3.1.5
+
+  '@vue/shared@3.1.5': {}
+
   acorn-jsx@5.3.2(acorn@8.14.0):
     dependencies:
       acorn: 8.14.0
@@ -3888,6 +3914,10 @@ snapshots:
       fast-uri: 3.0.6
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
+
+  alpinejs@3.15.2:
+    dependencies:
+      '@vue/reactivity': 3.1.5
 
   ansi-align@3.0.1:
     dependencies:
@@ -3979,7 +4009,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  astro@5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@4.9.5)(yaml@2.7.0):
+  astro@5.15.8(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.0):
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/internal-helpers': 0.7.4
@@ -4029,7 +4059,7 @@ snapshots:
       smol-toml: 1.4.2
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
-      tsconfck: 3.1.6(typescript@4.9.5)
+      tsconfck: 3.1.6(typescript@5.9.3)
       ultrahtml: 1.6.0
       unifont: 0.6.0
       unist-util-visit: 5.0.0
@@ -4042,7 +4072,7 @@ snapshots:
       yocto-spinner: 0.2.3
       zod: 3.25.76
       zod-to-json-schema: 3.24.6(zod@3.25.76)
-      zod-to-ts: 1.2.0(typescript@4.9.5)(zod@3.25.76)
+      zod-to-ts: 1.2.0(typescript@5.9.3)(zod@3.25.76)
     optionalDependencies:
       sharp: 0.34.3
     transitivePeerDependencies:
@@ -4273,14 +4303,14 @@ snapshots:
 
   cookie@1.0.2: {}
 
-  cosmiconfig@9.0.0(typescript@4.9.5):
+  cosmiconfig@9.0.0(typescript@5.9.3):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
       js-yaml: 4.1.0
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 4.9.5
+      typescript: 5.9.3
 
   cross-spawn@7.0.6:
     dependencies:
@@ -6265,18 +6295,18 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  stylelint-config-astro@1.0.4(postcss-html@1.8.0)(stylelint@16.13.2(typescript@4.9.5)):
+  stylelint-config-astro@1.0.4(postcss-html@1.8.0)(stylelint@16.13.2(typescript@5.9.3)):
     dependencies:
       postcss-html: 1.8.0
-      stylelint: 16.13.2(typescript@4.9.5)
+      stylelint: 16.13.2(typescript@5.9.3)
       typescript: 4.9.5
 
-  stylelint-config-html@1.1.0(postcss-html@1.8.0)(stylelint@16.13.2(typescript@4.9.5)):
+  stylelint-config-html@1.1.0(postcss-html@1.8.0)(stylelint@16.13.2(typescript@5.9.3)):
     dependencies:
       postcss-html: 1.8.0
-      stylelint: 16.13.2(typescript@4.9.5)
+      stylelint: 16.13.2(typescript@5.9.3)
 
-  stylelint@16.13.2(typescript@4.9.5):
+  stylelint@16.13.2(typescript@5.9.3):
     dependencies:
       '@csstools/css-parser-algorithms': 3.0.4(@csstools/css-tokenizer@3.0.3)
       '@csstools/css-tokenizer': 3.0.3
@@ -6285,10 +6315,10 @@ snapshots:
       '@dual-bundle/import-meta-resolve': 4.1.0
       balanced-match: 2.0.0
       colord: 2.9.3
-      cosmiconfig: 9.0.0(typescript@4.9.5)
+      cosmiconfig: 9.0.0(typescript@5.9.3)
       css-functions-list: 3.2.3
       css-tree: 3.1.0
-      debug: 4.4.1
+      debug: 4.4.3
       fast-glob: 3.3.3
       fastest-levenshtein: 1.0.16
       file-entry-cache: 10.0.6
@@ -6410,9 +6440,9 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  tsconfck@3.1.6(typescript@4.9.5):
+  tsconfck@3.1.6(typescript@5.9.3):
     optionalDependencies:
-      typescript: 4.9.5
+      typescript: 5.9.3
 
   tslib@2.8.1: {}
 
@@ -6456,6 +6486,8 @@ snapshots:
       reflect.getprototypeof: 1.0.10
 
   typescript@4.9.5: {}
+
+  typescript@5.9.3: {}
 
   ufo@1.6.1: {}
 
@@ -6701,9 +6733,9 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  zod-to-ts@1.2.0(typescript@4.9.5)(zod@3.25.76):
+  zod-to-ts@1.2.0(typescript@5.9.3)(zod@3.25.76):
     dependencies:
-      typescript: 4.9.5
+      typescript: 5.9.3
       zod: 3.25.76
 
   zod@3.25.76: {}

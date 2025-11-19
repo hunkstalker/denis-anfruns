@@ -1,0 +1,143 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { useTranslations } from '../i18n/utils';
+
+const t = useTranslations('es');
+
+// Obtener todos los proyectos en español
+const allProjects = await getCollection('projects', ({ id }) => {
+  return id.endsWith('.es.md');
+});
+
+// Ordenar por fecha (más recientes primero)
+const projects = allProjects.sort((a, b) => 
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Extraer todas las tecnologías únicas para los filtros
+const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))];
+---
+
+<Layout title={t('projects.title')} description={t('site.description')}>
+  <main class="container mx-auto px-4 py-8">
+    <!-- Título de la página -->
+    <h1 class="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-8 text-center">
+      {t('projects.title')}
+    </h1>
+
+    <!-- 
+      ALPINE.JS: x-data inicializa un componente Alpine con estado reactivo
+      - selectedFilter: estado que guarda el filtro actualmente seleccionado
+      - 'all' es el valor por defecto (mostrar todos los proyectos)
+    -->
+    <div x-data="{ selectedFilter: 'all' }">
+      
+      <!-- Sección de filtros -->
+      <div class="mb-8 flex flex-wrap gap-3 justify-center">
+        <!-- 
+          Botón "Todos" - siempre visible
+          @click: evento de Alpine.js que ejecuta cuando se hace click
+          :class: binding dinámico de clases basado en el estado
+          - Si selectedFilter === 'all', aplica estilos de botón activo (emerald)
+          - Si no, aplica estilos de botón inactivo (zinc)
+        -->
+        <button
+          @click="selectedFilter = 'all'"
+          :class="selectedFilter === 'all' 
+            ? 'bg-emerald-600 text-white' 
+            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'"
+          class="px-4 py-2 rounded-lg font-medium transition-colors"
+        >
+          {t('projects.filter.all')}
+        </button>
+
+        <!-- 
+          Generamos un botón por cada tecnología encontrada en los proyectos
+          Alpine.js funciona perfectamente con elementos generados por Astro
+        -->
+        {allTechnologies.slice(0, 8).map(tech => (
+          <button
+            data-tech={tech}
+            x-on:click={`selectedFilter = $el.dataset.tech`}
+            x-bind:class={`selectedFilter === $el.dataset.tech ? 'bg-emerald-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'`}
+            class="px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            {tech}
+          </button>
+        ))}
+      </div>
+
+      <!-- Grid de proyectos -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map(project => (
+          <!-- 
+            x-show: directiva de Alpine.js que muestra/oculta el elemento
+            - Evalúa la expresión JavaScript
+            - Si selectedFilter === 'all', muestra el proyecto
+            - Si no, verifica si el proyecto incluye la tecnología seleccionada
+            
+            Usamos data-technologies para pasar el array y luego Alpine lo lee
+            
+            x-transition: añade animaciones suaves al mostrar/ocultar
+            - Alpine.js maneja las transiciones CSS automáticamente
+          -->
+          <div 
+            data-technologies={JSON.stringify(project.data.technologies)}
+            x-show="selectedFilter === 'all' || JSON.parse($el.dataset.technologies).includes(selectedFilter)"
+            x-transition
+          >
+            <ProjectCard
+              title={project.data.title}
+              shortDescription={project.data.shortDescription}
+              technologies={project.data.technologies}
+              image={project.data.image}
+              github={project.data.github}
+              demo={project.data.demo}
+              slug={project.slug}
+            />
+          </div>
+        ))}
+      </div>
+
+      <!-- 
+        Mensaje cuando no hay proyectos que coincidan con el filtro
+        Este se muestra cuando selectedFilter no es 'all' y no hay elementos visibles
+      -->
+      <div 
+        x-data="{ hasVisibleProjects: true }"
+        x-init="$watch('selectedFilter', () => { 
+          if (selectedFilter === 'all') { 
+            hasVisibleProjects = true; 
+          } else { 
+            hasVisibleProjects = Array.from($root.querySelectorAll('[data-technologies]')).some(el => 
+              JSON.parse(el.dataset.technologies).includes(selectedFilter)
+            );
+          }
+        })"
+        x-show="!hasVisibleProjects && selectedFilter !== 'all'"
+        x-transition
+        class="text-center py-12"
+      >
+        <p class="text-zinc-600 dark:text-zinc-400 text-lg">
+          {t('projects.empty')}
+        </p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<!-- 
+  Importar Alpine.js al final del documento
+  - type="module" permite usar import/export
+  - Alpine.start() inicializa la librería
+  - IMPORTANTE: esto debe estar después del contenido con directivas Alpine
+-->
+<script>
+  import Alpine from 'alpinejs';
+  
+  // Iniciar Alpine.js
+  // Alpine busca automáticamente todos los elementos con x-data y los hace reactivos
+  Alpine.start();
+</script>

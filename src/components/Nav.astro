@@ -16,7 +16,11 @@ const t = useTranslations(lang);
 
 		<div class="inline-flex gap-5 md:gap-1">
 			<div class="text-center">
-				<Button text={t('nav.projects')} link='/' enabledBtn={false}/>
+				<Button 
+					text={t('nav.projects')} 
+					link={lang === 'es' ? '/projects' : `/${lang}/projects`} 
+					enabledBtn={true}
+				/>
 			</div>
 		</div>
 
