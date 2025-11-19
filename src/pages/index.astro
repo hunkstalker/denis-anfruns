@@ -9,11 +9,24 @@ const lang = 'es';
 ---
 <script is:inline>
   const userLang = navigator.language || navigator.userLanguage; 
+  const savedLang = localStorage.getItem('selectedLang');
+
   if (window.location.pathname === '/') {
-    if (userLang.startsWith('ca')) {
-      window.location.href = '/ca';
-    } else if (!userLang.startsWith('es')) {
-      window.location.href = '/en';
+    // Si hay preferencia guardada, la respetamos
+    if (savedLang) {
+      if (savedLang === 'ca') {
+        window.location.href = '/ca';
+      } else if (savedLang === 'en') {
+        window.location.href = '/en';
+      }
+      // Si es 'es', nos quedamos aquí
+    } else {
+      // Si no hay preferencia, usamos el idioma del navegador
+      if (userLang.startsWith('ca')) {
+        window.location.href = '/ca';
+      } else if (!userLang.startsWith('es')) {
+        window.location.href = '/en';
+      }
     }
   }
 </script>
