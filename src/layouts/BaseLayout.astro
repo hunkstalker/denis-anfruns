@@ -8,14 +8,14 @@ interface Props {
 	lang?: string;
 }
 
-const { siteTitle } = Astro.props as Props;
-const url = 'https://denis-anfruns.dev';
+const { siteTitle, lang = 'es' } = Astro.props as Props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const description = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
-const image = `${url}/denis-anfruns-millan.png`;
+const image = new URL('/denis-anfruns-millan.png', Astro.site);
 ---
 
 <!DOCTYPE html>
-<html lang='es'>
+<html lang={lang}>
 	<head>
 		<meta charset='UTF-8' />
 		<meta name='viewport' content='width=device-width' />
@@ -23,6 +23,7 @@ const image = `${url}/denis-anfruns-millan.png`;
 
 		<!-- Descripción SEO -->
   	<meta name='description' content={description} />
+    <link rel="canonical" href={canonicalURL} />
 
 		<!-- Twitter Cards -->
 		<meta name='twitter:site' content='@HunkStalker'>
@@ -35,7 +36,6 @@ const image = `${url}/denis-anfruns-millan.png`;
 		<meta name='twitter:image:height' content='630' />
 
 		<!-- Open Graph -->
-		<meta property='og:type' content='profile' />
 		<meta property='og:locale' content='es_ES' />
 		<meta property='og:title' content={siteTitle} />
 		<meta property='og:image' content={image} />
@@ -44,7 +44,7 @@ const image = `${url}/denis-anfruns-millan.png`;
 		<meta property='og:image:height' content='630' />
 		<meta property='og:image:alt' content='Vista previa de Denis Anfruns Millán - Web portfolio' />
 		<meta property='og:description' content={description} />
-		<meta property='og:url' content={url} />
+		<meta property='og:url' content={canonicalURL} />
 		<meta property='og:type' content='website' />
 
 		<meta name='generator' content={Astro.generator} />

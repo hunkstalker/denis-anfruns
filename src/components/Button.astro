@@ -6,25 +6,19 @@ interface Props {
 }
 const { text, link, enabledBtn } = Astro.props;
 ---
-<button class='m-5 cursor-default relative' type="button">
-  <a class:list=
-    {[
-      'text-sm xs:text-md md:text-lg rounded-lg inline-block relative',
-      {
-        'focus': enabledBtn,
-        'text-gray-400 font-bold md:text-lg pointer-events-none cursor-default': !enabledBtn
-      }
-    ]}
-    href={link} title='Mis proyectos'>
-    <span class="relative inline-flex items-center">
-      <span class="z-10">{text}</span>
-    </span>
-  </a>
-</button>
-
-<style>
-    .focus:hover {
-    background-color: #52525B;
-    color: white;
+<a 
+  href={enabledBtn ? link : undefined} 
+  title='Mis proyectos'
+  class:list={[
+    'm-5 relative text-sm xs:text-md md:text-lg rounded-lg inline-block px-4 py-2 transition-colors',
+    {
+      'hover:bg-zinc-600 hover:text-white cursor-pointer': enabledBtn,
+      'text-gray-400 font-bold pointer-events-none cursor-default': !enabledBtn
     }
-</style>
+  ]}
+  aria-disabled={!enabledBtn}
+>
+  <span class="relative inline-flex items-center">
+    <span class="z-10">{text}</span>
+  </span>
+</a>

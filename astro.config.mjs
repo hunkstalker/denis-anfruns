@@ -5,5 +5,6 @@ import inline from '@playform/inline';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://denis-anfruns.dev',
   integrations: [tailwind(), react(), inline()],
 });

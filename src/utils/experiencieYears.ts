@@ -3,5 +3,5 @@ export default function experiencieYears(): number {
   const startWorkingYear: number = 2022;
   const currentYear: number = new Date().getFullYear();
 
-  return Math.abs(currentYear - startWorkingYear) + startWorkingDual;
+  return (currentYear - startWorkingYear) + startWorkingDual;
 }
