@@ -1,8 +1,8 @@
 /* 
    NOTE: This file contains multiple header styles. 
-   Currently using 'Masked Motion' as the active style.
-   Other styles (Gradient Reveal, Glitch) are preserved here for potential future use.
-   Generado por Gemini 3 --
+   Currently using solid color for minimalist design.
+   Other styles (Masked Motion, Gradient Reveal, Glitch) are preserved for easter eggs/Konami codes.
+   To activate via JS: element.classList.add('header-style-masked') or other style names.
 */
 
 /* Default Style (Legacy/Fallback) */
