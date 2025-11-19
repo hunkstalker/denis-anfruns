@@ -6,12 +6,12 @@ import SocialLinks from '../../components/SocialLinks.astro';
 
 export function getStaticPaths() {
   return [
-    { params: { lang: 'ca' } },
-    { params: { lang: 'en' } }
+    { params: { lang: 'ca' as const } },
+    { params: { lang: 'en' as const } }
   ];
 }
 
-const { lang } = Astro.params;
+const { lang } = Astro.params as { lang: 'ca' | 'en' };
 const siteTitle = `Denis A. M. Portfolio`;
 ---
 <BaseLayout siteTitle={siteTitle} lang={lang}>
