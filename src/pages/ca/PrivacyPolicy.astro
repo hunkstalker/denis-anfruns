@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const siteTitle = 'Política de Privacitat - Denis Anfruns Millán';
+---
+
+<BaseLayout siteTitle={siteTitle} lang="ca">
+  <main class="privacy">
+    <h1 class="font-bold">Política de Privacitat</h1>
+    <p>Darrera actualització: 17/11/2025</p>
+    
+    <h2 class="font-bold">1. Responsable del Tractament</h2>
+    <p>
+      Responsable: <strong>Denis Anfruns Millán</strong><br />
+      Correu de contacte:
+      <strong>
+        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
+      </strong>
+    </p>
+
+    <h2 class="font-bold">2. Dades que Recollim</h2>
+    <p>
+      Aquesta web personal no recull dades personals dels visitants.
+      No existeixen formularis, no hi ha registre d'usuaris i no se sol·licita
+      informació identificativa de cap tipus.
+    </p>
+
+    <h2>3. Ús de Cookies</h2>
+    <p>
+      Aquest lloc utilitza únicament <strong>cookies tècniques de Cloudflare</strong>
+      amb la finalitat de protegir la web davant de bots i atacs. Aquestes cookies són:
+    </p>
+
+    <ul>
+      <li><code>__cf_bm</code>: distingeix trànsit legítim de bots.</li>
+      <li><code>cf_clearance</code>: permet que Cloudflare mantingui validat l'accés.</li>
+    </ul>
+
+    <p>
+      Aquestes cookies:
+    </p>
+
+    <ul>
+      <li>Són necessàries per al funcionament segur del lloc.</li>
+      <li>No serveixen per a seguiment ni publicitat.</li>
+      <li>No emmagatzemen informació personal identificable.</li>
+      <li>Estan exemptes de consentiment segons la normativa vigent.</li>
+    </ul>
+
+    <h2>4. Enllaços Externs</h2>
+    <p>
+      Aquesta web pot contenir enllaços cap a llocs externs. No som responsables
+      de les seves polítiques de privacitat. Et recomanem revisar-les abans de navegar
+      per elles.
+    </p>
+
+    <h2>5. Drets de l'Usuari</h2>
+    <p>
+      Encara que aquesta web no recull dades personals, si desitges realitzar qualsevol 
+      consulta o sol·licitar informació addicional pots contactar a:
+      <strong>
+        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
+      </strong>
+    </p>
+
+    <h2>6. Canvis en aquesta Política</h2>
+    <p>
+      Podem actualitzar aquesta Política de Privacitat en qualsevol moment.
+      Publicarem els canvis aquí, indicant la data d'actualització.
+    </p>
+
+    <h2>7. Contacte</h2>
+    <p>
+      Per a qualsevol qüestió relativa a aquesta política, pots escriure a:<br />
+      <strong>
+        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
+      </strong>
+    </p>
+    <a href="/ca/" class='inline-block text-base text-black hover:bg-slate-400 mt-5 px-10 py-2 bg-slate-300 rounded-md text-center'>Anar a l'inici</a>
+  </main>
+
+  <style>
+    .privacy {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+    h1, h2 { font-weight: 700; margin-top: 1.6rem; } /* alternativa CSS */
+    .email-oklch { color: oklch(75% 0.183 55.934); text-decoration: none; }
+  </style>
+</BaseLayout>

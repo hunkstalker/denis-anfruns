@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const siteTitle = 'Privacy Policy - Denis Anfruns Millán';
+---
+
+<BaseLayout siteTitle={siteTitle} lang="en">
+  <main class="privacy">
+    <h1 class="font-bold">Privacy Policy</h1>
+    <p>Last updated: 17/11/2025</p>
+    
+    <h2 class="font-bold">1. Data Controller</h2>
+    <p>
+      Controller: <strong>Denis Anfruns Millán</strong><br />
+      Contact email:
+      <strong>
+        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
+      </strong>
+    </p>
+
+    <h2 class="font-bold">2. Data We Collect</h2>
+    <p>
+      This personal website does not collect personal data from visitors.
+      There are no forms, no user registration, and no identifying information
+      is requested of any kind.
+    </p>
+
+    <h2>3. Use of Cookies</h2>
+    <p>
+      This site only uses <strong>technical cookies from Cloudflare</strong>
+      in order to protect the website against bots and attacks. These cookies are:
+    </p>
+
+    <ul>
+      <li><code>__cf_bm</code>: distinguishes legitimate traffic from bots.</li>
+      <li><code>cf_clearance</code>: allows Cloudflare to keep access validated.</li>
+    </ul>
+
+    <p>
+      These cookies:
+    </p>
+
+    <ul>
+      <li>Are necessary for the secure operation of the site.</li>
+      <li>Are not used for tracking or advertising.</li>
+      <li>Do not store personally identifiable information.</li>
+      <li>Are exempt from consent according to current regulations.</li>
+    </ul>
+
+    <h2>4. External Links</h2>
+    <p>
+      This website may contain links to external sites. We are not responsible
+      for their privacy policies. We recommend reviewing them before browsing
+      them.
+    </p>
+
+    <h2>5. User Rights</h2>
+    <p>
+      Although this website does not collect personal data, if you wish to make any
+      inquiries or request additional information, you can contact:
+      <strong>
+        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
+      </strong>
+    </p>
+
+    <h2>6. Changes to this Policy</h2>
+    <p>
+      We may update this Privacy Policy at any time.
+      We will publish the changes here, indicating the date of the update.
+    </p>
+
+    <h2>7. Contact</h2>
+    <p>
+      For any questions regarding this policy, you can write to:<br />
+      <strong>
+        <a class='email-oklch' href="mailto:anfruns.denis@gmail.com">anfruns.denis@gmail.com</a>
+      </strong>
+    </p>
+    <a href="/en/" class='inline-block text-base text-black hover:bg-slate-400 mt-5 px-10 py-2 bg-slate-300 rounded-md text-center'>Go to home</a>
+  </main>
+
+  <style>
+    .privacy {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+    h1, h2 { font-weight: 700; margin-top: 1.6rem; } /* CSS alternative */
+    .email-oklch { color: oklch(75% 0.183 55.934); text-decoration: none; }
+  </style>
+</BaseLayout>

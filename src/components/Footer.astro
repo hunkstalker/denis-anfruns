@@ -11,6 +11,7 @@ const t = useTranslations(lang);
 
 const rawPath = typeof Astro !== 'undefined' && Astro.request ? new URL(Astro.request.url).pathname : '/';
 const currentPath = rawPath.replace(/\/+$/, '') || '/';
+const privacyPath = lang === 'es' ? '/PrivacyPolicy' : `/${lang}/PrivacyPolicy`;
 ---
 <footer class='flex place-content-center mb-10 mt-auto'>
 	<div class='flex flex-col'>
@@ -59,9 +60,9 @@ const currentPath = rawPath.replace(/\/+$/, '') || '/';
 			</svg>
 		</div>
 		{ 
-			currentPath !== '/PrivacyPolicy' && (
+			currentPath !== privacyPath && (
 				<div class='flex flex-row mt-2 mb-4 text-md text-gray-500 place-content-center'>
-					<a href='/PrivacyPolicy/'>
+					<a href={`${privacyPath}/`}>
 						<p>{t('footer.privacy')}</p>
 					</a>
 				</div>
