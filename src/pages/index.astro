@@ -10,10 +10,10 @@ const lang = 'es';
 <script is:inline>
   const userLang = navigator.language || navigator.userLanguage; 
   if (window.location.pathname === '/') {
-    if (userLang.startsWith('en')) {
-      window.location.href = '/en';
-    } else if (userLang.startsWith('ca')) {
+    if (userLang.startsWith('ca')) {
       window.location.href = '/ca';
+    } else if (!userLang.startsWith('es')) {
+      window.location.href = '/en';
     }
   }
 </script>
