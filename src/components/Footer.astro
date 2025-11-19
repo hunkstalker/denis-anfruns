@@ -1,7 +1,13 @@
 ---
+import { useTranslations } from '../i18n/utils';
+
 interface Props {
-	currentPath?: string
+	currentPath?: string;
+    lang?: 'es' | 'en' | 'ca';
 }
+
+const { lang = 'es' } = Astro.props;
+const t = useTranslations(lang);
 
 const rawPath = typeof Astro !== 'undefined' && Astro.request ? new URL(Astro.request.url).pathname : '/';
 const currentPath = rawPath.replace(/\/+$/, '') || '/';
@@ -9,7 +15,7 @@ const currentPath = rawPath.replace(/\/+$/, '') || '/';
 <footer class='flex place-content-center mb-10 mt-auto'>
 	<div class='flex flex-col'>
 		<div class='flex p-3 w-72 lg:w-96 place-content-center'>
-			<p>Web impulsada por&nbsp;</p>
+			<p>{t('footer.astro')}&nbsp;</p>
 			<a
 				class='flex ml-1'
 				href='https://astro.build/'
@@ -56,7 +62,7 @@ const currentPath = rawPath.replace(/\/+$/, '') || '/';
 			currentPath !== '/PrivacyPolicy' && (
 				<div class='flex flex-row mt-2 mb-4 text-md text-gray-500 place-content-center'>
 					<a href='/PrivacyPolicy/'>
-						<p>Política de Privacidad</p>
+						<p>{t('footer.privacy')}</p>
 					</a>
 				</div>
 			)

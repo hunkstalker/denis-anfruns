@@ -7,10 +7,20 @@ import SocialLinks from '../components/SocialLinks.astro';
 const siteTitle = `Denis A. M. Portfolio`;
 const lang = 'es';
 ---
+<script is:inline>
+  const userLang = navigator.language || navigator.userLanguage; 
+  if (window.location.pathname === '/') {
+    if (userLang.startsWith('en')) {
+      window.location.href = '/en';
+    } else if (userLang.startsWith('ca')) {
+      window.location.href = '/ca';
+    }
+  }
+</script>
 <BaseLayout siteTitle={siteTitle} lang={lang}>
-  <Nav />
+  <Nav lang={lang} />
   <div class='flex-1 container'>
-    <Header />
+    <Header lang={lang} />
     <SocialLinks />
   </div>
 </BaseLayout>

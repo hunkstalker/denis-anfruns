@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import Header from '../../components/Header.astro';
+import SocialLinks from '../../components/SocialLinks.astro';
+
+const siteTitle = `Denis A. M. Portfolio`;
+const lang = 'en';
+---
+<BaseLayout siteTitle={siteTitle} lang={lang}>
+  <Nav lang={lang} />
+  <div class='flex-1 container'>
+    <Header lang={lang} />
+    <SocialLinks />
+  </div>
+</BaseLayout>

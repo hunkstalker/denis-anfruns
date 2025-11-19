@@ -1,5 +1,5 @@
 ---
-import '../styles/global.css';
+import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import experiencieYears from '../utils/experiencieYears';
 
@@ -8,64 +8,19 @@ interface Props {
 	lang?: string;
 }
 
-const { siteTitle, lang = 'es' } = Astro.props as Props;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const { siteTitle, lang = 'es' } = Astro.props;
 const description = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
-const image = new URL('/denis-anfruns-millan.png', Astro.site);
 ---
 
 <!DOCTYPE html>
 <html lang={lang}>
 	<head>
-		<meta charset='UTF-8' />
-		<meta name='viewport' content='width=device-width' />
-		<title>{siteTitle}</title>
-
-		<!-- Descripción SEO -->
-  	<meta name='description' content={description} />
-    <link rel="canonical" href={canonicalURL} />
-
-		<!-- Twitter Cards -->
-		<meta name='twitter:site' content='@HunkStalker'>
-		<meta name='twitter:creator' content='@HunkStalker'>
-		<meta name='twitter:title' content={siteTitle} />
-		<meta name='twitter:description' content={description} />
-		<meta name='twitter:card' content='summary_large_image' />
-		<meta name='twitter:image' content={image} />
-		<meta name='twitter:image:width' content='1200' />
-		<meta name='twitter:image:height' content='630' />
-
-		<!-- Open Graph -->
-		<meta property='og:locale' content='es_ES' />
-		<meta property='og:title' content={siteTitle} />
-		<meta property='og:image' content={image} />
-		<meta property='og:image:type' content='image/png'>
-		<meta property='og:image:width' content='1200' />
-		<meta property='og:image:height' content='630' />
-		<meta property='og:image:alt' content='Vista previa de Denis Anfruns Millán - Web portfolio' />
-		<meta property='og:description' content={description} />
-		<meta property='og:url' content={canonicalURL} />
-		<meta property='og:type' content='website' />
-
-		<meta name='generator' content={Astro.generator} />
-
-    <!-- Preload fonts -->
-    <link rel='preload' href='/fonts/inter-variable.woff2' as='font' type='font/woff2' crossorigin />
-
-		<!-- Icon -->
-    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-
-    <!-- Alternate / multilenguaje -->
-    <link rel='alternate' hreflang='x-default' href='https://denis-anfruns.dev/' />
-		<script>
-			const theme = localStorage.getItem('theme');
-			document.documentElement.classList.toggle('dark', theme === 'dark');
-		</script>
+		<BaseHead title={siteTitle} description={description} />
 	</head>
 	<body class='flex flex-col min-h-screen' >
 		<main>
 			<slot />
 		</main>
-		<Footer />
+		<Footer lang={lang as any} />
 	</body>
 </html>

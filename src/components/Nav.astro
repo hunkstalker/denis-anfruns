@@ -1,17 +1,27 @@
 ---
 import Button from './Button.astro'
 import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
+import LanguagePicker from './LanguagePicker.astro';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang?: 'es' | 'en' | 'ca';
+}
+
+const { lang = 'es' } = Astro.props;
+const t = useTranslations(lang);
 ---
 <nav>
 	<div class="container flex items-center justify-between">
 
 		<div class="inline-flex gap-5 md:gap-1">
 			<div class="text-center">
-				<Button text='PROYECTOS (WIP)' link='/' enabledBtn={false}/>
+				<Button text={t('nav.projects')} link='/' enabledBtn={false}/>
 			</div>
 		</div>
 
-		<div class="flex gap-20">
+		<div class="flex gap-4 md:gap-6 items-center">
+            <LanguagePicker />
 			<SwitchBtnThemeMode />
 		</div>
 
