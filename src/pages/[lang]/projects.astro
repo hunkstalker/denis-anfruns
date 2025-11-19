@@ -48,10 +48,9 @@ const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))]
 
         {allTechnologies.slice(0, 8).map(tech => (
           <button
-            @click={`selectedFilter = '${tech}'`}
-            :class={`selectedFilter === '${tech}' 
-              ? 'bg-emerald-600 text-white' 
-              : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'`}
+            data-tech={tech}
+            x-on:click={`selectedFilter = $el.dataset.tech`}
+            x-bind:class={`selectedFilter === $el.dataset.tech ? 'bg-emerald-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'`}
             class="px-4 py-2 rounded-lg font-medium transition-colors"
           >
             {tech}
@@ -62,7 +61,8 @@ const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))]
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.map(project => (
           <div 
-            x-show={`selectedFilter === 'all' || ${JSON.stringify(project.data.technologies)}.includes(selectedFilter)`}
+            data-technologies={JSON.stringify(project.data.technologies)}
+            x-show="selectedFilter === 'all' || JSON.parse($el.dataset.technologies).includes(selectedFilter)"
             x-transition
           >
             <ProjectCard
@@ -79,7 +79,17 @@ const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))]
       </div>
 
       <div 
-        x-show={`selectedFilter !== 'all' && ${JSON.stringify(projects.map(p => ({ technologies: p.data.technologies })))}.filter(p => p.technologies.includes(selectedFilter)).length === 0`}
+        x-data="{ hasVisibleProjects: true }"
+        x-init="$watch('selectedFilter', () => { 
+          if (selectedFilter === 'all') { 
+            hasVisibleProjects = true; 
+          } else { 
+            hasVisibleProjects = Array.from($root.querySelectorAll('[data-technologies]')).some(el => 
+              JSON.parse(el.dataset.technologies).includes(selectedFilter)
+            );
+          }
+        })"
+        x-show="!hasVisibleProjects && selectedFilter !== 'all'"
         x-transition
         class="text-center py-12"
       >

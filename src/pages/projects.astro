@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { useTranslations } from '../i18n/utils';
 
@@ -20,7 +20,7 @@ const projects = allProjects.sort((a, b) =>
 const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))];
 ---
 
-<Layout title={t('projects.title')} description={t('site.description')}>
+<BaseLayout siteTitle={t('projects.title')} description={t('site.description')}>
   <main class="container mx-auto px-4 py-8">
     <!-- Título de la página -->
     <h1 class="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-8 text-center">
@@ -45,9 +45,7 @@ const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))]
         -->
         <button
           @click="selectedFilter = 'all'"
-          :class="selectedFilter === 'all' 
-            ? 'bg-emerald-600 text-white' 
-            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'"
+          :class="selectedFilter === 'all' ? 'bg-emerald-600 text-white' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'"
           class="px-4 py-2 rounded-lg font-medium transition-colors"
         >
           {t('projects.filter.all')}
@@ -126,7 +124,7 @@ const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))]
       </div>
     </div>
   </main>
-</Layout>
+</BaseLayout>
 
 <!-- 
   Importar Alpine.js al final del documento

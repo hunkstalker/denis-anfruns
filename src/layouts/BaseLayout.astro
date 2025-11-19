@@ -6,10 +6,11 @@ import experiencieYears from '../utils/experiencieYears';
 interface Props {
 	siteTitle: string;
 	lang?: string;
+	description?: string;
 }
 
-const { siteTitle, lang = 'es' } = Astro.props;
-const description = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
+const { siteTitle, lang = 'es', description: propDescription } = Astro.props;
+const description = propDescription || `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
 ---
 
 <!DOCTYPE html>
