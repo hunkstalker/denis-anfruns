@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import ProjectsGrid from '../../components/ProjectsGrid.svelte';
+import { ui, defaultLang } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'es' } },
+    { params: { lang: 'en' } },
+    { params: { lang: 'ca' } },
+  ];
+}
+
+const { lang } = Astro.params as { lang: keyof typeof ui };
+
+import { projects } from '../../data/projects';
+
+// Extract unique technologies for the filter
+const allTechnologies = [...new Set(projects.flatMap(p => p.tags))].sort();
+
+const t = ui[lang as keyof typeof ui] || ui[defaultLang];
+const title = t['nav.projects'];
+---
+
+<BaseLayout siteTitle={`Denis Anfruns | ${title}`} lang={lang}>
+  <Nav lang={lang} />
+  
+  <main class="container mx-auto px-4 py-24">
+    <h1 class="text-center text-4xl md:text-5xl font-bold text-white mb-10 mt-10">
+      {title}
+    </h1>
+    <ProjectsGrid 
+      client:load 
+      projects={projects} 
+      allTechnologies={allTechnologies} 
+    />
+  </main>
+</BaseLayout>

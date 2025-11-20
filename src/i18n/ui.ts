@@ -8,7 +8,8 @@ export const defaultLang = 'es';
 
 export const ui = {
   es: {
-    'nav.projects': 'PROYECTOS (WIP)',
+    'nav.home': 'INICIO',
+    'nav.projects': 'PROYECTOS',
     'nav.videogames': 'videojuegos',
     'nav.devblog': 'dev blog',
     'header.role': 'Desarrollador Full Stack con',
@@ -18,9 +19,12 @@ export const ui = {
     'footer.rights': 'Todos los derechos reservados.',
     'footer.astro': 'Web impulsada por ',
     'footer.privacy': 'Política de Privacidad',
+    'home.featured': 'Trabajos',
+    'home.work': 'Destacados',
   },
   ca: {
-    'nav.projects': 'PROJECTES (WIP)',
+    'nav.home': 'INICI',
+    'nav.projects': 'PROJECTES',
     'nav.videogames': 'videojocs',
     'nav.devblog': 'dev blog',
     'header.role': 'Desenvolupador Full Stack amb',
@@ -30,9 +34,12 @@ export const ui = {
     'footer.rights': 'Tots els drets reservats.',
     'footer.astro': 'Web impulsada per ',
     'footer.privacy': 'Política de Privacitat',
+    'home.featured': 'Treballs',
+    'home.work': 'Destacats',
   },
   en: {
-    'nav.projects': 'PROJECTS (WIP)',
+    'nav.home': 'HOME',
+    'nav.projects': 'PROJECTS',
     'nav.videogames': 'video games',
     'nav.devblog': 'dev blog',
     'header.role': 'Full Stack Developer with',
@@ -42,5 +49,7 @@ export const ui = {
     'footer.rights': 'All rights reserved.',
     'footer.astro': 'Web powered by ',
     'footer.privacy': 'Privacy Policy',
+    'home.featured': 'Featured',
+    'home.work': 'Work',
   },
 } as const;

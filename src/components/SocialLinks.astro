@@ -1,3 +1,14 @@
+---
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang?: 'es' | 'en' | 'ca';
+}
+
+const { lang = 'es' } = Astro.props;
+const t = useTranslations(lang);
+---
+<p class="text-center lg:text-xl md:mt-20 mt-10 font-medium tracking-normal">{t('header.socials')}</p>
 <ul class="flex flex-wrap place-content-around md:flex-row justify-center items-center mt-6 mb-10 gap-6 md:gap-6">
 	<li class='hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200 ease-out hover:opacity-100 hover:scale-125 '>
 		<a class="list-none" href='https://www.linkedin.com/in/denis-anfruns/' title='LinkedIn' target='_blank'>

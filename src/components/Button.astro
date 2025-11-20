@@ -3,12 +3,13 @@ interface Props {
   text: string;
   link: string;
   enabledBtn: boolean;
+  title?: string;
 }
-const { text, link, enabledBtn } = Astro.props;
+const { text, link, enabledBtn, title } = Astro.props;
 ---
 <a 
   href={enabledBtn ? link : undefined} 
-  title='Mis proyectos'
+  title={title || text}
   class:list={[
     'm-5 relative text-sm xs:text-md md:text-lg rounded-lg inline-block px-4 py-2 transition-colors',
     {

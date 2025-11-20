@@ -10,18 +10,22 @@ interface Props {
 
 const { lang = 'es' } = Astro.props;
 const t = useTranslations(lang);
+
+const homeLink = lang === 'es' ? '/' : `/${lang}`;
+const projectsLink = lang === 'es' ? '/es/projects' : `/${lang}/projects`;
 ---
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-700/50 shadow-sm">
 	<div class="container flex items-center justify-between py-4">
 
 		<div class="inline-flex gap-5 md:gap-1">
 			<div class="text-center">
-				<Button text={t('nav.projects')} link='/' enabledBtn={false}/>
+        <Button text={t('nav.home')} link={homeLink} enabledBtn={true} />
+				<Button text={t('nav.projects')} link={projectsLink} enabledBtn={true} />
 			</div>
 		</div>
 
 		<div class="flex gap-4 md:gap-6 items-center">
-            <LanguagePicker />
+      <LanguagePicker />
 			<SwitchBtnThemeMode />
 		</div>
 

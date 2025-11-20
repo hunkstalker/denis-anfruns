@@ -4,6 +4,8 @@ import Nav from '../../components/Nav.astro';
 import Header from '../../components/Header.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
 
+import TopProjects from '../../components/TopProjects.astro';
+
 export function getStaticPaths() {
   return [
     { params: { lang: 'ca' as const } },
@@ -19,5 +21,6 @@ const siteTitle = `Denis A. M. Portfolio`;
   <div class='flex-1 container'>
     <Header lang={lang} />
     <SocialLinks />
+    <TopProjects lang={lang} />
   </div>
 </BaseLayout>
