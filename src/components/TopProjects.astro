@@ -1,11 +1,16 @@
 ---
 import { projects } from '../data/projects';
 import ProjectCarousel from './ProjectCarousel.svelte';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const projectCount = projects.length;
 ---
 
 <section class="py-12 px-4">
   <div class="container mx-auto max-w-7xl">
-    <p class="mb-8"><a href="/" class="text-xl font-bold">Ver todos los proyectos</a></p>
+    <p class="mb-8"><a href={`/${lang}/projects`} class="text-xl font-bold">{t('home.viewAllProjects', projectCount)}</a></p>
     <ProjectCarousel client:visible projects={projects} />
   </div>
 </section>
