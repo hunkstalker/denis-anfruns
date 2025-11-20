@@ -16,11 +16,21 @@ const t = useTranslations(lang);
 
 		<div class="inline-flex gap-5 md:gap-1">
 			<div class="text-center">
-				<Button 
-					text={t('nav.projects')} 
-					link={lang === 'es' ? '/projects' : `/${lang}/projects`} 
-					enabledBtn={true}
-				/>
+				{
+					Astro.url.pathname.includes('projects') ? (
+						<Button 
+							text={t('nav.home')} 
+							link={lang === 'es' ? '/' : `/${lang}`} 
+							enabledBtn={true}
+						/>
+					) : (
+						<Button 
+							text={t('nav.projects')} 
+							link={lang === 'es' ? '/projects' : `/${lang}/projects`} 
+							enabledBtn={true}
+						/>
+					)
+				}
 			</div>
 		</div>
 

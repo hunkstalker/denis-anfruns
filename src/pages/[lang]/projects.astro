@@ -1,8 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { useTranslations } from '../../i18n/utils';
+
+import Nav from '../../components/Nav.astro';
 
 export async function getStaticPaths() {
   return [
@@ -26,7 +28,8 @@ const projects = allProjects.sort((a, b) =>
 const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))];
 ---
 
-<Layout title={t('projects.title')} description={t('site.description')}>
+<BaseLayout siteTitle={t('projects.title')} description={t('site.description')} lang={lang}>
+  <Nav lang={lang as 'ca' | 'en'} />
   <main class="container mx-auto px-4 py-8">
     <h1 class="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-8 text-center">
       {t('projects.title')}
@@ -37,8 +40,8 @@ const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))]
       
       <div class="mb-8 flex flex-wrap gap-3 justify-center">
         <button
-          @click="selectedFilter = 'all'"
-          :class="selectedFilter === 'all' 
+          x-on:click="selectedFilter = 'all'"
+          x-bind:class="selectedFilter === 'all' 
             ? 'bg-emerald-600 text-white' 
             : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'"
           class="px-4 py-2 rounded-lg font-medium transition-colors"
@@ -99,7 +102,7 @@ const allTechnologies = [...new Set(projects.flatMap(p => p.data.technologies))]
       </div>
     </div>
   </main>
-</Layout>
+</BaseLayout>
 
 <script>
   import Alpine from 'alpinejs';

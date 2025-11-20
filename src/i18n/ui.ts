@@ -9,6 +9,7 @@ export const defaultLang = 'es';
 export const ui = {
   es: {
     'nav.projects': 'PROYECTOS',
+    'nav.home': 'INICIO',
     'nav.videogames': 'VIDEOJUEGOS',
     'header.role': 'Desarrollador Full Stack con',
     'header.years': 'años',
@@ -37,6 +38,7 @@ export const ui = {
   } as const,
   ca: {
     'nav.projects': 'PROJECTES',
+    'nav.home': 'INICI',
     'nav.videogames': 'VIDEOJOCS',
     'header.role': 'Desenvolupador Full Stack amb',
     'header.years': 'anys',
@@ -65,6 +67,7 @@ export const ui = {
   } as const,
   en: {
     'nav.projects': 'PROJECTS',
+    'nav.home': 'HOME',
     'nav.videogames': 'VIDEOGAMES',
     'header.role': 'Full Stack Developer with',
     'header.years': 'years',
