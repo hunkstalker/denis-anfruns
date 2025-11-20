@@ -20,7 +20,7 @@ export const projects: Project[] = [
     ]
   },
   {
-    title: 'HOOBY TRACKING',
+    title: 'HOBBY TRACKING',
     progress: 0,
     description: 'App para hacer el seguimiento de juegos terminados con representaación de datos y gráficos',
     tags: ['react', 'd1', 'typescript', 'tailwind'],
@@ -42,14 +42,14 @@ export const projects: Project[] = [
     ]
   },
   {
-    title: 'MATCHA-APP',
+    title: 'MATCHapp',
     progress: 0,
     description: 'Aplicación social para conocer gente compartiendo tus "feels"',
     tags: ['react', 'firebase', 'mobile', 'tailwind'],
     images: [
-      'https://placehold.co/1200x600/4a4a4a/ffffff?text=Matcha+Screen+1',
-      'https://placehold.co/1200x600/5a5a5a/ffffff?text=Matcha+Screen+2',
-      'https://placehold.co/1200x600/4a4a4a/ffffff?text=Matcha+Screen+3'
+      'https://placehold.co/1200x600/4a4a4a/ffffff?text=Matchapp+Screen+1',
+      'https://placehold.co/1200x600/5a5a5a/ffffff?text=Matchapp+Screen+2',
+      'https://placehold.co/1200x600/4a4a4a/ffffff?text=Matchapp+Screen+3'
     ]
   },
   {

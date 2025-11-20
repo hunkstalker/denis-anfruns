@@ -24,6 +24,27 @@
     rgb(var(--accent-dark)) 30%,
     white 60%
   );
+
+  --purple-gradient: linear-gradient(
+    43deg,
+    #4158d0 0%,
+    #c850c0 46%,
+    #ffcc70 100%
+  );
+  
+  --christmasSnow-gradient: linear-gradient(
+    135deg,
+    oklch(26.6% 0.065 152.934) 0%,
+    oklch(44.8% 0.119 151.328) 50%,
+    oklch(26.6% 0.065 152.934) 100%
+  );
+
+  --christmasAutumn-gradient: linear-gradient(
+    135deg,
+    oklch(27.9% 0.077 45.635) 0%,
+    oklch(55.4% 0.135 66.442) 50%,
+    oklch(27.9% 0.077 45.635) 100%
+  );
   
   --color-highlight: rgba(52 211 153);
   --primary-bg-color: #16161a;
@@ -45,7 +66,9 @@ html nav {
 
 html.dark {
   color: #fff;
+  /* background-color: var(--bg-color-dark); */
   background-color: var(--bg-color-dark);
+  background-attachment: fixed;
   --color-highlight: #ffffff80;
 }
 

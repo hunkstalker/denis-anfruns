@@ -1,0 +1,17 @@
+/* Curtain transition overlay for background changes */
+.background-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--curtain-gradient);
+  z-index: -1;
+  pointer-events: none;
+  transform: translateX(-100%);
+  transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.background-curtain.active {
+  transform: translateX(0);
+}

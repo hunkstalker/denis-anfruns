@@ -76,7 +76,7 @@
               {#if tech}
                 <span 
                   class="px-4 py-1.5 rounded-full backdrop-blur-sm text-sm font-medium border"
-                  style="background-color: {tech.color}20; border-color: {tech.color}50; color: {tech.color}"
+                  style="background-color: {tech.lightColor || tech.color}15; color: {tech.lightColor || tech.color}; border-color: {tech.lightColor || tech.color}30;"
                 >
                   {tech.name}
                 </span>
