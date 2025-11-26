@@ -2,10 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Header from '../../components/Header.astro';
-import SocialLinks from '../../components/SocialLinks.astro';
-
 import TopProjects from '../../components/TopProjects.astro';
 import SeasonalEffect from '../../components/SeasonalEffect.svelte';
+import KonamiCode from '../../components/KonamiCode.svelte';
+import MegaManEasterEgg from '../../components/MegaManEasterEgg.svelte';
+import '../../styles/curtain.css';
 
 export function getStaticPaths() {
   return [
@@ -22,9 +23,14 @@ const siteTitle = `Denis A. M. Portfolio`;
   <div class='flex-1 container'>
     <Header lang={lang} />
     <TopProjects lang={lang} />
-    <SocialLinks lang={lang} />
   </div>
   
-  <!-- 🍂❄️ Automatic Seasonal Effect (Autumn leaves / Winter snow) -->
+  <!-- 🍂❄️ Seasonal Effect (unlocked by Konami Code) -->
   <SeasonalEffect client:load particleCount={60} speed={0.8} />
+  
+  <!-- 🎮 Konami Code Easter Egg (Press Space to start) -->
+  <KonamiCode client:load />
+  
+  <!-- 🤖 Mega Man Easter Egg (Type "MEGAMAN") -->
+  <MegaManEasterEgg client:load />
 </BaseLayout>

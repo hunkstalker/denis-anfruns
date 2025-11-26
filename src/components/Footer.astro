@@ -1,5 +1,6 @@
 ---
 import { useTranslations } from '../i18n/utils';
+import SocialLinks from './SocialLinks.astro';
 
 interface Props {
 	currentPath?: string;
@@ -13,60 +14,60 @@ const rawPath = typeof Astro !== 'undefined' && Astro.request ? new URL(Astro.re
 const currentPath = rawPath.replace(/\/+$/, '') || '/';
 const privacyPath = lang === 'es' ? '/PrivacyPolicy' : `/${lang}/PrivacyPolicy`;
 ---
-<footer class='flex place-content-center mt-20 mb-10 mt-auto'>
-	<div class='flex flex-col'>
-		<div class='flex p-3 w-72 lg:w-96 place-content-center'>
-			<p>{t('footer.astro')}&nbsp;</p>
-			<a
-				class='flex ml-1'
-				href='https://astro.build/'
-				target='_blank'>
-				<p class='text-[#e63ba9] font-bold'>Astro</p></a
-			>
-			<svg
-				class='ml-2'
-				width='24'
-				height='24'
-				viewBox='0 0 85 107'
-				fill='none'
-				xmlns='http://www.w3.org/2000/svg'>
-				<path
-					fill='white'
-					d='M27.5894 91.1365C22.7555 86.7178 21.3444 77.4335 23.3583 70.7072C26.8503 74.948 31.6888 76.2914 36.7005 77.0497C44.4375 78.2199 52.0359 77.7822 59.2232 74.2459C60.0454 73.841 60.8052 73.3027 61.7036 72.7574C62.378 74.714 62.5535 76.6892 62.318 78.6996C61.7452 83.5957 59.3086 87.3778 55.4332 90.2448C53.8835 91.3916 52.2437 92.4167 50.6432 93.4979C45.7262 96.8213 44.3959 100.718 46.2435 106.386C46.2874 106.525 46.3267 106.663 46.426 107C43.9155 105.876 42.0817 104.24 40.6845 102.089C39.2087 99.8193 38.5066 97.3081 38.4696 94.5909C38.4511 93.2686 38.4511 91.9345 38.2733 90.6309C37.8391 87.4527 36.3471 86.0297 33.5364 85.9478C30.6518 85.8636 28.37 87.6469 27.7649 90.4554C27.7187 90.6707 27.6517 90.8837 27.5847 91.1341L27.5894 91.1365Z'
-				></path>
-				<path
-					fill='url(#gradient)'
-					d='M27.5894 91.1365C22.7555 86.7178 21.3444 77.4335 23.3583 70.7072C26.8503 74.948 31.6888 76.2914 36.7005 77.0497C44.4375 78.2199 52.0359 77.7822 59.2232 74.2459C60.0454 73.841 60.8052 73.3027 61.7036 72.7574C62.378 74.714 62.5535 76.6892 62.318 78.6996C61.7452 83.5957 59.3086 87.3778 55.4332 90.2448C53.8835 91.3916 52.2437 92.4167 50.6432 93.4979C45.7262 96.8213 44.3959 100.718 46.2435 106.386C46.2874 106.525 46.3267 106.663 46.426 107C43.9155 105.876 42.0817 104.24 40.6845 102.089C39.2087 99.8193 38.5066 97.3081 38.4696 94.5909C38.4511 93.2686 38.4511 91.9345 38.2733 90.6309C37.8391 87.4527 36.3471 86.0297 33.5364 85.9478C30.6518 85.8636 28.37 87.6469 27.7649 90.4554C27.7187 90.6707 27.6517 90.8837 27.5847 91.1341L27.5894 91.1365Z'
-				></path>
-				<path
-					fill='currentColor'
-					d='M0 69.5866C0 69.5866 14.3139 62.6137 28.6678 62.6137L39.4901 29.1204C39.8953 27.5007 41.0783 26.3999 42.4139 26.3999C43.7495 26.3999 44.9325 27.5007 45.3377 29.1204L56.1601 62.6137C73.1601 62.6137 84.8278 69.5866 84.8278 69.5866C84.8278 69.5866 60.5145 3.35233 60.467 3.21944C59.7692 1.2612 58.5911 0 57.0029 0H27.8274C26.2392 0 25.1087 1.2612 24.3634 3.21944C24.3108 3.34983 0 69.5866 0 69.5866Z'
-				></path>
-				<defs>
-					<linearGradient
-						id='gradient'
-						x1='22.4702'
-						y1='107'
-						x2='69.1451'
-						y2='84.9468'
-						gradientUnits='userSpaceOnUse'>
-						<stop stop-color='#D83333'></stop>
-						<stop
-							offset='1'
-							stop-color='#F041FF'
-						></stop>
-					</linearGradient>
-				</defs>
-			</svg>
-		</div>
-		{ 
-			currentPath !== privacyPath && (
-				<div class='flex flex-row mt-2 mb-4 text-md place-content-center'>
-					<a class='transition-all duration-200 text-zinc-500 hover:text-black dark:text-zinc-500 dark:hover:text-zinc-200' href={`${privacyPath}/`}>
-						<p>{t('footer.privacy')}</p>
+<footer class='mt-20 mb-10'>
+	<!-- Social Icons - Compact -->
+	<div class='flex justify-center gap-4 mb-8'>
+		<a href='https://www.linkedin.com/in/denis-anfruns/' title='LinkedIn' target='_blank' rel='noopener noreferrer' class='p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all'>
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 dark:text-blue-400"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 11v5" /><path d="M8 8v.01" /><path d="M12 16v-5" /><path d="M16 16v-3a2 2 0 1 0 -4 0" /><path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" /></svg>
+		</a>
+		<a href='https://github.com/hunkstalker' title='GitHub' target='_blank' rel='noopener noreferrer' class='p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all'>
+			<svg xmlns='http://www.w3.org/2000/svg' class='w-5 h-5 text-gray-800 dark:text-gray-200' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d='M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5'></path></svg>
+		</a>
+		<a rel="me" href="https://fosstodon.org/@hunkstalker" title='Mastodon' target='_blank' rel='noopener noreferrer' class='p-2 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-all'>
+			<svg class='w-5 h-5 text-purple-600 dark:text-purple-400' width='20' height='20' viewBox="-45 -40 300 300" stroke-width='25' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d="m211.80734,138.0875c-3.18125,16.36625 -28.4925,34.2775 -57.5625,37.74875c-15.15875,1.80875 -30.08375,3.47125 -45.99875,2.74125c-26.0275,-1.1925 -46.565,-6.2125 -46.565,-6.2125c0,2.53375 0.15625,4.94625 0.46875,7.2025c3.38375,25.68625 25.47,27.225 46.39125,27.9425c21.11625,0.7225 39.91875,-5.20625 39.91875,-5.20625l0.8675,19.09s-14.77,7.93125 -41.08125,9.39c-14.50875,0.7975 -32.52375,-0.365 -53.50625,-5.91875c-45.5075,-12.045 -53.33375,-60.55375 -54.53125,-109.77375c-0.365,-14.61375 -0.14,-28.39375 -0.14,-39.91875c0,-50.33 32.97625,-65.0825 32.97625,-65.0825c16.6275,-7.63625 45.15875,-10.8475 74.82,-11.09l0.72875,0c29.66125,0.2425 58.21125,3.45375 74.8375,11.09c0,0 32.975,14.7525 32.975,65.0825c0,0 0.41375,37.13375 -4.59875,62.915l0,0l0,0z"></path><path fill="currentColor" stroke-width='0' d="m177.50984,80.077l0,60.94125l-24.14375,0l0,-59.15c0,-12.46875 -5.24625,-18.7975 -15.74,-18.7975c-11.6025,0 -17.4175,7.5075 -17.4175,22.3525l0,32.37625l-24.00125,0l0,-32.37625c0,-14.845 -5.81625,-22.3525 -17.41875,-22.3525c-10.49375,0 -15.74,6.32875 -15.74,18.7975l0,59.15l-24.14375,0l0,-60.94125c0,-12.455 3.17125,-22.3525 9.54125,-29.675c6.56875,-7.3225 15.17125,-11.07625 25.85,-11.07625c12.355,0 21.71125,4.74875 27.8975,14.2475l6.01375,10.08125l6.015,-10.08125c6.185,-9.49875 15.54125,-14.2475 27.8975,-14.2475c10.6775,0 19.28,3.75375 25.85,11.07625c6.36875,7.3225 9.54,17.22 9.54,29.675"></path></svg>
+		</a>
+		<a href='https://twitter.com/hunkstalker' title='Twitter' target='_blank' rel='noopener noreferrer' class='p-2 rounded-lg hover:bg-sky-100 dark:hover:bg-sky-900/30 transition-all'>
+			<svg xmlns='http://www.w3.org/2000/svg' class='w-5 h-5 text-sky-500 dark:text-sky-400' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d='M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c0 -.249 1.51 -2.772 1.818 -4.013z'></path></svg>
+		</a>
+		<a href='https://instagram.com/hunk_stalker' title='Instagram' target='_blank' rel='noopener noreferrer' class='p-2 rounded-lg hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-all'>
+			<svg xmlns='http://www.w3.org/2000/svg' class='w-5 h-5 text-pink-600 dark:text-pink-400' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path d='M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z'></path><path d='M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0'></path><path d='M16.5 7.5l0 .01'></path></svg>
+		</a>
+	</div>
+	
+	<!-- Footer Info - Balanced Layout -->
+	<div class='flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400 px-4 max-w-7xl mx-auto'>
+		
+		<!-- Left Spacer (for centering balance) -->
+		<div class="hidden md:block w-24"></div>
+
+		<!-- Center: Astro + GitHub + Privacy -->
+		<div class='flex flex-wrap justify-center items-center gap-x-6 gap-y-2'>
+			<!-- Powered by Astro -->
+			<a href='https://astro.build/' target='_blank' rel='noopener noreferrer' class='flex items-center gap-1.5 hover:text-[#e63ba9] transition-colors'>
+				<span>{t('footer.astro')}</span>
+				<span class='text-[#e63ba9] font-bold'>Astro</span>
+				<svg class='w-4 h-4' viewBox='0 0 85 107' fill='none'><path fill='white' d='M27.5894 91.1365C22.7555 86.7178 21.3444 77.4335 23.3583 70.7072C26.8503 74.948 31.6888 76.2914 36.7005 77.0497C44.4375 78.2199 52.0359 77.7822 59.2232 74.2459C60.0454 73.841 60.8052 73.3027 61.7036 72.7574C62.378 74.714 62.5535 76.6892 62.318 78.6996C61.7452 83.5957 59.3086 87.3778 55.4332 90.2448C53.8835 91.3916 52.2437 92.4167 50.6432 93.4979C45.7262 96.8213 44.3959 100.718 46.2435 106.386C46.2874 106.525 46.3267 106.663 46.426 107C43.9155 105.876 42.0817 104.24 40.6845 102.089C39.2087 99.8193 38.5066 97.3081 38.4696 94.5909C38.4511 93.2686 38.4511 91.9345 38.2733 90.6309C37.8391 87.4527 36.3471 86.0297 33.5364 85.9478C30.6518 85.8636 28.37 87.6469 27.7649 90.4554C27.7187 90.6707 27.6517 90.8837 27.5847 91.1341L27.5894 91.1365Z'></path><path fill='url(#gradient)' d='M27.5894 91.1365C22.7555 86.7178 21.3444 77.4335 23.3583 70.7072C26.8503 74.948 31.6888 76.2914 36.7005 77.0497C44.4375 78.2199 52.0359 77.7822 59.2232 74.2459C60.0454 73.841 60.8052 73.3027 61.7036 72.7574C62.378 74.714 62.5535 76.6892 62.318 78.6996C61.7452 83.5957 59.3086 87.3778 55.4332 90.2448C53.8835 91.3916 52.2437 92.4167 50.6432 93.4979C45.7262 96.8213 44.3959 100.718 46.2435 106.386C46.2874 106.525 46.3267 106.663 46.426 107C43.9155 105.876 42.0817 104.24 40.6845 102.089C39.2087 99.8193 38.5066 97.3081 38.4696 94.5909C38.4511 93.2686 38.4511 91.9345 38.2733 90.6309C37.8391 87.4527 36.3471 86.0297 33.5364 85.9478C30.6518 85.8636 28.37 87.6469 27.7649 90.4554C27.7187 90.6707 27.6517 90.8837 27.5847 91.1341L27.5894 91.1365Z'></path><path fill='currentColor' d='M0 69.5866C0 69.5866 14.3139 62.6137 28.6678 62.6137L39.4901 29.1204C39.8953 27.5007 41.0783 26.3999 42.4139 26.3999C43.7495 26.3999 44.9325 27.5007 45.3377 29.1204L56.1601 62.6137C73.1601 62.6137 84.8278 69.5866 84.8278 69.5866C84.8278 69.5866 60.5145 3.35233 60.467 3.21944C59.7692 1.2612 58.5911 0 57.0029 0H27.8274C26.2392 0 25.1087 1.2612 24.3634 3.21944C24.3108 3.34983 0 69.5866 0 69.5866Z'></path><defs><linearGradient id='gradient' x1='22.4702' y1='107' x2='69.1451' y2='84.9468' gradientUnits='userSpaceOnUse'><stop stop-color='#D83333'></stop><stop offset='1' stop-color='#F041FF'></stop></linearGradient></defs></svg>
+			</a>
+			
+			<span class='text-zinc-400 dark:text-zinc-600'>•</span>
+
+			<!-- GitHub Repo -->
+			<a href='https://github.com/hunkstalker/denis-anfruns-web' target='_blank' rel='noopener noreferrer' class='flex items-center gap-1.5 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors' title='Ver código en GitHub'>
+				<svg class='w-4 h-4' viewBox='0 0 24 24' fill='currentColor'><path d='M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z'/></svg>
+				<span>GitHub</span>
+			</a>
+			
+			{ currentPath !== privacyPath && (
+				<>
+					<span class='text-zinc-400 dark:text-zinc-600'>•</span>
+					<a href={`${privacyPath}/`} class='hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors'>
+						{t('footer.privacy')}
 					</a>
-				</div>
-			)
-		}
+				</>
+			)}
+		</div>
+
+		<!-- Right Spacer (for centering balance) -->
+		<div class="hidden md:block w-24"></div>
 	</div>
 </footer>
