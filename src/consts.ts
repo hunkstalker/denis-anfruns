@@ -1,11 +1,13 @@
+import { SiAstro, SiReact, SiDotnet } from "react-icons/si";
+import { FaMicrosoft, FaGlobe } from "react-icons/fa";
+
 export const SKILLS = [
-  "Power Apps",
-  "Power Automate",
-  "Astro",
-  "React",
-  "SharePoint",
-  ".NET MAUI",
-  "APIs Web nativas"
+  { name: "Power Platform", Icon: FaMicrosoft },
+  { name: "SharePoint", Icon: FaMicrosoft },
+  { name: ".NET MAUI", Icon: SiDotnet },
+  { name: "Astro", Icon: SiAstro },
+  { name: "React", Icon: SiReact },
+  { name: "APIs Web nativas", Icon: FaGlobe }
 ];
 
 export const SITE_TITLE = 'Denis A. M. Portfolio';

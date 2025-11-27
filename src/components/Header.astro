@@ -1,26 +1,39 @@
 ---
-import experiencieYears from '../utils/experiencieYears';
-import { SKILLS } from '../consts';
-import { useTranslations } from '../i18n/utils';
-import '../styles/header-effects.css';
+import experiencieYears from '../utils/experiencieYears'
+import { SKILLS } from '../consts'
+import { useTranslations } from '../i18n/utils'
 
 interface Props {
-  lang?: 'es' | 'en' | 'ca';
+	lang?: 'es' | 'en' | 'ca'
 }
 
-const { lang = 'es' } = Astro.props;
-const t = useTranslations(lang);
-const years = experiencieYears();
+const { lang = 'es' } = Astro.props
+const t = useTranslations(lang)
+const years = experiencieYears()
 ---
-<header class="text-center mt-10 sm:mt-40">
-    <h1 class="text-left md:text-center text-zinc-900 dark:text-white mx-6 md:mx-0 drop-shadow-md text-[3.95rem] sm:text-[4rem] lg:text-[5rem] leading-[80px] font-bold tracking-wide">DENIS ANFRUNS MILLÁN</h1>
 
-    <p class="xl:text-3xl lg:text-2xl text-xl  mx-8 sm:mx-0 tracking-wide mt-5">{t('header.role')}<span id="experience" class="font-black text-[var(--jade-hover)] dark:text-[var(--jade)]"> +{years} {t('header.years')}</span> <span> {t('header.experience')}</span></p>
-    <ul class="flex flex-wrap gap-2 justify-center mt-10">
-        {SKILLS.map((skill) => (
-            <li class="px-5 py-3 bg-zinc-300 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded">{skill}</li>
-        ))}
-    </ul>
+<header class='text-center mt-10 sm:mt-40'>
+	<h1
+		class='text-left md:text-center text-zinc-900 dark:text-white mx-6 md:mx-0 drop-shadow-md text-[3.95rem] sm:text-[4rem] lg:text-[5rem] leading-[80px] font-bold tracking-wide'>
+		DENIS ANFRUNS MILLÁN
+	</h1>
 
-    <p class=" lg:text-xl md:mt-20 mt-10 font-medium tracking-normal">{t('header.socials')}</p>
+	<p class='xl:text-3xl lg:text-2xl text-xl mx-8 sm:mx-0 tracking-wide mt-5'>
+		{t('header.role')}<span
+			id='experience'
+			class='font-black text-[var(--jade-hover)] dark:text-[var(--jade)]'>
+			+{years} {t('header.years')}</span
+		>
+		<span> {t('header.experience')}</span>
+	</p>
+	<ul class='flex flex-wrap gap-2 sm:gap-3 justify-center mt-8 sm:mt-10 md:mt-12 mb-6 sm:mb-8 md:mb-10 px-2'>
+		{SKILLS.map(({ name, Icon }) => (
+			<li class='px-3 py-1.5 sm:px-4 bg-zinc-200/50 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 text-xs sm:text-sm rounded-full font-medium flex items-center gap-1.5 sm:gap-2 transition-transform hover:scale-105 cursor-default border border-zinc-300/60 dark:border-zinc-700/60'>
+				<Icon className='size-3 sm:size-4' />
+				<span>{name}</span>
+			</li>
+		))}
+	</ul>
+
+	<p class='lg:text-xl md:mt-20 mt-10 font-medium tracking-normal'>{t('header.socials')}</p>
 </header>
