@@ -14,14 +14,16 @@ const t = useTranslations(lang);
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-700/50 shadow-sm">
 	<div class="container flex items-center justify-between py-4">
 
-		<div class="inline-flex gap-5 md:gap-1">
+		<!-- Lado izquierdo -->
+		<div class="hidden sm:inline-flex md:gap-1">
 			<div class="text-center">
 				<Button text={t('nav.projects')} link='/' enabledBtn={false}/>
 			</div>
 		</div>
 
+		<!-- Lado derecho -->
 		<div class="flex gap-4 md:gap-6 items-center">
-            <LanguagePicker />
+			<LanguagePicker />
 			<SwitchBtnThemeMode />
 		</div>
 
@@ -29,7 +31,7 @@ const t = useTranslations(lang);
 </nav>
 
 <style>
-	/* Add padding to body to account for fixed nav */
+	/* Donde se incluya el nav se apliará el padding-top al body para dar espacio */
 	:global(body) {
 		padding-top: 4rem;
 	}
