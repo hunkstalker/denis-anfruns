@@ -15,8 +15,13 @@ const t = useTranslations(lang)
 <nav class='fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-700/50 shadow-sm'>
 	<div class='container'>
 		<div class='flex items-center justify-between py-4'>
-			
-			<!-- Lado izquierdo -->
+
+			<!-- Menú izquierdo Móvil -->
+			<div class='sm:hidden'>
+				
+			</div>
+
+			<!-- Nav izquierdo Desktop -->
 			<div class='hidden sm:inline-flex md:gap-1'>
 				<div class='text-center'>
 					<Button text={t('nav.projects')} link='/' enabledBtn={false} />
