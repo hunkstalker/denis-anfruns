@@ -17,6 +17,7 @@ export const ui = {
     'header.valueProp': 'Desarrollo de soluciones mantenibles y escalables',
     'footer.rights': 'Todos los derechos reservados.',
     'footer.astro': 'Web impulsada por ',
+    'footer.github': 'Código Fuente en GitHub',
     'footer.privacy': 'Política de Privacidad',
   },
   ca: {
@@ -29,6 +30,7 @@ export const ui = {
     'header.valueProp': 'Desenvolupament de solucions mantenibles i escalables',
     'footer.rights': 'Tots els drets reservats.',
     'footer.astro': 'Web impulsada per ',
+    'footer.github': 'Codi Font en GitHub',
     'footer.privacy': 'Política de Privacitat',
   },
   en: {
@@ -41,6 +43,7 @@ export const ui = {
     'header.valueProp': 'Development of maintainable and scalable solutions',
     'footer.rights': 'All rights reserved.',
     'footer.astro': 'Web powered by ',
+    'footer.github': 'Source Code in GitHub',
     'footer.privacy': 'Privacy Policy',
-  },
+  },  
 } as const;
