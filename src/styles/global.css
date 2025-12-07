@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Inter';
   src: url('/fonts/inter-variable.woff2') format('truetype');
-  font-display: swap;
+  font-display: optional;
 }
 
 * {
