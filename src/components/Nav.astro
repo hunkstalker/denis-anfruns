@@ -51,6 +51,9 @@ const t = useTranslations(lang)
   const overlay = document.getElementById('menu-overlay');
 
   function toggleMenu() {
+    if (!menu?.classList.contains('transition-transform')) {
+      menu?.classList.add('transition-transform', 'duration-300', 'ease-in-out');
+    }
     menu?.classList.toggle('-translate-x-full');
     overlay?.classList.toggle('hidden');
   }
