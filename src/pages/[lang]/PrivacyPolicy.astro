@@ -7,8 +7,6 @@ export async function getStaticPaths() {
   
   // Filter out 'es' since it's handled by src/pages/PrivacyPolicy.astro
   const filteredPages = pages.filter(page => page.slug !== 'es');
-  
-  console.log(`[PrivacyPolicy] Generating paths for: ${filteredPages.map(p => p.slug).join(', ')}`);
 
   return filteredPages.map((page) => {
     const lang = page.slug;
