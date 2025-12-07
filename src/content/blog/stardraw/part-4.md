@@ -1,7 +1,7 @@
 ---
 title: 'StarDraw Parte 4: Test'
 description: 'Post de prueba para verificar el funcionamiento del Series Widget.'
-pubDate: '2025-12-08 10:00'
+pubDate: '2025-12-08 13:00'
 tags: ['stardraw', 'react']
 series: 'StarDraw'
 new: true
