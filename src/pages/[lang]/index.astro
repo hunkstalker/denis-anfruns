@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Nav from '../../components/Nav.astro';
 import Header from '../../components/Header.astro';
-import SocialLinks from '../../components/SocialLinks.astro';
 
 export function getStaticPaths() {
   return [
@@ -18,6 +17,5 @@ const siteTitle = `Denis A. M. Portfolio`;
   <Nav lang={lang} />
   <div class='flex-1 container'>
     <Header lang={lang} />
-    <SocialLinks />
   </div>
 </BaseLayout>
