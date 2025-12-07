@@ -1,79 +1,35 @@
-<ul class="flex flex-wrap place-content-around md:flex-row justify-center items-center mt-6 mb-10 gap-6 md:gap-6">
-	<li class='hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200 ease-out hover:opacity-100 hover:scale-125 '>
-		<a class="list-none" href='https://www.linkedin.com/in/denis-anfruns/' title='LinkedIn' target='_blank'>
-			<div class="p-3 rounded-lg">
-				<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="text-blue-600 dark:text-blue-400"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 11v5" /><path d="M8 8v.01" /><path d="M12 16v-5" /><path d="M16 16v-3a2 2 0 1 0 -4 0" /><path d="M3 7a4 4 0 0 1 4 -4h10a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-10a4 4 0 0 1 -4 -4z" /></svg>
-			</div>
+---
+import LinkedIn from '../icons/linkedin.svg';
+import Github from '../icons/github.svg';
+import Mastodon from '../icons/mastodon.svg';
+import Twitter from '../icons/twitter.svg';
+import Bluesky from '../icons/bluesky.svg';
+---
+
+<ul class='flex flex-wrap place-content-around md:flex-row justify-center items-center mt-6 mb-10 gap-6 md:gap-6'>
+	<li class='hover:bg-[#0077b5]/10 dark:hover:bg-[#0077b5]/30 rounded-lg p-2 transition-all duration-200 ease-out hover:opacity-100 hover:scale-125'>
+		<a class='list-none' href='https://www.linkedin.com/in/denis-anfruns/' title='LinkedIn' target='_blank' rel='noopener noreferrer'>
+			<LinkedIn class='text-[#0077b5]' width='24' height='24' />
 		</a>
 	</li>
-	<li class='hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 ease-out hover:opacity-100 hover:scale-125 '>
-		<a class="list-none" href='https://github.com/hunkstalker' title='GitHub' target='_blank'>
-			<div class="p-3 rounded-lg">
-				<svg
-					xmlns='http://www.w3.org/2000/svg'
-					class='icon icon-tabler icon-tabler-brand-github text-gray-800 dark:text-gray-200'
-					width='24'
-					height='24'
-					viewBox='0 0 24 24'
-					stroke-width='2'
-					stroke='currentColor'
-					fill='none'
-					stroke-linecap='round'
-					stroke-linejoin='round'>
-					<defs>
-						<filter id="filtroDropShadow" x="-50%" y="-50%" width="200%" height="200%">
-							<feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
-							<feOffset in="blur" dx="2" dy="2" result="offsetBlur" />
-							<feMerge>
-									<feMergeNode in="offsetBlur" />
-									<feMergeNode in="SourceGraphic" />
-							</feMerge>
-						</filter>
-					</defs>
-					<path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
-					<path d='M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5'></path>
-				</svg>
-			</div>
+	<li class='hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg p-2 transition-all duration-200 ease-out hover:opacity-100 hover:scale-125'>
+		<a class='list-none' href='https://github.com/hunkstalker' title='GitHub' target='_blank' rel='noopener noreferrer'>
+			<Github class='text-gray-800 dark:text-gray-200' width='24' height='24' />
 		</a>
 	</li>
-	<li class='hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-lg transition-all duration-200 ease-out hover:opacity-100 hover:scale-125 '>
-		<a class="list-none" rel="me" href="https://fosstodon.org/@hunkstalker" title='Mastodon@Fosstodon' target='_blank'>
-			<div class="p-3 rounded-lg">
-			<svg 
-				class='icon icon-tabler icon-tabler-brand-mastodon text-purple-600 dark:text-purple-400'
-				width='24'
-				height='24'
-				viewBox="-45 -40 300 300"
-				stroke-width='25'
-				stroke='currentColor'
-				fill='none'
-				stroke-linecap='round'
-				stroke-linejoin='round'>
-				<path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
-				<path d="m211.80734,138.0875c-3.18125,16.36625 -28.4925,34.2775 -57.5625,37.74875c-15.15875,1.80875 -30.08375,3.47125 -45.99875,2.74125c-26.0275,-1.1925 -46.565,-6.2125 -46.565,-6.2125c0,2.53375 0.15625,4.94625 0.46875,7.2025c3.38375,25.68625 25.47,27.225 46.39125,27.9425c21.11625,0.7225 39.91875,-5.20625 39.91875,-5.20625l0.8675,19.09s-14.77,7.93125 -41.08125,9.39c-14.50875,0.7975 -32.52375,-0.365 -53.50625,-5.91875c-45.5075,-12.045 -53.33375,-60.55375 -54.53125,-109.77375c-0.365,-14.61375 -0.14,-28.39375 -0.14,-39.91875c0,-50.33 32.97625,-65.0825 32.97625,-65.0825c16.6275,-7.63625 45.15875,-10.8475 74.82,-11.09l0.72875,0c29.66125,0.2425 58.21125,3.45375 74.8375,11.09c0,0 32.975,14.7525 32.975,65.0825c0,0 0.41375,37.13375 -4.59875,62.915l0,0l0,0z"></path>
-				<path fill="currentColor" stroke-width='0' d="m177.50984,80.077l0,60.94125l-24.14375,0l0,-59.15c0,-12.46875 -5.24625,-18.7975 -15.74,-18.7975c-11.6025,0 -17.4175,7.5075 -17.4175,22.3525l0,32.37625l-24.00125,0l0,-32.37625c0,-14.845 -5.81625,-22.3525 -17.41875,-22.3525c-10.49375,0 -15.74,6.32875 -15.74,18.7975l0,59.15l-24.14375,0l0,-60.94125c0,-12.455 3.17125,-22.3525 9.54125,-29.675c6.56875,-7.3225 15.17125,-11.07625 25.85,-11.07625c12.355,0 21.71125,4.74875 27.8975,14.2475l6.01375,10.08125l6.015,-10.08125c6.185,-9.49875 15.54125,-14.2475 27.8975,-14.2475c10.6775,0 19.28,3.75375 25.85,11.07625c6.36875,7.3225 9.54,17.22 9.54,29.675"></path>
-			 </svg>
-			</div>
+	<li class='hover:bg-[#228DFF]/10 dark:hover:bg-[#228DFF]/30 rounded-lg p-2 transition-all duration-200 ease-out hover:opacity-100 hover:scale-125'>
+		<a class='list-none' href='https://bsky.app/profile/hunkstalker.bsky.social' title='Bluesky' target='_blank' rel='noopener noreferrer'>
+			<Bluesky class='text-[#228DFF]' width='24' height='24' />
 		</a>
 	</li>
-	<li class='hover:bg-sky-100 dark:hover:bg-sky-900/30 rounded-lg transition-all duration-200 ease-out hover:opacity-100 hover:scale-125 '>
-		<a class="list-none" href='https://twitter.com/hunkstalker' title='Twitter' target='_blank'>
-			<div class="p-3 rounded-lg">
-			<svg
-				xmlns='http://www.w3.org/2000/svg'
-				class='icon icon-tabler icon-tabler-brand-twitter text-sky-500 dark:text-sky-400'
-				width='24'
-				height='24'
-				viewBox='0 0 24 24'
-				stroke-width='2'
-				stroke='currentColor'
-				fill='none'
-				stroke-linecap='round'
-				stroke-linejoin='round'>
-				<path stroke='none' d='M0 0h24v24H0z' fill='none'></path>
-				<path d='M22 4.01c-1 .49 -1.98 .689 -3 .99c-1.121 -1.265 -2.783 -1.335 -4.38 -.737s-2.643 2.06 -2.62 3.737v1c-3.245 .083 -6.135 -1.395 -8 -4c0 0 -4.182 7.433 4 11c-1.872 1.247 -3.739 2.088 -6 2c3.308 1.803 6.913 2.423 10.034 1.517c3.58 -1.04 6.522 -3.723 7.651 -7.742a13.84 13.84 0 0 0 .497 -3.753c0 -.249 1.51 -2.772 1.818 -4.013z'></path>
-			</svg>
-		</div>
-	</a>
+	<li class='hover:bg-[#6364FF]/10 dark:hover:bg-[#6364FF]/30 rounded-lg p-2 transition-all duration-200 ease-out hover:opacity-100 hover:scale-125'>
+		<a class='list-none' rel='me noopener noreferrer' href='https://fosstodon.org/@hunkstalker' title='Mastodon@Fosstodon' target='_blank'>
+			<Mastodon class='text-[#6364FF]' width='24' height='24' />
+		</a>
+	</li>
+	<li class='hover:bg-[#1da1f2]/10 dark:hover:bg-[#1da1f2]/30 rounded-lg p-2 transition-all duration-200 ease-out hover:opacity-100 hover:scale-125'>
+		<a class='list-none' href='https://twitter.com/hunkstalker' title='Twitter' target='_blank' rel='noopener noreferrer'>
+			<Twitter class='text-[#1da1f2]' width='24' height='24' />
+		</a>
 	</li>
 </ul>

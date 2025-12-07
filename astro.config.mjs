@@ -14,4 +14,9 @@ export default defineConfig({
       prefixDefaultLocale: false
     }
   },
+  experimental: {
+    svgo: {
+      svgo: true
+    }
+  }
 });
