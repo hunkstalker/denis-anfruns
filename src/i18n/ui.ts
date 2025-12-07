@@ -9,6 +9,7 @@ export const defaultLang = 'es';
 export const ui = {
   es: {
     'nav.home': 'INICIO',
+    'nav.blog': 'BLOG',
     'nav.projects': 'PROYECTOS (WIP)',
     'nav.videogames': 'videojuegos',
     'nav.devblog': 'dev blog',
@@ -23,6 +24,7 @@ export const ui = {
   },
   ca: {
     'nav.home': 'INICI',
+    'nav.blog': 'BLOG',
     'nav.projects': 'PROJECTES (WIP)',
     'nav.videogames': 'videojocs',
     'nav.devblog': 'dev blog',
@@ -37,6 +39,7 @@ export const ui = {
   },
   en: {
     'nav.home': 'HOME',
+    'nav.blog': 'BLOG',
     'nav.projects': 'PROJECTS (WIP)',
     'nav.videogames': 'video games',
     'nav.devblog': 'dev blog',

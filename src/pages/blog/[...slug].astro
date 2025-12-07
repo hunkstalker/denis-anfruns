@@ -1,0 +1,41 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const lang = 'es';
+const { Content } = await post.render();
+---
+
+<BaseLayout siteTitle={post.data.title} lang={lang}>
+  <Nav lang={lang} />
+	<div class="container mx-auto px-4 py-8 pt-20 md:pt-28">
+		<article class="prose dark:prose-invert lg:prose-xl mx-auto">
+			<div class="mb-8">
+				{post.data.heroImage && <img width={1020} height={510} src={post.data.heroImage} alt="" class="rounded-lg shadow-lg mb-4" />}
+				<p class="text-sm text-zinc-500 mb-2">
+          Publicado: {post.data.pubDate.toLocaleString('es-ES', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} (CET)
+          {post.data.updatedDate && ` | Actualizado: ${post.data.updatedDate.toLocaleString('es-ES', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} (CET)`}
+        </p>
+				<h1 class="text-4xl font-bold dark:text-white mb-2">{post.data.title}</h1>
+        <div class="flex gap-2 mb-4">
+          {post.data.tags.map(tag => (
+             <span class="bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded text-sm text-gray-600 dark:text-gray-400">#{tag}</span>
+          ))}
+        </div>
+				<hr class="border-zinc-300 dark:border-zinc-700 my-4"/>
+			</div>
+			<Content />
+		</article>
+	</div>
+</BaseLayout>

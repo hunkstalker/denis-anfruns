@@ -30,7 +30,7 @@ const t = useTranslations(lang)
 			<div class='hidden sm:inline-flex md:gap-1'>
 				<div class='text-center'>
 					<Button text={t('nav.home')} link='/' enabledBtn={true} />
-					<Button text={t('nav.projects')} link='/' enabledBtn={false} />
+					<Button text={t('nav.blog')} link={lang === 'es' ? '/blog' : `/${lang}/blog`} enabledBtn={true} />
 				</div>
 			</div>
 
