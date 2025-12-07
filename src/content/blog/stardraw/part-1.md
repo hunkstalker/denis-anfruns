@@ -3,7 +3,8 @@ title: 'StarDraw ✨'
 description: 'Inicio del desarrollo de StarDraw, un proyecto para dominar React y crear mi primer proyecto público.'
 pubDate: '2025-11-22 20:28'
 # updatedDate: '2025-12-07 19:00'
-tags: ['stardraw','react', 'konva', 'zustand', 'excalidraw']
+tags: ['react', 'konva', 'zustand', 'stardraw', 'excalidraw']
+series: 'StarDraw'
 heroImage: '/assets/stardraw/hero-stardraw.png'
 ---
 

@@ -1,12 +1,55 @@
 ---
-import { getCollection } from 'astro:content';
+import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
+import { getLangFromSlug, getBaseSlug } from '../utils/blogI18n';
 
 const lang = 'es';
+const rawPosts = (await getCollection('blog')).filter(p => getLangFromSlug(p.slug) === 'es');
 
-const allPosts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+// Logic to consolidate series
+// Map series name -> Array of posts in that series
+const seriesMap = new Map<string, CollectionEntry<'blog'>[]>();
+const soloPosts: CollectionEntry<'blog'>[] = [];
+
+for (const post of rawPosts) {
+    if (post.data.series) {
+        const list = seriesMap.get(post.data.series) || [];
+        list.push(post);
+        seriesMap.set(post.data.series, list);
+    } else {
+        soloPosts.push(post);
+    }
+}
+
+// Process series:
+// 1. Sort posts by date within series.
+// 2. Pick the FIRST post (Part 1, oldest) to display.
+// 3. Use the LAST post's date (Newest) for sorting the feed.
+const finalSeriesPosts = Array.from(seriesMap.values()).map(list => {
+    // Sort ascending (Oldest -> Newest)
+    list.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+    
+    const part1 = list[0]; 
+    const latestPart = list[list.length - 1]; 
+    
+    // Clone Part 1 to avoid mutating original collection if deeply frozen (though usually fine in Astro)
+    // We want to effectively "hoist" Part 1 to the top based on Latest Update
+    // But we don't want to change the displayed date if the design says "Published: Nov 22".
+    // However, for a "Feed", usually you want to show the activity date.
+    // Let's create a proxy object for the feed.
+    const entry = { 
+        ...part1, 
+        data: { 
+            ...part1.data, 
+            pubDate: latestPart.data.pubDate // Use latest date for sorting and display in feed
+        } 
+    };
+    return entry;
+});
+
+const allPosts = [...soloPosts, ...finalSeriesPosts].sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 
 const tils = allPosts.filter(post => post.data.tags.includes('til') || post.data.tags.includes('snippet'));
@@ -48,7 +91,7 @@ const articles = allPosts.filter(post => !post.data.tags.includes('til') && !pos
                 </div>
                 
                 <h3 class="text-xl font-bold mb-2 dark:text-white group-hover:text-blue-500 transition-colors">
-                  <a href={`/blog/${post.slug}/`}>
+                  <a href={`/blog/${getBaseSlug(post.slug)}/`}>
                     <span class="absolute inset-0"></span>
                     {post.data.title}
                   </a>
@@ -81,7 +124,7 @@ const articles = allPosts.filter(post => !post.data.tags.includes('til') && !pos
             {tils.length === 0 && <p class="text-zinc-500 italic text-sm">No hay TILs todavía.</p>}
 
             {tils.map((post) => (
-              <a href={`/blog/${post.slug}/`} class="block group p-4 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-green-500/50 transition-colors">
+              <a href={`/blog/${getBaseSlug(post.slug)}/`} class="block group p-4 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-green-500/50 transition-colors">
                 <div class="flex items-start justify-between gap-2 mb-1">
                   <span class="text-xs font-mono text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">
                     TIL
