@@ -36,21 +36,12 @@
 
 html {
   font-family: 'Inter', sans-serif, system-ui;
-  background-color: var(--bg-color-nav-light);
-}
-
-html nav {
-  background-color: var(--bg-color-light);
 }
 
 html.dark {
   color: #fff;
   background-color: var(--bg-color-dark);
   --color-highlight: #ffffff80;
-}
-
-html.dark nav {
-  background-color: var(--bg-color-nav-dark);
 }
 
 .container {

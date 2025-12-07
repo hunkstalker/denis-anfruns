@@ -4,6 +4,9 @@ import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
 import LanguagePicker from './LanguagePicker.astro'
 import { useTranslations } from '../i18n/utils'
 
+import MenuIcon from '../icons/menu.svg'
+import SideMenu from './SideMenu.astro'
+
 interface Props {
 	lang?: 'es' | 'en' | 'ca'
 }
@@ -18,12 +21,15 @@ const t = useTranslations(lang)
 
 			<!-- Menú izquierdo Móvil -->
 			<div class='sm:hidden'>
-				
+				<button id='menu-toggle' >
+					<MenuIcon />
+				</button>
 			</div>
 
 			<!-- Nav izquierdo Desktop -->
 			<div class='hidden sm:inline-flex md:gap-1'>
 				<div class='text-center'>
+					<Button text={t('nav.home')} link='/' enabledBtn={true} />
 					<Button text={t('nav.projects')} link='/' enabledBtn={false} />
 				</div>
 			</div>
@@ -36,6 +42,22 @@ const t = useTranslations(lang)
 		</div>
 	</div>
 </nav>
+
+<SideMenu lang={lang} />
+
+<script>
+  const btn = document.getElementById('menu-toggle');
+  const menu = document.getElementById('side-menu');
+  const overlay = document.getElementById('menu-overlay');
+
+  function toggleMenu() {
+    menu?.classList.toggle('-translate-x-full');
+    overlay?.classList.toggle('hidden');
+  }
+
+  btn?.addEventListener('click', toggleMenu);
+  overlay?.addEventListener('click', toggleMenu);
+</script>
 
 <style>
 	/* Donde se incluya el nav se apliará el padding-top al body para dar espacio */

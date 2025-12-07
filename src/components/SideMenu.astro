@@ -1,12 +1,19 @@
 ---
+import Button from './Button.astro'
+import { useTranslations } from '../i18n/utils'
 
+const { lang = 'es' } = Astro.props
+const t = useTranslations(lang)
 ---
-<div>
-  <!-- <LanguageMenu/> -->
-</div>
-<style>
-  div {
-    display: flex;
-		align-items: center;
-  }
-</style>
+
+<aside id='side-menu' class='fixed inset-y-0 left-0 top-16 z-40 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 transform -translate-x-full transition-transform duration-300 ease-in-out'>
+	<div class='p-6'>
+		<nav class='flex flex-col gap-4 bg-transparent'>
+			<Button text={t('nav.home')} link='/' enabledBtn={true} />
+			<Button text={t('nav.projects')} link='/projects' enabledBtn={false} />
+		</nav>
+	</div>
+</aside>
+
+<!-- Overlay para cerrar al hacer click fuera -->
+<div id='menu-overlay' class='fixed inset-0 z-30 bg-black/50 hidden backdrop-blur-sm'></div>

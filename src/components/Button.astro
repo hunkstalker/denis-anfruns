@@ -8,9 +8,9 @@ const { text, link, enabledBtn } = Astro.props;
 ---
 <a 
   href={enabledBtn ? link : undefined} 
-  title='Mis proyectos'
+  title={text}
   class:list={[
-    'm-5 relative text-sm xs:text-md md:text-lg rounded-lg inline-block px-4 py-2 transition-colors',
+    'relative text-sm xs:text-md md:text-lg rounded-lg inline-block px-4 py-2 transition-colors',
     {
       'hover:bg-zinc-600 hover:text-white cursor-pointer': enabledBtn,
       'text-gray-400 font-bold pointer-events-none cursor-default': !enabledBtn

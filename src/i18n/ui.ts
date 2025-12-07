@@ -8,6 +8,7 @@ export const defaultLang = 'es';
 
 export const ui = {
   es: {
+    'nav.home': 'INICIO',
     'nav.projects': 'PROYECTOS (WIP)',
     'nav.videogames': 'videojuegos',
     'nav.devblog': 'dev blog',
@@ -21,6 +22,7 @@ export const ui = {
     'footer.privacy': 'Política de Privacidad',
   },
   ca: {
+    'nav.home': 'INICI',
     'nav.projects': 'PROJECTES (WIP)',
     'nav.videogames': 'videojocs',
     'nav.devblog': 'dev blog',
@@ -34,6 +36,7 @@ export const ui = {
     'footer.privacy': 'Política de Privacitat',
   },
   en: {
+    'nav.home': 'HOME',
     'nav.projects': 'PROJECTS (WIP)',
     'nav.videogames': 'video games',
     'nav.devblog': 'dev blog',
