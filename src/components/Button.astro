@@ -1,24 +1,33 @@
 ---
 interface Props {
-  text: string;
-  link: string;
-  enabledBtn: boolean;
+	text: string
+	link: string
+	enabled?: boolean
+	active?: boolean
 }
-const { text, link, enabledBtn } = Astro.props;
+const { text, link, enabled = true, active = false } = Astro.props
+
+const baseClasses = 'm-2 py-3 px-4 text-sm md:text-lg rounded-lg inline-block transition-colors no-underline leading-normal'
 ---
-<a 
-  href={enabledBtn ? link : undefined} 
-  title={text}
-  class:list={[
-    'm-2 py-3 px-4 relative text-sm xs:text-md md:text-lg rounded-lg inline-block transition-colors',
-    {
-      'hover:bg-zinc-600 hover:text-white cursor-pointer': enabledBtn,
-      'text-gray-400 font-bold pointer-events-none cursor-default': !enabledBtn
-    }
-  ]}
-  aria-disabled={!enabledBtn}
->
-  <span class="relative inline-flex items-center">
-    <span class="z-10">{text}</span>
-  </span>
-</a>
+
+{
+	active ? (
+		<a
+			href={link}
+			class={`${baseClasses} text-zinc-700 dark:text-zinc-200 hover:bg-zinc-600 hover:text-white`}
+			aria-current="page"
+			onclick="event.preventDefault()">
+			{text}
+		</a>
+	) : enabled ? (
+		<a
+			href={link}
+			class={`${baseClasses} text-zinc-700 dark:text-zinc-200 hover:bg-zinc-600 hover:text-white`}>
+			{text}
+		</a>
+	) : (
+		<span class={`${baseClasses} text-gray-400 cursor-default`} aria-disabled='true'>
+			{text}
+		</span>
+	)
+}
