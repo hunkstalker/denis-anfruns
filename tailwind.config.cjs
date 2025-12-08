@@ -20,5 +20,6 @@ module.exports = {
         width: "width"
       }
     }
-  }
+  },
+  plugins: [require('@tailwindcss/typography')],
 }

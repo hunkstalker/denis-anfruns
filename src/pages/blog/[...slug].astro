@@ -1,0 +1,132 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Nav from '../../components/Nav.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import SeriesWidget from '../../components/SeriesWidget.astro';
+import { getLangFromSlug, getBaseSlug } from '../../utils/blogi18n';
+import { useTranslations } from '../../i18n/utils'
+
+import ChevronUp from '../../icons/chevron-up.svg';
+import ChevronRight from '../../icons/chevron-right.svg';
+import ChevronLeft from '../../icons/chevron-left.svg';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+
+	return posts
+		.filter(post => getLangFromSlug(post.slug) === 'es')
+		.map((post) => ({
+			params: { slug: getBaseSlug(post.slug) },
+			props: post,
+		}));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const lang = getLangFromSlug(post.slug)
+const t = useTranslations(lang)
+const { Content, headings } = await post.render();
+
+
+let nextPost: CollectionEntry<'blog'> | null = null;
+if (post.data.series) {
+  const allPosts = await getCollection('blog');
+  const seriesPosts = allPosts
+    .filter(p => p.data.series === post.data.series && getLangFromSlug(p.slug) === 'es')
+    .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+  const currentIndex = seriesPosts.findIndex(p => p.slug === post.slug);
+  nextPost = seriesPosts[currentIndex + 1] || null;
+}
+---
+
+<BaseLayout siteTitle={post.data.title} lang={lang}>
+  <Nav lang={lang} />
+
+	<div class="container mx-auto px-4 py-8 pt-20 md:pt-28">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      
+      <article class="lg:col-span-8 xl:col-span-9 prose dark:prose-invert lg:prose-xl max-w-none">
+        <div class="mb-8 not-prose">
+          {post.data.heroImage && (
+            <div class="mb-6">
+              <img src={post.data.heroImage} alt={post.data.title} class="w-full h-auto max-h-[400px] object-cover rounded-lg" />
+            </div>
+          )}
+          
+          <div class="flex flex-wrap items-center gap-4 text-sm text-zinc-500 mb-4 font-mono">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {post.data.pubDate.toLocaleString('es-ES', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} (CET)
+            </time>
+            {post.data.updatedDate && (
+              <>
+                <span>/</span>
+                <span class="text-[--tangerine]">Actualizado: {post.data.updatedDate.toLocaleString('es-ES', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} (CET)</span>
+              </>
+            )}
+          </div>
+
+          <h1 class="text-4xl md:text-5xl font-bold dark:text-white mb-6 leading-tight text-balance">{post.data.title}</h1>
+          
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map(tag => (
+               <span class="bg-zinc-100 dark:bg-zinc-800 px-2.5 py-1 rounded-md text-sm font-medium text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/50">#{tag}</span>
+            ))}
+          </div>
+          <hr class="border-zinc-200 dark:border-zinc-800 mt-8"/>
+        </div>
+
+        <Content />
+
+        <footer class="mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-700 not-prose">
+          <div class="flex items-center justify-between">
+            <button 
+              id="scroll-to-top"
+              class="flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-[--tangerine] transition-colors group"
+            >
+              <ChevronUp class="group-hover:-translate-y-0.5 transition-transform" />
+              {t('blog.backToTop')}
+            </button>
+            
+            {nextPost && (
+              <a 
+                href={`/blog/${getBaseSlug(nextPost.slug)}/`}
+                class="flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-[--tangerine] transition-colors group no-underline"
+              >
+                {t('blog.nextPost')}
+                <ChevronRight class="group-hover:translate-x-1 transition-transform" />
+              </a>
+            )}
+          </div>
+        </footer>
+
+        <script>
+          document.getElementById('scroll-to-top')?.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        </script>
+      </article>
+
+      <aside class="hidden lg:block lg:col-span-4 xl:col-span-3">
+        <div class="sticky top-32 space-y-8">
+            {post.data.series && (
+              <SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+            )}
+
+            <TableOfContents headings={headings} />
+            
+            <div class="mt-8 pt-8 border-t border-zinc-100 dark:border-zinc-800">
+              <a href="/blog" class="flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <ChevronLeft />
+                {t('blog.backToBlog')}
+              </a>
+            </div>
+        </div>
+      </aside>
+
+    </div>
+	</div>
+  
+  <div class="h-16 md:h-24"></div>
+</BaseLayout>

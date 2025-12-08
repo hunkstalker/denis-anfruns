@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../utils/blogi18n';
+
+interface Props {
+  seriesId: string;
+  currentSlug: string;
+  lang?: SupportedLang;
+}
+
+const { seriesId, currentSlug, lang = 'es' } = Astro.props
+
+const allPosts = await getCollection('blog')
+const seriesPosts = allPosts
+  .filter((post) => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
+  .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+
+if (seriesPosts.length < 2) return null
+
+const getPath = (slug: string) => lang === 'es' ? `/blog/${getBaseSlug(slug)}/` : `/${lang}/blog/${getBaseSlug(slug)}/`
+---
+
+<div class="series-widget">
+  <h3 class="font-bold text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-4">
+    Serie: <span class="text-[--tangerine]">{seriesId}</span>
+  </h3>
+
+  <ul class="space-y-2 relative">
+    <div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-zinc-200 dark:bg-zinc-800 -z-10"></div>
+
+    {seriesPosts.map((post, index) => {
+      const isCurrent = post.slug === currentSlug
+      return (
+        <li class="relative pl-8 group">
+          <div 
+            class="series-status absolute left-0 top-0.5 w-6 h-6 rounded-full border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-950 flex items-center justify-center transition-all shadow-sm z-10"
+            data-slug={post.slug}
+          >
+            <svg class="check-icon w-3.5 h-3.5 text-white opacity-0 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            {isCurrent && <div class="current-dot absolute w-2 h-2 rounded-full bg-[--tangerine]"></div>}
+          </div>
+
+          <a 
+            href={getPath(post.slug)}
+            class={`block text-sm leading-tight py-1 transition-colors ${
+              isCurrent 
+                ? 'font-bold text-zinc-900 dark:text-white' 
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-[--tangerine]'
+            }`}
+          >
+            {post.data.title}
+            {post.data.new && (
+                <span class="new-badge ml-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/20">NEW</span>
+            )}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</div>
+
+<script is:inline define:vars={{ currentSlug }}>
+  function updateReadStatus() {
+    const STORAGE_KEY = 'blog:read-posts';
+    
+    let readPosts = [];
+    try {
+      readPosts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    } catch (e) {
+      console.error('Error reading localStorage', e)
+    }
+
+    if (!readPosts.includes(currentSlug)) {
+      readPosts.push(currentSlug);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(readPosts))
+    }
+
+    const indicators = document.querySelectorAll('.series-status')
+    indicators.forEach((el) => {
+      const slug = el.getAttribute('data-slug');
+      const isCurrent = el.querySelector('.current-dot') !== null
+      
+      if (readPosts.includes(slug)) {
+        const badge = el.parentElement?.querySelector('.new-badge')
+        if (badge) badge.classList.add('hidden');
+
+        if (!isCurrent) {
+            el.classList.add('bg-green-500', 'border-green-500', 'dark:border-green-500');
+            el.querySelector('.check-icon')?.classList.remove('opacity-0');
+        }
+      }
+    });
+  }
+  
+  updateReadStatus()
+  
+  document.addEventListener('astro:page-load', updateReadStatus)
+</script>
