@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro'
-import Nav from '../../components/Nav.astro'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Nav from '../../../components/Nav.astro'
 import { type CollectionEntry, getCollection } from 'astro:content'
-import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../../utils/blogi18n'
-import { languages } from '../../i18n/ui'
-import { useTranslations } from '../../i18n/utils'
+import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../../../utils/blogi18n'
+import { languages } from '../../../i18n/ui'
+import { useTranslations } from '../../../i18n/utils'
 
 export async function getStaticPaths() {
 	return Object.keys(languages)

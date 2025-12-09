@@ -50,12 +50,12 @@ const articles = allPosts.filter(p => !p.data.tags.includes('til'))
 
 <BaseLayout siteTitle='Jardín Digital' lang={lang}>
 	<Nav lang={lang} />
-	<div class='container mx-auto px-4 py-8 pt-20 md:pt-28'>
+	<div class='container mx-auto px-3 sm:px-4 py-6 sm:py-8 pt-20 md:pt-28'>
 		<!-- <div class='mb-12 text-center'>
 			<p class='text-xl text-zinc-600 dark:text-zinc-400 mx-auto'>Un espacio donde documento mi aprendizaje. Desde artículos profundos hasta pequeños fragmentos de código (TILs).</p>
 		</div> -->
 
-		<div class='grid grid-cols-1 lg:grid-cols-12 gap-12'>
+		<div class='grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12'>
 
 			<!-- Columna principal: Artículos -->
 			<div class='lg:col-span-8 space-y-12'>
@@ -65,10 +65,10 @@ const articles = allPosts.filter(p => !p.data.tags.includes('til'))
 
 				{articles.length === 0 && <p class='text-zinc-500 italic'>No hay artículos todavía.</p>}
 
-				<div class='grid gap-8'>
+				<div class='grid gap-4 sm:gap-6 lg:gap-8'>
 					{
 						articles.map(post => (
-							<article class='group relative flex flex-col md:flex-row gap-6 bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700/50 hover:border-blue-500/50 transition-all shadow-sm hover:shadow-md'>
+							<article class='group relative flex flex-col gap-4 sm:gap-6 bg-white dark:bg-zinc-800/50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-700/50 hover:border-blue-500/50 transition-all shadow-sm hover:shadow-md'>
 								<div class='flex-1'>
 									<div class='flex items-center gap-3 text-xs text-zinc-500 mb-3'>
 										<time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
@@ -98,8 +98,8 @@ const articles = allPosts.filter(p => !p.data.tags.includes('til'))
 			</div>
 
 			<!-- Columna lateral: TILs -->
-			<aside class='lg:col-span-4 space-y-8'>
-				<div class='bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 sticky top-24'>
+			<aside class='lg:col-span-4 space-y-6 sm:space-y-8'>
+				<div class='bg-zinc-50 dark:bg-zinc-900/50 p-4 sm:p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 lg:sticky lg:top-24'>
 					<h2 class='text-xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>
 						Notas TIL
 					</h2>
