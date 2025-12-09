@@ -1,16 +1,23 @@
 ---
 import Button from './Button.astro'
 import { useTranslations } from '../i18n/utils'
+import { navItems } from '../i18n/navigation'
 
 const { lang = 'es' } = Astro.props
 const t = useTranslations(lang)
+
+const currentPath = Astro.url.pathname
 ---
 
 <aside id='side-menu' class='fixed inset-y-0 left-0 top-16 z-40 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 transform -translate-x-full'>
 	<div class='p-6'>
 		<nav class='flex flex-col'>
-			<Button text={t('nav.home')} link='/' enabledBtn={true} />
-			<Button text={t('nav.projects')} link='/projects' enabledBtn={false} />
+			{navItems.map(item => {
+				const isActive = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path))
+				return (
+					<Button text={t(item.key)} link={item.path} enabled={item.enabled} active={item.enabled && isActive} />
+				)
+			})}
 		</nav>
 	</div>
 </aside>
