@@ -75,7 +75,7 @@ const articles = allPosts.filter(p => !p.data.tags.includes('til'))
 										<span class='bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium'>{post.data.tags[0]}</span>
 									</div>
 
-									<h3 class='text-xl font-bold mb-2 dark:text-white group-hover:text-blue-500 transition-colors'>
+									<h3 class='text-xl font-bold mb-2 dark:text-white group-hover:text-[--tangerine-hover] transition-colors'>
 										<a href={`/blog/${getBaseSlug(post.slug)}/`}>
 											<span class='absolute inset-0' />
 											{post.data.title}
@@ -84,7 +84,7 @@ const articles = allPosts.filter(p => !p.data.tags.includes('til'))
 
 									<p class='text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4'>{post.data.description}</p>
 
-									<div class='flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400'>
+									<div class='flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]'>
 										Leer artículo
 										<svg class='w-4 h-4 group-hover:translate-x-1 transition-transform' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 											<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 8l4 4m0 0l-4 4m4-4H3' />
