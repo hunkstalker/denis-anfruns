@@ -33,6 +33,7 @@ export const ui = {
     'blog.nextPost': 'Siguiente',
     'blog.previousPost': 'Anterior',
     'blog.updated': 'Actualizado',
+    'blog.tableOfContents': 'En esta página',
     'toc.title': 'Tabla de contenidos',
   },
   ca: {
@@ -61,6 +62,7 @@ export const ui = {
     'blog.nextPost': 'Següent',
     'blog.previousPost': 'Anterior',
     'blog.updated': 'Actualitzat',
+    'blog.tableOfContents': 'En aquesta pàgina',
     'toc.title': 'Taula de continguts',
   },
   en: {
@@ -89,6 +91,7 @@ export const ui = {
     'blog.nextPost': 'Next',
     'blog.previousPost': 'Previous',
     'blog.updated': 'Updated',
+    'blog.tableOfContents': 'In this page',
     'toc.title': 'Table of Contents',
   },  
 } as const;
