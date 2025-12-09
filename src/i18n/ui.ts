@@ -32,6 +32,8 @@ export const ui = {
     'blog.backToTop': 'Volver arriba',
     'blog.nextPost': 'Siguiente',
     'blog.previousPost': 'Anterior',
+    'blog.updated': 'Actualizado',
+    'toc.title': 'Tabla de contenidos',
   },
   ca: {
     'nav.home': 'INICI',
@@ -58,6 +60,8 @@ export const ui = {
     'blog.backToTop': 'Tornar adalt',
     'blog.nextPost': 'Següent',
     'blog.previousPost': 'Anterior',
+    'blog.updated': 'Actualitzat',
+    'toc.title': 'Taula de continguts',
   },
   en: {
     'nav.home': 'HOME',
@@ -84,5 +88,7 @@ export const ui = {
     'blog.backToTop': 'Back to Top',
     'blog.nextPost': 'Next',
     'blog.previousPost': 'Previous',
+    'blog.updated': 'Updated',
+    'toc.title': 'Table of Contents',
   },  
 } as const;
