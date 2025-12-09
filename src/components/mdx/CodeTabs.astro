@@ -1,0 +1,167 @@
+---
+import { Code } from 'astro:components';
+
+interface TabItem {
+  label: string;
+  code: string;
+  lang?: string;
+}
+
+interface Props {
+  items: TabItem[];
+}
+
+const { items } = Astro.props;
+// Generate a unique ID for this instance to scope the script events
+const uniqueId = 'code-tabs-' + Math.random().toString(36).substr(2, 9);
+---
+
+<div id={uniqueId} class="code-tabs-container my-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
+  <div class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 px-2 pt-2 rounded-t-lg">
+    <div class="flex items-center overflow-x-auto scrollbar-none flex-1" role="tablist">
+        {items.map((item, index) => (
+        <button
+            role="tab"
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-controls={`${uniqueId}-panel-${index}`}
+            data-index={index}
+            data-lang={item.lang}
+            class:list={[
+            "tab-button px-4 py-2 text-sm font-medium border-t border-x rounded-t-lg mr-1 transition-colors relative top-[1px] whitespace-nowrap",
+            index === 0
+                ? "active bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border-zinc-200 dark:border-zinc-800 border-b-white dark:border-b-zinc-900"
+                : "bg-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            ]}
+        >
+            {item.label}
+        </button>
+        ))}
+    </div>
+    <div class="shrink-0 pl-4 pr-2 pb-2">
+        <span class="text-xs font-mono text-zinc-400 dark:text-zinc-500 select-none lang-label">
+            {items[0].lang}
+        </span>
+    </div>
+  </div>
+  
+  <div class="relative group">
+    <div class="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+       <button
+           class="copy-button p-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white/70 hover:text-white cursor-pointer backdrop-blur-sm transition-all"
+           title="Copy code"
+           aria-label="Copy code"
+       >
+           <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+           <svg class="check-icon hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+       </button>
+    </div>
+
+    {items.map((item, index) => (
+      <div
+        id={`${uniqueId}-panel-${index}`}
+        role="tabpanel"
+        class:list={["tab-panel transition-all duration-300", { hidden: index !== 0 }]}
+      >
+        <Code code={item.code} lang={item.lang as any} theme="github-dark" class="!m-0 !rounded-none p-4 min-h-[4rem] text-sm md:text-base leading-relaxed" />
+      </div>
+    ))}
+  </div>
+</div>
+
+<style is:global>
+  /* Override Shiki's default overflow to ensure it respects container width */
+  .astro-code {
+    overflow-x: auto !important;
+  }
+</style>
+
+<script>
+  // Script runs once on the client, logic handles multiple instances via event delegation or scoped init
+  class CodeTabs extends HTMLElement {
+    constructor() {
+      super();
+    }
+    // Logic could be here if using web components, but simpler island logic works too.
+  }
+
+  // Simple function to initialize a specific container instance
+  function initCodeTabs(container: Element) {
+    const tabs = container.querySelectorAll('.tab-button');
+    const panels = container.querySelectorAll('.tab-panel');
+    const copyBtn = container.querySelector('.copy-button');
+    
+    const langLabel = container.querySelector('.lang-label');
+    
+    // TAB SWITCHING
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const index = Number(tab.getAttribute('data-index'));
+            const lang = tab.getAttribute('data-lang');
+
+            // Update Tabs
+            tabs.forEach(t => {
+                t.setAttribute('aria-selected', 'false');
+                t.classList.remove('active', 'bg-white', 'dark:bg-zinc-900', 'text-zinc-900', 'dark:text-zinc-100', 'border-zinc-200', 'dark:border-zinc-800', 'border-b-white', 'dark:border-b-zinc-900');
+                t.classList.add('bg-transparent', 'text-zinc-500', 'hover:text-zinc-700', 'dark:text-zinc-400', 'dark:hover:text-zinc-200', 'border-transparent', 'hover:bg-zinc-100', 'dark:hover:bg-zinc-800');
+            });
+
+            tab.setAttribute('aria-selected', 'true');
+            tab.classList.remove('bg-transparent', 'text-zinc-500', 'hover:text-zinc-700', 'dark:text-zinc-400', 'dark:hover:text-zinc-200', 'border-transparent', 'hover:bg-zinc-100', 'dark:hover:bg-zinc-800');
+            tab.classList.add('active', 'bg-white', 'dark:bg-zinc-900', 'text-zinc-900', 'dark:text-zinc-100', 'border-zinc-200', 'dark:border-zinc-800', 'border-b-white', 'dark:border-b-zinc-900');
+
+            // Update Language Label
+            if (langLabel && lang) {
+                langLabel.textContent = lang;
+            }
+
+            // Update Panels
+            panels.forEach((p, i) => {
+                if (i === index) {
+                    p.classList.remove('hidden');
+                } else {
+                    p.classList.add('hidden');
+                }
+            });
+        });
+    });
+
+    // COPY FUNCTIONALITY
+    copyBtn?.addEventListener('click', async () => {
+        // Find visible code block
+        const visiblePanel = Array.from(panels).find(p => !p.classList.contains('hidden'));
+        if (!visiblePanel) return;
+        
+        const code = visiblePanel.querySelector('code')?.innerText || '';
+        
+        try {
+            await navigator.clipboard.writeText(code);
+            
+            // Toggle icons for feedback
+            const copyIcon = copyBtn.querySelector('.copy-icon');
+            const checkIcon = copyBtn.querySelector('.check-icon');
+            
+            copyIcon?.classList.add('hidden');
+            checkIcon?.classList.remove('hidden');
+            checkIcon?.classList.add('text-green-500');
+            
+            setTimeout(() => {
+                copyIcon?.classList.remove('hidden');
+                checkIcon?.classList.add('hidden');
+                checkIcon?.classList.remove('text-green-500');
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy', err);
+        }
+    });
+
+    // Optional: add visual hint that it initialized
+  }
+
+  // Initialize all present and future instances (Astro View Transitions compatible)
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('.code-tabs-container').forEach(initCodeTabs);
+  });
+  
+  // Also run on initial load if not using view transitions or for first paint
+  document.querySelectorAll('.code-tabs-container').forEach(initCodeTabs);
+</script>
