@@ -33,9 +33,10 @@ const currentPath = Astro.url.pathname
 			<div class='hidden sm:inline-flex md:gap-1'>
 				<div class='text-center'>
 					{navItems.map(item => {
-						const isActive = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path))
+            const finalPath = lang === 'es' ? item.path : `/${lang}${item.path === '/' ? '' : item.path}`
+						const isActive = currentPath === finalPath || (finalPath !== '/' && currentPath.startsWith(finalPath))
 						return (
-							<Button text={t(item.key)} link={item.path} enabled={item.enabled} active={item.enabled && isActive} />
+							<Button text={t(item.key)} link={finalPath} enabled={item.enabled} active={item.enabled && isActive} />
 						)
 					})}
 				</div>
