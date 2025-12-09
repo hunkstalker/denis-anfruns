@@ -45,13 +45,16 @@ if (post.data.series) {
 
 	<div class="container mx-auto px-4 py-8 pt-20 md:pt-28">
     
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
       
       <article class="lg:col-span-8 xl:col-span-9 prose dark:prose-invert lg:prose-xl max-w-none">
         <div class="mb-8 not-prose">
           {post.data.heroImage && (
             <div class="mb-6">
               <img src={post.data.heroImage} alt={post.data.title} class="w-full h-auto max-h-[400px] object-cover rounded-lg" />
+              {post.data.descriptionHeroImage && (
+                <p class="text-sm italic text-zinc-500 mt-2">{post.data.descriptionHeroImage}</p>
+              )}
             </div>
           )}
           
@@ -67,7 +70,7 @@ if (post.data.series) {
             )}
           </div>
 
-          <h1 class="text-4xl md:text-5xl font-bold dark:text-white mb-6 leading-tight text-balance">{post.data.title}</h1>
+          <h1 class="text-3xl md:text-5xl font-bold dark:text-white mb-6 leading-tight text-balance">{post.data.title}</h1>
           
           <div class="flex flex-wrap gap-2">
             {post.data.tags.map(tag => (
@@ -76,6 +79,17 @@ if (post.data.series) {
           </div>
           <hr class="border-zinc-200 dark:border-zinc-800 mt-8"/>
         </div>
+
+        <!-- Mobile Table of Contents (Collapsible) -->
+        <details class="lg:hidden mb-8 bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
+          <summary class="font-medium cursor-pointer text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            Tabla de contenidos
+          </summary>
+          <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+            <TableOfContents headings={headings} />
+          </div>
+        </details>
 
         <Content />
 
