@@ -14,7 +14,9 @@ import ChevronRight from '../../../icons/chevron-right.svg'
 import ChevronLeft from '../../../icons/chevron-left.svg'
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog')
+	const posts = await getCollection('blog', ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true
+	})
 	const supportedLangs = Object.keys(languages).filter(lang => lang !== 'es')
 
 	return posts
@@ -40,7 +42,9 @@ const { Content, headings } = await post.render()
 
 let nextPost: CollectionEntry<'blog'> | null = null
 if (post.data.series) {
-	const allPosts = await getCollection('blog')
+	const allPosts = await getCollection('blog', ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true
+	})
 	const seriesPosts = allPosts.filter(p => p.data.series === post.data.series && getLangFromSlug(p.slug) === lang).sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
 	const currentIndex = seriesPosts.findIndex(p => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null

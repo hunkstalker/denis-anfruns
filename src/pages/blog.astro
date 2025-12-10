@@ -5,7 +5,9 @@ import { type CollectionEntry, getCollection } from 'astro:content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 
 const lang = 'es'
-const rawPosts = (await getCollection('blog')).filter(p => getLangFromSlug(p.slug) === lang)
+const rawPosts = (await getCollection('blog', ({ data }) => {
+	return import.meta.env.PROD ? data.draft !== true : true
+})).filter(p => getLangFromSlug(p.slug) === lang)
 
 const seriesMap = new Map<string, CollectionEntry<'blog'>[]>()
 const soloPosts: CollectionEntry<'blog'>[] = []

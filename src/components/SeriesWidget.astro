@@ -8,9 +8,17 @@ interface Props {
   lang?: SupportedLang;
 }
 
+const badgetText = {
+  es: {'b.new': 'NUEVO'},
+  ca: {'b.new': 'NOU'},
+  en: {'b.new': 'NEW'}
+}
+
 const { seriesId, currentSlug, lang = 'es' } = Astro.props
 
-const allPosts = await getCollection('blog')
+const allPosts = await getCollection('blog', ({ data }) => {
+	return import.meta.env.PROD ? data.draft !== true : true
+})
 const seriesPosts = allPosts
   .filter((post) => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
   .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
@@ -44,15 +52,17 @@ const getPath = (slug: string) => lang === 'es' ? `/blog/${getBaseSlug(slug)}/` 
 
           <a 
             href={getPath(post.slug)}
-            class={`block text-sm leading-tight py-1 transition-colors ${
+            class={`flex items-start text-sm leading-tight py-1 transition-colors ${
               isCurrent 
                 ? 'font-bold text-zinc-900 dark:text-white' 
                 : 'text-zinc-600 dark:text-zinc-400 hover:text-[--tangerine]'
             }`}
           >
-            {post.data.title}
+            {post.data.seriesTitle || post.data.title}
             {post.data.new && (
-                <span class="new-badge ml-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/20">NEW</span>
+              <span class="new-badge ml-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/20 whitespace-nowrap align-middle">
+                {badgetText[lang]['b.new']}
+              </span>
             )}
           </a>
         </li>
