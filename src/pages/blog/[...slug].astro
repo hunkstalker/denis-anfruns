@@ -50,7 +50,8 @@ if (post.data.series) {
 			<article 
         class='lg:col-span-8 xl:col-span-9 prose dark:prose-invert lg:prose-xl max-w-none'
         data-pagefind-body
-        data-pagefind-filter={`type:${post.data.tags.some(t => t.toLowerCase() === 'project' || t.toLowerCase() === 'stardraw') ? 'project' : 'blog'}`}
+        data-pagefind-filter={`type:${post.data.tags.some(t => t.toLowerCase() === 'project') ? 'project' : 'blog'}`}
+        data-pagefind-meta={`description:${post.data.description}`}
       >
 				<div class='mb-8 not-prose'>
 					{
