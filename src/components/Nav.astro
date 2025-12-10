@@ -71,18 +71,11 @@ const currentPath = Astro.url.pathname
             </div>
           </div>
 
-          <!-- Desktop Results Dropdown (Placeholder) -->
-          <div class="absolute top-full right-0 mt-3 w-96 bg-white dark:bg-zinc-900 rounded-xl shadow-xl ring-1 ring-black/5 dark:ring-white/10 opacity-0 invisible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 transform origin-top-right overflow-hidden z-50">
-             <!-- Categorized Results Demo -->
-             <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
-                <div class="p-3">
-                  <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2">Artículos recientes</h3>
-                  <div class="space-y-1">
-                    <a href="#" class="block px-2 py-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-sm text-zinc-700 dark:text-zinc-300">
-                      StarDraw: Implementando el Canvas
-                    </a>
-                  </div>
-                </div>
+          <!-- Desktop Results Dropdown -->
+          <div id="desktop-search-results" class="absolute top-full right-0 mt-3 w-96 bg-white dark:bg-zinc-900 rounded-xl shadow-xl ring-1 ring-black/5 dark:ring-white/10 opacity-0 invisible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 transform origin-top-right overflow-hidden z-50">
+             <!-- Results will be injected here -->
+             <div class="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+               Empieza a escribir...
              </div>
           </div>
         </div>
@@ -115,6 +108,93 @@ const currentPath = Astro.url.pathname
 
   // Desktop shortcut to focus input
   const desktopInput = document.querySelector('.group input') as HTMLInputElement;
+  const desktopResults = document.getElementById('desktop-search-results');
+  let navPagefind: any = null;
+
+  async function loadNavPagefind() {
+    if (navPagefind) return;
+    try {
+      // @ts-ignore
+      // Using a variable to prevent Vite from analyzing the import (it fails in dev because the file doesn't exist yet)
+      const pagefindUrl = '/pagefind/pagefind.js';
+      navPagefind = await import(/* @vite-ignore */ pagefindUrl);
+    } catch (e) {
+      console.warn('Pagefind not found (Nav).');
+    }
+  }
+
+  async function searchNav(query: string) {
+    if (!navPagefind || !query.trim()) {
+       if (desktopResults) desktopResults.innerHTML = '<div class="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">Empieza a escribir...</div>';
+       return;
+    }
+    const search = await navPagefind.search(query);
+    const results = await Promise.all(search.results.map((r: any) => r.data()));
+    renderNavResults(results);
+  }
+
+  function renderNavResults(results: any[]) {
+    if (!desktopResults) return;
+
+    if (results.length === 0) {
+      desktopResults.innerHTML = '<div class="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">No se encontraron resultados.</div>';
+      return;
+    }
+
+    const projects = results.filter(r => r.filters.type?.includes('project'));
+    const articles = results.filter(r => !r.filters.type || r.filters.type.includes('blog'));
+
+    let html = '<div class="max-h-96 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800">';
+
+    if (projects.length > 0) {
+      html += `
+        <div class="p-3">
+           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2">🚀 Proyectos</h3>
+           <div class="space-y-1">
+             ${projects.map(r => renderNavItem(r)).join('')}
+           </div>
+        </div>
+      `;
+    }
+
+    if (articles.length > 0) {
+      html += `
+        <div class="p-3">
+           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2">📝 Artículos</h3>
+           <div class="space-y-1">
+             ${articles.map(r => renderNavItem(r)).join('')}
+           </div>
+        </div>
+      `;
+    }
+    
+    html += '</div>';
+    desktopResults.innerHTML = html;
+  }
+
+  function renderNavItem(item: any) {
+    return `
+      <a href="${item.url}" class="block px-2 py-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 group">
+        <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-[--tangerine] dark:group-hover:text-[--tangerine] transition-colors">
+          ${item.meta.title}
+        </div>
+        <div class="text-xs text-zinc-400 line-clamp-1 mt-0.5">${item.excerpt}</div>
+      </a>
+    `;
+  }
+
+  let navTimeout: any;
+  if (desktopInput) {
+    desktopInput.addEventListener('focus', loadNavPagefind);
+    desktopInput.addEventListener('input', (e) => {
+      const val = (e.target as HTMLInputElement).value;
+      clearTimeout(navTimeout);
+      navTimeout = setTimeout(() => {
+        searchNav(val);
+      }, 300);
+    });
+  }
+
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (document.activeElement === desktopInput) {
