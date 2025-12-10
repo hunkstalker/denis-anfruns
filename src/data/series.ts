@@ -11,7 +11,7 @@ export interface SeriesData {
 
 export const seriesData: Record<string, SeriesData> = {
   'StarDraw': {
-    githubUrl: 'https://github.com/denis-anfruns/stardraw',
+    githubUrl: 'https://github.com/hunkstalker/stardraw',
     texts: {
       es: {
         title: 'Código Abierto',
