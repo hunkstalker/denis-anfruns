@@ -57,7 +57,7 @@ if (post.data.series) {
 					{
 						post.data.heroImage && (
 							<div class='mb-6'>
-								<img src={post.data.ogImage ?? post.data.heroImage} alt={post.data.title} class='w-full h-auto max-h-[400px] object-cover rounded-lg' />
+								<img src={post.data.heroImage} alt={post.data.title} class='w-full h-auto max-h-[400px] object-cover rounded-lg' />
 								{post.data.descriptionHeroImage && <p class='text-sm italic text-zinc-500 mt-2'>{post.data.descriptionHeroImage}</p>}
 							</div>
 						)
