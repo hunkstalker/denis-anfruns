@@ -47,7 +47,7 @@ if (post.data.series) {
 }
 ---
 
-<BaseLayout siteTitle={post.data.title} lang={lang} description={post.data.description} image={post.data.heroImage}>
+<BaseLayout siteTitle={post.data.title} lang={lang} description={post.data.description} image={post.data.ogImage ?? post.data.heroImage}>
 	<Nav lang={lang} />
 
 	<div class='container mx-auto px-4 py-8 pt-20 md:pt-28'>
@@ -57,7 +57,7 @@ if (post.data.series) {
 					{
 						post.data.heroImage && (
 							<div class='mb-6'>
-								<img src={post.data.heroImage} alt={post.data.title} class='w-full h-auto max-h-[400px] object-cover rounded-lg' />
+								<img src={post.data.ogImage ?? post.data.heroImage} alt={post.data.title} class='w-full h-auto max-h-[400px] object-cover rounded-lg' />
 								{post.data.descriptionHeroImage && <p class='text-sm italic text-zinc-500 mt-2'>{post.data.descriptionHeroImage}</p>}
 							</div>
 						)

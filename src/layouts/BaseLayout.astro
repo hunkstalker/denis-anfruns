@@ -12,12 +12,13 @@ interface Props {
 
 const { siteTitle, lang = 'es', description, image } = Astro.props;
 const defaultDescription = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
+const formattedTitle = `Denis A. M. Portfolio - ${siteTitle}`;
 ---
 
 <!DOCTYPE html>
 <html lang={lang}>
 	<head>
-		<BaseHead title={siteTitle} description={description || defaultDescription} image={image} />
+		<BaseHead title={formattedTitle} description={description || defaultDescription} image={image} />
 	</head>
 	<body class='flex flex-col min-h-screen' >
 		<main>
