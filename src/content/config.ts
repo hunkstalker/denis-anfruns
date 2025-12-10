@@ -20,6 +20,7 @@ const blog = defineCollection({
     ogImage: z.string().optional(),
     tags: z.array(z.string()).default(['general']),
     series: z.string().optional(),
+    seriesTitle: z.string().optional(),
     new: z.boolean().default(false),
     lang: z.enum(['es', 'en', 'ca']).default('es'),
     draft: z.boolean().default(false),
