@@ -35,6 +35,9 @@ export const ui = {
     'blog.updated': 'Actualizado',
     'blog.tableOfContents': 'En esta página',
     'toc.title': 'Tabla de contenidos',
+    'series.github.title': 'Código fuente',
+    'series.github.description': 'Explora, aprende y contribuye.',
+    'series.github.button': 'Ver en GitHub',
   },
   ca: {
     'nav.home': 'INICI',
@@ -64,6 +67,9 @@ export const ui = {
     'blog.updated': 'Actualitzat',
     'blog.tableOfContents': 'En aquesta pàgina',
     'toc.title': 'Taula de continguts',
+    'series.github.title': 'Codi font',
+    'series.github.description': 'Explora, aprèn i contribueix.',
+    'series.github.button': 'Veure a GitHub',
   },
   en: {
     'nav.home': 'HOME',
@@ -93,5 +99,8 @@ export const ui = {
     'blog.updated': 'Updated',
     'blog.tableOfContents': 'In this page',
     'toc.title': 'Table of Contents',
+    'series.github.title': 'Source code',
+    'series.github.description': 'Explore, learn and contribute.',
+    'series.github.button': 'View on GitHub',
   },  
 } as const;
