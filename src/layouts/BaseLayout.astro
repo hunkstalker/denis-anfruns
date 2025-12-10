@@ -6,16 +6,18 @@ import experiencieYears from '../utils/experiencieYears';
 interface Props {
 	siteTitle: string;
 	lang?: string;
+    description?: string;
+    image?: string;
 }
 
-const { siteTitle, lang = 'es' } = Astro.props;
-const description = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
+const { siteTitle, lang = 'es', description, image } = Astro.props;
+const defaultDescription = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
 ---
 
 <!DOCTYPE html>
 <html lang={lang}>
 	<head>
-		<BaseHead title={siteTitle} description={description} />
+		<BaseHead title={siteTitle} description={description || defaultDescription} image={image} />
 	</head>
 	<body class='flex flex-col min-h-screen' >
 		<main>

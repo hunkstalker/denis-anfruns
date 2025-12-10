@@ -38,7 +38,7 @@ if (post.data.series) {
 }
 ---
 
-<BaseLayout siteTitle={post.data.title} lang={lang}>
+<BaseLayout siteTitle={post.data.title} lang={lang} description={post.data.description} image={post.data.heroImage}>
 	<Nav lang={lang} />
 
 	<div class='container mx-auto px-4 py-8 pt-20 md:pt-28'>
