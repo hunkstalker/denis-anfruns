@@ -5,7 +5,9 @@ import Nav from '../../components/Nav.astro'
 import ChevronLeft from '../../icons/chevron-left.svg'
 
 export async function getStaticPaths() {
-	const posts = await getCollection('til')
+	const posts = await getCollection('til', ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true
+	})
 	return posts
 		.filter(post => post.data.lang === 'es')
 		.map(post => ({

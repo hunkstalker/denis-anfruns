@@ -34,6 +34,7 @@ const til = defineCollection({
     pubDate: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     lang: z.enum(['es', 'en', 'ca']).default('es'),
+    draft: z.boolean().default(false),
   })
 })
 
