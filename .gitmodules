@@ -1,0 +1,3 @@
+[submodule "packages/astro-search-badges"]
+	path = packages/astro-search-badges
+	url = https://github.com/hunkstalker/astro-search-badges.git
