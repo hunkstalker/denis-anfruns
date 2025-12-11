@@ -1,81 +1,94 @@
 ---
-import { getCollection } from 'astro:content'
+// Importación de utilidades de internalización (i18n)
 import { useTranslations } from '../i18n/utils'
+
+// Importación de funciones para obtener contenido (TILs y Posts)
 import { getTils } from '../utils/til-content'
 import { getBlogPosts } from '../utils/blog-content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
-import SearchIcon from '../icons/search.svg'
 
+// Importación de Iconos SVG
+import SearchIcon from '../icons/search.svg'
+import PinIcon from '../icons/pin.svg?raw' // Importación "raw" para inyectar SVG directamente
+import BookmarkIcon from '../icons/bookmark.svg?raw'
+
+// Definición de las Props del componente
 interface Props {
 	lang: 'es' | 'en' | 'ca'
 }
 
+// Extracción de props y configuración de traducciones
 const { lang = 'es' } = Astro.props
 const t = useTranslations(lang)
 
-// Fetch recent items for default view
+// --- LÓGICA DEL SERVIDOR (Build Time) ---
+
+// 1. Obtener todos los elementos recientes de TIL y Blog para la vista por defecto
 const allTils = await getTils()
 const allBlog = await getBlogPosts()
 
-// Filter by lang and sort
+// 2. Filtrar TILs por idioma actual, ordenar por fecha descendente y tomar los 3 más recientes
 const recentTils = allTils
-	.filter((p) => p.data.lang === lang)
+	.filter(p => p.data.lang === lang)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 3) // Top 3 TILs
+	.slice(0, 3)
 
+// 3. Filtrar Posts por idioma actual, ordenar y tomar los 3 más recientes
 const recentPosts = allBlog
-	.filter((post) => getLangFromSlug(post.slug) === lang && post.data.pubDate)
+	.filter(post => getLangFromSlug(post.slug) === lang && post.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 3) // Top 3 Posts
+	.slice(0, 3)
 ---
 
-<div id="search-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-	<!-- Backdrop -->
+<!-- Modal de búsqueda para dispositivos móviles (y desktop overlay) -->
+<div id='search-modal' class='fixed inset-0 z-50 hidden' role='dialog' aria-modal='true'>
+	<!-- Fondo Oscuro / Backdrop con efecto blur -->
 	<div
-		class="fixed inset-0 bg-zinc-900/50 backdrop-blur-sm transition-opacity"
-		id="search-backdrop"
-	>
+		class='fixed inset-0 bg-zinc-900/50 backdrop-blur-sm transition-opacity'
+		id='search-backdrop'>
 	</div>
 
-	<!-- Modal Panel -->
-	<div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+	<!-- Panel del Modal -->
+	<div class='fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20'>
 		<div
-			class="mx-auto max-w-2xl transform divide-y divide-zinc-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all dark:divide-zinc-800 dark:bg-zinc-900"
-		>
-			<!-- Input Search -->
-			<div class="relative">
-				<SearchIcon class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-zinc-400" />
+			class='mx-auto max-w-2xl transform divide-y divide-zinc-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all dark:divide-zinc-800 dark:bg-zinc-900'>
+			<!-- Campo de Búsqueda (Input) -->
+			<div class='relative'>
+				<SearchIcon class='pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-zinc-400' />
 				<input
-					type="text"
-					class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-0 dark:text-white sm:text-sm"
-					placeholder="Buscar..."
-					role="combobox"
-					aria-expanded="false"
-					aria-controls="options"
+					type='text'
+					class='h-12 w-full border-0 bg-transparent pl-11 pr-4 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-0 dark:text-white sm:text-sm'
+					placeholder='Buscar...'
+					role='combobox'
+					aria-expanded='false'
+					aria-controls='options'
 					auto-focus
 				/>
 			</div>
 
-			<!-- Results List -->
-			<div id="search-results-container" class="max-h-96 scroll-py-3 overflow-y-auto p-3">
-				<!-- Default Content (Recent Items) -->
-				<div id="initial-results-content">
+			<!-- Lista de Resultados (Contenedor con scroll) -->
+			<div id='search-results-container' class='max-h-96 scroll-py-3 overflow-y-auto p-3'>
+				<!-- Contenido Inicial: Se muestra antes de buscar nada (Renderizado en Servidor) -->
+				<div id='initial-results-content'>
+					{/* Sección de TILs recientes */}
 					{
 						recentTils.length > 0 && (
-							<div class="px-2 py-2">
-								<h3 class="text-xs mb-2 font-semibold uppercase tracking-wider text-zinc-400">
-									💡 Recientes: TIL
+							<div class='px-2 py-2'>
+								<h3 class='text-xs mb-2 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-400'>
+									<span class='mr-2 h-4 w-4 text-zinc-400'>
+										<Fragment set:html={PinIcon} />
+									</span>
+									{t('blog.til')}
 								</h3>
-								<div class="space-y-1">
-									{recentTils.map((tilItem) => (
+								<div class='space-y-1'>
+									{recentTils.map(tilItem => (
 										<a
 											href={`/${lang}/til/${tilItem.slug.split('/').pop()}/`}
-											class="group block rounded-lg px-3 py-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
-										>
-											<h4 class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
+											class='group block rounded-lg px-2 py-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800'>
+											<h4 class='text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]'>
 												{tilItem.data.title}
 											</h4>
-											<div class="text-xs mt-0.5 flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+											<div class='text-xs mt-0.5 flex items-center gap-2 text-zinc-500 dark:text-zinc-400'>
 												<time datetime={tilItem.data.pubDate.toISOString()}>
 													{tilItem.data.pubDate.toLocaleDateString(lang)}
 												</time>
@@ -87,24 +100,26 @@ const recentPosts = allBlog
 						)
 					}
 
+					{/* Sección de Posts recientes */}
 					{
 						recentPosts.length > 0 && (
 							<div
-								class={`px-2 py-2 ${recentTils.length > 0 ? 'mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-800' : ''}`}
-							>
-								<h3 class="text-xs mb-2 font-semibold uppercase tracking-wider text-zinc-400">
-									📝 Recientes: DevLog
+								class={`px-2 py-2 ${recentTils.length > 0 ? 'mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-800' : ''}`}>
+								<h3 class='text-xs mb-2 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-400'>
+									<span class='mr-2 h-4 w-4 text-zinc-400'>
+										<Fragment set:html={BookmarkIcon} />
+									</span>
+									{t('blog.series')}
 								</h3>
-								<div class="space-y-1">
-									{recentPosts.map((blogItem) => (
+								<div class='space-y-1'>
+									{recentPosts.map(blogItem => (
 										<a
 											href={`/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
-											class="group block rounded-lg px-3 py-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
-										>
-											<h4 class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
+											class='group block rounded-lg px-2 py-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800'>
+											<h4 class='text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]'>
 												{blogItem.data.title}
 											</h4>
-											<p class="text-xs mt-0.5 line-clamp-1 text-zinc-500 dark:text-zinc-400">
+											<p class='text-xs mt-0.5 line-clamp-1 text-zinc-500 dark:text-zinc-400'>
 												{blogItem.data.description}
 											</p>
 										</a>
@@ -114,9 +129,10 @@ const recentPosts = allBlog
 						)
 					}
 
+					{/* Estado vacío si no hay TILs ni Posts recientes */}
 					{
 						recentTils.length === 0 && recentPosts.length === 0 && (
-							<div class="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+							<div class='py-10 text-center text-sm text-zinc-500 dark:text-zinc-400'>
 								<p>Escribe para buscar artículos y proyectos...</p>
 							</div>
 						)
@@ -128,15 +144,25 @@ const recentPosts = allBlog
 </div>
 
 <script>
+	// --- LÓGICA DEL CLIENTE (Browser) ---
+
+	import RocketIcon from '../icons/rocket.svg?raw'
+	import PinIcon from '../icons/pin.svg?raw'
+	import BookmarkIcon from '../icons/bookmark.svg?raw'
+	import { ui, defaultLang } from '../i18n/ui'
+
+	// Referencias a elementos del DOM
 	const modal = document.getElementById('search-modal')
 	const backdrop = document.getElementById('search-backdrop')
 	const input = modal?.querySelector('input')
 	const resultsContainer = modal?.querySelector('#search-results-container')
-	// Store the server-rendered default content
+	// Almacenar el contenido HTML inicial (renderizado por el servidor) para restaurarlo cuando no hay búsqueda
 	const defaultContent = resultsContainer?.innerHTML || ''
 
 	let pagefind: any = null
 
+	// Carga perezosa (Lazy Load) de Pagefind
+	// Solo se carga el script pesado de búsqueda cuando el usuario abre el modal
 	async function loadPagefind() {
 		if (pagefind) return
 		try {
@@ -148,56 +174,81 @@ const recentPosts = allBlog
 		}
 	}
 
+	// Función para ABRIR el buscador
 	function openSearch() {
 		modal?.classList.remove('hidden')
 		input?.focus()
 		loadPagefind()
 
-		// Restore default content if input is empty
+		// Restaurar contenido por defecto si el input está vacío
 		if (input && !input.value.trim() && resultsContainer) {
 			resultsContainer.innerHTML = defaultContent
 		}
 	}
 
+	// Función para CERRAR el buscador
 	function closeSearch() {
 		modal?.classList.add('hidden')
 	}
 
+	// Función para EJECUTAR la búsqueda
 	async function performSearch(query: string) {
 		if (!pagefind || !query.trim()) {
-			// Restore default content
+			// Si no hay librería o query vacía, restaurar contenido inicial "Recientes"
 			if (resultsContainer) resultsContainer.innerHTML = defaultContent
 			return
 		}
 
+		// Ejecutar búsqueda en Pagefind
 		const search = await pagefind.search(query)
-		const results = await Promise.all(search.results.map((r: any) => r.data()))
+		// Cargar datos completos de los resultados
+		const allResults = await Promise.all(search.results.map((r: any) => r.data()))
+
+		// Filtrar duplicados: Pagefind puede devolver múltiples resultados para la misma URL.
+		// Nos quedamos con el primero (más relevante).
+		const seenUrls = new Set()
+		const results = []
+		for (const result of allResults) {
+			if (!seenUrls.has(result.url)) {
+				seenUrls.add(result.url)
+				results.push(result)
+			}
+		}
+
 		renderResults(results)
 	}
 
+	// Función para RENDERIZAR los resultados en el DOM
 	function renderResults(results: any[]) {
 		if (!resultsContainer) return
+
+		// Obtener idioma actual para traducciones dinámicas en cliente
+		const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
+		const t = ui[currentLang]
 
 		if (results.length === 0) {
 			resultsContainer.innerHTML = `
         <div class="text-center py-10 text-sm text-zinc-500 dark:text-zinc-400">
-           ${input?.value ? '<p>No se encontraron resultados.</p>' : '<p>Escribe para buscar artículos y proyectos...</p>'}
+           ${input?.value ? `<p>${t['nav.noResults']}</p>` : '<p>Escribe para buscar artículos y proyectos...</p>'}
         </div>
       `
 			return
 		}
 
-		// Categorize results
-		const projects = results.filter((r) => r.filters.type?.includes('project'))
-		const tils = results.filter((r) => r.filters.type?.includes('til'))
-		const articles = results.filter((r) => !r.filters.type || r.filters.type.includes('blog'))
+		// Clasificar resultados por tipo (basado en filtros de Pagefind)
+		const projects = results.filter(r => r.filters.type?.includes('project'))
+		const tils = results.filter(r => r.filters.type?.includes('til'))
+		const articles = results.filter(r => !r.filters.type || r.filters.type.includes('blog'))
 
 		let html = ''
 
 		if (projects.length > 0) {
 			html += `
         <div class="px-2 py-2">
-           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">🚀 Proyectos</h3>
+           <h3 class="text-xs mb-2 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-400">
+             <span class="mr-2 h-4 w-4 text-zinc-400">${RocketIcon}</span>
+             ${t['nav.projects']}
+           </h3>
            <div class="space-y-1">
              ${projects.map((r: any) => renderItem(r)).join('')}
            </div>
@@ -208,7 +259,10 @@ const recentPosts = allBlog
 		if (tils.length > 0) {
 			html += `
         <div class="px-2 py-2 ${projects.length > 0 ? 'mt-4 border-t border-zinc-100 dark:border-zinc-800 pt-4' : ''}">
-           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">💡 TIL</h3>
+           <h3 class="text-xs mb-2 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-400">
+             <span class="mr-2 h-4 w-4 text-zinc-400">${PinIcon}</span>
+             ${t['blog.til']}
+           </h3>
            <div class="space-y-1">
              ${tils.map((r: any) => renderItem(r)).join('')}
            </div>
@@ -219,7 +273,10 @@ const recentPosts = allBlog
 		if (articles.length > 0) {
 			html += `
         <div class="px-2 py-2 ${projects.length > 0 || tils.length > 0 ? 'mt-4 border-t border-zinc-100 dark:border-zinc-800 pt-4' : ''}">
-           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">📝 DevLog</h3>
+           <h3 class="text-xs mb-2 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-400">
+             <span class="mr-2 h-4 w-4 text-zinc-400">${BookmarkIcon}</span>
+             ${t['blog.series']}
+           </h3>
            <div class="space-y-1">
              ${articles.map((r: any) => renderItem(r)).join('')}
            </div>
@@ -230,20 +287,21 @@ const recentPosts = allBlog
 		resultsContainer.innerHTML = html
 	}
 
+	// Helper para renderizar un item individual
 	function renderItem(item: any) {
 		return `
-      <a href="${item.url}" class="block px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group">
+      <a href="${item.url}" class="block px-2 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group">
         <h4 class="text-sm font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-[--tangerine] dark:group-hover:text-[--tangerine] transition-colors">
           ${item.meta.title}
         </h4>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">${item.excerpt}</p>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">${item.excerpt || item.meta.description}</p>
       </a>
     `
 	}
 
-	// Debounce search
+	// Debounce: Esperar 300ms a que el usuario deje de escribir para buscar
 	let timeout: any
-	input?.addEventListener('input', (e) => {
+	input?.addEventListener('input', e => {
 		const val = (e.target as HTMLInputElement).value
 		clearTimeout(timeout)
 		timeout = setTimeout(() => {
@@ -251,23 +309,24 @@ const recentPosts = allBlog
 		}, 300)
 	})
 
-	// Event Listeners being handled by the Nav button (setup there) or global events
-	window.addEventListener('keydown', (e) => {
+	// Event Listeners Globales: Cerrar con ESC
+	window.addEventListener('keydown', e => {
 		if (e.key === 'Escape') {
 			closeSearch()
 		}
 	})
 
+	// Cerrar al hacer clic en el backdrop
 	backdrop?.addEventListener('click', closeSearch)
 
-	// Close on click outside (wrapper)
+	// Cerrar al hacer clic fuera del contenido del modal
 	const wrapper = modal?.querySelector('.fixed.z-10')
-	wrapper?.addEventListener('click', (e) => {
+	wrapper?.addEventListener('click', e => {
 		if (e.target === wrapper) {
 			closeSearch()
 		}
 	})
 
-	// Custom event to open search from anywhere
+	// Evento Personalizado: Permite abrir el buscador desde otros componentes (ej: Navbar)
 	document.addEventListener('open-search', openSearch)
 </script>

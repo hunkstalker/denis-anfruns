@@ -1,10 +1,8 @@
 ---
-import { type CollectionEntry } from 'astro:content'
 import { getBlogPosts, type BlogPost } from '../../../utils/blog-content'
 import BaseLayout from '../../../layouts/BaseLayout.astro'
 import Nav from '../../../components/Nav.astro'
 import TableOfContents from '../../../components/TableOfContents.astro'
-import SeriesWidget from '../../../components/SeriesWidget.astro'
 import SeriesGithubCard from '../../../components/SeriesGithubCard.astro'
 import { getLangFromSlug, getBaseSlug } from '../../../utils/blogi18n'
 import { useTranslations } from '../../../i18n/utils'
@@ -22,7 +20,7 @@ export async function getStaticPaths() {
 		.filter((post) => {
             const parts = post.slug.split('/')
             const langParam = parts[parts.length - 1]
-            return supportedLangs.includes(langParam) || langParam === 'es'
+            return supportedLangs.includes(langParam)
         })
 		.map((post) => {
 			const parts = post.slug.split('/')

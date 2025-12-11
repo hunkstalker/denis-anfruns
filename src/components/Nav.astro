@@ -1,51 +1,63 @@
 ---
+// Importación de componentes UI
 import Button from './Button.astro'
 import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
 import LanguagePicker from './LanguagePicker.astro'
 import SideMenu from './SideMenu.astro'
 import Search from './Search.astro'
+
+// Importación de utilidades de internacionalización y navegación
 import { useTranslations } from '../i18n/utils'
 import { navItems } from '../i18n/navigation'
 
+// Importación de Iconos
 import MenuIcon from '../icons/menu.svg'
 import BookmarkIcon from '../icons/bookmark.svg?raw'
 import PinIcon from '../icons/pin.svg?raw'
 import SearchIcon from '../icons/search.svg'
 
+// Definición de las Props
 interface Props {
 	lang?: 'es' | 'en' | 'ca'
 }
 
+// Extracción de props y configuración de traducciones
 const { lang = 'es' } = Astro.props
 const t = useTranslations(lang)
 
-import { getCollection } from 'astro:content'
+// Importación de funciones de contenido (Server-side)
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 import { getBlogPosts } from '../utils/blog-content'
-
 import { getTils } from '../utils/til-content'
 
-// Fetch recent items for default view
+// --- LÓGICA DEL SERVIDOR (Build Time) ---
+
+// 1. Obtener todos los elementos (TILs y Posts)
 const allTils = await getTils()
 const allBlog = (await getBlogPosts())
-	// Filter drafts in PROD if needed (getBlogPosts logic handles drafts? No, we filter manually akin to getCollection logic if possible, or just rely on new logic)
-	// getBlogPosts returns ALL. We should filter drafts.
-	.filter(p => import.meta.env.PROD ? p.data.draft !== true : true)
+	// Filtrar borradores en producción
+	.filter(p => (import.meta.env.PROD ? p.data.draft !== true : true))
 
+// 2. Procesar TILs recientes (filtrar por idioma, ordenar y tomar 3)
 const recentTils = allTils
-	.filter((p) => p.data.lang === lang)
+	.filter(p => p.data.lang === lang)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 3)
 
+// 3. Procesar Posts (DevLog) recientes
+// - Filtrar por idioma
+// - Ordenar por fecha
+// - Agrupar series (mostrar solo un post por serie para evitar duplicados en el dropdown)
 const recentPosts = allBlog
-	.filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
+	.filter(p => getLangFromSlug(p.slug) === lang && p.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.reduce(
 		(acc, post) => {
-			if (acc.length >= 3) return acc
+			if (acc.length >= 3) return acc // Limitar a 3 items
 			const isSeries = post.data.series
 			if (isSeries) {
-				const seriesExists = acc.some((p) => p.data.series === isSeries)
+				// Si es parte de una serie, verificar si ya añadimos uno de esa serie
+				const seriesExists = acc.some(p => p.data.series === isSeries)
 				if (!seriesExists) acc.push(post)
 			} else {
 				acc.push(post)
@@ -55,30 +67,29 @@ const recentPosts = allBlog
 		[] as typeof allBlog,
 	)
 
+// Obtener ruta actual para resaltar el menú activo
 const currentPath = Astro.url.pathname
 ---
 
 <nav
-	class="fixed left-0 right-0 top-0 z-50 border-b border-zinc-200/50 bg-white/70 shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70"
->
-	<div class="container">
-		<div class="flex items-center justify-between py-4 md:py-6">
-			<!-- Menú izquierdo Móvil -->
-			<div class="sm:hidden">
-				<button id="menu-toggle">
+	class='fixed left-0 right-0 top-0 z-50 border-b border-zinc-200/50 bg-white/70 shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70'>
+	<div class='container'>
+		<div class='flex items-center justify-between py-4 md:py-6'>
+			
+			<!-- Menú Hamburguesa (Móvil) -->
+			<div class='sm:hidden'>
+				<button id='menu-toggle'>
 					<MenuIcon />
 				</button>
 			</div>
 
-			<!-- Nav izquierdo Desktop -->
-			<div class="hidden sm:inline-flex md:gap-1">
-				<div class="text-center">
+			<!-- Menú de Navegación Desktop (Enlaces) -->
+			<div class='hidden sm:inline-flex md:gap-1'>
+				<div class='text-center'>
 					{
-						navItems.map((navItem) => {
+						navItems.map(navItem => {
 							const finalPath =
-								lang === 'es'
-									? navItem.path
-									: `/${lang}${navItem.path === '/' ? '' : navItem.path}`
+								lang === 'es' ? navItem.path : `/${lang}${navItem.path === '/' ? '' : navItem.path}`
 							const isActive =
 								currentPath === finalPath ||
 								(finalPath !== '/' && currentPath.startsWith(finalPath))
@@ -95,62 +106,60 @@ const currentPath = Astro.url.pathname
 				</div>
 			</div>
 
-			<!-- Lado derecho -->
-			<div class="flex items-center gap-4 md:gap-6">
-				<!-- Botón de búsqueda móvil -->
+			<!-- Zona Derecha (Buscador, Idioma, Tema) -->
+			<div class='flex items-center gap-4 md:gap-6'>
+				
+				<!-- Botón Lupa (Solo Móvil) -->
 				<button
-					id="search-mobile-btn"
-					class="text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 md:hidden"
-					aria-label="Search"
-				>
-					<SearchIcon class="h-5 w-5" />
+					id='search-mobile-btn'
+					class='text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 md:hidden'
+					aria-label='Search'>
+					<SearchIcon class='h-5 w-5' />
 				</button>
 
-				<!-- Barra de búsqueda desktop -->
-				<div class="group relative hidden md:block">
-					<div class="relative">
+				<!-- Barra de Búsqueda (Solo Desktop) -->
+				<div class='group/search relative hidden md:block'>
+					<div class='relative'>
 						<span
-							class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 dark:text-zinc-400"
-						>
-							<SearchIcon class="h-4 w-4" />
+							class='absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 dark:text-zinc-400'>
+							<SearchIcon class='h-4 w-4' />
 						</span>
 						<input
-							type="text"
+							type='text'
 							placeholder={t('nav.search') || 'Buscar...'}
-							class="w-96 rounded-xl border border-zinc-200 bg-zinc-100 py-2 pl-10 pr-12 text-sm text-zinc-800 transition-all placeholder:text-zinc-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[--tangerine] dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-200 dark:placeholder:text-zinc-400"
+							class='w-96 rounded-xl border border-zinc-200 bg-zinc-100 py-2 pl-10 pr-12 text-sm text-zinc-800 transition-all placeholder:text-zinc-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[--tangerine] dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-200 dark:placeholder:text-zinc-400'
 						/>
-						<div class="absolute right-2 top-2 flex items-center gap-1">
+						<div class='absolute right-2 top-2 flex items-center gap-1'>
 							<span
-								id="shortcut-key"
-								class="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
+								id='shortcut-key'
+								class='rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-medium text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400'
 								>⌘K</span
 							>
 						</div>
 					</div>
 
-					<!-- Resultados de búsqueda de escritorio -->
+					<!-- Dropdown de Resultados (Desktop) -->
 					<div
-						id="desktop-search-results"
-						class="invisible absolute right-0 top-full z-50 mt-3 w-96 origin-top-right transform overflow-hidden rounded-xl bg-white opacity-0 shadow-xl ring-1 ring-black/5 transition-all duration-200 group-focus-within:visible group-focus-within:opacity-100 dark:bg-zinc-900 dark:ring-white/10"
-					>
-						<!-- Los resultados que se insertarán aquí. La estructura actual es para cuando no hay búsqueda -->
-						<div id="desktop-initial-content">
+						id='desktop-search-results'
+						class='invisible absolute right-0 top-full z-50 mt-3 w-96 origin-top-right transform overflow-hidden rounded-xl bg-white opacity-0 shadow-xl ring-1 ring-black/5 transition-all duration-200 group-focus-within/search:visible group-focus-within/search:opacity-100 dark:bg-zinc-900 dark:ring-white/10'>
+						
+						<!-- Contenedor de Resultados (Inicialmente muestra Recientes) -->
+						<div id='desktop-initial-content'>
 							{
 								recentTils.length > 0 && (
-									<div class="p-3">
-										<h3 class="text-xs mb-2 flex items-center gap-2 px-2 font-semibold uppercase tracking-wider text-zinc-400">
-											<span class="mr-2 h-4 w-4 text-zinc-400">
+									<div class='p-3'>
+										<h3 class='text-xs mb-2 flex items-center gap-2 px-2 font-semibold uppercase tracking-wider text-zinc-400'>
+											<span class='mr-2 h-4 w-4 text-zinc-400'>
 												<Fragment set:html={PinIcon} />
 											</span>
 											{t('blog.til')}
 										</h3>
-										<div class="space-y-1">
-											{recentTils.map((tilItem) => (
+										<div class='space-y-1'>
+											{recentTils.map(tilItem => (
 												<a
 													href={`/${lang}/til/${tilItem.slug.split('/').pop()}/`}
-													class="group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
-												>
-													<div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+													class='group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'>
+													<div class='text-sm font-medium text-zinc-700 transition-colors group-hover:text-[--tangerine] dark:text-zinc-300 dark:group-hover:text-[--tangerine]'>
 														{tilItem.data.title}
 													</div>
 												</a>
@@ -162,23 +171,22 @@ const currentPath = Astro.url.pathname
 
 							{
 								recentPosts.length > 0 && (
-									<div class="p-3">
-										<h3 class="text-xs mb-2 flex items-center gap-2 px-2 font-semibold uppercase tracking-wider text-zinc-400">
-											<span class="mr-2 h-4 w-4 text-zinc-400">
+									<div class='p-3'>
+										<h3 class='text-xs mb-2 flex items-center gap-2 px-2 font-semibold uppercase tracking-wider text-zinc-400'>
+											<span class='mr-2 h-4 w-4 text-zinc-400'>
 												<Fragment set:html={BookmarkIcon} />
 											</span>
 											{t('blog.series')}
 										</h3>
-										<div class="space-y-1">
-											{recentPosts.map((blogItem) => (
+										<div class='space-y-1'>
+											{recentPosts.map(blogItem => (
 												<a
 													href={`/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
-													class="group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
-												>
-													<div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+													class='group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'>
+													<div class='text-sm font-medium text-zinc-700 transition-colors group-hover:text-[--tangerine] dark:text-zinc-300 dark:group-hover:text-[--tangerine]'>
 														{blogItem.data.title}
 													</div>
-													<div class="text-xs mt-0.5 line-clamp-1 text-zinc-400">
+													<div class='text-xs mt-0.5 line-clamp-1 text-zinc-400'>
 														{blogItem.data.description}
 													</div>
 												</a>
@@ -190,7 +198,7 @@ const currentPath = Astro.url.pathname
 
 							{
 								recentTils.length === 0 && recentPosts.length === 0 && (
-									<div class="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+									<div class='p-4 text-center text-sm text-zinc-500 dark:text-zinc-400'>
 										Empieza a escribir...
 									</div>
 								)
@@ -215,35 +223,38 @@ const currentPath = Astro.url.pathname
 	import BookmarkIcon from '../icons/bookmark.svg?raw'
 	import { ui, defaultLang } from '../i18n/ui'
 
+	// Lógica para abrir el buscador desde el botón móvil
 	const searchMobileBtn = document.getElementById('search-mobile-btn')
 	searchMobileBtn?.addEventListener('click', () => {
 		document.dispatchEvent(new CustomEvent('open-search'))
 	})
 
+	// Detección de SO para mostrar Command (Mac) o Ctrl (Windows)
 	const shortcutKey = document.getElementById('shortcut-key')
 	if (shortcutKey) {
-		// navigator.platform is deprecated, using userAgent fallback
+		// navigator.platform está deprecado, usamos userAgent como fallback
 		const isMac = navigator.userAgent.includes('Mac')
 		if (!isMac) {
 			shortcutKey.textContent = 'Ctrl K'
 		}
 	}
 
-	// Desktop shortcut to focus input
-	const desktopInput = document.querySelector('.group input') as HTMLInputElement
+	// Atajo de teclado para enfocar el input (Desktop)
+	const desktopInput = document.querySelector('.group\\/search input') as HTMLInputElement
 	const desktopResults = document.getElementById('desktop-search-results')
 
-	// We need to capture the initial HTML of the results container to restore it.
-	// Since this script runs on the client, we can grab it immediately.
+	// Almacenar el HTML inicial para restaurarlo cuando no hay búsqueda activa
+	// Como este script corre en el cliente, podemos capturarlo inmediatamente.
 	const defaultDesktopContent = desktopResults ? desktopResults.innerHTML : ''
 
 	let navPagefind: any = null
 
+	// Carga perezosa de Pagefind para la barra de navegación
 	async function loadNavPagefind() {
 		if (navPagefind) return
 		try {
 			// @ts-ignore
-			// Using a variable to prevent Vite from analyzing the import (it fails in dev because the file doesn't exist yet)
+			// Uso de variable para evitar que Vite intente analizar el import dinámico en build time
 			const pagefindUrl = '/pagefind/pagefind.js'
 			navPagefind = await import(/* @vite-ignore */ pagefindUrl)
 		} catch (e) {
@@ -251,16 +262,31 @@ const currentPath = Astro.url.pathname
 		}
 	}
 
+	// Función para realizar la búsqueda en el Nav
 	async function searchNav(query: string) {
 		if (!navPagefind || !query.trim()) {
+			// Restaurar contenido inicial si no hay búsqueda
 			if (desktopResults) desktopResults.innerHTML = defaultDesktopContent
 			return
 		}
 		const search = await navPagefind.search(query)
-		const results = await Promise.all(search.results.map((r: any) => r.data()))
+		const allResults = await Promise.all(search.results.map((r: any) => r.data()))
+
+		// Filtrar duplicados: Pagefind puede devolver múltiples resultados para la misma URL si hay muchas coincidencias.
+		// Nos quedamos solo con la primera (la más relevante).
+		const seenUrls = new Set()
+		const results = []
+		for (const result of allResults) {
+			if (!seenUrls.has(result.url)) {
+				seenUrls.add(result.url)
+				results.push(result)
+			}
+		}
+
 		renderNavResults(results)
 	}
 
+	// Función para renderizar los resultados del Nav
 	function renderNavResults(results: any[]) {
 		if (!desktopResults) return
 
@@ -269,6 +295,7 @@ const currentPath = Astro.url.pathname
 
 		let html = `<div class="max-h-96 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800">`
 
+		// Sin resultados
 		if (results.length === 0) {
 			html += `
 				<div class="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
@@ -277,47 +304,51 @@ const currentPath = Astro.url.pathname
 			`
 		}
 
-		const projects = results.filter((r) => r.filters.type?.includes('project'))
-		const tils = results.filter((r) => r.filters.type?.includes('til'))
-		const devlogs = results.filter((r) => !r.filters.type || r.filters.type.includes('blog'))
+		// Clasificar por tipo
+		const projects = results.filter(r => r.filters.type?.includes('project'))
+		const tils = results.filter(r => r.filters.type?.includes('til'))
+		const devlogs = results.filter(r => !r.filters.type || r.filters.type.includes('blog'))
 
+		// Renderizar Proyectos
 		if (projects.length > 0) {
 			html += `
         <div class="p-3">
            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2 flex items-center gap-2">
-             <span class="w-4 h-4 text-zinc-400">${RocketIcon}</span>
+             <span class="mr-2 h-4 w-4 text-zinc-400">${RocketIcon}</span>
              ${t['nav.projects']}
            </h3>
            <div class="space-y-1">
-             ${projects.map((r) => renderNavItem(r)).join('')}
+             ${projects.map(r => renderNavItem(r)).join('')}
            </div>
         </div>
       `
 		}
 
+		// Renderizar TILs
 		if (tils.length > 0) {
 			html += `
         <div class="p-3">
            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2 flex items-center gap-2">
-             <span class="w-4 h-4 text-zinc-400">${PinIcon}</span>
+             <span class="mr-2 h-4 w-4 text-zinc-400">${PinIcon}</span>
              ${t['blog.til']}
            </h3>
            <div class="space-y-1">
-             ${tils.map((r) => renderNavItem(r)).join('')}
+             ${tils.map(r => renderNavItem(r)).join('')}
            </div>
         </div>
       `
 		}
 
+		// Renderizar DevLogs
 		if (devlogs.length > 0) {
 			html += `
         <div class="p-3">
            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2 flex items-center gap-2">
-             <span class="w-4 h-4 text-zinc-400">${BookmarkIcon}</span>
+             <span class="mr-2 h-4 w-4 text-zinc-400">${BookmarkIcon}</span>
              ${t['blog.series']}
            </h3>
            <div class="space-y-1">
-             ${devlogs.map((r) => renderNavItem(r)).join('')}
+             ${devlogs.map(r => renderNavItem(r)).join('')}
            </div>
         </div>
       `
@@ -327,21 +358,23 @@ const currentPath = Astro.url.pathname
 		desktopResults.innerHTML = html
 	}
 
+	// Helper para renderizar item individual
 	function renderNavItem(item: any) {
 		return `
       <a href="${item.url}" class="block px-2 py-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 group">
         <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-[--tangerine] dark:group-hover:text-[--tangerine] transition-colors">
           ${item.meta.title}
         </div>
-        <div class="text-xs text-zinc-400 line-clamp-1 mt-0.5">${item.meta.description || item.excerpt}</div>
+        <div class="text-xs text-zinc-400 line-clamp-1 mt-0.5">${item.excerpt || item.meta.description}</div>
       </a>
     `
 	}
 
+	// Debounce y Listeners para el Input de Escritorio
 	let navTimeout: any
 	if (desktopInput) {
 		desktopInput.addEventListener('focus', loadNavPagefind)
-		desktopInput.addEventListener('input', (e) => {
+		desktopInput.addEventListener('input', e => {
 			const val = (e.target as HTMLInputElement).value
 			clearTimeout(navTimeout)
 			navTimeout = setTimeout(() => {
@@ -350,7 +383,8 @@ const currentPath = Astro.url.pathname
 		})
 	}
 
-	window.addEventListener('keydown', (e) => {
+	// Manejo global de teclas (Esc, Cmd+K)
+	window.addEventListener('keydown', e => {
 		if (e.key === 'Escape') {
 			if (document.activeElement === desktopInput) {
 				desktopInput.blur()
@@ -358,7 +392,8 @@ const currentPath = Astro.url.pathname
 		}
 		if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault()
-			// Using offsetParent to check visibility (it's null if hidden)
+			// Usamos offsetParent para verificar si el input es visible (es null si está oculto)
+			// Si es visible (Desktop), lo enfocamos. Si no (Mobile), abrimos el modal.
 			if (desktopInput && desktopInput.offsetParent !== null) {
 				desktopInput.focus()
 			} else {
@@ -369,11 +404,14 @@ const currentPath = Astro.url.pathname
 </script>
 
 <script>
+	// Lógica del Menú Lateral (Móvil)
 	const btn = document.getElementById('menu-toggle')
 	const menu = document.getElementById('side-menu')
 	const overlay = document.getElementById('menu-overlay')
 
+	// Alternar visibilidad del menú y el overlay
 	function toggleMenu() {
+		// Agregar clases de transición solo cuando se interactúa por primera vez para evitar flash en carga
 		if (!menu?.classList.contains('transition-transform')) {
 			menu?.classList.add('transition-transform', 'duration-300', 'ease-in-out')
 		}
