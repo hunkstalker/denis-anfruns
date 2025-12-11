@@ -12,9 +12,9 @@ import { navItems } from '../i18n/navigation'
 
 // Importación de Iconos
 import MenuIcon from '../icons/menu.svg'
+import SearchIcon from '../icons/search.svg'
 import BookmarkIcon from '../icons/bookmark.svg?raw'
 import PinIcon from '../icons/pin.svg?raw'
-import SearchIcon from '../icons/search.svg'
 
 // Definición de las Props
 interface Props {
@@ -71,6 +71,8 @@ const recentPosts = allBlog
 const currentPath = Astro.url.pathname
 ---
 
+
+
 <nav
 	class='fixed left-0 right-0 top-0 z-50 border-b border-zinc-200/50 bg-white/70 shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70'>
 	<div class='container'>
@@ -117,7 +119,7 @@ const currentPath = Astro.url.pathname
 					<SearchIcon class='h-5 w-5' />
 				</button>
 
-				<!-- Barra de Búsqueda (Solo Desktop) -->
+				<!-- Barra de Búsqueda (Solo Desktop) - Estilo Híbrido -->
 				<div class='group/search relative hidden md:block'>
 					<div class='relative'>
 						<span
@@ -127,7 +129,7 @@ const currentPath = Astro.url.pathname
 						<input
 							type='text'
 							placeholder={t('nav.search') || 'Buscar...'}
-							class='w-96 rounded-xl border border-zinc-200 bg-zinc-100 py-2 pl-10 pr-12 text-sm text-zinc-800 transition-all placeholder:text-zinc-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[--tangerine] dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-200 dark:placeholder:text-zinc-400'
+							class='w-96 rounded-xl border border-zinc-200 bg-zinc-100 py-2 pl-10 pr-12 text-sm text-zinc-800 placeholder:text-zinc-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[--tangerine] dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-200 dark:placeholder:text-zinc-400'
 						/>
 						<div class='absolute right-2 top-2 flex items-center gap-1'>
 							<span
@@ -138,71 +140,109 @@ const currentPath = Astro.url.pathname
 						</div>
 					</div>
 
-					<!-- Dropdown de Resultados (Desktop) -->
+					<!-- Mega-Dropdown de Resultados (Hybrid Overlay) -->
+					<!-- Overlay de fondo -->
+					<div
+						id='desktop-search-overlay'
+						class='fixed inset-x-0 top-[calc(100%+1px)] z-40 hidden h-screen bg-zinc-900/40 opacity-0 backdrop-blur-[2px] '>
+					</div>
+
+					<!-- Panel de Resultados (Mega-Dropdown) -->
 					<div
 						id='desktop-search-results'
-						class='invisible absolute right-0 top-full z-50 mt-3 w-96 origin-top-right transform overflow-hidden rounded-xl bg-white opacity-0 shadow-xl ring-1 ring-black/5 transition-all duration-200 group-focus-within/search:visible group-focus-within/search:opacity-100 dark:bg-zinc-900 dark:ring-white/10'>
+						class='invisible fixed inset-x-0 top-[6rem] z-50 mx-auto max-w-5xl origin-top -translate-y-4 transform overflow-hidden rounded-2xl border border-white/20 bg-white/40 opacity-0 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-out dark:border-white/10 dark:bg-zinc-900/50'>
 						
-						<!-- Contenedor de Resultados (Inicialmente muestra Recientes) -->
-						<div id='desktop-initial-content'>
-							{
-								recentTils.length > 0 && (
-									<div class='p-3'>
-										<h3 class='text-xs mb-2 flex items-center gap-2 px-2 font-semibold uppercase tracking-wider text-zinc-400'>
-											<span class='mr-2 h-4 w-4 text-zinc-400'>
-												<Fragment set:html={PinIcon} />
-											</span>
-											{t('blog.til')}
-										</h3>
-										<div class='space-y-1'>
-											{recentTils.map(tilItem => (
-												<a
-													href={`/${lang}/til/${tilItem.slug.split('/').pop()}/`}
-													class='group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'>
-													<div class='text-sm font-medium text-zinc-700 transition-colors group-hover:text-[--tangerine] dark:text-zinc-300 dark:group-hover:text-[--tangerine]'>
-														{tilItem.data.title}
-													</div>
-												</a>
-											))}
-										</div>
-									</div>
-								)
-							}
+						<!-- Contenido -->
+						<div id='desktop-content-container' class='max-h-[80vh] overflow-y-auto px-6 py-6'>
+							<!-- Resultados Iniciales -->
+							<div id='desktop-initial-content'>
+								{
+									recentTils.length > 0 && (
+										<div class='mb-6'>
+											<h3 class='text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400'>
+												<span class='mr-2 h-4 w-4'>
+													<Fragment set:html={PinIcon} />
+												</span>
+												{t('blog.til')}
+											</h3>
+											<div class='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3'>
+												{recentTils.map(tilItem => (
+													<a
+														href={`/${lang}/til/${tilItem.slug.split('/').pop()}/`}
+														class='group relative block h-full min-h-[140px] overflow-hidden rounded-xl bg-white/90 p-5 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
+														
+														{/* Header: Date + Arrow */}
+														<div class='mb-2 flex items-center justify-between'>
+															<time datetime={tilItem.data.pubDate.toISOString()} class='text-[10px] font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500'>
+																{tilItem.data.pubDate.toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' })}
+															</time>
+															<span class='opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[--tangerine] group-hover:opacity-100'>
+																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+															</span>
+														</div>
 
-							{
-								recentPosts.length > 0 && (
-									<div class='p-3'>
-										<h3 class='text-xs mb-2 flex items-center gap-2 px-2 font-semibold uppercase tracking-wider text-zinc-400'>
-											<span class='mr-2 h-4 w-4 text-zinc-400'>
-												<Fragment set:html={BookmarkIcon} />
-											</span>
-											{t('blog.series')}
-										</h3>
-										<div class='space-y-1'>
-											{recentPosts.map(blogItem => (
-												<a
-													href={`/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
-													class='group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'>
-													<div class='text-sm font-medium text-zinc-700 transition-colors group-hover:text-[--tangerine] dark:text-zinc-300 dark:group-hover:text-[--tangerine]'>
-														{blogItem.data.title}
-													</div>
-													<div class='text-xs mt-0.5 line-clamp-1 text-zinc-400'>
-														{blogItem.data.description}
-													</div>
-												</a>
-											))}
+														{/* Content */}
+														<div class='text-base font-semibold leading-tight text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-100 dark:group-hover:text-[--tangerine]'>
+															{tilItem.data.title}
+														</div>
+														<div class='mt-2 text-xs leading-relaxed text-zinc-500 line-clamp-3 dark:text-zinc-400'>
+															{/* @ts-ignore */}
+															{tilItem.data.description}
+														</div>
+													</a>
+												))}
+											</div>
 										</div>
-									</div>
-								)
-							}
+									)
+								}
 
-							{
-								recentTils.length === 0 && recentPosts.length === 0 && (
-									<div class='p-4 text-center text-sm text-zinc-500 dark:text-zinc-400'>
-										Empieza a escribir...
-									</div>
-								)
-							}
+								{
+									recentPosts.length > 0 && (
+										<div class='mb-6'>
+											<h3 class='text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400'>
+												<span class='mr-2 h-4 w-4'>
+													<Fragment set:html={BookmarkIcon} />
+												</span>
+												{t('blog.series')}
+											</h3>
+											<div class='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3'>
+												{recentPosts.map(blogItem => (
+													<a
+														href={`/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
+														class='group relative block h-full min-h-[140px] overflow-hidden rounded-xl bg-white/90 p-5 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
+														
+														{/* Header: Date + Arrow */}
+														<div class='mb-2 flex items-center justify-between'>
+															<time datetime={blogItem.data.pubDate.toISOString()} class='text-[10px] font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500'>
+																{blogItem.data.pubDate.toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' })}
+															</time>
+															<span class='opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[--tangerine] group-hover:opacity-100'>
+																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+															</span>
+														</div>
+
+														{/* Content */}
+														<div class='text-base font-semibold leading-tight text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-100 dark:group-hover:text-[--tangerine]'>
+															{blogItem.data.title}
+														</div>
+														<div class='mt-2 text-xs leading-relaxed text-zinc-500 line-clamp-3 dark:text-zinc-400'>
+															{blogItem.data.description}
+														</div>
+													</a>
+												))}
+											</div>
+										</div>
+									)
+								}
+
+								{
+									recentTils.length === 0 && recentPosts.length === 0 && (
+										<div class='p-8 text-center text-zinc-500 dark:text-zinc-400'>
+											<p>Empieza a escribir para buscar contenido...</p>
+										</div>
+									)
+								}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -232,48 +272,88 @@ const currentPath = Astro.url.pathname
 	// Detección de SO para mostrar Command (Mac) o Ctrl (Windows)
 	const shortcutKey = document.getElementById('shortcut-key')
 	if (shortcutKey) {
-		// navigator.platform está deprecado, usamos userAgent como fallback
 		const isMac = navigator.userAgent.includes('Mac')
 		if (!isMac) {
 			shortcutKey.textContent = 'Ctrl K'
 		}
 	}
 
-	// Atajo de teclado para enfocar el input (Desktop)
+	// === Lógica de Búsqueda Desktop Híbrida ===
 	const desktopInput = document.querySelector('.group\\/search input') as HTMLInputElement
-	const desktopResults = document.getElementById('desktop-search-results')
+	const resultsContainer = document.getElementById('desktop-search-results')
+	const resultsOverlay = document.getElementById('desktop-search-overlay')
+	const contentContainer = document.getElementById('desktop-content-container')
+	
 
-	// Almacenar el HTML inicial para restaurarlo cuando no hay búsqueda activa
-	// Como este script corre en el cliente, podemos capturarlo inmediatamente.
-	const defaultDesktopContent = desktopResults ? desktopResults.innerHTML : ''
+	
+	// Almacenar contenido inicial (Recientes)
+	const defaultContent = contentContainer ? contentContainer.innerHTML : ''
 
 	let navPagefind: any = null
+	let isOpen = false
 
-	// Carga perezosa de Pagefind para la barra de navegación
+	// Función para mostrar resultados/overlay
+	function showResults() {
+		if (resultsContainer && resultsOverlay) {
+			resultsOverlay.classList.remove('hidden')
+			// Forzar reflow para animación
+			void resultsOverlay.offsetWidth
+			resultsOverlay.classList.remove('opacity-0')
+			
+			resultsContainer.classList.remove('invisible', '-translate-y-4', 'opacity-0')
+			document.body.classList.add('overflow-hidden') // Lock scroll
+			isOpen = true
+		}
+	}
+
+	// Función para ocultar resultados/overlay
+	function hideResults() {
+		if (resultsContainer && resultsOverlay) {
+			resultsOverlay.classList.add('opacity-0')
+			resultsContainer.classList.add('-translate-y-4', 'opacity-0')
+			document.body.classList.remove('overflow-hidden') // Unlock scroll
+			
+			setTimeout(() => {
+				resultsOverlay.classList.add('hidden')
+				resultsContainer.classList.add('invisible')
+			}, 200)
+			isOpen = false
+		}
+	}
+
+	// Toggle basado en foco
+	desktopInput?.addEventListener('focus', () => {
+		showResults()
+		loadNavPagefind()
+	})
+
+	// Cerrar al hacer clic fuera (Overlay)
+	resultsOverlay?.addEventListener('click', hideResults)
+
+
+	// Carga perezosa de Pagefind
 	async function loadNavPagefind() {
 		if (navPagefind) return
 		try {
 			// @ts-ignore
-			// Uso de variable para evitar que Vite intente analizar el import dinámico en build time
 			const pagefindUrl = '/pagefind/pagefind.js'
 			navPagefind = await import(/* @vite-ignore */ pagefindUrl)
+            await navPagefind.init()
 		} catch (e) {
 			console.warn('Pagefind not found (Nav).')
 		}
 	}
 
-	// Función para realizar la búsqueda en el Nav
+	// Ejecutar búsqueda
 	async function searchNav(query: string) {
 		if (!navPagefind || !query.trim()) {
-			// Restaurar contenido inicial si no hay búsqueda
-			if (desktopResults) desktopResults.innerHTML = defaultDesktopContent
+			if (contentContainer) contentContainer.innerHTML = defaultContent
 			return
 		}
 		const search = await navPagefind.search(query)
 		const allResults = await Promise.all(search.results.map((r: any) => r.data()))
 
-		// Filtrar duplicados: Pagefind puede devolver múltiples resultados para la misma URL si hay muchas coincidencias.
-		// Nos quedamos solo con la primera (la más relevante).
+		// Deduplicación por URL
 		const seenUrls = new Set()
 		const results = []
 		for (const result of allResults) {
@@ -286,96 +366,72 @@ const currentPath = Astro.url.pathname
 		renderNavResults(results)
 	}
 
-	// Función para renderizar los resultados del Nav
 	function renderNavResults(results: any[]) {
-		if (!desktopResults) return
+		if (!contentContainer) return
 
 		const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
 		const t = ui[currentLang]
 
-		let html = `<div class="max-h-96 overflow-y-auto divide-y divide-zinc-100 dark:divide-zinc-800">`
+		let html = '<div class="space-y-6">'
 
-		// Sin resultados
 		if (results.length === 0) {
 			html += `
-				<div class="p-4 text-center text-sm text-zinc-500 dark:text-zinc-400">
+				<div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
 					${t['nav.noResults']}
 				</div>
 			`
+			contentContainer.innerHTML = html
+			return
 		}
 
-		// Clasificar por tipo
+		// Clasificar
 		const projects = results.filter(r => r.filters.type?.includes('project'))
 		const tils = results.filter(r => r.filters.type?.includes('til'))
 		const devlogs = results.filter(r => !r.filters.type || r.filters.type.includes('blog'))
 
-		// Renderizar Proyectos
-		if (projects.length > 0) {
-			html += `
-        <div class="p-3">
-           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2 flex items-center gap-2">
-             <span class="mr-2 h-4 w-4 text-zinc-400">${RocketIcon}</span>
-             ${t['nav.projects']}
-           </h3>
-           <div class="space-y-1">
-             ${projects.map(r => renderNavItem(r)).join('')}
-           </div>
-        </div>
-      `
+		// Renderizar (Grid Layout para más espacio)
+		// Renderizar (Grid Layout para más espacio)
+		const renderSection = (title: string, icon: string, items: any[]) => {
+			if (items.length === 0) return ''
+			return `
+				<div>
+					<h3 class="text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400">
+						<span class="mr-2 h-4 w-4">${icon}</span>
+						${title}
+					</h3>
+					<div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+						${items.map(item => `
+							<a href="${item.url}" class="group block h-full min-h-[140px] overflow-hidden rounded-xl bg-white/90 p-4 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]">
+								<div class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
+									${item.meta.title}
+								</div>
+								<div class="mt-2 text-xs text-zinc-500 line-clamp-5 dark:text-zinc-400">
+									${item.excerpt || item.meta.description}
+								</div>
+							</a>
+						`).join('')}
+					</div>
+				</div>
+			`
 		}
 
-		// Renderizar TILs
-		if (tils.length > 0) {
-			html += `
-        <div class="p-3">
-           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2 flex items-center gap-2">
-             <span class="mr-2 h-4 w-4 text-zinc-400">${PinIcon}</span>
-             ${t['blog.til']}
-           </h3>
-           <div class="space-y-1">
-             ${tils.map(r => renderNavItem(r)).join('')}
-           </div>
-        </div>
-      `
-		}
-
-		// Renderizar DevLogs
-		if (devlogs.length > 0) {
-			html += `
-        <div class="p-3">
-           <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 px-2 flex items-center gap-2">
-             <span class="mr-2 h-4 w-4 text-zinc-400">${BookmarkIcon}</span>
-             ${t['blog.series']}
-           </h3>
-           <div class="space-y-1">
-             ${devlogs.map(r => renderNavItem(r)).join('')}
-           </div>
-        </div>
-      `
-		}
-
+		html += renderSection(t['nav.projects'], RocketIcon, projects)
+		html += renderSection(t['blog.til'], PinIcon, tils)
+		html += renderSection(t['blog.series'], BookmarkIcon, devlogs)
+		
 		html += '</div>'
-		desktopResults.innerHTML = html
+		contentContainer.innerHTML = html
 	}
 
-	// Helper para renderizar item individual
-	function renderNavItem(item: any) {
-		return `
-      <a href="${item.url}" class="block px-2 py-2 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 group">
-        <div class="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-[--tangerine] dark:group-hover:text-[--tangerine] transition-colors">
-          ${item.meta.title}
-        </div>
-        <div class="text-xs text-zinc-400 line-clamp-1 mt-0.5">${item.excerpt || item.meta.description}</div>
-      </a>
-    `
-	}
-
-	// Debounce y Listeners para el Input de Escritorio
+	// Debounce y Listeners
 	let navTimeout: any
 	if (desktopInput) {
-		desktopInput.addEventListener('focus', loadNavPagefind)
 		desktopInput.addEventListener('input', e => {
 			const val = (e.target as HTMLInputElement).value
+			
+			// Si el usuario escribe y estaba cerrado (raro pq tiene focus), abrir
+			if (!isOpen) showResults()
+
 			clearTimeout(navTimeout)
 			navTimeout = setTimeout(() => {
 				searchNav(val)
@@ -383,22 +439,18 @@ const currentPath = Astro.url.pathname
 		})
 	}
 
-	// Manejo global de teclas (Esc, Cmd+K)
+	// Teclas Globales
 	window.addEventListener('keydown', e => {
 		if (e.key === 'Escape') {
-			if (document.activeElement === desktopInput) {
-				desktopInput.blur()
+			if (isOpen) {
+				desktopInput?.blur()
+				hideResults()
 			}
 		}
 		if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault()
-			// Usamos offsetParent para verificar si el input es visible (es null si está oculto)
-			// Si es visible (Desktop), lo enfocamos. Si no (Mobile), abrimos el modal.
-			if (desktopInput && desktopInput.offsetParent !== null) {
-				desktopInput.focus()
-			} else {
-				document.dispatchEvent(new CustomEvent('open-search'))
-			}
+			desktopInput?.focus()
+			// showResults se activa por el evento 'focus' del input
 		}
 	})
 </script>
@@ -413,7 +465,7 @@ const currentPath = Astro.url.pathname
 	function toggleMenu() {
 		// Agregar clases de transición solo cuando se interactúa por primera vez para evitar flash en carga
 		if (!menu?.classList.contains('transition-transform')) {
-			menu?.classList.add('transition-transform', 'duration-300', 'ease-in-out')
+			// No-op or simply remove the transition adding line since we don't want transitions
 		}
 		menu?.classList.toggle('-translate-x-full')
 		overlay?.classList.toggle('hidden')

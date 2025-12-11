@@ -31,6 +31,7 @@ const til = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
+    description: z.string().optional(),
     pubDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]).optional(),
     lang: z.enum(['es', 'en', 'ca']).default('es'),
