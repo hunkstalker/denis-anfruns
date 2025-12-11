@@ -1,0 +1,30 @@
+---
+title: "Nulos elegantes con Coalesce"
+pubDate: 2025-11-20
+lang: "es"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../components/mdx/Callout.astro';
+
+Deja de anidar `If` para comprobar si un valor está en blanco. `Coalesce` devuelve el primer valor que **no sea nulo** (blank) de la lista de argumentos.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps',
+      code: `// ❌ Verboso
+If(IsBlank(TextInput1.Text), "Sin nombre", TextInput1.Text)
+
+// ✅ Elegante
+Coalesce(TextInput1.Text, "Sin nombre")`, 
+      lang: 'power fx'
+    }
+  ]}
+/>
+
+Es perfecto para valores por defecto en formularios o etiquetas.
+
+<Callout type="warning" title="Ojo con el separador" filled={true}>
+  Recuerda que si tienes Power Apps configurado para la **región europea** tendrás que cambiar la coma `,` por punto y coma `;` en las fórmulas. Y Doble punto y coma `;;` para saltos de línea donde normalmente se pondría únicamente un punto y coma `;`.
+</Callout>

@@ -1,0 +1,40 @@
+---
+title: "Cleaner code with the With function"
+pubDate: 2025-11-15
+lang: "en"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../components/mdx/Callout.astro';
+
+Avoid creating temporary context variables or repeating complex logic. The `With` function allows you to define local variables that only exist within its scope.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps', 
+      code: `// ❌ Repetitive and hard to read
+Patch(Users, ThisItem, {
+    FullName: User().FullName & " (" & User().Email & ")",
+    UniqueID: Upper(User().Email)
+});
+
+// ✅ Using With (Local variables)
+With({ 
+    CurrentUser: User() 
+},
+    Patch(Users, ThisItem, {
+        FullName: CurrentUser.FullName & " (" & CurrentUser.Email & ")",
+        UniqueID: Upper(CurrentUser.Email)
+    })
+);`, 
+      lang: 'power fx' 
+    }
+  ]}
+/>
+
+<Callout type="warning" title="Mind the separator" filled>
+  Remember that if your Power Apps is configured for the **European region**, you will need to change commas `,` to semicolons `;` in formulas. And use double semicolons `;;` for chaining functions where normally a single semicolon `;` would be used.
+</Callout>
+
+Your "Future Self" will thank you for this readable code.

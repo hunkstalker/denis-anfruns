@@ -1,0 +1,40 @@
+---
+title: "Código más limpio con la función With"
+pubDate: 2025-11-15
+lang: "es"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../components/mdx/Callout.astro';
+
+Evita crear variables de contexto temporales o repetir lógica compleja. La función `With` permite definir variables locales que solo existen dentro de su ámbito.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps', 
+      code: `// ❌ Repetitivo y difícil de leer
+Patch(Usuarios, ThisItem, {
+    NombreCompleto: User().FullName & " (" & User().Email & ")",
+    ID_Unico: Upper(User().Email)
+});
+
+// ✅ Con With (Variables locales)
+With({ 
+    UsuarioActual: User() 
+},
+    Patch(Usuarios, ThisItem, {
+        NombreCompleto: UsuarioActual.FullName & " (" & UsuarioActual.Email & ")",
+        ID_Unico: Upper(UsuarioActual.Email)
+    })
+);`, 
+      lang: 'power fx' 
+    }
+  ]}
+/>
+
+<Callout type="warning" title="Ojo con el separador" filled>
+  Recuerda que si tienes Power Apps configurado para la **región europea** tendrás que cambiar la coma `,` por punto y coma `;` en las fórmulas. Y Doble punto y coma `;;` para saltos de línea donde normalmente se pondría únicamente un punto y coma `;`.
+</Callout>
+
+Tu "Yo del futuro" te agradecerá este código legible.

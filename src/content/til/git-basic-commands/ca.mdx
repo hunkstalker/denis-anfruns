@@ -1,0 +1,33 @@
+---
+title: "Comandes bàsiques de Git per iniciar un projecte"
+pubDate: 2025-12-11
+lang: "ca"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Llista ràpida de les comandes essencials per inicialitzar un repositori local i pujar-lo a GitHub per primera vegada.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Bash', 
+      code: `git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin {url-del-repositori}
+git push -u origin main`, 
+      lang: 'bash' 
+    }
+  ]}
+/>
+
+### Què fa cada comanda
+
+- `git init`: Inicialitza un nou repositori de Git a la teva carpeta actual.
+- `git add .`: Afegeix tots els fitxers modificats a l'àrea de preparació (stage).
+- `git commit -m "..."`: Desa els canvis confirmats amb un missatge descriptiu.
+- `git branch -M main`: Canvia el nom de la branca per defecte a `main` (estàndard actual).
+- `git remote add origin`: Connecta el teu repositori local amb el remot (GitHub, GitLab, etc.).
+- `git push -u origin main`: Puja els canvis al núvol i vincula la teva branca local amb la remota.
