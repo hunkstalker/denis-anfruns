@@ -1,0 +1,27 @@
+---
+title: "Record Utility in TypeScript"
+pubDate: 2025-11-27
+lang: "en"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Create typed objects flexibly where you know the keys and values but not the exact content.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'TypeScript', 
+      code: `type Pages = Record<string, string>;
+
+const routes: Pages = {
+  home: '/',
+  contact: '/contact',
+  blog: '/blog'
+};`, 
+      lang: 'typescript' 
+    }
+  ]}
+/>
+
+Cleaner than using `any` or complex interfaces for simple dictionaries.

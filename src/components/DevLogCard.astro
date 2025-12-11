@@ -1,0 +1,67 @@
+---
+import { type CollectionEntry } from 'astro:content'
+import { getBaseSlug } from '../utils/blogi18n'
+import { useTranslations } from '../i18n/utils'
+
+interface Props {
+	post: CollectionEntry<'blog'>
+	lang: 'es' | 'en' | 'ca'
+}
+
+const { post, lang } = Astro.props
+const t = useTranslations(lang)
+
+const href = lang === 'es' 
+  ? `/blog/${getBaseSlug(post.slug)}/` 
+  : `/${lang}/blog/${getBaseSlug(post.slug)}/`
+---
+
+<article class='devlog-card opacity-0 translate-y-8 transition-all duration-700 ease-out group relative flex flex-col gap-4 sm:gap-6 bg-white dark:bg-zinc-800 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-700/50 hover:border-black/15 dark:hover:border-white/15 shadow-sm hover:shadow-md'>
+	<div class='flex-1'>
+		<div class='flex items-center gap-3 text-xs text-zinc-500 mb-3'>
+			<time datetime={post.data.pubDate.toISOString()}>
+        {post.data.pubDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+			{post.data.tags.slice(0, 3).map((tag, index) => (
+				<span class={`bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium ${index > 0 ? 'hidden md:block' : ''}`}>{tag}</span>
+			))}
+		</div>
+
+		<h3 class='text-xl font-bold mb-2 dark:text-white group-hover:text-[--tangerine-hover] transition-colors'>
+			<a href={href}>
+				<span class='absolute inset-0' />
+				{post.data.title}
+			</a>
+		</h3>
+
+		<p class='text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4'>{post.data.description}</p>
+
+		<div class='flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]'>
+			{t('blog.readArticle')}
+			<svg class='w-4 h-4 group-hover:translate-x-1 transition-transform' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+				<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 8l4 4m0 0l-4 4m4-4H3' />
+			</svg>
+		</div>
+	</div>
+</article>
+
+<script>
+	const observerOptions = {
+		root: null,
+		rootMargin: '0px',
+		threshold: 0.1
+	};
+
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				entry.target.classList.remove('opacity-0', 'translate-y-8');
+				observer.unobserve(entry.target);
+			}
+		});
+	}, observerOptions);
+
+	document.querySelectorAll('.devlog-card').forEach((el) => {
+		observer.observe(el);
+	});
+</script>

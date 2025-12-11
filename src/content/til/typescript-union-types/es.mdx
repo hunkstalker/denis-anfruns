@@ -1,0 +1,27 @@
+---
+title: "Tipos de Unión en TypeScript"
+pubDate: 2025-11-25
+lang: "es"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Define variables que pueden ser de múltiples tipos. Útil para estados o respuestas de API.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'TypeScript', 
+      code: `type Estado = 'cargando' | 'exito' | 'error';
+      
+function procesar(estado: Estado) {
+  if (estado === 'error') {
+    console.error('Algo salió mal');
+  }
+}`, 
+      lang: 'typescript' 
+    }
+  ]}
+/>
+
+Esto evita "números mágicos" y cadenas de texto sueltas.

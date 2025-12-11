@@ -1,0 +1,27 @@
+---
+title: "Utilidad Record en TypeScript"
+pubDate: 2025-11-27
+lang: "es"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Crea objetos tipados de forma flexible donde conoces las claves y los valores pero no el contenido exacto.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'TypeScript', 
+      code: `type Paginas = Record<string, string>;
+
+const rutas: Paginas = {
+  inicio: '/',
+  contacto: '/contacto',
+  blog: '/blog'
+};`, 
+      lang: 'typescript' 
+    }
+  ]}
+/>
+
+Más limpio que usar `any` o interfaces complejas para diccionarios simples.

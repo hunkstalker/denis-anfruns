@@ -1,0 +1,27 @@
+---
+title: "Utilitat Record a TypeScript"
+pubDate: 2025-11-27
+lang: "ca"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Crea objectes tipats de forma flexible on coneixes les claus i els valors però no el contingut exacte.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'TypeScript', 
+      code: `type Pagines = Record<string, string>;
+
+const rutes: Pagines = {
+  inici: '/',
+  contacte: '/contacte',
+  blog: '/blog'
+};`, 
+      lang: 'typescript' 
+    }
+  ]}
+/>
+
+Més net que utilitzar `any` o interfícies complexes per a diccionaris simples.
