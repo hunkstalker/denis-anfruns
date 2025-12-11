@@ -22,7 +22,6 @@ const seriesPosts = allPosts
 	.filter((post) => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
 	.sort((a: BlogPost, b: BlogPost) => {
         if (!a.data.pubDate || !b.data.pubDate) {
-             console.error(`[SeriesWidget] Missing pubDate for ${!a.data.pubDate ? a.id : b.id}`)
              return 0
         }
         return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()

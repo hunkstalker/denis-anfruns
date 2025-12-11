@@ -17,7 +17,7 @@ export function getTilMeta(slug: string): TilMeta {
 			return JSON.parse(fileContent)
 		}
 	} catch (error) {
-		console.warn(`Error reading meta.json for slug ${slug}:`, error)
+		// console.warn removed
 	}
 
 	return {}

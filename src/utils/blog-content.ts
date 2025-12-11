@@ -13,7 +13,6 @@ const metaFiles = import.meta.glob('../content/blog/**/meta.json', { eager: true
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
 	const posts = await getCollection('blog', ({ id, data }) => {
-        console.log(`[getCollection] Filtering ${id}. Draft: ${data.draft}. Env: ${import.meta.env.PROD ? 'PROD' : 'DEV'}`)
 		return import.meta.env.PROD ? data.draft !== true : true
 	})
 	
@@ -47,7 +46,6 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 			}
 
             if (!pubDate) {
-                console.error(`[getBlogPosts] CRITICAL: pubDate undefined for ${post.id}. Using default date.`)
                 pubDate = new Date(0) // Default to epoch to avoid crash
             }
 

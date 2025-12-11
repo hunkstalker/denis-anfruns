@@ -34,7 +34,6 @@ const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
 	list.sort(
 		(a: BlogPost, b: BlogPost) => {
             if (!a.data.pubDate || !b.data.pubDate) {
-                console.error(`[blog.astro] Missing pubDate for ${!a.data.pubDate ? a.id : b.id}`)
                 return 0
             }
 			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
@@ -58,7 +57,6 @@ const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
 const articles = [...soloPosts, ...finalSeriesPosts].sort(
 	(a, b) => {
         if (!a.data.pubDate || !b.data.pubDate) {
-             console.error(`[blog.astro] Missing pubDate in articles check for ${!a.data.pubDate ? a.id : b.id}`)
              return 0
         }
         return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
