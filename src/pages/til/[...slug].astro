@@ -1,5 +1,4 @@
 ---
-import { type CollectionEntry } from 'astro:content'
 import { getTils, type TilPost } from '../../utils/til-content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Nav from '../../components/Nav.astro'
@@ -72,7 +71,7 @@ const lang = 'es'
 						{post.data.pubDate!.toLocaleDateString('es-ES', { dateStyle: 'long' })}
 					</time>
 					<div class="flex gap-2">
-						{post.data.tags.map((tag) => <span>#{tag}</span>)}
+						{(post.data.tags || []).map((tag) => <span>#{tag}</span>)}
 					</div>
 				</div>
 			</div>
