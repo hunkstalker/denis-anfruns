@@ -1,65 +1,87 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
 
 export async function getStaticPaths() {
-  const pages = await getCollection('privacy');
-  
-  // Filter out 'es' since it's handled by src/pages/PrivacyPolicy.astro
-  const filteredPages = pages.filter(page => page.slug !== 'es');
+	const pages = await getCollection('privacy')
 
-  return filteredPages.map((page) => {
-    const lang = page.slug;
-    return {
-      params: { lang },
-      props: { page },
-    };
-  });
+	// Filter out 'es' since it's handled by src/pages/PrivacyPolicy.astro
+	const filteredPages = pages.filter((page) => page.slug !== 'es')
+
+	return filteredPages.map((page) => {
+		const lang = page.slug
+		return {
+			params: { lang },
+			props: { page },
+		}
+	})
 }
 
-const { page } = Astro.props;
-const { Content } = await page.render();
+const { page } = Astro.props
+const { Content } = await page.render()
 
 // Map del texto del botón
 // Map del texto del botón
 const buttonText = {
-  es: "Volver",
-  ca: "Tornar",
-  en: "Back"
-};
+	es: 'Volver',
+	ca: 'Tornar',
+	en: 'Back',
+}
 
-const lang = page.slug as keyof typeof buttonText;
-const btnText = buttonText[lang] || buttonText.es;
+const lang = page.slug as keyof typeof buttonText
+const btnText = buttonText[lang] || buttonText.es
 ---
 
 <BaseLayout siteTitle={page.data.title} lang={lang}>
-  <main class="privacy">
-    <Content />
-    <button id="back-btn" class="hidden mt-8 px-6 py-3 text-sm font-bold text-zinc-200 uppercase transition-colors duration-200 transform bg-zinc-800 rounded-lg hover:bg-zinc-500">{btnText}</button>
+	<main class="privacy">
+		<Content />
+		<button
+			id="back-btn"
+			class="mt-8 hidden transform rounded-lg bg-zinc-800 px-6 py-3 text-sm font-bold uppercase text-zinc-200 transition-colors duration-200 hover:bg-zinc-500"
+			>{btnText}</button
+		>
 
-    <script>
-      const backBtn = document.getElementById('back-btn');
-      if (backBtn && document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
-        backBtn.classList.remove('hidden');
-        backBtn.addEventListener('click', () => {
-          history.back();
-        });
-      }
-    </script>
-  </main>
+		<script>
+			const backBtn = document.getElementById('back-btn')
+			if (backBtn && document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+				backBtn.classList.remove('hidden')
+				backBtn.addEventListener('click', () => {
+					history.back()
+				})
+			}
+		</script>
+	</main>
 
-  <style is:global>
-    .privacy {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
-      line-height: 1.7;
-      font-size: 1.05rem;
-    }
-    .privacy h1 { font-weight: 700; margin-top: 1.6rem; font-size: 2rem; }
-    .privacy h2 { font-weight: 700; margin-top: 1.6rem; font-size: 1.5rem; }
-    .privacy p { margin-bottom: 1rem; }
-    .privacy ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
-    .privacy a { color: oklch(75% 0.183 55.934); text-decoration: none; font-weight: bold; }
-  </style>
+	<style is:global>
+		.privacy {
+			max-width: 800px;
+			margin: 2rem auto;
+			padding: 1rem;
+			line-height: 1.7;
+			font-size: 1.05rem;
+		}
+		.privacy h1 {
+			font-weight: 700;
+			margin-top: 1.6rem;
+			font-size: 2rem;
+		}
+		.privacy h2 {
+			font-weight: 700;
+			margin-top: 1.6rem;
+			font-size: 1.5rem;
+		}
+		.privacy p {
+			margin-bottom: 1rem;
+		}
+		.privacy ul {
+			list-style-type: disc;
+			margin-left: 1.5rem;
+			margin-bottom: 1rem;
+		}
+		.privacy a {
+			color: oklch(75% 0.183 55.934);
+			text-decoration: none;
+			font-weight: bold;
+		}
+	</style>
 </BaseLayout>

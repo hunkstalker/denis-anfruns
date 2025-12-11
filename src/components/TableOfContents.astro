@@ -1,57 +1,83 @@
 ---
-import type { MarkdownHeading } from 'astro';
-import { useTranslations } from '../i18n/utils';
-import type { SupportedLang } from '../utils/blogi18n';
+import type { MarkdownHeading } from 'astro'
+import { useTranslations } from '../i18n/utils'
+import type { SupportedLang } from '../utils/blogi18n'
 
 interface Props {
-  headings: MarkdownHeading[];
-  lang?: SupportedLang;
+	headings: MarkdownHeading[]
+	lang?: SupportedLang
 }
 
-const { headings, lang = 'es' } = Astro.props;
+const { headings, lang = 'es' } = Astro.props
 const t = useTranslations(lang)
 
-const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3);
+const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3)
 ---
 
-{toc.length > 0 && (
-  <nav class="toc-container text-sm max-h-[calc(100vh-10rem)] overflow-y-auto pr-4">
-    <h3 class="font-bold text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-4 px-3 flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
-      {t('blog.tableOfContents')}
-    </h3>
-    <ul class="space-y-1">
-      {toc.map((heading) => (
-          <a
-            href={`#${heading.slug}`}
-            class={`block py-1.5 no-underline transition-colors duration-200 text-zinc-500 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400
-              ${heading.depth === 2 ? 'pl-4' : 'pl-8 text-xs'}
-            `}
-          >
-            {heading.text}
-          </a>
-      ))}
-    </ul>
-  </nav>
-)}
+{
+	toc.length > 0 && (
+		<nav class="toc-container max-h-[calc(100vh-10rem)] overflow-y-auto pr-4 text-sm">
+			<h3 class="text-xs mb-4 flex items-center gap-2 px-3 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="14"
+					height="14"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-list"
+				>
+					<>
+						<line x1="8" x2="21" y1="6" y2="6" />
+						<line x1="8" x2="21" y1="12" y2="12" />
+						<line x1="8" x2="21" y1="18" y2="18" />
+						<line x1="3" x2="3.01" y1="6" y2="6" />
+						<line x1="3" x2="3.01" y1="12" y2="12" />
+						<line x1="3" x2="3.01" y1="18" y2="18" />
+					</>
+				</svg>
+				{t('blog.tableOfContents')}
+			</h3>
+			<ul class="space-y-1">
+				{toc.map((heading) => (
+					<a
+						href={`#${heading.slug}`}
+						class={`block py-1.5 text-zinc-500 no-underline transition-colors duration-200 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 ${heading.depth === 2 ? 'pl-4' : 'text-xs pl-8'} `}
+					>
+						{heading.text}
+					</a>
+				))}
+			</ul>
+		</nav>
+	)
+}
 
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      const id = entry.target.getAttribute('id');
-      if (entry.intersectionRatio > 0) {
-        document.querySelectorAll('nav.toc-container a').forEach((link) => {
-          link.classList.remove('text-blue-600', 'font-medium', 'border-l-2', 'border-blue-500', '-ml-0.5');
-        });
-        const activeLink = document.querySelector(`nav.toc-container a[href="#${id}"]`);
-        if (activeLink) {
-          activeLink.classList.add('text-blue-600', 'dark:text-blue-400', 'font-medium');
-        }
-      }
-    });
-  });
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.getAttribute('id')
+			if (entry.intersectionRatio > 0) {
+				document.querySelectorAll('nav.toc-container a').forEach((link) => {
+					link.classList.remove(
+						'text-blue-600',
+						'font-medium',
+						'border-l-2',
+						'border-blue-500',
+						'-ml-0.5',
+					)
+				})
+				const activeLink = document.querySelector(`nav.toc-container a[href="#${id}"]`)
+				if (activeLink) {
+					activeLink.classList.add('text-blue-600', 'dark:text-blue-400', 'font-medium')
+				}
+			}
+		})
+	})
 
-  document.querySelectorAll('article h2, article h3').forEach((h) => {
-    observer.observe(h);
-  });
+	document.querySelectorAll('article h2, article h3').forEach((h) => {
+		observer.observe(h)
+	})
 </script>

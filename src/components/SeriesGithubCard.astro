@@ -6,8 +6,8 @@ import { useTranslations } from '../i18n/utils'
 import type { SupportedLang } from '../utils/blogi18n'
 
 interface Props {
-  seriesId: string
-  lang?: SupportedLang
+	seriesId: string
+	lang?: SupportedLang
 }
 
 const { seriesId, lang = 'es' } = Astro.props
@@ -16,7 +16,7 @@ const t = useTranslations(lang)
 const series = seriesData[seriesId]
 
 if (!series || !series.githubUrl) {
-  return null
+	return null
 }
 
 const texts = series.texts?.[lang]
@@ -25,30 +25,34 @@ const description = texts?.description || t('series.github.description')
 const buttonText = texts?.button || t('series.github.button')
 ---
 
-<div class="mt-8 pt-8 border-t border-zinc-100 dark:border-zinc-800">
-  <div class="bg-zinc-50 dark:bg-zinc-900/50 rounded-lg p-4 border border-zinc-200 dark:border-zinc-800">
-    <div class="flex items-start justify-between gap-4">
-      <div>
-        <h3 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
-          {title}
-        </h3>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed mb-3">
-          {description}
-        </p>
-      </div>
-      <div class="p-2 bg-white dark:bg-zinc-800 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-sm text-zinc-900 dark:text-white">
-        <GithubIcon class="w-5 h-5" />
-      </div>
-    </div>
-    
-    <a 
-      href={series.githubUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="flex items-center justify-center gap-2 w-full py-2 px-4 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
-    >
-      {buttonText}
-      <ExternalLink class="w-3.5 h-3.5" />
-    </a>
-  </div>
+<div class="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-800">
+	<div
+		class="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50"
+	>
+		<div class="flex items-start justify-between gap-4">
+			<div>
+				<h3 class="mb-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+					{title}
+				</h3>
+				<p class="text-xs mb-3 leading-relaxed text-zinc-500 dark:text-zinc-400">
+					{description}
+				</p>
+			</div>
+			<div
+				class="rounded-md border border-zinc-200 bg-white p-2 text-zinc-900 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+			>
+				<GithubIcon class="h-5 w-5" />
+			</div>
+		</div>
+
+		<a
+			href={series.githubUrl}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="text-xs flex w-full items-center justify-center gap-2 rounded-md bg-zinc-900 px-4 py-2 font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+		>
+			{buttonText}
+			<ExternalLink class="h-3.5 w-3.5" />
+		</a>
+	</div>
 </div>

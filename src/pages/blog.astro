@@ -11,7 +11,7 @@ const rawPosts = (
 	await getCollection('blog', ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true
 	})
-).filter(p => getLangFromSlug(p.slug) === lang)
+).filter((p) => getLangFromSlug(p.slug) === lang)
 
 const seriesMap = new Map<string, CollectionEntry<'blog'>[]>()
 const soloPosts: CollectionEntry<'blog'>[] = []
@@ -31,8 +31,11 @@ for (const post of rawPosts) {
 // 1. Ordenar por fecha de publicación
 // 2. Obtener el primer post de cada serie
 // 3. Utiliza la fecha de la última publicación (más reciente) para ordenar el feed.
-const finalSeriesPosts = Array.from(seriesMap.values()).map(list => {
-	list.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
+	list.sort(
+		(a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+			a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
+	)
 
 	const part1 = list[0]
 	const latestPart = list[list.length - 1]
@@ -48,31 +51,32 @@ const finalSeriesPosts = Array.from(seriesMap.values()).map(list => {
 	return entry
 })
 
-const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const articles = [...soloPosts, ...finalSeriesPosts].sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)
 ---
 
-<BaseLayout siteTitle='Jardín Digital' lang={lang}>
+<BaseLayout siteTitle="Jardín Digital" lang={lang}>
 	<Nav lang={lang} />
-	<div class='container mx-auto px-3 sm:px-4 py-6 sm:py-8 pt-20 md:pt-28'>
-		<div class='grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12'>
-
+	<div class="container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28">
+		<div class="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-12">
 			<!-- Columna principal: DevLogs -->
-			<div class='lg:col-span-8 space-y-12'>
-				<h2 class='text-2xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>DevLogs</h2>
+			<div class="space-y-12 lg:col-span-8">
+				<h2
+					class="mb-6 flex items-center gap-2 border-b border-zinc-200 pb-2 text-2xl font-bold dark:border-zinc-700 dark:text-zinc-200"
+				>
+					DevLogs
+				</h2>
 
-				{articles.length === 0 && <p class='text-zinc-500 italic'>No hay DevLogs todavía.</p>}
+				{articles.length === 0 && <p class="italic text-zinc-500">No hay DevLogs todavía.</p>}
 
-				<div class='grid gap-4 sm:gap-6 lg:gap-8'>
-					{
-						articles.map(post => (
-							<DevLogCard post={post} lang={lang} />
-						))
-					}
+				<div class="grid gap-4 sm:gap-6 lg:gap-8">
+					{articles.map((post) => <DevLogCard post={post} lang={lang} />)}
 				</div>
 			</div>
 
 			<!-- Columna lateral: TILs -->
-      <TilAside lang={lang} />
+			<TilAside lang={lang} />
 		</div>
 	</div>
 </BaseLayout>

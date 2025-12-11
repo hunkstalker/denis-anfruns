@@ -1,58 +1,68 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro'
 const siteTitle = 'Denis Anfruns - Error 404'
 ---
 
 <BaseLayout siteTitle={siteTitle}>
-	<header class="mt-28 md:mt-48 text-center">
-    <h1 class='text-gradient drop-shadow-md px-18 my-4 text-3xl sm:text-4xl lg:text-5xl leading-none font-bold'>ERROR 404</h1>
-		<h2 id="error-msg" class='mx-12 my-4 sm:mt-4 sm:mb-6 lg:text-xl 2xl:text-2xl"'>Oops! The page you're looking for can't be found.</h2>
-        <a id="home-link" href="/" class="inline-block px-6 py-3 mt-8 text-sm font-bold text-white uppercase transition-colors duration-200 transform bg-emerald-600 rounded-lg hover:bg-emerald-500">Go Home</a>
+	<header class="mt-28 text-center md:mt-48">
+		<h1
+			class="text-gradient px-18 my-4 text-3xl font-bold leading-none drop-shadow-md sm:text-4xl lg:text-5xl"
+		>
+			ERROR 404
+		</h1>
+		<h2 id="error-msg" class='2xl:text-2xl" mx-12 my-4 sm:mb-6 sm:mt-4 lg:text-xl'>
+			Oops! The page you're looking for can't be found.
+		</h2>
+		<a
+			id="home-link"
+			href="/"
+			class="mt-8 inline-block transform rounded-lg bg-emerald-600 px-6 py-3 text-sm font-bold uppercase text-white transition-colors duration-200 hover:bg-emerald-500"
+			>Go Home</a
+		>
 	</header>
-	<main class="flex-grow">
-	</main>
+	<main class="flex-grow"></main>
 </BaseLayout>
 
 <script>
-    // Simple translation map for 404 specifically
-    const translations = {
-        es: {
-            msg: "¡Vaya! La página que buscas no se encuentra.",
-            btn: "Ir al Inicio"
-        },
-        ca: {
-            msg: "Vaja! La pàgina que busques no es troba.",
-            btn: "Anar a l'Inici"
-        },
-        en: {
-            msg: "Oops! The page you're looking for can't be found.",
-            btn: "Go Home"
-        }
-    };
+	// Simple translation map for 404 specifically
+	const translations = {
+		es: {
+			msg: '¡Vaya! La página que buscas no se encuentra.',
+			btn: 'Ir al Inicio',
+		},
+		ca: {
+			msg: 'Vaja! La pàgina que busques no es troba.',
+			btn: "Anar a l'Inici",
+		},
+		en: {
+			msg: "Oops! The page you're looking for can't be found.",
+			btn: 'Go Home',
+		},
+	}
 
-    function getLang() {
-        const pathLang = window.location.pathname.split('/')[1];
-        if (pathLang in translations) return pathLang;
-        
-        const savedLang = localStorage.getItem('selectedLang');
-        if (savedLang && savedLang in translations) return savedLang;
+	function getLang() {
+		const pathLang = window.location.pathname.split('/')[1]
+		if (pathLang in translations) return pathLang
 
-        const userLang = navigator.language.split('-')[0];
-        if (userLang in translations) return userLang;
+		const savedLang = localStorage.getItem('selectedLang')
+		if (savedLang && savedLang in translations) return savedLang
 
-        return 'es'; // Default fallback
-    }
+		const userLang = navigator.language.split('-')[0]
+		if (userLang in translations) return userLang
 
-    const lang = getLang() as keyof typeof translations;
-    const t = translations[lang];
+		return 'es' // Default fallback
+	}
 
-    const msgElement = document.getElementById('error-msg');
-    const linkElement = document.getElementById('home-link');
+	const lang = getLang() as keyof typeof translations
+	const t = translations[lang]
 
-    if (msgElement) msgElement.textContent = t.msg;
-    if (linkElement) {
-        linkElement.textContent = t.btn;
-        // Adjust home link based on language
-        linkElement.setAttribute('href', lang === 'es' ? '/' : `/${lang}`);
-    }
+	const msgElement = document.getElementById('error-msg')
+	const linkElement = document.getElementById('home-link')
+
+	if (msgElement) msgElement.textContent = t.msg
+	if (linkElement) {
+		linkElement.textContent = t.btn
+		// Adjust home link based on language
+		linkElement.setAttribute('href', lang === 'es' ? '/' : `/${lang}`)
+	}
 </script>

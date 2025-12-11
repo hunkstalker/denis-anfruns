@@ -1,69 +1,74 @@
 ---
-import { languages } from '../i18n/ui';
-import { getLangFromUrl } from '../i18n/utils';
+import { languages } from '../i18n/ui'
+import { getLangFromUrl } from '../i18n/utils'
 
-const currentLang = getLangFromUrl(Astro.url);
-const currentPath = Astro.url.pathname;
+const currentLang = getLangFromUrl(Astro.url)
+const currentPath = Astro.url.pathname
 
 function getPathForLang(lang: string) {
-  // Eliminar barra inicial y dividir
-  const segments = currentPath.replace(/^\//, '').split('/').filter(Boolean);
-  const firstSegment = segments[0];
-  
-  // Comprobar si el primer segmento es un código de idioma conocido (excepto 'es' que es el default)
-  // Nota: 'es' no debería aparecer en la URL según tu configuración actual, pero lo comprobamos por seguridad
-  const isLangSegment = firstSegment && firstSegment in languages && firstSegment !== 'es';
-  
-  let newSegments = [...segments];
-  
-  if (isLangSegment) {
-    if (lang === 'es') {
-      // Si cambiamos a español (default), quitamos el segmento de idioma
-      newSegments.shift();
-    } else {
-      // Si cambiamos a otro idioma, reemplazamos el segmento
-      newSegments[0] = lang;
-    }
-  } else {
-    if (lang !== 'es') {
-      // Si no estamos en un segmento de idioma y vamos a uno no-default, lo añadimos al principio
-      newSegments.unshift(lang);
-    }
-    // Si vamos a 'es' y no hay segmento, no hacemos nada (ya estamos en la raíz relativa)
-  }
-  
-  const path = '/' + newSegments.join('/');
-  // Asegurar que no termine en doble barra si está vacío
-  return path === '//' ? '/' : path;
+	// Eliminar barra inicial y dividir
+	const segments = currentPath.replace(/^\//, '').split('/').filter(Boolean)
+	const firstSegment = segments[0]
+
+	// Comprobar si el primer segmento es un código de idioma conocido (excepto 'es' que es el default)
+	// Nota: 'es' no debería aparecer en la URL según tu configuración actual, pero lo comprobamos por seguridad
+	const isLangSegment = firstSegment && firstSegment in languages && firstSegment !== 'es'
+
+	let newSegments = [...segments]
+
+	if (isLangSegment) {
+		if (lang === 'es') {
+			// Si cambiamos a español (default), quitamos el segmento de idioma
+			newSegments.shift()
+		} else {
+			// Si cambiamos a otro idioma, reemplazamos el segmento
+			newSegments[0] = lang
+		}
+	} else {
+		if (lang !== 'es') {
+			// Si no estamos en un segmento de idioma y vamos a uno no-default, lo añadimos al principio
+			newSegments.unshift(lang)
+		}
+		// Si vamos a 'es' y no hay segmento, no hacemos nada (ya estamos en la raíz relativa)
+	}
+
+	const path = '/' + newSegments.join('/')
+	// Asegurar que no termine en doble barra si está vacío
+	return path === '//' ? '/' : path
 }
 ---
-<div class="flex items-center gap-3 bg-zinc-200 dark:bg-zinc-800 px-3 py-1.5 rounded-lg">
-  {Object.keys(languages).map((lang) => (
-    <a 
-      href={getPathForLang(lang)}
-      data-lang={lang}
-      class:list={[
-        "text-xs sm:text-sm font-bold transition-all duration-200 language-link",
-        {
-          "text-[var(--tangerine-hover)] dark:text-[var(--tangerine)] scale-110 cursor-default pointer-events-none": lang === currentLang,
-          "text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200": lang !== currentLang
-        }
-      ]}
-      aria-label={`Cambiar idioma a ${languages[lang as keyof typeof languages]}`}
-    >
-      {lang.toUpperCase()}
-    </a>
-  ))}
+
+<div class="flex items-center gap-3 rounded-lg bg-zinc-200 px-3 py-1.5 dark:bg-zinc-800">
+	{
+		Object.keys(languages).map((lang) => (
+			<a
+				href={getPathForLang(lang)}
+				data-lang={lang}
+				class:list={[
+					'text-xs language-link font-bold transition-all duration-200 sm:text-sm',
+					{
+						'pointer-events-none scale-110 cursor-default text-[var(--tangerine-hover)] dark:text-[var(--tangerine)]':
+							lang === currentLang,
+						'text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200':
+							lang !== currentLang,
+					},
+				]}
+				aria-label={`Cambiar idioma a ${languages[lang as keyof typeof languages]}`}
+			>
+				{lang.toUpperCase()}
+			</a>
+		))
+	}
 </div>
 
 <script>
-  const links = document.querySelectorAll('.language-link');
-  links.forEach(link => {
-    link.addEventListener('click', (e) => {
-      const lang = (e.currentTarget as HTMLElement).dataset.lang;
-      if (lang) {
-        localStorage.setItem('selectedLang', lang);
-      }
-    });
-  });
+	const links = document.querySelectorAll('.language-link')
+	links.forEach((link) => {
+		link.addEventListener('click', (e) => {
+			const lang = (e.currentTarget as HTMLElement).dataset.lang
+			if (lang) {
+				localStorage.setItem('selectedLang', lang)
+			}
+		})
+	})
 </script>

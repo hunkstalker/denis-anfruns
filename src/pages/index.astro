@@ -1,37 +1,38 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Nav from '../components/Nav.astro';
-import Header from '../components/Header.astro';
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav from '../components/Nav.astro'
+import Header from '../components/Header.astro'
 
-const siteTitle = `Denis A. M. Portfolio`;
-const lang = 'es';
+const siteTitle = `Denis A. M. Portfolio`
+const lang = 'es'
 ---
-<script is:inline>
-  const userLang = navigator.language || navigator.userLanguage; 
-  const savedLang = localStorage.getItem('selectedLang');
 
-  if (window.location.pathname === '/') {
-    // Si hay preferencia guardada, la respetamos
-    if (savedLang) {
-      if (savedLang === 'ca') {
-        window.location.href = '/ca';
-      } else if (savedLang === 'en') {
-        window.location.href = '/en';
-      }
-      // Si es 'es', nos quedamos aquí
-    } else {
-      // Si no hay preferencia, usamos el idioma del navegador
-      if (userLang.startsWith('ca')) {
-        window.location.href = '/ca';
-      } else if (!userLang.startsWith('es')) {
-        window.location.href = '/en';
-      }
-    }
-  }
+<script is:inline>
+	const userLang = navigator.language || navigator.userLanguage
+	const savedLang = localStorage.getItem('selectedLang')
+
+	if (window.location.pathname === '/') {
+		// Si hay preferencia guardada, la respetamos
+		if (savedLang) {
+			if (savedLang === 'ca') {
+				window.location.href = '/ca'
+			} else if (savedLang === 'en') {
+				window.location.href = '/en'
+			}
+			// Si es 'es', nos quedamos aquí
+		} else {
+			// Si no hay preferencia, usamos el idioma del navegador
+			if (userLang.startsWith('ca')) {
+				window.location.href = '/ca'
+			} else if (!userLang.startsWith('es')) {
+				window.location.href = '/en'
+			}
+		}
+	}
 </script>
 <BaseLayout siteTitle={siteTitle} lang={lang}>
-  <Nav lang={lang} />
-  <div class='flex-1 container'>
-    <Header lang={lang} />
-  </div>
+	<Nav lang={lang} />
+	<div class="container flex-1">
+		<Header lang={lang} />
+	</div>
 </BaseLayout>

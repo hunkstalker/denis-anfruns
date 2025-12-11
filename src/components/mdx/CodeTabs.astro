@@ -16,42 +16,101 @@ const { items } = Astro.props
 const uniqueId = 'code-tabs-' + Math.random().toString(36).substring(2, 9)
 ---
 
-<div id={uniqueId} class='code-tabs-container my-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 overflow-hidden'>
+<div
+	id={uniqueId}
+	class="code-tabs-container my-6 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
+>
 	<!-- Pestañas de código -->
-	<div class='flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 px-2 pt-2 rounded-t-lg'>
-		<div class='flex items-center overflow-x-auto scrollbar-none flex-1' role='tablist'>
+	<div
+		class="flex items-center justify-between rounded-t-lg border-b border-zinc-200 bg-zinc-50 px-2 pt-2 dark:border-zinc-800 dark:bg-zinc-900/50"
+	>
+		<div class="scrollbar-none flex flex-1 items-center overflow-x-auto" role="tablist">
 			{
 				items.map((item, index) => (
-					<button role='tab' aria-selected={index === 0 ? 'true' : 'false'} aria-controls={`${uniqueId}-panel-${index}`} data-index={index} data-lang={item.lang} class:list={['tab-button px-4 py-2 text-sm font-medium border-t border-x rounded-t-lg mr-1 whitespace-nowrap', index === 0 ? 'active bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border-zinc-200 dark:border-zinc-800 border-b-white dark:border-b-zinc-900' : 'bg-transparent text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 border-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800']}>
+					<button
+						role="tab"
+						aria-selected={index === 0 ? 'true' : 'false'}
+						aria-controls={`${uniqueId}-panel-${index}`}
+						data-index={index}
+						data-lang={item.lang}
+						class:list={[
+							'tab-button mr-1 whitespace-nowrap rounded-t-lg border-x border-t px-4 py-2 text-sm font-medium',
+							index === 0
+								? 'active border-zinc-200 border-b-white bg-white text-zinc-900 dark:border-zinc-800 dark:border-b-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
+								: 'border-transparent bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200',
+						]}
+					>
 						{item.label}
 					</button>
 				))
 			}
 		</div>
-		<div class='shrink-0 pl-4 pr-2 pb-2'>
-			<span class='text-xs font-mono text-zinc-400 dark:text-zinc-500 select-none lang-label'>
+		<div class="shrink-0 pb-2 pl-4 pr-2">
+			<span class="text-xs lang-label select-none font-mono text-zinc-400 dark:text-zinc-500">
 				{items[0].lang}
 			</span>
 		</div>
 	</div>
 
 	<!-- Botón de copia de código -->
-	<div class='relative group'>
-		<div class='absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity z-10'>
-			<button class='copy-button p-1.5 rounded-md bg-zinc-200/50 hover:bg-zinc-200 dark:bg-white/10 dark:hover:bg-white/20 text-zinc-500 hover:text-zinc-700 dark:text-white/70 dark:hover:text-white cursor-pointer backdrop-blur-sm transition-all' title='Copy code' aria-label='Copy code'>
-				<svg class='copy-icon' xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='9' y='9' width='13' height='13' rx='2' ry='2'></rect><path d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'></path></svg>
-				<svg class='check-icon hidden' xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'></polyline></svg>
+	<div class="group relative">
+		<div class="absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100">
+			<button
+				class="copy-button cursor-pointer rounded-md bg-zinc-200/50 p-1.5 text-zinc-500 backdrop-blur-sm transition-all hover:bg-zinc-200 hover:text-zinc-700 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20 dark:hover:text-white"
+				title="Copy code"
+				aria-label="Copy code"
+			>
+				<svg
+					class="copy-icon"
+					xmlns="http://www.w3.org/2000/svg"
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path
+						d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg
+				>
+				<svg
+					class="check-icon hidden"
+					xmlns="http://www.w3.org/2000/svg"
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg
+				>
 			</button>
 		</div>
 
 		{
 			items.map((item, index) => (
-				<div id={`${uniqueId}-panel-${index}`} role='tabpanel' class:list={['tab-panel bg-white dark:bg-zinc-900', { hidden: index !== 0 }]}>
-				<div class="block dark:hidden">
-						<Code code={item.code} lang={item.lang as any} theme='github-light' class='!m-0 !rounded-none p-4 min-h-[4rem] text-sm md:text-base leading-relaxed' />
+				<div
+					id={`${uniqueId}-panel-${index}`}
+					role="tabpanel"
+					class:list={['tab-panel bg-white dark:bg-zinc-900', { hidden: index !== 0 }]}
+				>
+					<div class="block dark:hidden">
+						<Code
+							code={item.code}
+							lang={item.lang as any}
+							theme="github-light"
+							class="!m-0 min-h-[4rem] !rounded-none p-4 text-sm leading-relaxed md:text-base"
+						/>
 					</div>
 					<div class="hidden dark:block">
-						<Code code={item.code} lang={item.lang as any} theme='github-dark' class='!m-0 !rounded-none p-4 min-h-[4rem] text-sm md:text-base leading-relaxed' />
+						<Code
+							code={item.code}
+							lang={item.lang as any}
+							theme="github-dark"
+							class="!m-0 min-h-[4rem] !rounded-none p-4 text-sm leading-relaxed md:text-base"
+						/>
 					</div>
 				</div>
 			))
@@ -81,21 +140,59 @@ const uniqueId = 'code-tabs-' + Math.random().toString(36).substring(2, 9)
 		const langLabel = container.querySelector('.lang-label')
 
 		// TAB SWITCHING
-		tabs.forEach(tab => {
+		tabs.forEach((tab) => {
 			tab.addEventListener('click', () => {
 				const index = Number(tab.getAttribute('data-index'))
 				const lang = tab.getAttribute('data-lang')
 
 				// Actualización de pestañas
-				tabs.forEach(t => {
+				tabs.forEach((t) => {
 					t.setAttribute('aria-selected', 'false')
-					t.classList.remove('active', 'bg-white', 'dark:bg-zinc-900', 'text-zinc-900', 'dark:text-zinc-100', 'border-zinc-200', 'dark:border-zinc-800', 'border-b-white', 'dark:border-b-zinc-900')
-					t.classList.add('bg-transparent', 'text-zinc-500', 'hover:text-zinc-700', 'dark:text-zinc-400', 'dark:hover:text-zinc-200', 'border-transparent', 'hover:bg-zinc-100', 'dark:hover:bg-zinc-800')
+					t.classList.remove(
+						'active',
+						'bg-white',
+						'dark:bg-zinc-900',
+						'text-zinc-900',
+						'dark:text-zinc-100',
+						'border-zinc-200',
+						'dark:border-zinc-800',
+						'border-b-white',
+						'dark:border-b-zinc-900',
+					)
+					t.classList.add(
+						'bg-transparent',
+						'text-zinc-500',
+						'hover:text-zinc-700',
+						'dark:text-zinc-400',
+						'dark:hover:text-zinc-200',
+						'border-transparent',
+						'hover:bg-zinc-100',
+						'dark:hover:bg-zinc-800',
+					)
 				})
 
 				tab.setAttribute('aria-selected', 'true')
-				tab.classList.remove('bg-transparent', 'text-zinc-500', 'hover:text-zinc-700', 'dark:text-zinc-400', 'dark:hover:text-zinc-200', 'border-transparent', 'hover:bg-zinc-100', 'dark:hover:bg-zinc-800')
-				tab.classList.add('active', 'bg-white', 'dark:bg-zinc-900', 'text-zinc-900', 'dark:text-zinc-100', 'border-zinc-200', 'dark:border-zinc-800', 'border-b-white', 'dark:border-b-zinc-900')
+				tab.classList.remove(
+					'bg-transparent',
+					'text-zinc-500',
+					'hover:text-zinc-700',
+					'dark:text-zinc-400',
+					'dark:hover:text-zinc-200',
+					'border-transparent',
+					'hover:bg-zinc-100',
+					'dark:hover:bg-zinc-800',
+				)
+				tab.classList.add(
+					'active',
+					'bg-white',
+					'dark:bg-zinc-900',
+					'text-zinc-900',
+					'dark:text-zinc-100',
+					'border-zinc-200',
+					'dark:border-zinc-800',
+					'border-b-white',
+					'dark:border-b-zinc-900',
+				)
 
 				// Actualización de etiqueta de idioma
 				if (langLabel && lang) {
@@ -116,14 +213,14 @@ const uniqueId = 'code-tabs-' + Math.random().toString(36).substring(2, 9)
 		// Funcionalidad de copiar
 		copyBtn?.addEventListener('click', async () => {
 			// Buscar el panel visible
-			const visiblePanel = Array.from(panels).find(p => !p.classList.contains('hidden'))
+			const visiblePanel = Array.from(panels).find((p) => !p.classList.contains('hidden'))
 			if (!visiblePanel) return
 
 			// Buscar el bloque de código visible dentro del panel (ya que ahora hay dos: light y dark)
 			// Usamos offsetParent para verificar visibilidad, o window.getComputedStyle
 			const codeElements = visiblePanel.querySelectorAll('code')
 			let code = ''
-			
+
 			for (const codeEl of codeElements) {
 				if (codeEl.offsetParent !== null) {
 					code = codeEl.innerText

@@ -1,21 +1,19 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Nav from '../../components/Nav.astro';
-import Header from '../../components/Header.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Nav from '../../components/Nav.astro'
+import Header from '../../components/Header.astro'
 
 export function getStaticPaths() {
-  return [
-    { params: { lang: 'ca' as const } },
-    { params: { lang: 'en' as const } }
-  ];
+	return [{ params: { lang: 'ca' as const } }, { params: { lang: 'en' as const } }]
 }
 
-const { lang } = Astro.params as { lang: 'ca' | 'en' };
-const siteTitle = `Denis A. M. Portfolio`;
+const { lang } = Astro.params as { lang: 'ca' | 'en' }
+const siteTitle = `Denis A. M. Portfolio`
 ---
+
 <BaseLayout siteTitle={siteTitle} lang={lang}>
-  <Nav lang={lang} />
-  <div class='flex-1 container'>
-    <Header lang={lang} />
-  </div>
+	<Nav lang={lang} />
+	<div class="container flex-1">
+		<Header lang={lang} />
+	</div>
 </BaseLayout>

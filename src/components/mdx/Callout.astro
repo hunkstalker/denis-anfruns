@@ -24,7 +24,9 @@ const styles = {
 		container: isFilled
 			? 'bg-amber-100 dark:bg-amber-500/30 border-2 border-amber-500 text-amber-900 dark:text-amber-100'
 			: 'bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-900 dark:text-amber-200',
-		iconColor: isFilled ? 'text-amber-700 dark:text-amber-300' : 'text-amber-600 dark:text-amber-400',
+		iconColor: isFilled
+			? 'text-amber-700 dark:text-amber-300'
+			: 'text-amber-600 dark:text-amber-400',
 	},
 	error: {
 		container: isFilled
@@ -36,7 +38,9 @@ const styles = {
 		container: isFilled
 			? 'bg-green-100 dark:bg-green-500/30 border-2 border-green-500 text-green-900 dark:text-green-100'
 			: 'bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-green-900 dark:text-green-200',
-		iconColor: isFilled ? 'text-green-700 dark:text-green-300' : 'text-green-600 dark:text-green-400',
+		iconColor: isFilled
+			? 'text-green-700 dark:text-green-300'
+			: 'text-green-600 dark:text-green-400',
 	},
 }
 
@@ -47,22 +51,26 @@ const colors = {
 	success: '#22c55e',
 }
 const baseColor = colors[type]
-const inlineStyle = isFilled ? `border: 2px solid ${baseColor}; background-color: ${baseColor}30;` : ''
+const inlineStyle = isFilled
+	? `border: 2px solid ${baseColor}; background-color: ${baseColor}30;`
+	: ''
 
 const currentStyle = styles[type]
 ---
 
 <div class={`p-4 rounded-xl ${currentStyle.container} relative my-6 shadow-sm`} style={inlineStyle}>
-	<div class='flex gap-3'>
+	<div class="flex gap-3">
 		<div class={`shrink-0 mt-0.5 ${currentStyle.iconColor}`}>
 			{type === 'info' && <InfoIcon />}
 			{type === 'warning' && <WarningIcon />}
 			{type === 'error' && <ErrorIcon />}
 			{type === 'success' && <SuccessIcon />}
 		</div>
-		<div class='flex-1'>
-			{title && <h5 class='font-bold mb-1'>{title}</h5>}
-			<div class='text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-p:my-0 prose-ul:my-0 prose-ol:my-0'>
+		<div class="flex-1">
+			{title && <h5 class="mb-1 font-bold">{title}</h5>}
+			<div
+				class="prose prose-sm max-w-none text-sm leading-relaxed dark:prose-invert prose-p:my-0 prose-ol:my-0 prose-ul:my-0"
+			>
 				<slot />
 			</div>
 		</div>

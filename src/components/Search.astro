@@ -1,247 +1,282 @@
 ---
 import { getCollection } from 'astro:content'
 import { useTranslations } from '../i18n/utils'
-import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n';
+import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 
 interface Props {
-  lang: 'es' | 'en' | 'ca'
+	lang: 'es' | 'en' | 'ca'
 }
 
 const { lang } = Astro.props
 const t = useTranslations(lang)
 
 // Fetch recent items for default view
-const allTils = await getCollection('til');
+const allTils = await getCollection('til')
 const allBlog = await getCollection('blog', ({ data }) => {
-  return import.meta.env.PROD ? data.draft !== true : true
-});
+	return import.meta.env.PROD ? data.draft !== true : true
+})
 
 // Filter by lang and sort
 const recentTils = allTils
-  .filter(p => p.data.lang === lang)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3); // Top 3 TILs
+	.filter((p) => p.data.lang === lang)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3) // Top 3 TILs
 
 const recentPosts = allBlog
-  .filter(p => getLangFromSlug(p.slug) === lang)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3); // Top 3 Posts
+	.filter((p) => getLangFromSlug(p.slug) === lang)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3) // Top 3 Posts
 ---
 
 <div id="search-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-  <!-- Backdrop -->
-  <div class="fixed inset-0 bg-zinc-900/50 backdrop-blur-sm transition-opacity" id="search-backdrop"></div>
+	<!-- Backdrop -->
+	<div
+		class="fixed inset-0 bg-zinc-900/50 backdrop-blur-sm transition-opacity"
+		id="search-backdrop"
+	>
+	</div>
 
-  <!-- Modal Panel -->
-  <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
-    <div class="mx-auto max-w-2xl transform divide-y divide-zinc-100 dark:divide-zinc-800 overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-2xl ring-1 ring-black/5 transition-all">
-      
-      <!-- Input Search -->
-      <div class="relative">
-        <svg class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-zinc-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
-        </svg>
-        <input 
-          type="text" 
-          class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:ring-0 focus:outline-none sm:text-sm" 
-          placeholder="Buscar..." 
-          role="combobox" 
-          aria-expanded="false" 
-          aria-controls="options"
-          auto-focus
-        >
-      </div>
+	<!-- Modal Panel -->
+	<div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+		<div
+			class="mx-auto max-w-2xl transform divide-y divide-zinc-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all dark:divide-zinc-800 dark:bg-zinc-900"
+		>
+			<!-- Input Search -->
+			<div class="relative">
+				<svg
+					class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-zinc-400"
+					viewBox="0 0 20 20"
+					fill="currentColor"
+					aria-hidden="true"
+				>
+					<path
+						fill-rule="evenodd"
+						d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+						clip-rule="evenodd"></path>
+				</svg>
+				<input
+					type="text"
+					class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-0 dark:text-white sm:text-sm"
+					placeholder="Buscar..."
+					role="combobox"
+					aria-expanded="false"
+					aria-controls="options"
+					auto-focus
+				/>
+			</div>
 
-      <!-- Results List -->
-      <div id="search-results-container" class="max-h-96 scroll-py-3 overflow-y-auto p-3">
-        <!-- Default Content (Recent Items) -->
-        <div id="initial-results-content">
-          {recentTils.length > 0 && (
-            <div class="px-2 py-2">
-               <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">💡 Recientes: TIL</h3>
-               <div class="space-y-1">
-                 {recentTils.map(post => (
-                    <a href={`/${lang}/til/${post.slug.split('/').pop()}/`} class="block px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group">
-                      <h4 class="text-sm font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-[--tangerine] dark:group-hover:text-[--tangerine] transition-colors">
-                        {post.data.title}
-                      </h4>
-                      <div class="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-2 mt-0.5">
-                        <time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString(lang)}</time>
-                      </div>
-                    </a>
-                 ))}
-               </div>
-            </div>
-          )}
+			<!-- Results List -->
+			<div id="search-results-container" class="max-h-96 scroll-py-3 overflow-y-auto p-3">
+				<!-- Default Content (Recent Items) -->
+				<div id="initial-results-content">
+					{
+						recentTils.length > 0 && (
+							<div class="px-2 py-2">
+								<h3 class="text-xs mb-2 font-semibold uppercase tracking-wider text-zinc-400">
+									💡 Recientes: TIL
+								</h3>
+								<div class="space-y-1">
+									{recentTils.map((post) => (
+										<a
+											href={`/${lang}/til/${post.slug.split('/').pop()}/`}
+											class="group block rounded-lg px-3 py-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+										>
+											<h4 class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
+												{post.data.title}
+											</h4>
+											<div class="text-xs mt-0.5 flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+												<time datetime={post.data.pubDate.toISOString()}>
+													{post.data.pubDate.toLocaleDateString(lang)}
+												</time>
+											</div>
+										</a>
+									))}
+								</div>
+							</div>
+						)
+					}
 
-          {recentPosts.length > 0 && (
-            <div class={`px-2 py-2 ${recentTils.length > 0 ? 'mt-4 border-t border-zinc-100 dark:border-zinc-800 pt-4' : ''}`}>
-               <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">📝 Recientes: DevLog</h3>
-               <div class="space-y-1">
-                 {recentPosts.map(post => (
-                    <a href={`/${lang}/blog/${getBaseSlug(post.slug)}/`} class="block px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group">
-                      <h4 class="text-sm font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-[--tangerine] dark:group-hover:text-[--tangerine] transition-colors">
-                        {post.data.title}
-                      </h4>
-                      <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">{post.data.description}</p>
-                    </a>
-                 ))}
-               </div>
-            </div>
-          )}
-          
-          {recentTils.length === 0 && recentPosts.length === 0 && (
-             <div class="text-center py-10 text-sm text-zinc-500 dark:text-zinc-400">
-                <p>Escribe para buscar artículos y proyectos...</p>
-             </div>
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
+					{
+						recentPosts.length > 0 && (
+							<div
+								class={`px-2 py-2 ${recentTils.length > 0 ? 'mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-800' : ''}`}
+							>
+								<h3 class="text-xs mb-2 font-semibold uppercase tracking-wider text-zinc-400">
+									📝 Recientes: DevLog
+								</h3>
+								<div class="space-y-1">
+									{recentPosts.map((post) => (
+										<a
+											href={`/${lang}/blog/${getBaseSlug(post.slug)}/`}
+											class="group block rounded-lg px-3 py-2 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+										>
+											<h4 class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
+												{post.data.title}
+											</h4>
+											<p class="text-xs mt-0.5 line-clamp-1 text-zinc-500 dark:text-zinc-400">
+												{post.data.description}
+											</p>
+										</a>
+									))}
+								</div>
+							</div>
+						)
+					}
+
+					{
+						recentTils.length === 0 && recentPosts.length === 0 && (
+							<div class="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+								<p>Escribe para buscar artículos y proyectos...</p>
+							</div>
+						)
+					}
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
-  const modal = document.getElementById('search-modal');
-  const backdrop = document.getElementById('search-backdrop');
-  const input = modal?.querySelector('input');
-  const resultsContainer = modal?.querySelector('#search-results-container');
-  // Store the server-rendered default content
-  const defaultContent = resultsContainer?.innerHTML || '';
-  
-  let pagefind: any = null;
+	const modal = document.getElementById('search-modal')
+	const backdrop = document.getElementById('search-backdrop')
+	const input = modal?.querySelector('input')
+	const resultsContainer = modal?.querySelector('#search-results-container')
+	// Store the server-rendered default content
+	const defaultContent = resultsContainer?.innerHTML || ''
 
-  async function loadPagefind() {
-    if (pagefind) return;
-    try {
-      // @ts-ignore
-      const url = '/pagefind/pagefind.js';
-      pagefind = await import(/* @vite-ignore */ url);
-    } catch (e) {
-      console.warn('Pagefind not found. Search will only work in production build.');
-    }
-  }
+	let pagefind: any = null
 
-  function openSearch() {
-    modal?.classList.remove('hidden');
-    input?.focus();
-    loadPagefind();
-    
-    // Restore default content if input is empty
-    if (input && !input.value.trim() && resultsContainer) {
-      resultsContainer.innerHTML = defaultContent;
-    }
-  }
+	async function loadPagefind() {
+		if (pagefind) return
+		try {
+			// @ts-ignore
+			const url = '/pagefind/pagefind.js'
+			pagefind = await import(/* @vite-ignore */ url)
+		} catch (e) {
+			console.warn('Pagefind not found. Search will only work in production build.')
+		}
+	}
 
-  function closeSearch() {
-    modal?.classList.add('hidden');
-  }
+	function openSearch() {
+		modal?.classList.remove('hidden')
+		input?.focus()
+		loadPagefind()
 
-  async function performSearch(query: string) {
-    if (!pagefind || !query.trim()) {
-      // Restore default content
-      if (resultsContainer) resultsContainer.innerHTML = defaultContent;
-      return;
-    }
+		// Restore default content if input is empty
+		if (input && !input.value.trim() && resultsContainer) {
+			resultsContainer.innerHTML = defaultContent
+		}
+	}
 
-    const search = await pagefind.search(query);
-    const results = await Promise.all(search.results.map((r: any) => r.data()));
-    renderResults(results);
-  }
+	function closeSearch() {
+		modal?.classList.add('hidden')
+	}
 
-  function renderResults(results: any[]) {
-    if (!resultsContainer) return;
+	async function performSearch(query: string) {
+		if (!pagefind || !query.trim()) {
+			// Restore default content
+			if (resultsContainer) resultsContainer.innerHTML = defaultContent
+			return
+		}
 
-    if (results.length === 0) {
-      resultsContainer.innerHTML = `
+		const search = await pagefind.search(query)
+		const results = await Promise.all(search.results.map((r: any) => r.data()))
+		renderResults(results)
+	}
+
+	function renderResults(results: any[]) {
+		if (!resultsContainer) return
+
+		if (results.length === 0) {
+			resultsContainer.innerHTML = `
         <div class="text-center py-10 text-sm text-zinc-500 dark:text-zinc-400">
            ${input?.value ? '<p>No se encontraron resultados.</p>' : '<p>Escribe para buscar artículos y proyectos...</p>'}
         </div>
-      `;
-      return;
-    }
+      `
+			return
+		}
 
-    // Categorize results
-    const projects = results.filter(r => r.filters.type?.includes('project'));
-    const tils = results.filter(r => r.filters.type?.includes('til'));
-    const articles = results.filter(r => !r.filters.type || r.filters.type.includes('blog'));
+		// Categorize results
+		const projects = results.filter((r) => r.filters.type?.includes('project'))
+		const tils = results.filter((r) => r.filters.type?.includes('til'))
+		const articles = results.filter((r) => !r.filters.type || r.filters.type.includes('blog'))
 
-    let html = '';
+		let html = ''
 
-    if (projects.length > 0) {
-      html += `
+		if (projects.length > 0) {
+			html += `
         <div class="px-2 py-2">
            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">🚀 Proyectos</h3>
            <div class="space-y-1">
-             ${projects.map(r => renderItem(r)).join('')}
+             ${projects.map((r) => renderItem(r)).join('')}
            </div>
         </div>
-      `;
-    }
+      `
+		}
 
-    if (tils.length > 0) {
-      html += `
+		if (tils.length > 0) {
+			html += `
         <div class="px-2 py-2 ${projects.length > 0 ? 'mt-4 border-t border-zinc-100 dark:border-zinc-800 pt-4' : ''}">
            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">💡 TIL</h3>
            <div class="space-y-1">
-             ${tils.map(r => renderItem(r)).join('')}
+             ${tils.map((r) => renderItem(r)).join('')}
            </div>
         </div>
-      `;
-    }
+      `
+		}
 
-    if (articles.length > 0) {
-      html += `
-        <div class="px-2 py-2 ${(projects.length > 0 || tils.length > 0) ? 'mt-4 border-t border-zinc-100 dark:border-zinc-800 pt-4' : ''}">
+		if (articles.length > 0) {
+			html += `
+        <div class="px-2 py-2 ${projects.length > 0 || tils.length > 0 ? 'mt-4 border-t border-zinc-100 dark:border-zinc-800 pt-4' : ''}">
            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">📝 DevLog</h3>
            <div class="space-y-1">
-             ${articles.map(r => renderItem(r)).join('')}
+             ${articles.map((r) => renderItem(r)).join('')}
            </div>
         </div>
-      `;
-    }
+      `
+		}
 
-    resultsContainer.innerHTML = html;
-  }
+		resultsContainer.innerHTML = html
+	}
 
-  function renderItem(item: any) {
-    return `
+	function renderItem(item: any) {
+		return `
       <a href="${item.url}" class="block px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group">
         <h4 class="text-sm font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-[--tangerine] dark:group-hover:text-[--tangerine] transition-colors">
           ${item.meta.title}
         </h4>
         <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 mt-0.5">${item.excerpt}</p>
       </a>
-    `;
-  }
+    `
+	}
 
-  // Debounce search
-  let timeout: any;
-  input?.addEventListener('input', (e) => {
-    const val = (e.target as HTMLInputElement).value;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      performSearch(val);
-    }, 300);
-  });
+	// Debounce search
+	let timeout: any
+	input?.addEventListener('input', (e) => {
+		const val = (e.target as HTMLInputElement).value
+		clearTimeout(timeout)
+		timeout = setTimeout(() => {
+			performSearch(val)
+		}, 300)
+	})
 
-  // Event Listeners being handled by the Nav button (setup there) or global events
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeSearch();
-    }
-  });
+	// Event Listeners being handled by the Nav button (setup there) or global events
+	window.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape') {
+			closeSearch()
+		}
+	})
 
-  backdrop?.addEventListener('click', closeSearch);
-  
-  // Close on click outside (wrapper)
-  const wrapper = modal?.querySelector('.fixed.z-10');
-  wrapper?.addEventListener('click', (e) => {
-    if (e.target === wrapper) {
-      closeSearch();
-    }
-  });
-  
-  // Custom event to open search from anywhere
-  document.addEventListener('open-search', openSearch);
+	backdrop?.addEventListener('click', closeSearch)
+
+	// Close on click outside (wrapper)
+	const wrapper = modal?.querySelector('.fixed.z-10')
+	wrapper?.addEventListener('click', (e) => {
+		if (e.target === wrapper) {
+			closeSearch()
+		}
+	})
+
+	// Custom event to open search from anywhere
+	document.addEventListener('open-search', openSearch)
 </script>

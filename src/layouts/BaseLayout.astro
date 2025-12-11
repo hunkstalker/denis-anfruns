@@ -1,43 +1,47 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import experiencieYears from '../utils/experiencieYears';
+import BaseHead from '../components/BaseHead.astro'
+import Footer from '../components/Footer.astro'
+import experiencieYears from '../utils/experiencieYears'
 
 interface Props {
-	siteTitle: string;
-	lang?: string;
-    description?: string;
-    image?: string;
+	siteTitle: string
+	lang?: string
+	description?: string
+	image?: string
 }
 
-const { siteTitle, lang = 'es', description, image } = Astro.props;
-const defaultDescription = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`;
-const formattedTitle = `Denis A. M. Portfolio - ${siteTitle}`;
+const { siteTitle, lang = 'es', description, image } = Astro.props
+const defaultDescription = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`
+const formattedTitle = `Denis A. M. Portfolio - ${siteTitle}`
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang={lang}>
 	<head>
 		<!-- Theme Script (Inline & Blocking to prevent FOUC) -->
 		<script is:inline>
-			(function() {
-				const theme = localStorage.getItem('theme');
-				const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				
+			;(function () {
+				const theme = localStorage.getItem('theme')
+				const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+
 				if (theme === 'dark' || (!theme && systemDark)) {
-					document.documentElement.classList.add('dark');
-					document.documentElement.style.backgroundColor = '#131313'; // rgb(19, 19, 19)
-					document.documentElement.style.colorScheme = 'dark';
+					document.documentElement.classList.add('dark')
+					document.documentElement.style.backgroundColor = '#131313' // rgb(19, 19, 19)
+					document.documentElement.style.colorScheme = 'dark'
 				} else {
-					document.documentElement.classList.remove('dark');
-					document.documentElement.style.backgroundColor = '#ffffff';
-					document.documentElement.style.colorScheme = 'light';
+					document.documentElement.classList.remove('dark')
+					document.documentElement.style.backgroundColor = '#ffffff'
+					document.documentElement.style.colorScheme = 'light'
 				}
-			})();
+			})()
 		</script>
-		<BaseHead title={formattedTitle} description={description || defaultDescription} image={image} />
+		<BaseHead
+			title={formattedTitle}
+			description={description || defaultDescription}
+			image={image}
+		/>
 	</head>
-	<body class='flex flex-col min-h-screen' >
+	<body class="flex min-h-screen flex-col">
 		<main>
 			<slot />
 		</main>

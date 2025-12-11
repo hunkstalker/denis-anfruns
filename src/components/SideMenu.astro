@@ -9,19 +9,31 @@ const t = useTranslations(lang)
 const currentPath = Astro.url.pathname
 ---
 
-<aside id='side-menu' class='fixed inset-y-0 left-0 top-16 z-40 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 transform -translate-x-full'>
-	<div class='p-6'>
-		<nav class='flex flex-col'>
-			{navItems.map(item => {
-        const finalPath = lang === 'es' ? item.path : `/${lang}${item.path === '/' ? '' : item.path}`
-				const isActive = currentPath === finalPath || (finalPath !== '/' && currentPath.startsWith(finalPath))
-				return (
-					<Button text={t(item.key)} link={finalPath} enabled={item.enabled} active={item.enabled && isActive} />
-				)
-			})}
+<aside
+	id="side-menu"
+	class="fixed inset-y-0 left-0 top-16 z-40 w-64 -translate-x-full transform border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+>
+	<div class="p-6">
+		<nav class="flex flex-col">
+			{
+				navItems.map((item) => {
+					const finalPath =
+						lang === 'es' ? item.path : `/${lang}${item.path === '/' ? '' : item.path}`
+					const isActive =
+						currentPath === finalPath || (finalPath !== '/' && currentPath.startsWith(finalPath))
+					return (
+						<Button
+							text={t(item.key)}
+							link={finalPath}
+							enabled={item.enabled}
+							active={item.enabled && isActive}
+						/>
+					)
+				})
+			}
 		</nav>
 	</div>
 </aside>
 
 <!-- Overlay para cerrar al hacer click fuera -->
-<div id='menu-overlay' class='fixed inset-0 z-30 bg-black/50 hidden backdrop-blur-sm'></div>
+<div id="menu-overlay" class="fixed inset-0 z-30 hidden bg-black/50 backdrop-blur-sm"></div>
