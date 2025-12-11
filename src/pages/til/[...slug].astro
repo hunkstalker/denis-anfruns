@@ -37,7 +37,6 @@ const lang = 'es'
           <time datetime={post.data.pubDate.toISOString()}>
              {post.data.pubDate.toLocaleDateString('es-ES', { dateStyle: 'long' })}
           </time>
-          <span>/</span>
           <div class="flex gap-2">
             {post.data.tags.map(tag => (
               <span>#{tag}</span>

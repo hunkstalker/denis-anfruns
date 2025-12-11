@@ -8,17 +8,21 @@ import { useTranslations } from '../../../i18n/utils'
 
 export async function getStaticPaths() {
 	const posts = await getCollection('til')
-  const supportedLangs = Object.keys(languages).filter(lang => lang !== 'es')
+	const supportedLangs = Object.keys(languages).filter(lang => lang !== 'es')
 
 	return posts
-    .filter(post => supportedLangs.includes(post.data.lang))
-    .map(post => ({
-      params: { 
-        lang: post.data.lang,
-        slug: post.slug.split('/')[0]
-      },
-      props: post,
-	  }))
+		.filter(post => supportedLangs.includes(post.data.lang))
+		.map(post => {
+      // slug is "folder/lang" -> we want "folder" as the URL slug
+      const slug = post.slug.split('/')[0]
+      return {
+			  params: { 
+				  lang: post.data.lang,
+				  slug: slug
+			  },
+			  props: post,
+		  }
+    })
 }
 type Props = CollectionEntry<'til'>
 

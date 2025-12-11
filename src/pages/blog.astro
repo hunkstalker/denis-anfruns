@@ -5,9 +5,11 @@ import { type CollectionEntry, getCollection } from 'astro:content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 
 const lang = 'es'
-const rawPosts = (await getCollection('blog', ({ data }) => {
-	return import.meta.env.PROD ? data.draft !== true : true
-})).filter(p => getLangFromSlug(p.slug) === lang)
+const rawPosts = (
+	await getCollection('blog', ({ data }) => {
+		return import.meta.env.PROD ? data.draft !== true : true
+	})
+).filter(p => getLangFromSlug(p.slug) === lang)
 
 const seriesMap = new Map<string, CollectionEntry<'blog'>[]>()
 const soloPosts: CollectionEntry<'blog'>[] = []
@@ -46,10 +48,8 @@ const finalSeriesPosts = Array.from(seriesMap.values()).map(list => {
 
 const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 
-const tilCollection = await getCollection('til');
-const tils = tilCollection
-	.filter(p => p.data.lang === lang)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const tilCollection = await getCollection('til')
+const tils = tilCollection.filter(p => p.data.lang === lang).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 ---
 
 <BaseLayout siteTitle='Jardín Digital' lang={lang}>
@@ -60,23 +60,20 @@ const tils = tilCollection
 		</div> -->
 
 		<div class='grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12'>
-
-			<!-- Columna principal: Artículos -->
+			<!-- Columna principal: DevLogs -->
 			<div class='lg:col-span-8 space-y-12'>
-				<h2 class='text-2xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>
-					DevLogs
-				</h2>
+				<h2 class='text-2xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>DevLogs</h2>
 
 				{articles.length === 0 && <p class='text-zinc-500 italic'>No hay DevLogs todavía.</p>}
 
 				<div class='grid gap-4 sm:gap-6 lg:gap-8'>
 					{
 						articles.map(post => (
-							<article class='group relative flex flex-col gap-4 sm:gap-6 bg-white dark:bg-zinc-800/50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-700/50 hover:border-blue-500/50 transition-all shadow-sm hover:shadow-md'>
+							<article class='group relative flex flex-col gap-4 sm:gap-6 bg-white dark:bg-zinc-800 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-zinc-200 dark:border-zinc-700/50 hover:border-black/15 dark:hover:border-white/15 shadow-sm hover:shadow-md'>
 								<div class='flex-1'>
 									<div class='flex items-center gap-3 text-xs text-zinc-500 mb-3'>
 										<time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
-										{ post.data.tags.slice(0, 3).map((tag, index) => (
+										{post.data.tags.slice(0, 3).map((tag, index) => (
 											<span class={`bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium ${index > 0 ? 'hidden md:block' : ''}`}>{tag}</span>
 										))}
 									</div>
@@ -91,7 +88,7 @@ const tils = tilCollection
 									<p class='text-zinc-600 dark:text-zinc-400 line-clamp-2 mb-4'>{post.data.description}</p>
 
 									<div class='flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]'>
-										Leer artículo
+										Leer devlog
 										<svg class='w-4 h-4 group-hover:translate-x-1 transition-transform' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 											<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 8l4 4m0 0l-4 4m4-4H3' />
 										</svg>
@@ -106,24 +103,33 @@ const tils = tilCollection
 			<!-- Columna lateral: TILs -->
 			<aside class='lg:col-span-4 space-y-6 sm:space-y-8'>
 				<div class='bg-zinc-50 dark:bg-zinc-900/50 p-4 sm:p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 lg:sticky lg:top-24'>
-					<h2 class='text-xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>
-						Notas TIL
-					</h2>
+					<h2 class='text-xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>Notas TIL</h2>
 
 					<div class='space-y-4'>
 						{tils.length === 0 && <p class='text-zinc-500 italic text-sm'>No hay TILs todavía.</p>}
 
-						{
+						{// Card TIL
 							tils.map(post => (
-								<a href={`/til/${post.slug.split('/').pop()}/`} class='block group p-4 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 hover:border-green-500/50 transition-colors'>
-									<div class='flex items-start justify-between gap-2 mb-1'>
-										<span class='text-xs font-mono text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded'>TIL</span>
-										<time class='text-xs text-zinc-400' datetime={post.data.pubDate.toISOString()}>
-											{post.data.pubDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+								<article class='group relative flex flex-col gap-2 bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 hover:border-black/15 dark:hover:border-white/15 shadow-sm hover:shadow-md'>
+									<div class='flex items-center justify-between gap-2 mb-1'>
+										<time class='flex items-center gap-3 text-xs text-zinc-500' datetime={post.data.pubDate.toISOString()}>
+											{post.data.pubDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
 										</time>
 									</div>
-									<h3 class='font-medium text-zinc-800 dark:text-zinc-200 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors leading-tight'>{post.data.title}</h3>
-								</a>
+
+									<p class='dark:text-white line-clamp-2 mb-4'>
+										<a href={`/til/${post.slug.split('/')[0]}/`}>
+											<span class='absolute inset-0' />
+											{post.data.title}
+										</a>
+									</p>
+									<div class='flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]'>
+										Leer nota
+										<svg class='w-4 h-4 group-hover:translate-x-1 transition-transform' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+											<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 8l4 4m0 0l-4 4m4-4H3' />
+										</svg>
+									</div>
+								</article>
 							))
 						}
 					</div>
