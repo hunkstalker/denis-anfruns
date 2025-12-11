@@ -27,7 +27,7 @@ const tils = tilCollection
 
 			{
 				tils.map(post => (
-					<article class='group relative flex flex-col gap-2 bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 hover:border-black/15 dark:hover:border-white/15 shadow-sm hover:shadow-md'>
+					<article class='til-card opacity-0 translate-y-8 transition-all duration-700 ease-out group relative flex flex-col gap-2 bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 hover:border-black/15 dark:hover:border-white/15 shadow-sm hover:shadow-md'>
 						<div class='flex items-center justify-between gap-2 mb-1'>
 							<time class='flex items-center gap-3 text-xs text-zinc-500' datetime={post.data.pubDate.toISOString()}>
 								{post.data.pubDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -54,3 +54,24 @@ const tils = tilCollection
 		</div>
 	</div>
 </aside>
+
+<script>
+	const observerOptions = {
+		root: null,
+		rootMargin: '0px',
+		threshold: 0.1
+	};
+
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				entry.target.classList.remove('opacity-0', 'translate-y-8');
+				observer.unobserve(entry.target);
+			}
+		});
+	}, observerOptions);
+
+	document.querySelectorAll('.til-card').forEach((el) => {
+		observer.observe(el);
+	});
+</script>
