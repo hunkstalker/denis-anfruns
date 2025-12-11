@@ -2,6 +2,7 @@
 import { type CollectionEntry } from 'astro:content'
 import { getBaseSlug } from '../utils/blogi18n'
 import { useTranslations } from '../i18n/utils'
+import ArrowLink from '../icons/arrow-link.svg'
 
 interface Props {
 	post: CollectionEntry<'blog'>
@@ -57,18 +58,7 @@ const href =
 			class="flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]"
 		>
 			{t('blog.readArticle')}
-			<svg
-				class="h-4 w-4 transition-transform group-hover:translate-x-1"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-			</svg>
+			<ArrowLink class="h-4 w-4 transition-transform group-hover:translate-x-1" />
 		</div>
 	</div>
 </article>

@@ -2,6 +2,7 @@
 import type { MarkdownHeading } from 'astro'
 import { useTranslations } from '../i18n/utils'
 import type { SupportedLang } from '../utils/blogi18n'
+import ListIcon from '../icons/list.svg'
 
 interface Props {
 	headings: MarkdownHeading[]
@@ -18,27 +19,7 @@ const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3)
 	toc.length > 0 && (
 		<nav class="toc-container max-h-[calc(100vh-10rem)] overflow-y-auto pr-4 text-sm">
 			<h3 class="text-xs mb-4 flex items-center gap-2 px-3 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="14"
-					height="14"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="lucide lucide-list"
-				>
-					<>
-						<line x1="8" x2="21" y1="6" y2="6" />
-						<line x1="8" x2="21" y1="12" y2="12" />
-						<line x1="8" x2="21" y1="18" y2="18" />
-						<line x1="3" x2="3.01" y1="6" y2="6" />
-						<line x1="3" x2="3.01" y1="12" y2="12" />
-						<line x1="3" x2="3.01" y1="18" y2="18" />
-					</>
-				</svg>
+				<ListIcon class="w-3.5 h-3.5" />
 				{t('blog.tableOfContents')}
 			</h3>
 			<ul class="space-y-1">

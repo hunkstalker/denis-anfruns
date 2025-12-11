@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
 import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../utils/blogi18n'
+import CheckIcon from '../icons/check.svg'
 
 interface Props {
 	seriesId: string
@@ -46,15 +47,9 @@ const getPath = (slug: string) =>
 							class="series-status absolute left-0 top-0.5 z-10 flex h-6 w-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950"
 							data-slug={post.slug}
 						>
-							<svg
+							<CheckIcon
 								class="check-icon h-3.5 w-3.5 text-white opacity-0 transition-opacity"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
-								stroke-width="3"
-							>
-								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-							</svg>
+							/>
 							{isCurrent && (
 								<div class="current-dot absolute h-2 w-2 rounded-full bg-[--tangerine]" />
 							)}
