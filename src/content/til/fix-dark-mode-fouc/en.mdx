@@ -1,0 +1,71 @@
+---
+title: "FOUC in Astro: The Ultimate Guide (Script + Config)"
+pubDate: "2025-12-11"
+lang: "en"
+tags: ["astro", "css", "perf"]
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+FOUC (Flash of Unstyled Content) is the number one enemy of static sites (SSG). In this project, I encountered two levels of FOUC, and here is how I solved both.
+
+## Level 1: The White Flash
+
+The browser paints the page white by default before loading your dark styles.
+**Solution:** Inject a blocking script into the `<head>` of the main Layout.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'BaseLayout.astro', 
+      code: `<head>
+  <script is:inline>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (theme === 'dark' || (!theme && systemDark)) {
+        document.documentElement.classList.add('dark');
+        // Direct style injection for absolute immediacy
+        document.documentElement.style.backgroundColor = '#131313';
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '#ffffff';
+         document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>`, 
+      lang: 'html' 
+    }
+  ]}
+/>
+
+## Level 2: The Layout Shift (Deferred CSS)
+
+Despite the script, navigating between pages caused elements to "disassemble" for an instant.
+**The Culprit:** A misconfigured optimization plugin (`@playform/inline`).
+
+This plugin inlines critical CSS, but if placed **before** other build processes in `astro.config.mjs`, it can cause CSS to load asynchronously in an incorrect order, triggering layout shifts.
+
+**Solution:**
+Move optimization plugins to the **end** of the `integrations` array or disable them if they cause instability.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'astro.config.mjs', 
+      code: `export default defineConfig({
+  // BAD: inline() before mdx()
+  // integrations: [tailwind(), react(), inline(), mdx()],
+
+  // GOOD: Optimizations at the end (or disabled if problematic)
+  integrations: [tailwind(), react(), mdx() /*, inline() */],
+});`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+> **Lesson:** Visual stability (CLS) is more important than saving 2ms of load time. If an optimization breaks the experience, remove it.

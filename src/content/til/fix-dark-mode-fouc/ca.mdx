@@ -1,0 +1,71 @@
+---
+title: "FOUC a Astro: La Guia Definitiva (Script + Config)"
+pubDate: "2025-12-11"
+lang: "ca"
+tags: ["astro", "css", "perf"]
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+El FOUC (Flash of Unstyled Content) és l'enemic número u dels llocs estàtics (SSG). En aquest projecte em vaig trobar amb dos nivells de FOUC, i aquí explico com vaig solucionar tots dos.
+
+## Nivell 1: El Parpelleig de Color (The White Flash)
+
+El navegador pinta la pàgina en blanc per defecte abans de carregar els teus estils foscos.
+**Solució:** Injectar un script bloquejant al `<head>` del Layout principal.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'BaseLayout.astro', 
+      code: `<head>
+  <script is:inline>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (theme === 'dark' || (!theme && systemDark)) {
+        document.documentElement.classList.add('dark');
+        // Injecció directa d'estils per a immediatesa absoluta
+        document.documentElement.style.backgroundColor = '#131313';
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '#ffffff';
+         document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>`, 
+      lang: 'html' 
+    }
+  ]}
+/>
+
+## Nivell 2: El Salt de Layout (CSS Diferit)
+
+Malgrat l'script, en navegar entre pàgines, els elements es "desmuntaven" per un instant.
+**El culpable:** Un plugin d'optimització (`@playform/inline`) mal configurat.
+
+Aquest plugin fa "inline" del CSS crític, però si es col·loca **abans** d'altres processos de build a `astro.config.mjs`, pot causar que el CSS es carregui de forma asíncrona incorrecta, provocant salts.
+
+**Solució:**
+Moure els plugins d'optimització **al final** de l'array `integrations` o desactivar-los si causen inestabilitat.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'astro.config.mjs', 
+      code: `export default defineConfig({
+  // MALAMENT: inline() abans de mdx()
+  // integrations: [tailwind(), react(), inline(), mdx()],
+
+  // BÉ: Optimitzacions al final (o deshabilitades si donen problemes)
+  integrations: [tailwind(), react(), mdx() /*, inline() */],
+});`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+> **Lliçó:** L'estabilitat visual (CLS) és més important que estalviar 2ms de càrrega. Si una optimització trenca l'experiència, fora.

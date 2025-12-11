@@ -12,6 +12,8 @@ const { title, description, image = '/denis-anfruns-millan.png' } = Astro.props;
 const resolvedImage = new URL(image, Astro.site);
 ---
 
+
+
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -55,8 +57,4 @@ const resolvedImage = new URL(image, Astro.site);
 <!-- Alternate / multilenguaje -->
 <link rel="alternate" hreflang="x-default" href="https://denis-anfruns.dev/" />
 
-<!-- Theme Script -->
-<script is:inline>
-	const theme = localStorage.getItem('theme');
-	document.documentElement.classList.toggle('dark', theme === 'dark');
-</script>
+

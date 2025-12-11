@@ -1,0 +1,71 @@
+---
+title: "FOUC en Astro: La Guía Definitiva (Script + Config)"
+pubDate: "2025-12-11"
+lang: "es"
+tags: ["astro", "css", "perf"]
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+El FOUC (Flash of Unstyled Content) es el enemigo número uno de los sitios estáticos (SSG). En este proyecto me encontré con dos niveles de FOUC, y aquí explico cómo solucioné ambos.
+
+## Nivel 1: El Parpadeo de Color (The White Flash)
+
+El navegador pinta la página en blanco por defecto antes de cargar tus estilos oscuros.
+**Solución:** Inyectar un script bloqueante en el `<head>` del Layout principal.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'BaseLayout.astro', 
+      code: `<head>
+  <script is:inline>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (theme === 'dark' || (!theme && systemDark)) {
+        document.documentElement.classList.add('dark');
+        // Inyección directa de estilos para inmediatez absoluta
+        document.documentElement.style.backgroundColor = '#131313';
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '#ffffff';
+         document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>`, 
+      lang: 'html' 
+    }
+  ]}
+/>
+
+## Nivel 2: El Salto de Layout (CSS Diferido)
+
+A pesar del script, al navegar entre páginas, los elementos se "desmontaban" por un instante.
+**El culpable:** Un plugin de optimización (`@playform/inline`) mal configurado.
+
+Este plugin inlines el CSS crítico, pero si se coloca **antes** de otros procesos de build en `astro.config.mjs`, puede causar que el CSS se cargue de forma asíncrona incorrecta, provocando saltos.
+
+**Solución:**
+Mover los plugins de optimización **al final** del array `integrations` o desactivarlos si causan inestabilidad.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'astro.config.mjs', 
+      code: `export default defineConfig({
+  // MAL: inline() antes de mdx()
+  // integrations: [tailwind(), react(), inline(), mdx()],
+
+  // BIEN: Optimizaciones al final (o deshabilitadas si dan problemas)
+  integrations: [tailwind(), react(), mdx() /*, inline() */],
+});`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+> **Lección:** La estabilidad visual (CLS) es más importante que ahorrar 2ms de carga. Si una optimización rompe la experiencia, fuera.
