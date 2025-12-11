@@ -1,0 +1,48 @@
+import { getCollection, type CollectionEntry } from 'astro:content'
+
+export type TilPost = CollectionEntry<'til'> & {
+	data: CollectionEntry<'til'>['data'] & {
+		pubDate: Date
+	}
+}
+
+// Load all meta.json files at build time
+const metaFiles = import.meta.glob('../content/til/**/meta.json', { eager: true, import: 'default' })
+
+export async function getTils(): Promise<TilPost[]> {
+	const posts = await getCollection('til')
+	
+	return posts
+		.map((post) => {
+			const folder = post.slug.split('/')[0]
+            // Construct the expected path key for the glob result
+            // import.meta.glob keys are relative to THIS file if starting with ./ or ../
+            // We differ to exact string matching logic of Vite
+            // ../content/til/folder/meta.json
+            const metaKey = `../content/til/${folder}/meta.json`
+			const meta = metaFiles[metaKey] as { pubDate?: string; tags?: string[] } | undefined
+
+			// Validar y parsear fecha
+			let pubDate = post.data.pubDate
+			if (meta?.pubDate) {
+				pubDate = new Date(meta.pubDate)
+			}
+
+			// Validar tags
+			let tags = post.data.tags || []
+			if (meta?.tags && meta.tags.length > 0) {
+				tags = meta.tags
+			}
+
+			return {
+				...post,
+				data: {
+					...post.data,
+					pubDate,
+					tags,
+				},
+			}
+		})
+        // Filter out posts that still don't have a date (legacy or missing meta)
+		.filter((post): post is TilPost => post.data.pubDate !== undefined)
+}

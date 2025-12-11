@@ -22,8 +22,10 @@ const t = useTranslations(lang)
 import { getCollection } from 'astro:content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 
+import { getTils } from '../utils/til-content'
+
 // Fetch recent items for default view
-const allTils = await getCollection('til')
+const allTils = await getTils()
 const allBlog = await getCollection('blog', ({ data }) => {
 	return import.meta.env.PROD ? data.draft !== true : true
 })
@@ -70,18 +72,20 @@ const currentPath = Astro.url.pathname
 			<div class="hidden sm:inline-flex md:gap-1">
 				<div class="text-center">
 					{
-						navItems.map((item) => {
+						navItems.map((navItem) => {
 							const finalPath =
-								lang === 'es' ? item.path : `/${lang}${item.path === '/' ? '' : item.path}`
+								lang === 'es'
+									? navItem.path
+									: `/${lang}${navItem.path === '/' ? '' : navItem.path}`
 							const isActive =
 								currentPath === finalPath ||
 								(finalPath !== '/' && currentPath.startsWith(finalPath))
 							return (
 								<Button
-									text={t(item.key)}
+									text={t(navItem.key)}
 									link={finalPath}
-									enabled={item.enabled}
-									active={item.enabled && isActive}
+									enabled={navItem.enabled}
+									active={navItem.enabled && isActive}
 								/>
 							)
 						})
@@ -139,13 +143,13 @@ const currentPath = Astro.url.pathname
 											{t('blog.til')}
 										</h3>
 										<div class="space-y-1">
-											{recentTils.map((post) => (
+											{recentTils.map((tilItem) => (
 												<a
-													href={`/${lang}/til/${post.slug.split('/').pop()}/`}
+													href={`/${lang}/til/${tilItem.slug.split('/').pop()}/`}
 													class="group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
 												>
 													<div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-														{post.data.title}
+														{tilItem.data.title}
 													</div>
 												</a>
 											))}
@@ -164,16 +168,16 @@ const currentPath = Astro.url.pathname
 											{t('blog.series')}
 										</h3>
 										<div class="space-y-1">
-											{recentPosts.map((post) => (
+											{recentPosts.map((blogItem) => (
 												<a
-													href={`/${lang}/blog/${getBaseSlug(post.slug)}/`}
+													href={`/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
 													class="group block rounded-md px-2 py-2 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
 												>
 													<div class="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-														{post.data.title}
+														{blogItem.data.title}
 													</div>
 													<div class="text-xs mt-0.5 line-clamp-1 text-zinc-400">
-														{post.data.description}
+														{blogItem.data.description}
 													</div>
 												</a>
 											))}

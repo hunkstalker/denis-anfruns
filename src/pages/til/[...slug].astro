@@ -1,12 +1,14 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content'
+import { type CollectionEntry } from 'astro:content'
+import { getTils, type TilPost } from '../../utils/til-content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Nav from '../../components/Nav.astro'
 import ChevronLeft from '../../icons/chevron-left.svg'
 
 export async function getStaticPaths() {
-	const posts = await getCollection('til', ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true
+	const allPosts = await getTils()
+	const posts = allPosts.filter(post => {
+		return import.meta.env.PROD ? post.data.draft !== true : true
 	})
 	return posts
 		.filter((post) => post.data.lang === 'es')
@@ -15,7 +17,7 @@ export async function getStaticPaths() {
 			props: post,
 		}))
 }
-type Props = CollectionEntry<'til'>
+type Props = TilPost
 
 const post = Astro.props
 const { Content } = await post.render()
@@ -43,8 +45,8 @@ const lang = 'es'
 				<div
 					class="flex gap-3 border-b border-zinc-200 pb-6 font-mono text-sm text-zinc-500 dark:border-zinc-800"
 				>
-					<time datetime={post.data.pubDate.toISOString()}>
-						{post.data.pubDate.toLocaleDateString('es-ES', { dateStyle: 'long' })}
+					<time datetime={post.data.pubDate!.toISOString()}>
+						{post.data.pubDate!.toLocaleDateString('es-ES', { dateStyle: 'long' })}
 					</time>
 					<div class="flex gap-2">
 						{post.data.tags.map((tag) => <span>#{tag}</span>)}
