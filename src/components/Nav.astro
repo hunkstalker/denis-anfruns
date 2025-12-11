@@ -126,7 +126,19 @@ const currentPath = Astro.url.pathname
 							class='absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 dark:text-zinc-400'>
 							<SearchIcon class='h-4 w-4' />
 						</span>
+						
+						<!-- Contenedor de Badge Activa -->
+						<div id='desktop-filter-badge-container' class='absolute left-10 top-1 hidden'>
+							<!-- Badge se inyecta aquí dinámicamente -->
+						</div>
+						
+						<!-- Sugerencia Fantasma (solo visible cuando se detecta keyword) -->
+						<div id='desktop-filter-suggestion' class='pointer-events-none absolute left-10 top-1 hidden opacity-40'>
+							<span class='rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1 text-[10px] font-medium text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400'></span>
+						</div>
+						
 						<input
+							id='desktop-search-input'
 							type='text'
 							placeholder={t('nav.search') || 'Buscar...'}
 							class='w-96 rounded-xl border border-zinc-200 bg-zinc-100 py-2 pl-10 pr-12 text-sm text-zinc-800 placeholder:text-zinc-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[--tangerine] dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-200 dark:placeholder:text-zinc-400'
@@ -279,10 +291,56 @@ const currentPath = Astro.url.pathname
 	}
 
 	// === Lógica de Búsqueda Desktop Híbrida ===
-	const desktopInput = document.querySelector('.group\\/search input') as HTMLInputElement
+	const desktopInput = document.querySelector('#desktop-search-input') as HTMLInputElement
 	const resultsContainer = document.getElementById('desktop-search-results')
 	const resultsOverlay = document.getElementById('desktop-search-overlay')
 	const contentContainer = document.getElementById('desktop-content-container')
+	const badgeContainer = document.getElementById('desktop-filter-badge-container')
+	const suggestionContainer = document.getElementById('desktop-filter-suggestion')
+	
+	// === Sistema de Filtros con Badges ===
+	interface FilterConfig {
+		keys: string[] | Record<string, string>
+		label: string
+		badge: string
+		color: string
+		filterType: string
+	}
+	
+	const FILTER_KEYWORDS: Record<string, FilterConfig> = {
+		til: {
+			keys: ['til'],
+			label: 'blog.til',  // i18n key
+			badge: 'TIL',
+			color: 'emerald',
+			filterType: 'til'
+		},
+		projects: {
+			keys: { es: 'proyectos', en: 'projects', ca: 'projectes' },
+			label: 'nav.search.filter.projects',  // i18n key
+			badge: 'PRO',
+			color: 'blue',
+			filterType: 'project'
+		},
+		devlog: {
+			keys: ['devlog', 'blog'],
+			label: 'blog.series',  // i18n key
+			badge: 'DEV',
+			color: 'purple',
+			filterType: 'blog'
+		}
+	}
+	
+	// Obtener label traducido
+	function getTranslatedLabel(config: FilterConfig): string {
+		const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
+		const t = ui[currentLang]
+		return t[config.label as keyof typeof t] as string || config.label
+	}
+	
+	let activeFilter: string | null = null
+	let activeFilterConfig: FilterConfig | null = null
+	let currentSuggestion: { keyword: string; config: FilterConfig } | null = null
 	
 
 	
@@ -291,6 +349,162 @@ const currentPath = Astro.url.pathname
 
 	let navPagefind: any = null
 	let isOpen = false
+	
+	// === Funciones del Sistema de Badges ===
+	
+	// Obtener idioma actual
+	function getCurrentLang(): string {
+		const htmlLang = document.documentElement.lang
+		return htmlLang === 'ca' || htmlLang === 'en' ? htmlLang : 'es'
+	}
+	
+	// Detectar si el input coincide con una keyword
+	function detectKeyword(input: string): { keyword: string; config: FilterConfig } | null {
+		if (!input.trim()) return null
+		const normalized = input.toLowerCase().trim()
+		const lang = getCurrentLang()
+		
+		for (const [key, config] of Object.entries(FILTER_KEYWORDS)) {
+			let keys: string[] = []
+			if (Array.isArray(config.keys)) {
+				keys = config.keys
+			} else {
+				keys = [config.keys[lang] || config.keys['es']]
+			}
+			
+			for (const keyword of keys) {
+				if (keyword.startsWith(normalized) && keyword !== normalized) {
+					return { keyword, config }
+				}
+			}
+		}
+		return null
+	}
+	
+	// Mostrar sugerencia fantasma
+	function showSuggestion(keyword: string, config: FilterConfig) {
+		if (!suggestionContainer) return
+		const span = suggestionContainer.querySelector('span')
+		if (span) {
+			span.textContent = config.badge
+			suggestionContainer.classList.remove('hidden')
+			currentSuggestion = { keyword, config }
+		}
+	}
+	
+	// Ocultar sugerencia fantasma
+	function hideSuggestion() {
+		suggestionContainer?.classList.add('hidden')
+		currentSuggestion = null
+	}
+	
+	// Crear badge activa
+	function createActiveBadge(config: FilterConfig) {
+		if (!badgeContainer) return
+		
+		activeFilter = config.filterType
+		activeFilterConfig = config
+		
+		// Determinar clases de color con bordes
+		const colorClasses = {
+			emerald: 'bg-emerald-100 text-emerald-700 border border-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-700',
+			blue: 'bg-blue-100 text-blue-700 border border-blue-600 dark:bg-blue-900/50 dark:text-blue-300 dark:border-blue-700',
+			purple: 'bg-purple-100 text-purple-700 border border-purple-600 dark:bg-purple-900/50 dark:text-purple-300 dark:border-purple-700'
+		}
+		
+		const badge = document.createElement('div')
+		badge.className = `inline-flex items-center justify-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium min-w-[2.5rem] ${colorClasses[config.color as keyof typeof colorClasses] || colorClasses.blue}`
+		badge.textContent = config.badge
+		
+		badgeContainer.innerHTML = ''
+		badgeContainer.appendChild(badge)
+		badgeContainer.classList.remove('hidden')
+		
+		// Ocultar sugerencia
+		hideSuggestion()
+		
+		// Ajustar padding del input para dar espacio a la badge
+		if (desktopInput) {
+			desktopInput.style.paddingLeft = '5.5rem'
+			// Actualizar placeholder para indicar filtro activo
+			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
+			const t = ui[currentLang]
+			const translatedLabel = getTranslatedLabel(config)
+			desktopInput.placeholder = `${t['nav.search'] || 'Buscar...'} ${t['nav.search.in']} ${translatedLabel}...`
+		}
+	}
+	
+	// Eliminar badge activa
+	function removeActiveBadge() {
+		if (!badgeContainer) return
+		badgeContainer.innerHTML = ''
+		badgeContainer.classList.add('hidden')
+		activeFilter = null
+		activeFilterConfig = null
+		
+		// Restaurar padding del input
+		if (desktopInput) {
+			desktopInput.style.paddingLeft = '2.5rem'
+			// Restaurar placeholder original
+			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
+			const t = ui[currentLang]
+			desktopInput.placeholder = t['nav.search'] || 'Buscar...'
+		}
+	}
+	
+	// Mostrar contenido inicial filtrado según badge activa
+	function showFilteredInitialContent() {
+		if (!contentContainer || !activeFilter) {
+			if (contentContainer) contentContainer.innerHTML = defaultContent
+			return
+		}
+		
+		// Obtener solo las secciones relevantes del contenido inicial
+		const parser = new DOMParser()
+		const doc = parser.parseFromString(defaultContent, 'text/html')
+		const initialDiv = doc.querySelector('#desktop-initial-content')
+		
+		if (!initialDiv) {
+			contentContainer.innerHTML = defaultContent
+			return
+		}
+		
+		// Filtrar secciones según el filtro activo
+		const sections = initialDiv.querySelectorAll('div.mb-6')
+		const filteredSections: Element[] = []
+		
+		sections.forEach(section => {
+			const header = section.querySelector('h3')
+			if (!header) return
+			
+			// Determinar si esta sección corresponde al filtro activo
+			const isPinSection = header.textContent?.includes('TIL') || header.querySelector('[class*="pin"]')
+			const isBookmarkSection = header.textContent?.includes('DevLog') || header.textContent?.includes('Serie') || header.querySelector('[class*="bookmark"]')
+			
+			if (activeFilter === 'til' && isPinSection) {
+				filteredSections.push(section)
+			} else if (activeFilter === 'blog' && isBookmarkSection) {
+				filteredSections.push(section)
+			}
+			// project no tiene sección en inicial, así que se quedaría vacío
+		})
+		
+		if (filteredSections.length > 0) {
+			const wrapper = document.createElement('div')
+			filteredSections.forEach(section => wrapper.appendChild(section.cloneNode(true)))
+			contentContainer.innerHTML = wrapper.innerHTML
+		} else {
+			// Si no hay contenido para este filtro, mostrar mensaje
+			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
+			const t = ui[currentLang]
+			const translatedLabel = activeFilterConfig ? getTranslatedLabel(activeFilterConfig) : ''
+			contentContainer.innerHTML = `
+				<div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
+					<p>${t['nav.search.typeToSearch']} ${translatedLabel}...</p>
+				</div>
+			`
+		}
+	}
 
 	// Función para mostrar resultados/overlay
 	function showResults() {
@@ -353,10 +567,16 @@ const currentPath = Astro.url.pathname
 		const search = await navPagefind.search(query)
 		const allResults = await Promise.all(search.results.map((r: any) => r.data()))
 
+		// Filtrar por categoría activa si existe
+		let filteredResults = allResults
+		if (activeFilter) {
+			filteredResults = allResults.filter(r => r.filters.type?.includes(activeFilter))
+		}
+
 		// Deduplicación por URL
 		const seenUrls = new Set()
 		const results = []
-		for (const result of allResults) {
+		for (const result of filteredResults) {
 			if (!seenUrls.has(result.url)) {
 				seenUrls.add(result.url)
 				results.push(result)
@@ -426,16 +646,58 @@ const currentPath = Astro.url.pathname
 	// Debounce y Listeners
 	let navTimeout: any
 	if (desktopInput) {
+		// Evento Input: Detección de keywords y búsqueda
 		desktopInput.addEventListener('input', e => {
 			const val = (e.target as HTMLInputElement).value
 			
 			// Si el usuario escribe y estaba cerrado (raro pq tiene focus), abrir
 			if (!isOpen) showResults()
+			
+			// Detectar keywords solo si no hay badge activa
+			if (!activeFilter) {
+				const detected = detectKeyword(val)
+				if (detected) {
+					showSuggestion(detected.keyword, detected.config)
+				} else {
+					hideSuggestion()
+				}
+			}
 
 			clearTimeout(navTimeout)
 			navTimeout = setTimeout(() => {
 				searchNav(val)
 			}, 300)
+		})
+		
+		// Evento KeyDown: Tab (autocompletar), Backspace (eliminar badge), Delete (limpiar)
+		desktopInput.addEventListener('keydown', e => {
+			// Tab: Autocompletar keyword
+			if (e.key === 'Tab' && currentSuggestion && !activeFilter) {
+				e.preventDefault()
+				createActiveBadge(currentSuggestion.config)
+				desktopInput.value = '' // Limpiar input
+				// Cancelar búsqueda pendiente y mostrar contenido filtrado
+				clearTimeout(navTimeout)
+				showFilteredInitialContent()
+			}
+			
+			// Backspace: Eliminar badge si input vacío
+			if (e.key === 'Backspace' && !desktopInput.value && activeFilter) {
+				e.preventDefault()
+				removeActiveBadge()
+				// Restaurar contenido por defecto
+				if (contentContainer) contentContainer.innerHTML = defaultContent
+			}
+			
+			// Delete: Limpiar todo (badge + input)
+			if (e.key === 'Delete') {
+				e.preventDefault()
+				removeActiveBadge()
+				hideSuggestion()
+				desktopInput.value = ''
+				// Restaurar contenido por defecto
+				if (contentContainer) contentContainer.innerHTML = defaultContent
+			}
 		})
 	}
 
@@ -445,6 +707,8 @@ const currentPath = Astro.url.pathname
 			if (isOpen) {
 				desktopInput?.blur()
 				hideResults()
+				// Limpiar badges y sugerencias al cerrar
+				hideSuggestion()
 			}
 		}
 		if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
