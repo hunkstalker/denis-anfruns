@@ -1,18 +1,20 @@
 ---
-title: "FOUC en Astro: La Guía Definitiva (Script + Config)"
-pubDate: "2025-12-11"
+title: "FOUC en Astro: Guía Definitiva, Parte I (Script + Config)"
+pubDate: "2025-12-11T10:00:00Z"
 lang: "es"
 tags: ["astro", "css", "perf"]
 ---
 
 import CodeTabs from '../../../components/mdx/CodeTabs.astro';
 
-El FOUC (Flash of Unstyled Content) es el enemigo número uno de los sitios estáticos (SSG). En este proyecto me encontré con dos niveles de FOUC, y aquí explico cómo solucioné ambos.
+El FOUC (Flash of Unstyled Content) es uno de los problemas que más me ha cstado de arreglar siempre. Es un dolor de cabeza. Ahora, en este proyecto me encontré con dos niveles de FOUC, y aquí explico cómo solucioné ambos.
 
 ## Nivel 1: El Parpadeo de Color (The White Flash)
 
-El navegador pinta la página en blanco por defecto antes de cargar tus estilos oscuros.
-**Solución:** Inyectar un script bloqueante en el `<head>` del Layout principal.
+El navegador pinta la página en blanco por defecto antes de cargar los estilos oscuros.
+**Solución:** Inyectar un script "bloqueante" en el `<head>` del Layout principal.
+
+Hay que tener en cuenta que esto además forma parte de la lógica para controlar entre temas claro y oscuro al iniciar el sitio.
 
 <CodeTabs 
   items={[
@@ -47,10 +49,10 @@ El navegador pinta la página en blanco por defecto antes de cargar tus estilos 
 A pesar del script, al navegar entre páginas, los elementos se "desmontaban" por un instante.
 **El culpable:** Un plugin de optimización (`@playform/inline`) mal configurado.
 
-Este plugin inlines el CSS crítico, pero si se coloca **antes** de otros procesos de build en `astro.config.mjs`, puede causar que el CSS se cargue de forma asíncrona incorrecta, provocando saltos.
+Este plugin _inlines_ el CSS crítico, pero si se coloca **antes** de otros procesos de build en `astro.config.mjs`, puede causar que el CSS se cargue de forma asíncrona incorrecta, provocando saltos. O al menos eso me dijo Gemini 3.
 
 **Solución:**
-Mover los plugins de optimización **al final** del array `integrations` o desactivarlos si causan inestabilidad.
+Mover los plugins de optimización **al final** del array `integrations` o... lo que realmente me solucionó el problema, cargármelo.
 
 <CodeTabs 
   items={[
@@ -67,5 +69,8 @@ Mover los plugins de optimización **al final** del array `integrations` o desac
     }
   ]}
 />
+
+ Esta integración inyecta CSS en el HTML, debería de servir para optimizar la carga, pero al menos en mi caso fue a costa de añadirme ese FOUC.
+Por ahora su eliminiación no me ha afectado en nada aparente.
 
 > **Lección:** La estabilidad visual (CLS) es más importante que ahorrar 2ms de carga. Si una optimización rompe la experiencia, fuera.
