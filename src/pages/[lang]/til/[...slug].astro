@@ -4,6 +4,7 @@ import { getTils, type TilPost } from '../../../utils/til-content'
 import BaseLayout from '../../../layouts/BaseLayout.astro'
 import Nav from '../../../components/Nav.astro'
 import ChevronLeft from '../../../icons/chevron-left.svg'
+import ChevronUp from '../../../icons/chevron-up.svg'
 import { languages } from '../../../i18n/ui'
 import { useTranslations } from '../../../i18n/utils'
 
@@ -98,16 +99,22 @@ const t = useTranslations(lang)
 			</article>
 
 			<div class="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
-				<a
-					href={`/${lang}/blog`}
-					class="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
+				<button
+					id="scroll-to-top"
+					class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
 				>
-					<ChevronLeft />
-					{t('blog.backToBlog')}
-				</a>
+					<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
+					{t('blog.backToTop')}
+				</button>
 			</div>
 
 			<div class="h-24"></div>
 		</div>
 	</div>
 </BaseLayout>
+
+<script>
+	document.getElementById('scroll-to-top')?.addEventListener('click', () => {
+		window.scrollTo({ top: 0, behavior: 'smooth' })
+	})
+</script>
