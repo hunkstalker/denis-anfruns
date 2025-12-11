@@ -99,6 +99,14 @@ if (post.data.series) {
 				data-pagefind-meta={`description:${post.data.description}`}
 			>
 				<div class="not-prose mb-8">
+					<a
+						href={`/${lang}/blog`}
+						class="animate-fade-in-up mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
+					>
+						<ChevronLeft />
+						{t('blog.backToBlog')}
+					</a>
+
 					{
 						post.data.heroImage && (
 							<div class="animate-fade-in-up mb-6">
@@ -166,7 +174,7 @@ if (post.data.series) {
 
 				<!-- Mobile Table of Contents (Collapsible) -->
 				<details
-					class="mb-8 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 lg:hidden"
+					class="mobile-toc mb-8 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 lg:hidden"
 				>
 					<summary
 						class="flex cursor-pointer items-center gap-2 font-medium text-zinc-900 dark:text-zinc-100"
@@ -193,8 +201,10 @@ if (post.data.series) {
 						>
 						{t('toc.title') || 'Table of Contents'}
 					</summary>
-					<div class="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-700">
-						<TableOfContents headings={headings} lang={lang} />
+					<div class="toc-content overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 0; opacity: 0;">
+						<div class="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-700">
+							<TableOfContents headings={headings} lang={lang} />
+						</div>
 					</div>
 				</details>
 
@@ -236,6 +246,46 @@ if (post.data.series) {
 					document.getElementById('scroll-to-top')?.addEventListener('click', () => {
 						window.scrollTo({ top: 0, behavior: 'smooth' })
 					})
+
+					// Mobile TOC Animation
+					const tocDetails = document.querySelector('.mobile-toc') as HTMLDetailsElement
+					const tocSummary = tocDetails?.querySelector('summary')
+					const tocContent = tocDetails?.querySelector('.toc-content') as HTMLElement
+
+					if (tocDetails && tocSummary && tocContent) {
+						tocSummary.addEventListener('click', (e) => {
+							e.preventDefault()
+
+							if (tocDetails.open) {
+								// Closing
+								tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
+								// Force reflow
+								tocContent.offsetHeight
+								
+								tocContent.style.maxHeight = '0'
+								tocContent.style.opacity = '0'
+								
+								setTimeout(() => {
+									tocDetails.open = false
+								}, 300)
+							} else {
+								// Opening
+								tocDetails.open = true
+								
+								tocContent.style.maxHeight = '0'
+								tocContent.style.opacity = '0'
+								// Force reflow
+								tocContent.offsetHeight
+								
+								tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
+								tocContent.style.opacity = '1'
+
+								setTimeout(() => {
+									tocContent.style.maxHeight = 'none'
+								}, 300)
+							}
+						})
+					}
 				</script>
 			</article>
 
@@ -253,15 +303,7 @@ if (post.data.series) {
 
 					{post.data.series && <SeriesGithubCard seriesId={post.data.series} lang={lang} />}
 
-					<div class="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-800">
-						<a
-							href={`/${lang}/blog`}
-							class="flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
-						>
-							<ChevronLeft />
-							{t('blog.backToBlog')}
-						</a>
-					</div>
+
 				</div>
 			</aside>
 		</div>
