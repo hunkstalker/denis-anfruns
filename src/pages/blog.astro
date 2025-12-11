@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav from '../components/Nav.astro'
 import { type CollectionEntry, getCollection } from 'astro:content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
+import TilAside from '../components/TilAside.astro'
 
 const lang = 'es'
 const rawPosts = (
@@ -47,9 +48,6 @@ const finalSeriesPosts = Array.from(seriesMap.values()).map(list => {
 })
 
 const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-
-const tilCollection = await getCollection('til')
-const tils = tilCollection.filter(p => p.data.lang === lang).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 ---
 
 <BaseLayout siteTitle='Jardín Digital' lang={lang}>
@@ -101,44 +99,7 @@ const tils = tilCollection.filter(p => p.data.lang === lang).sort((a, b) => b.da
 			</div>
 
 			<!-- Columna lateral: TILs -->
-			<aside class='lg:col-span-4 space-y-6 sm:space-y-8'>
-				<div class='bg-zinc-50 dark:bg-zinc-900/50 p-4 sm:p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 lg:sticky lg:top-24'>
-					<h2 class='text-xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>Notas TIL</h2>
-
-					<div class='space-y-4'>
-						{tils.length === 0 && <p class='text-zinc-500 italic text-sm'>No hay TILs todavía.</p>}
-
-						{// Card TIL
-							tils.map(post => (
-								<article class='group relative flex flex-col gap-2 bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 hover:border-black/15 dark:hover:border-white/15 shadow-sm hover:shadow-md'>
-									<div class='flex items-center justify-between gap-2 mb-1'>
-										<time class='flex items-center gap-3 text-xs text-zinc-500' datetime={post.data.pubDate.toISOString()}>
-											{post.data.pubDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-										</time>
-									</div>
-
-									<p class='dark:text-white line-clamp-2 mb-4'>
-										<a href={`/til/${post.slug.split('/')[0]}/`}>
-											<span class='absolute inset-0' />
-											{post.data.title}
-										</a>
-									</p>
-									<div class='flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]'>
-										Leer nota
-										<svg class='w-4 h-4 group-hover:translate-x-1 transition-transform' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-											<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 8l4 4m0 0l-4 4m4-4H3' />
-										</svg>
-									</div>
-								</article>
-							))
-						}
-					</div>
-
-					<div class='mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700 text-center'>
-						<p class='text-sm text-zinc-500'>Pequeños fragmentos de conocimiento que voy recolectando día a día.</p>
-					</div>
-				</div>
-			</aside>
+      <TilAside lang={lang} />
 		</div>
 	</div>
 </BaseLayout>

@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content'
+import { useTranslations } from '../i18n/utils'
+import ArrowLink from '../icons/arrow-link.svg'
+
+interface Props {
+	lang: 'es' | 'en' | 'ca'
+}
+
+const { lang } = Astro.props
+const t = useTranslations(lang)
+
+const tilCollection = await getCollection('til')
+const tils = tilCollection
+	.filter(p => p.data.lang === lang)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+---
+
+<aside class='lg:col-span-4 space-y-6 sm:space-y-8'>
+    <div class='bg-zinc-50 dark:bg-zinc-900/50 p-4 sm:p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 lg:sticky lg:top-24'>
+		<h2 class='text-xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>
+			{t('blog.til')}
+		</h2>
+
+		<div class='space-y-4'>
+			{tils.length === 0 && <p class='text-zinc-500 italic text-sm'>{t('blog.withoutTILs')}</p>}
+
+			{
+				tils.map(post => (
+					<article class='group relative flex flex-col gap-2 bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700/50 hover:border-black/15 dark:hover:border-white/15 shadow-sm hover:shadow-md'>
+						<div class='flex items-center justify-between gap-2 mb-1'>
+							<time class='flex items-center gap-3 text-xs text-zinc-500' datetime={post.data.pubDate.toISOString()}>
+								{post.data.pubDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+							</time>
+						</div>
+
+						<p class='dark:text-white line-clamp-2 mb-4'>
+							<a href={lang === 'es' ? `/til/${post.slug.split('/')[0]}/` : `/${lang}/til/${post.slug.split('/')[0]}/`}>
+								<span class='absolute inset-0'></span>
+								{post.data.title}
+							</a>
+						</p>
+						<div class='flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]'>
+							Leer nota
+							<ArrowLink />
+						</div>
+					</article>
+				))
+			}
+		</div>
+
+		<div class='mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700 text-center'>
+			<p class='text-sm text-zinc-500'>{t('blog.tilDescription')}</p>
+		</div>
+	</div>
+</aside>
