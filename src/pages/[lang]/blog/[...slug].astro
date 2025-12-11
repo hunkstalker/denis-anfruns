@@ -60,6 +60,28 @@ if (post.data.series) {
 }
 ---
 
+<style>
+	.animate-fade-in-up {
+		opacity: 0;
+		animation: fadeInUp 0.8s ease-out forwards;
+	}
+
+	.delay-100 { animation-delay: 0.1s; }
+	.delay-200 { animation-delay: 0.2s; }
+	.delay-300 { animation-delay: 0.3s; }
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
+
 <BaseLayout
 	siteTitle={post.data.title}
 	lang={lang}
@@ -79,7 +101,7 @@ if (post.data.series) {
 				<div class="not-prose mb-8">
 					{
 						post.data.heroImage && (
-							<div class="mb-6">
+							<div class="animate-fade-in-up mb-6">
 								<img
 									src={post.data.heroImage}
 									alt={post.data.title}
@@ -92,7 +114,7 @@ if (post.data.series) {
 						)
 					}
 
-					<div class="mb-4 flex flex-wrap items-center gap-4 font-mono text-sm text-zinc-500">
+					<div class="animate-fade-in-up delay-100 mb-4 flex flex-wrap items-center gap-4 font-mono text-sm text-zinc-500">
 						<time datetime={post.data.pubDate.toISOString()}>
 							{
 								post.data.pubDate.toLocaleString(lang, {
@@ -125,12 +147,12 @@ if (post.data.series) {
 					</div>
 
 					<h1
-						class="mb-6 text-balance text-3xl font-bold leading-tight dark:text-white md:text-5xl"
+						class="animate-fade-in-up delay-200 mb-6 text-balance text-3xl font-bold leading-tight dark:text-white md:text-5xl"
 					>
 						{post.data.title}
 					</h1>
 
-					<div class="flex flex-wrap gap-2">
+					<div class="animate-fade-in-up delay-300 flex flex-wrap gap-2">
 						{
 							post.data.tags.map((tag) => (
 								<span class="rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-sm font-medium text-zinc-600 dark:border-zinc-700/50 dark:bg-zinc-800 dark:text-zinc-400">
@@ -139,7 +161,7 @@ if (post.data.series) {
 							))
 						}
 					</div>
-					<hr class="mt-8 border-zinc-200 dark:border-zinc-800" />
+					<hr class="animate-fade-in-up delay-300 mt-8 border-zinc-200 dark:border-zinc-800" />
 				</div>
 
 				<!-- Mobile Table of Contents (Collapsible) -->
