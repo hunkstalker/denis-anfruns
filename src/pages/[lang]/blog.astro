@@ -61,15 +61,9 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => b.data.pubDa
 <BaseLayout siteTitle={t('blog.title')} lang={lang}>
 	<Nav lang={lang as 'es' | 'en' | 'ca'} />
 	<div class='container mx-auto px-3 sm:px-4 py-6 sm:py-8 pt-20 md:pt-28'>
-		<!-- <div class='mb-12 text-center'>
-			<p class='text-xl text-zinc-600 dark:text-zinc-400 mx-auto'>
-				{t('blog.description')}
-			</p>
-		</div> -->
-
 		<div class='grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12'>
 
-			<!-- Columna principal: Artículos -->
+			<!-- Columna principal: DevLogs -->
 			<div class='lg:col-span-8 space-y-12'>
 				<h2 class='text-2xl font-bold border-b border-zinc-200 dark:border-zinc-700 pb-2 mb-6 flex items-center gap-2 dark:text-zinc-200'>
 					{t('blog.series')}
@@ -84,7 +78,9 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => b.data.pubDa
 								<div class='flex-1'>
 									<div class='flex items-center gap-3 text-xs text-zinc-500 mb-3'>
 										<time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
-										<span class='bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium'>{post.data.tags[0]}</span>
+										{post.data.tags.slice(0, 3).map((tag, index) => (
+											<span class='bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium'>{tag}</span>
+										))}
 									</div>
 
 									<h3 class='text-xl font-bold mb-2 dark:text-white group-hover:text-[--tangerine-hover] transition-colors'>
