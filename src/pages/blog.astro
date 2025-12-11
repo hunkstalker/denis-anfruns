@@ -78,7 +78,7 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort(
 				{articles.length === 0 && <p class="italic text-zinc-500">No hay DevLogs todavía.</p>}
 
 				<div class="grid gap-4 sm:gap-6 lg:gap-8">
-					{articles.map((post) => <DevLogCard post={post} lang={lang} />)}
+					{articles.map((post, index) => <DevLogCard post={post} lang={lang} delay={index * 100} />)}
 				</div>
 			</div>
 
