@@ -21,14 +21,16 @@ const t = useTranslations(lang)
 
 import { getCollection } from 'astro:content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
+import { getBlogPosts } from '../utils/blog-content'
 
 import { getTils } from '../utils/til-content'
 
 // Fetch recent items for default view
 const allTils = await getTils()
-const allBlog = await getCollection('blog', ({ data }) => {
-	return import.meta.env.PROD ? data.draft !== true : true
-})
+const allBlog = (await getBlogPosts())
+	// Filter drafts in PROD if needed (getBlogPosts logic handles drafts? No, we filter manually akin to getCollection logic if possible, or just rely on new logic)
+	// getBlogPosts returns ALL. We should filter drafts.
+	.filter(p => import.meta.env.PROD ? p.data.draft !== true : true)
 
 const recentTils = allTils
 	.filter((p) => p.data.lang === lang)
@@ -36,7 +38,7 @@ const recentTils = allTils
 	.slice(0, 3)
 
 const recentPosts = allBlog
-	.filter((p) => getLangFromSlug(p.slug) === lang)
+	.filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.reduce(
 		(acc, post) => {

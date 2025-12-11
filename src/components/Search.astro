@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content'
 import { useTranslations } from '../i18n/utils'
 import { getTils } from '../utils/til-content'
+import { getBlogPosts } from '../utils/blog-content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 import SearchIcon from '../icons/search.svg'
 
@@ -14,9 +15,7 @@ const t = useTranslations(lang)
 
 // Fetch recent items for default view
 const allTils = await getTils()
-const allBlog = await getCollection('blog', ({ data }) => {
-	return import.meta.env.PROD ? data.draft !== true : true
-})
+const allBlog = await getBlogPosts()
 
 // Filter by lang and sort
 const recentTils = allTils
@@ -25,7 +24,7 @@ const recentTils = allTils
 	.slice(0, 3) // Top 3 TILs
 
 const recentPosts = allBlog
-	.filter((p) => getLangFromSlug(p.slug) === lang)
+	.filter((post) => getLangFromSlug(post.slug) === lang && post.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 3) // Top 3 Posts
 ---

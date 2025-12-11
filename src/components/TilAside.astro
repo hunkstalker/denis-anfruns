@@ -14,6 +14,7 @@ const t = useTranslations(lang)
 const tilCollection = await getTils()
 const tils = tilCollection
 	.filter((p) => p.data.lang === lang)
+	.filter((p) => p.data.lang === lang && p.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 ---
 

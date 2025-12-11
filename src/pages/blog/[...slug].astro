@@ -1,5 +1,6 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content'
+import { type CollectionEntry } from 'astro:content'
+import { getBlogPosts, type BlogPost } from '../../utils/blog-content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Nav from '../../components/Nav.astro'
 import TableOfContents from '../../components/TableOfContents.astro'
@@ -14,9 +15,7 @@ import ChevronLeft from '../../icons/chevron-left.svg'
 import ListIcon from '../../icons/list.svg'
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog', ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true
-	})
+	const posts = await getBlogPosts()
 
 	return posts
 		.filter((post) => getLangFromSlug(post.slug) === 'es')
@@ -25,21 +24,22 @@ export async function getStaticPaths() {
 			props: post,
 		}))
 }
-type Props = CollectionEntry<'blog'>
+type Props = BlogPost
 
 const post = Astro.props
 const lang = getLangFromSlug(post.slug)
 const t = useTranslations(lang)
 const { Content, headings } = await post.render()
 
-let nextPost: CollectionEntry<'blog'> | null = null
+let nextPost: BlogPost | null = null
 if (post.data.series) {
-	const allPosts = await getCollection('blog', ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true
-	})
+	const allPosts = await getBlogPosts()
 	const seriesPosts = allPosts
 		.filter((p) => p.data.series === post.data.series && getLangFromSlug(p.slug) === 'es')
-		.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+		.sort((a, b) => {
+            if (!a.data.pubDate || !b.data.pubDate) return 0
+            return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+        })
 	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }

@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content'
+import { getBlogPosts, type BlogPost } from '../utils/blog-content'
 import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../utils/blogi18n'
 import CheckIcon from '../icons/check.svg'
 
@@ -17,12 +17,16 @@ const badgetText = {
 
 const { seriesId, currentSlug, lang = 'es' } = Astro.props
 
-const allPosts = await getCollection('blog', ({ data }) => {
-	return import.meta.env.PROD ? data.draft !== true : true
-})
+const allPosts = await getBlogPosts()
 const seriesPosts = allPosts
 	.filter((post) => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
-	.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+	.sort((a: BlogPost, b: BlogPost) => {
+        if (!a.data.pubDate || !b.data.pubDate) {
+             console.error(`[SeriesWidget] Missing pubDate for ${!a.data.pubDate ? a.id : b.id}`)
+             return 0
+        }
+        return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+    })
 
 if (seriesPosts.length < 2) return null
 
@@ -39,7 +43,7 @@ const getPath = (slug: string) =>
 		<div class="absolute bottom-2 left-[11px] top-2 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800"></div>
 
 		{
-			seriesPosts.map((post, index) => {
+			seriesPosts.map((post: BlogPost, index) => {
 				const isCurrent = post.slug === currentSlug
 				return (
 					<li class="group relative pl-8">

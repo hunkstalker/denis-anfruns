@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Nav from '../../components/Nav.astro'
-import { type CollectionEntry, getCollection } from 'astro:content'
+import { type CollectionEntry } from 'astro:content'
+import { getBlogPosts, type BlogPost } from '../../utils/blog-content'
 import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../../utils/blogi18n'
 import { languages } from '../../i18n/ui'
 import { useTranslations } from '../../i18n/utils'
@@ -16,14 +17,12 @@ export async function getStaticPaths() {
 
 const { lang } = Astro.params
 const rawPosts = (
-	await getCollection('blog', ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true
-	})
-).filter((p) => getLangFromSlug(p.slug) === lang)
+	await getBlogPosts()
+).filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
 const t = useTranslations(lang)
 
-const seriesMap = new Map<string, CollectionEntry<'blog'>[]>()
-const soloPosts: CollectionEntry<'blog'>[] = []
+const seriesMap = new Map<string, BlogPost[]>()
+const soloPosts: BlogPost[] = []
 
 for (const post of rawPosts) {
 	if (post.data.series) {
@@ -42,8 +41,13 @@ for (const post of rawPosts) {
 // 3. Utiliza la fecha de la última publicación (más reciente) para ordenar el feed.
 const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
 	list.sort(
-		(a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
-			a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
+		(a: BlogPost, b: BlogPost) => {
+            if (!a.data.pubDate || !b.data.pubDate) {
+                console.error(`[blog.astro] Missing pubDate for ${!a.data.pubDate ? a.id : b.id}`)
+                return 0
+            }
+			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+        },
 	)
 
 	const part1 = list[0]
@@ -61,8 +65,13 @@ const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
 })
 
 const articles = [...soloPosts, ...finalSeriesPosts].sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-)
+	(a, b) => {
+        if (!a.data.pubDate || !b.data.pubDate) {
+             console.error(`[blog.astro] Missing pubDate in articles check for ${!a.data.pubDate ? a.id : b.id}`)
+             return 0
+        }
+        return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+    })
 ---
 
 <BaseLayout siteTitle={t('blog.title')} lang={lang}>

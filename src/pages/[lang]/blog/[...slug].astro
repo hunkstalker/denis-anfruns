@@ -1,5 +1,6 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content'
+import { type CollectionEntry } from 'astro:content'
+import { getBlogPosts, type BlogPost } from '../../../utils/blog-content'
 import BaseLayout from '../../../layouts/BaseLayout.astro'
 import Nav from '../../../components/Nav.astro'
 import TableOfContents from '../../../components/TableOfContents.astro'
@@ -14,40 +15,48 @@ import ChevronRight from '../../../icons/chevron-right.svg'
 import ChevronLeft from '../../../icons/chevron-left.svg'
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog', ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true
-	})
+	const posts = await getBlogPosts()
 	const supportedLangs = Object.keys(languages).filter((lang) => lang !== 'es')
 
 	return posts
-		.filter((post) => supportedLangs.includes(getLangFromSlug(post.slug)))
+		.filter((post) => {
+            const parts = post.slug.split('/')
+            const langParam = parts[parts.length - 1]
+            return supportedLangs.includes(langParam) || langParam === 'es'
+        })
 		.map((post) => {
-			const lang = getLangFromSlug(post.slug)
+			const parts = post.slug.split('/')
+            const lang = parts[parts.length - 1] as 'es' | 'en' | 'ca'
+            const baseSlug = parts.slice(0, -1).join('/')
+
 			return {
 				params: {
 					lang: lang,
-					slug: getBaseSlug(post.slug),
+					slug: baseSlug,
 				},
 				props: post,
 			}
 		})
 }
 
-type Props = CollectionEntry<'blog'>
+type Props = BlogPost
 
 const post = Astro.props
 const lang = getLangFromSlug(post.slug)
 const t = useTranslations(lang)
 const { Content, headings } = await post.render()
 
-let nextPost: CollectionEntry<'blog'> | null = null
+let nextPost: BlogPost | null = null
 if (post.data.series) {
-	const allPosts = await getCollection('blog', ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true
-	})
+	const allPosts = await getBlogPosts()
 	const seriesPosts = allPosts
 		.filter((p) => p.data.series === post.data.series && getLangFromSlug(p.slug) === lang)
-		.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+    
+    .sort((a, b) => {
+        const dateA = a.data?.pubDate?.valueOf() || 0
+        const dateB = b.data?.pubDate?.valueOf() || 0
+        return dateA - dateB
+    })
 	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }
@@ -215,7 +224,8 @@ if (post.data.series) {
 				<div class="sticky top-32 space-y-8">
 					{
 						post.data.series && (
-							<SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+                            <p>Series Widget Placeholder</p>
+							// <SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
 						)
 					}
 
