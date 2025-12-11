@@ -47,8 +47,8 @@ const uniqueId = 'code-tabs-' + Math.random().toString(36).substring(2, 9)
 		{
 			items.map((item, index) => (
 				<div id={`${uniqueId}-panel-${index}`} role='tabpanel' class:list={['tab-panel bg-white dark:bg-zinc-900', { hidden: index !== 0 }]}>
-					<div class="block dark:hidden">
-						<Code code={item.code} lang={item.lang as any} theme='min-light' class='!m-0 !rounded-none p-4 min-h-[4rem] text-sm md:text-base leading-relaxed' />
+				<div class="block dark:hidden">
+						<Code code={item.code} lang={item.lang as any} theme='github-light' class='!m-0 !rounded-none p-4 min-h-[4rem] text-sm md:text-base leading-relaxed' />
 					</div>
 					<div class="hidden dark:block">
 						<Code code={item.code} lang={item.lang as any} theme='github-dark' class='!m-0 !rounded-none p-4 min-h-[4rem] text-sm md:text-base leading-relaxed' />
@@ -153,8 +153,6 @@ const uniqueId = 'code-tabs-' + Math.random().toString(36).substring(2, 9)
 				console.error('Failed to copy', err)
 			}
 		})
-
-		// Opcional: agregar una pista visual que se inicializó
 	}
 
 	// Inicializar todas las instancias presentes y futuras (Astro View Transitions compatible)
