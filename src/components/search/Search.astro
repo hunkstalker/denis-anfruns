@@ -74,9 +74,13 @@ const { lang = 'es' } = Astro.props
 	const panel = document.getElementById('search-panel')
 	const input = modal?.querySelector('input')
 	const closeBtn = document.getElementById('close-search-btn')
+	
+	// Variable para guardar el elemento que tenía el foco antes de abrir
+	let lastFocusedElement: HTMLElement | null = null
 
 	// Función para ABRIR el buscador
 	function openSearch() {
+		lastFocusedElement = document.activeElement as HTMLElement
 		modal?.classList.remove('hidden')
 		document.body.classList.add('overflow-hidden') // Bloquear scroll
 
@@ -86,7 +90,11 @@ const { lang = 'es' } = Astro.props
 			panel?.classList.remove('opacity-0', '-translate-y-4')
 		})
 
-		input?.focus()
+		// Dar foco al input tras una pequeña espera para asegurar que es visible/interactuable
+		setTimeout(() => {
+			input?.focus()
+		}, 50)
+		
 		// La carga de Pagefind ahora la maneja UnifiedSearchResults al hacer focus
 	}
 
@@ -103,9 +111,11 @@ const { lang = 'es' } = Astro.props
 			modal?.classList.add('hidden')
 			// Limpiar input al cerrar? Opcional
 			if (input) input.value = ''
-			// Disparar evento de limpiar resultados?
-			// Como UnifiedSearch escucha 'input', al limpiar el value deberíamos disparar el evento si queremos limpiar
-			// Pero mejor dejarlo con el estado actual por si reabre.
+			
+			// Restaurar foco
+			if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+				lastFocusedElement.focus()
+			}
 		}, 300)
 	}
 
@@ -115,7 +125,10 @@ const { lang = 'es' } = Astro.props
 	// Event Listeners Globales: Cerrar con ESC
 	window.addEventListener('keydown', e => {
 		if (e.key === 'Escape') {
-			closeSearch()
+			// Si el modal está visible, cerrarlo
+			if (!modal?.classList.contains('hidden')) {
+				closeSearch()
+			}
 		}
 	})
 
@@ -127,6 +140,35 @@ const { lang = 'es' } = Astro.props
 	wrapper?.addEventListener('click', e => {
 		if (e.target === wrapper) {
 			closeSearch()
+		}
+	})
+
+	// FOCUS TRAP (Mantener foco dentro del modal)
+	modal?.addEventListener('keydown', (e) => {
+		if (e.key !== 'Tab') return
+
+		const focusableElements = modal.querySelectorAll(
+			'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+		)
+		
+		if (focusableElements.length === 0) return
+
+		const firstElement = focusableElements[0] as HTMLElement
+		const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+
+		// Shift + Tab (hacia atrás)
+		if (e.shiftKey) {
+			if (document.activeElement === firstElement) {
+				e.preventDefault()
+				lastElement.focus()
+			}
+		} 
+		// Tab normal (hacia adelante)
+		else {
+			if (document.activeElement === lastElement) {
+				e.preventDefault()
+				firstElement.focus()
+			}
 		}
 	})
 
