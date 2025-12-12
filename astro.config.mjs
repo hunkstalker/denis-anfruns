@@ -15,6 +15,13 @@ export default defineConfig({
       prefixDefaultLocale: false
     }
   },
+  markdown: {
+    shikiConfig: {
+      langAlias: {
+        powerfx: 'vb'
+      }
+    }
+  },
   vite: {
     plugins: [svgr()],
     build: {
