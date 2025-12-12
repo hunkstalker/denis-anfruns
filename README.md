@@ -68,10 +68,12 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 | `pnpm dev` | Servidor de desarrollo en `localhost:4321` |
 | `pnpm build` | Build de producción + índice Pagefind |
 | `pnpm preview` | Preview del build local |
+| `pnpm normalize:content` | Normaliza metadata de TILs (unifica en `meta.json`) |
 | `pnpm verify:content` | Verifica fechas e integridad del contenido |
-| `pnpm bp` | Verifica + Build + Preview (Recomendado) |
+| `pnpm bp` | **Normaliza** + Verifica + Build + Preview (Recomendado) |
+| `pnpm t` | **Normaliza** + Verifica + Build |
 
-> **Nota:** La búsqueda solo funciona en `preview` o producción (después de `pnpm build`).
+> **Nota:** La búsqueda solo funciona en `preview` o producción (después de un comando que genere `pnpm build`).
 
 ---
 
@@ -81,10 +83,10 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 ```
 src/content/til/
 └── nombre-til/
-    ├── es.mdx
+    ├── es.mdx      # Fuente de verdad para fechas/tags si falta meta.json
     ├── en.mdx
     ├── ca.mdx
-    └── meta.json  # { pubDate, tags }
+    └── meta.json   # { pubDate, tags } - Generado/Validado automáticamente
 ```
 
 ### DevLogs (Series)
@@ -101,7 +103,8 @@ src/content/blog/
 ---
 title: "Título del artículo"
 description: "Descripción breve"
-pubDate: "2024-12-01"
+# pubDate y tags se mueven a meta.json en TILs automáticamente
+pubDate: "2024-12-01" 
 tags: ["tag1", "tag2"]
 lang: "es"  # es | en | ca
 draft: false  # true = no se publica en producción
@@ -167,8 +170,9 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 
 ### Añadir un nuevo TIL
 1. Crear carpeta en `src/content/til/nombre-til/`
-2. Crear `es.mdx`, `en.mdx`, `ca.mdx` con frontmatter
-3. Crear `meta.json` con `pubDate` y `tags`
+2. Crear `es.mdx`, `en.mdx`, `ca.mdx` con frontmatter básico (título, lang).
+3. **Opcional**: Añadir `pubDate` y `tags` en `es.mdx` o crear `meta.json` manualmente.
+4. Al hacer `pnpm bp`, el sistema normalizará automáticamente los metadatos moviéndolos a `meta.json`.
 
 ### Añadir nuevo idioma
 1. Añadir key en `src/i18n/ui.ts` → `languages`
