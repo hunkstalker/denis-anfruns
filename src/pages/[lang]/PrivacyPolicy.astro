@@ -52,7 +52,7 @@ const btnText = buttonText[lang] || buttonText.es
 		</script>
 	</main>
 
-	<style is:global>
+	<style>
 		.privacy {
 			max-width: 800px;
 			margin: 2rem auto;
@@ -60,25 +60,25 @@ const btnText = buttonText[lang] || buttonText.es
 			line-height: 1.7;
 			font-size: 1.05rem;
 		}
-		.privacy h1 {
+		.privacy :global(h1) {
 			font-weight: 700;
 			margin-top: 1.6rem;
 			font-size: 2rem;
 		}
-		.privacy h2 {
+		.privacy :global(h2) {
 			font-weight: 700;
 			margin-top: 1.6rem;
 			font-size: 1.5rem;
 		}
-		.privacy p {
+		.privacy :global(p) {
 			margin-bottom: 1rem;
 		}
-		.privacy ul {
+		.privacy :global(ul) {
 			list-style-type: disc;
 			margin-left: 1.5rem;
 			margin-bottom: 1rem;
 		}
-		.privacy a {
+		.privacy :global(a) {
 			color: oklch(75% 0.183 55.934);
 			text-decoration: none;
 			font-weight: bold;
