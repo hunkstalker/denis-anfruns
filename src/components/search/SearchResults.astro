@@ -31,6 +31,10 @@ const labels = {
 	'blog.til': t('blog.til'),
 	'blog.series': t('blog.series'),
 	'nav.noResults': t('nav.noResults'),
+	'search.all': t('search.all'),
+	'search.project': t('search.project'),
+	'search.til': t('search.til'),
+	'search.devblog': t('search.devblog'),
 }
 
 // --- SERVER LOGIC (Build Time) ---
@@ -108,7 +112,12 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || blogItems.l
 	mode={mode}
 	inputId={inputId}
 	containerId={resultsContainerId}
-	labels={labels}>
+	labels={labels}
+	counts={{
+		til: tilItems.length,
+		project: projectItems.length,
+		devlog: blogItems.length
+	}}>
 	{/* Server Rendered Initial Content */}
 	<div id={`${resultsContainerId}-content`}>
 		{hasContent ? (
@@ -121,6 +130,7 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || blogItems.l
 					mode={mode}
 					lang={lang}
 					initialLimit={mode === 'desktop' ? 6 : 6}
+					type="til"
 				/>
 				<SearchSection
 					title={t('nav.projects') || 'Projects'}
@@ -130,6 +140,7 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || blogItems.l
 					lang={lang}
 					initialLimit={3}
 					hasBorderTop={tilItems.length > 0 && mode === 'mobile'}
+					type="project"
 				/>
 				<SearchSection
 					title={t('blog.series')}
@@ -139,6 +150,7 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || blogItems.l
 					lang={lang}
 					initialLimit={3}
 					hasBorderTop={(tilItems.length > 0 || projectItems.length > 0) && mode === 'mobile'}
+					type="devlog"
 				/>
 			</>
 		) : (

@@ -23,6 +23,11 @@ interface SearchResultsClientProps {
   labels: {
     [key: string]: string;
   };
+  counts: {
+    til: number;
+    project: number;
+    devlog: number;
+  };
   children?: React.ReactNode;
 }
 
@@ -31,6 +36,7 @@ export default function SearchResultsClient({
   inputId,
   containerId, // Unused? We render our own container now.
   labels,
+  counts,
   children,
 }: SearchResultsClientProps) {
   const [query, setQuery] = useState('');
@@ -116,9 +122,11 @@ export default function SearchResultsClient({
     const container = initialContentRef.current;
 
     // Toggle Sections
-    const sections = ['project', 'til', 'blog'];
+    const sections = ['project', 'til', 'devlog'];
+    
     sections.forEach(sectionType => {
       const sectionEl = container.querySelector(`[data-section="${sectionType}"]`);
+      
       if (sectionEl) {
         const isVisible = filter === 'all' || filter === sectionType;
         if (isVisible) {
@@ -186,7 +194,7 @@ export default function SearchResultsClient({
     if (filter === 'all') return true;
     if (filter === 'project') return r.filters.type?.includes('project');
     if (filter === 'til') return r.filters.type?.includes('til');
-    if (filter === 'blog') return !r.filters.type || r.filters.type.includes('blog');
+    if (filter === 'devlog') return !r.filters.type || r.filters.type.includes('blog');
     return true;
   });
 
@@ -248,11 +256,11 @@ export default function SearchResultsClient({
 
   // Chips for Mobile
   const chips = [
-    { id: 'all', label: 'All' }, // TODO: localize?
-    { id: 'project', label: labels['nav.projects'] },
-    { id: 'til', label: labels['blog.til'] },
-    { id: 'blog', label: labels['nav.blog'] }, // using nav.blog as generic term or blog.series?
-  ];
+    { id: 'all', label: labels['search.all'], count: 999 },
+    { id: 'project', label: labels['search.project'], count: counts.project },
+    { id: 'til', label: labels['search.til'], count: counts.til },
+    { id: 'devlog', label: labels['search.devblog'], count: counts.devlog },
+  ].filter(chip => chip.count > 0);
 
   // Container classes matching the original Astro component
   const rootClass = isDesktop
@@ -265,12 +273,12 @@ export default function SearchResultsClient({
     <div className={rootClass}>
       <div className={scrollContainerClass}>
         {/* Mobile Chips */}
-        {!isDesktop && !showInitialContent && (
+        {!isDesktop && (
           <div className="flex gap-2 overflow-x-auto pb-4 pt-2 scrollbar-hide">
             {chips.map(chip => (
               <button
                 key={chip.id}
-                onClick={() => setFilter(chip.id)}
+                onClick={() => setFilter(current => current === chip.id ? 'all' : chip.id)}
                 className={`filter-chip whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-medium transition-all ${filter === chip.id
                     ? 'bg-[--tangerine] text-zinc-900 active'
                     : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'
@@ -300,6 +308,9 @@ export default function SearchResultsClient({
           </div>
         )}
       </div>
+      
+      {/* Bottom Fade Gradient */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent dark:from-zinc-900" />
     </div>
   );
 }
