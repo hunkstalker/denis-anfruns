@@ -15,7 +15,7 @@ const baseClasses =
 	active ? (
 		<a
 			href={link}
-			class={`${baseClasses} text-zinc-700 hover:bg-zinc-600 hover:text-white dark:text-zinc-200`}
+			class={`${baseClasses} text-zinc-700 md:hover:bg-[#D4D4D8] md:dark:hover:bg-[#52525B] dark:text-zinc-200`}
 			aria-current="page"
 		>
 			{text}
@@ -23,7 +23,7 @@ const baseClasses =
 	) : enabled ? (
 		<a
 			href={link}
-			class={`${baseClasses} text-zinc-700 hover:bg-zinc-600 hover:text-white dark:text-zinc-200`}
+			class={`${baseClasses} text-zinc-700 md:hover:bg-[#D4D4D8] md:dark:hover:bg-[#52525B] dark:text-zinc-200`}
 		>
 			{text}
 		</a>
