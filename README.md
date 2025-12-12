@@ -18,7 +18,8 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 - **Content Collections**: TILs, DevLogs (series), Projects
 - **Dark/Light mode**: Tema oscuro por defecto con toggle
 - **Responsive**: Mobile-first design
-- **Optimizado**: Static site generation, font preload, CSS crítico inline
+- **Optimizado**: Static site generation, font preload, CSS crítico inline, SVGs optimizados
+- **Accesible**: Auditoría a11y, soporte teclado, reduced-motion, focus management
 
 ---
 
@@ -67,7 +68,8 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 | `pnpm dev` | Servidor de desarrollo en `localhost:4321` |
 | `pnpm build` | Build de producción + índice Pagefind |
 | `pnpm preview` | Preview del build local |
-| `pnpm bp` | Build + Preview (shortcut) |
+| `pnpm verify:content` | Verifica fechas e integridad del contenido |
+| `pnpm bp` | Verifica + Build + Preview (Recomendado) |
 
 > **Nota:** La búsqueda solo funciona en `preview` o producción (después de `pnpm build`).
 
@@ -157,7 +159,7 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 | `@astrojs/mdx` | Contenido en MDX |
 | `tailwindcss` | Estilos utility-first |
 | `pagefind` | Búsqueda estática |
-| `shiki` | Syntax highlighting en code blocks |
+| `shiki` | Syntax highlighting (incluye alias para PowerFx) |
 
 ---
 
