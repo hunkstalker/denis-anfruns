@@ -108,6 +108,13 @@ h1, h2, h3, h4, h5, h6 {
   transition: none !important;
 }
 
+mark {
+  background-color: var(--tangerine);
+  color: rgb(22, 22, 26); /* --primary-bg-color */
+  border-radius: 0.125rem;
+  padding-inline: 0.125rem;
+}
+
 /* Global Focus Styles for Accessibility */
 :focus-visible {
   outline: 2px solid rgb(var(--accent));

@@ -221,9 +221,13 @@ export default function SearchResultsClient({
       <div className={`font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine] ${isDesktop ? 'text-sm' : 'text-sm'}`}>
         {item.meta.title}
       </div>
-      <div className={`text-zinc-500 dark:text-zinc-400 ${isDesktop ? 'mt-2 text-xs line-clamp-5' : 'mt-1 text-xs line-clamp-1'}`}>
-        {item.excerpt || item.meta.description}
-      </div>
+      {/* Renderizar el extracto como HTML para admitir las etiquetas <mark> insertadas por 
+          Pagefind para resaltar los términos de búsqueda. Confiamos en los resultados de Pagefind 
+          (contenido depurado en el momento de la compilación). */}
+      <div 
+        className={`text-zinc-500 dark:text-zinc-400 ${isDesktop ? 'mt-2 text-xs line-clamp-5' : 'mt-1 text-xs line-clamp-1'}`}
+        dangerouslySetInnerHTML={{ __html: item.excerpt || item.meta.description }}
+      />
     </a>
   );
 
