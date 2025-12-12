@@ -147,7 +147,8 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 
 - **Dark mode** por defecto
 - Toggle en `ThemeToggle.astro`
-- Colores personalizados en `tailwind.config.cjs`:
+- **Iconografía**: Se utilizan iconos de [Lucide](https://lucide.dev) (vía `react-icons/lu`) para mantener la coherencia visual. Evitar mezclar con otros packs.
+- **Colores personalizados** en `tailwind.config.cjs`:
   - `--tangerine`: Color accent principal
   - `--jade`: Color secundario
 
@@ -184,6 +185,8 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 ## 📄 Licencia
 
 MIT © Denis Anfruns Millán
+
+Los iconos utilizados pertenecen a [Lucide](https://lucide.dev) (ISC License).
 
 ---
 
