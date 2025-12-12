@@ -99,3 +99,11 @@ h1, h2, h3, h4, h5, h6 {
   /* Puntos tema oscuro */
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.25) 1.5px, transparent 1.5px);
 }
+
+.disable-transitions * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  -ms-transition: none !important;
+  transition: none !important;
+}

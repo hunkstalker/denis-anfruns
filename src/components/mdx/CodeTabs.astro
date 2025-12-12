@@ -15,6 +15,13 @@ interface Props {
 
 const { items } = Astro.props
 
+import { useTranslations } from '../../i18n/utils'
+
+const lang = Astro.currentLocale || 'es'
+const t = useTranslations(lang as any)
+const copyLabel = t('code.copy')
+const copiedLabel = t('code.copied')
+
 const uniqueId = 'code-tabs-' + Math.random().toString(36).substring(2, 9)
 
 const highlighter = await getHighlighterInstance()
@@ -102,8 +109,10 @@ const highlightedItems = await Promise.all(
 		<div class='absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100'>
 			<button
 				class='copy-button cursor-pointer rounded-md bg-zinc-200/50 p-1.5 text-zinc-500 backdrop-blur-sm transition-all hover:bg-zinc-200 hover:text-zinc-700 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20 dark:hover:text-white'
-				title='Copy code'
-				aria-label='Copy code'>
+				title={copyLabel}
+				aria-label={copyLabel}
+				data-label-copy={copyLabel}
+				data-label-copied={copiedLabel}>
 				<CopyIcon class='copy-icon' width='16' height='16' />
 				<CheckIcon class='check-icon hidden' width='16' height='16' />
 			</button>
@@ -241,15 +250,24 @@ const highlightedItems = await Promise.all(
 				// Alternar iconos para feedback
 				const copyIcon = copyBtn.querySelector('.copy-icon')
 				const checkIcon = copyBtn.querySelector('.check-icon')
+				
+				const labelCopy = copyBtn.getAttribute('data-label-copy') || 'Copy code'
+				const labelCopied = copyBtn.getAttribute('data-label-copied') || 'Copied!'
 
 				copyIcon?.classList.add('hidden')
 				checkIcon?.classList.remove('hidden')
 				checkIcon?.classList.add('text-green-500')
+				
+				copyBtn.setAttribute('title', labelCopied)
+				copyBtn.setAttribute('aria-label', labelCopied)
 
 				setTimeout(() => {
 					copyIcon?.classList.remove('hidden')
 					checkIcon?.classList.add('hidden')
 					checkIcon?.classList.remove('text-green-500')
+					
+					copyBtn.setAttribute('title', labelCopy)
+					copyBtn.setAttribute('aria-label', labelCopy)
 				}, 2000)
 			} catch (err) {
 				console.error('Failed to copy', err)

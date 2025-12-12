@@ -1,8 +1,9 @@
 ---
 import { languages } from '../../i18n/ui'
-import { getLangFromUrl } from '../../i18n/utils'
+import { getLangFromUrl, useTranslations } from '../../i18n/utils'
 
 const currentLang = getLangFromUrl(Astro.url)
+const t = useTranslations(currentLang as any)
 const currentPath = Astro.url.pathname
 
 function getPathForLang(lang: string) {
@@ -53,7 +54,7 @@ function getPathForLang(lang: string) {
 							lang !== currentLang,
 					},
 				]}
-				aria-label={`Cambiar idioma a ${languages[lang as keyof typeof languages]}`}
+				aria-label={`${t('language.changeTo')} ${languages[lang as keyof typeof languages]}`}
 			>
 				{lang.toUpperCase()}
 			</a>

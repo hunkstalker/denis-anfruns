@@ -8,14 +8,23 @@ interface Props {
 const { text, link, enabled = true, active = false } = Astro.props
 
 const baseClasses =
-	'm-2 py-3 px-4 text-sm md:text-lg rounded-lg inline-block transition-colors no-underline leading-normal'
+	'relative m-2 py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal'
+
+const activeClasses = 
+	'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
+
+const enabledClasses = 
+	'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800'
+
+const disabledClasses = 
+	'cursor-default text-zinc-300 dark:text-zinc-600'
 ---
 
 {
 	active ? (
 		<a
 			href={link}
-			class={`${baseClasses} text-zinc-700 md:hover:bg-[#D4D4D8] md:dark:hover:bg-[#52525B] dark:text-zinc-200`}
+			class={`${baseClasses} ${activeClasses}`}
 			aria-current="page"
 		>
 			{text}
@@ -23,12 +32,12 @@ const baseClasses =
 	) : enabled ? (
 		<a
 			href={link}
-			class={`${baseClasses} text-zinc-700 md:hover:bg-[#D4D4D8] md:dark:hover:bg-[#52525B] dark:text-zinc-200`}
+			class={`${baseClasses} ${enabledClasses}`}
 		>
 			{text}
 		</a>
 	) : (
-		<span class={`${baseClasses} cursor-default text-gray-400`} aria-disabled="true">
+		<span class={`${baseClasses} ${disabledClasses}`} aria-disabled="true">
 			{text}
 		</span>
 	)
