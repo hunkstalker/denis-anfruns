@@ -73,6 +73,12 @@ importers:
         specifier: ^0.7.2
         version: 0.7.2(prettier-plugin-astro@0.14.1)(prettier@3.7.4)
 
+  packages/astro-search-badges:
+    devDependencies:
+      astro:
+        specifier: ^5.16.3
+        version: 5.16.3(@types/node@24.3.1)(jiti@1.21.7)(rollup@4.50.1)(typescript@5.9.3)(yaml@2.7.1)
+
 packages:
 
   '@alloc/quick-lru@5.2.0':

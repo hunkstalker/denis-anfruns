@@ -1,7 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	darkMode: 'class',
-	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+	content: [
+		'./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}',
+		'./packages/astro-search-badges/src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'
+	],
 	theme: {
     fontSize: {
       sm: '0.8rem',
