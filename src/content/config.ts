@@ -39,4 +39,20 @@ const til = defineCollection({
   })
 })
 
-export const collections = { privacy, blog, til }
+const projects = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date().optional(),
+    updatedDate: z.coerce.date().optional(),
+    heroImage: z.string().optional(),
+    descriptionHeroImage: z.string().optional(),
+    ogImage: z.string().optional(),
+    tags: z.array(z.string()).default([]).optional(),
+    lang: z.enum(['es', 'en', 'ca']).default('es'),
+    draft: z.boolean().default(false),
+  })
+})
+
+export const collections = { privacy, blog, til, projects }

@@ -1,0 +1,18 @@
+---
+title: "Power FX Delegation in SharePoint"
+description: "Handling large lists and avoiding the 500/2000 item limit."
+pubDate: "2025-02-10"
+tags: ["power-platform", "sharepoint", "power-fx"]
+lang: "en"
+draft: true
+---
+
+# Power FX Delegation in SharePoint
+
+When working with SharePoint, functions like `Search` or `Filter` might not delegate. Use pre-collections or Indexed Views.
+
+```powerfx
+Filter(Accounts, 'Created On' >= Date(2025,1,1))
+```
+
+Esta es una nota rápida sobre una lección aprendida.

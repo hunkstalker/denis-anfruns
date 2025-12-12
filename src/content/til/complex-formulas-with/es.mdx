@@ -1,0 +1,18 @@
+---
+title: "Simplificando fórmulas con With"
+description: "Mejora la legibilidad y evita cálculos repetidos."
+pubDate: "2025-05-25"
+tags: ["power-platform", "sharepoint", "power-fx"]
+lang: "es"
+draft: true
+---
+
+# Simplificando fórmulas con With
+
+La función `With` permite definir variables locales dentro de una fórmula, haciendo el código más limpio y rápido.
+
+```powerfx
+With({ profit: Price - Cost }, If(profit > 0, "Gain", "Loss"))
+```
+
+Esta es una nota rápida sobre una lección aprendida.

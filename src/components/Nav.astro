@@ -5,6 +5,8 @@ import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
 import LanguagePicker from './LanguagePicker.astro'
 import SideMenu from './SideMenu.astro'
 import Search from './Search.astro'
+import UnifiedSearchResults from './UnifiedSearchResults.astro'
+
 
 // Importación de utilidades de internacionalización y navegación
 import { useTranslations } from '../i18n/utils'
@@ -13,8 +15,6 @@ import { navItems } from '../i18n/navigation'
 // Importación de Iconos
 import MenuIcon from '../icons/menu.svg'
 import SearchIcon from '../icons/search.svg'
-import BookmarkIcon from '../icons/bookmark.svg?raw'
-import PinIcon from '../icons/pin.svg?raw'
 
 // Definición de las Props
 interface Props {
@@ -56,48 +56,6 @@ const filters = {
 
 // Pasar traducciones completas
 const translations = ui
-
-// Importación de funciones de contenido (Server-side)
-import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
-import { getBlogPosts } from '../utils/blog-content'
-import { getTils } from '../utils/til-content'
-
-// --- LÓGICA DEL SERVIDOR (Build Time) ---
-
-// 1. Obtener todos los elementos (TILs y Posts)
-const allTils = await getTils()
-const allBlog = (await getBlogPosts())
-	// Filtrar borradores en producción
-	.filter(p => (import.meta.env.PROD ? p.data.draft !== true : true))
-
-// 2. Procesar TILs recientes (filtrar por idioma, ordenar y tomar 3)
-const recentTils = allTils
-	.filter(p => p.data.lang === lang)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 3)
-
-// 3. Procesar Posts (DevLog) recientes
-// - Filtrar por idioma
-// - Ordenar por fecha
-// - Agrupar series (mostrar solo un post por serie para evitar duplicados en el dropdown)
-const recentPosts = allBlog
-	.filter(p => getLangFromSlug(p.slug) === lang && p.data.pubDate)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.reduce(
-		(acc, post) => {
-			if (acc.length >= 3) return acc // Limitar a 3 items
-			const isSeries = post.data.series
-			if (isSeries) {
-				// Si es parte de una serie, verificar si ya añadimos uno de esa serie
-				const seriesExists = acc.some(p => p.data.series === isSeries)
-				if (!seriesExists) acc.push(post)
-			} else {
-				acc.push(post)
-			}
-			return acc
-		},
-		[] as typeof allBlog,
-	)
 
 // Obtener ruta actual para resaltar el menú activo
 const currentPath = Astro.url.pathname
@@ -182,96 +140,16 @@ const currentPath = Astro.url.pathname
 						id='desktop-search-results'
 						class='invisible fixed inset-x-0 top-[6rem] z-50 mx-auto max-w-5xl origin-top -translate-y-4 transform overflow-hidden rounded-2xl border border-white/20 bg-white/40 opacity-0 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-out dark:border-white/10 dark:bg-zinc-900/50'>
 						
-						<!-- Contenido -->
-						<div id='desktop-content-container' class='max-h-[80vh] overflow-y-auto px-6 py-6'>
-							<!-- Resultados Iniciales -->
-							<div id='desktop-initial-content'>
-								{
-									recentTils.length > 0 && (
-										<div class='mb-6'>
-											<h3 class='text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400'>
-												<span class='mr-2 h-4 w-4'>
-													<Fragment set:html={PinIcon} />
-												</span>
-												{t('blog.til')}
-											</h3>
-											<div class='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3'>
-												{recentTils.map(tilItem => (
-													<a
-														href={lang === 'es' ? `/til/${tilItem.slug.split('/')[0]}/` : `/${lang}/til/${tilItem.slug.split('/')[0]}/`}
-														class='group relative block h-full min-h-[140px] overflow-hidden rounded-xl bg-white/90 p-5 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
-														{/* Header: Date + Arrow */}
-														<div class='mb-2 flex items-center justify-between'>
-															<time datetime={tilItem.data.pubDate.toISOString()} class='text-[10px] font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500'>
-																{tilItem.data.pubDate.toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' })}
-															</time>
-															<span class='opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[--tangerine] group-hover:opacity-100'>
-																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-															</span>
-														</div>
-
-														{/* Content */}
-														<div class='text-base font-semibold leading-tight text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-100 dark:group-hover:text-[--tangerine]'>
-															{tilItem.data.title}
-														</div>
-														<div class='mt-2 text-xs leading-relaxed text-zinc-500 line-clamp-3 dark:text-zinc-400'>
-															{tilItem.data.description}
-														</div>
-													</a>
-												))}
-											</div>
-										</div>
-									)
-								}
-
-								{
-									recentPosts.length > 0 && (
-										<div class='mb-6'>
-											<h3 class='text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400'>
-												<span class='mr-2 h-4 w-4'>
-													<Fragment set:html={BookmarkIcon} />
-												</span>
-												{t('blog.series')}
-											</h3>
-											<div class='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3'>
-												{recentPosts.map(blogItem => (
-													<a
-														href={lang === 'es' ? `/blog/${getBaseSlug(blogItem.slug)}/` : `/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
-														class='group relative block h-full min-h-[140px] overflow-hidden rounded-xl bg-white/90 p-5 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
-														
-														{/* Header: Date + Arrow */}
-														<div class='mb-2 flex items-center justify-between'>
-															<time datetime={blogItem.data.pubDate.toISOString()} class='text-[10px] font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500'>
-																{blogItem.data.pubDate.toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' })}
-															</time>
-															<span class='opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[--tangerine] group-hover:opacity-100'>
-																<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-															</span>
-														</div>
-
-														{/* Content */}
-														<div class='text-base font-semibold leading-tight text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-100 dark:group-hover:text-[--tangerine]'>
-															{blogItem.data.title}
-														</div>
-														<div class='mt-2 text-xs leading-relaxed text-zinc-500 line-clamp-3 dark:text-zinc-400'>
-															{blogItem.data.description}
-														</div>
-													</a>
-												))}
-											</div>
-										</div>
-									)
-								}
-
-								{
-									recentTils.length === 0 && recentPosts.length === 0 && (
-										<div class='p-8 text-center text-zinc-500 dark:text-zinc-400'>
-											<p>Empieza a escribir para buscar contenido...</p>
-										</div>
-									)
-								}
-							</div>
+						<!-- Contenido Unificado -->
+						<div class='w-full'>
+							<UnifiedSearchResults
+								lang={lang}
+								mode="desktop"
+								inputId="search-badges-input"
+								resultsContainerId="desktop-unified-results"
+							/>
 						</div>
+
 					</div>
 				</div>
 
@@ -286,9 +164,6 @@ const currentPath = Astro.url.pathname
 <SideMenu lang={lang} />
 
 <script>
-	import RocketIcon from '../icons/rocket.svg?raw'
-	import PinIcon from '../icons/pin.svg?raw'
-	import BookmarkIcon from '../icons/bookmark.svg?raw'
 	import { ui, defaultLang } from '../i18n/ui'
 
 	// Lógica para abrir el buscador desde el botón móvil
@@ -311,71 +186,9 @@ const currentPath = Astro.url.pathname
 	const desktopInput = document.getElementById('search-badges-input') as HTMLInputElement
 	const resultsContainer = document.getElementById('desktop-search-results')
 	const resultsOverlay = document.getElementById('desktop-search-overlay')
-	const contentContainer = document.getElementById('desktop-content-container')
 	
-	let activeFilter: string | null = null
-	
-	// Almacenar contenido inicial (Recientes)
-	const defaultContent = contentContainer ? contentContainer.innerHTML : ''
-
-	let navPagefind: any = null
 	let isOpen = false
 	
-	// Mostrar contenido inicial filtrado según badge activa
-	function showFilteredInitialContent(filterType: string | null) {
-		if (!contentContainer || !filterType) {
-			if (contentContainer) contentContainer.innerHTML = defaultContent
-			return
-		}
-		
-		// Obtener solo las secciones relevantes del contenido inicial
-		const parser = new DOMParser()
-		const doc = parser.parseFromString(defaultContent, 'text/html')
-		const initialDiv = doc.querySelector('#desktop-initial-content')
-		
-		if (!initialDiv) {
-			contentContainer.innerHTML = defaultContent
-			return
-		}
-		
-		// Filtrar secciones según el filtro activo
-		const sections = initialDiv.querySelectorAll('div.mb-6')
-		const filteredSections: Element[] = []
-		
-		sections.forEach(section => {
-			const header = section.querySelector('h3')
-			if (!header) return
-			
-			// Determinar si esta sección corresponde al filtro activo
-			const isPinSection = header.textContent?.includes('TIL') || header.querySelector('[class*="pin"]')
-			const isBookmarkSection = header.textContent?.includes('DevLog') || header.textContent?.includes('Serie') || header.querySelector('[class*="bookmark"]')
-			
-			if (filterType === 'til' && isPinSection) {
-				filteredSections.push(section)
-			} else if (filterType === 'blog' && isBookmarkSection) {
-				filteredSections.push(section)
-			}
-			// project no tiene sección en inicial, así que se quedaría vacío
-		})
-		
-		if (filteredSections.length > 0) {
-			const wrapper = document.createElement('div')
-			filteredSections.forEach(section => wrapper.appendChild(section.cloneNode(true)))
-			contentContainer.innerHTML = wrapper.innerHTML
-		} else {
-			// Si no hay contenido para este filtro, mostrar mensaje
-			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
-			const t = ui[currentLang]
-			// Obtenemos label traducido genérico o específico si pudiéramos acceder a la config, 
-			// pero para simplificar usamos texto genérico
-			contentContainer.innerHTML = `
-				<div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
-					<p>${t['nav.search.typeToSearch']}...</p>
-				</div>
-			`
-		}
-	}
-
 	// Función para mostrar resultados/overlay
 	function showResults() {
 		if (resultsContainer && resultsOverlay) {
@@ -408,149 +221,25 @@ const currentPath = Astro.url.pathname
 	// Toggle basado en foco
 	desktopInput?.addEventListener('focus', () => {
 		showResults()
-		loadNavPagefind()
+		// loadNavPagefind() -> Ahora lo hace UnifiedSearchResults
 	})
 
 	// Cerrar al hacer clic fuera (Overlay)
 	resultsOverlay?.addEventListener('click', hideResults)
 
 
-	// Carga perezosa de Pagefind
-	async function loadNavPagefind() {
-		if (navPagefind) return
-		try {
-			// @ts-ignore
-			const pagefindUrl = '/pagefind/pagefind.js'
-			navPagefind = await import(/* @vite-ignore */ pagefindUrl)
-            await navPagefind.init()
-		} catch (e) {
-			console.warn('Pagefind not found (Nav).')
-		}
-	}
-
-	// Ejecutar búsqueda
-	async function searchNav(query: string) {
-		// Mostrar contenido filtrado si no hay query
-		if (!query.trim()) {
-			showFilteredInitialContent(activeFilter)
-			return
-		}
-		
-		if (!navPagefind) return
-		
-		const search = await navPagefind.search(query)
-		
-		// Race Condition Check: Si el input se ha vaciado mientras buscábamos (ej. al crear badge), abortar
-		if (desktopInput && !desktopInput.value.trim()) {
-			showFilteredInitialContent(activeFilter)
-			return
-		}
-
-		const allResults = await Promise.all(search.results.map((r: any) => r.data()))
-
-		// Filtrar por categoría activa si existe
-		let filteredResults = allResults
-		if (activeFilter) {
-			filteredResults = allResults.filter(r => r.filters.type?.includes(activeFilter))
-		}
-
-		// Deduplicación por URL
-		const seenUrls = new Set()
-		const results = []
-		for (const result of filteredResults) {
-			if (!seenUrls.has(result.url)) {
-				seenUrls.add(result.url)
-				results.push(result)
-			}
-		}
-
-		renderNavResults(results)
-	}
-
-	function renderNavResults(results: any[]) {
-		if (!contentContainer) return
-
-		const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
-		const t = ui[currentLang]
-
-		let html = '<div class="space-y-6">'
-
-		if (results.length === 0) {
-			html += `
-				<div class="p-8 text-center text-zinc-500 dark:text-zinc-400">
-					${t['nav.noResults']}
-				</div>
-			`
-			contentContainer.innerHTML = html
-			return
-		}
-
-		// Clasificar
-		const projects = results.filter(r => r.filters.type?.includes('project'))
-		const tils = results.filter(r => r.filters.type?.includes('til'))
-		const devlogs = results.filter(r => !r.filters.type || r.filters.type.includes('blog'))
-
-		// Renderizar (Grid Layout para más espacio)
-		// Renderizar (Grid Layout para más espacio)
-		const renderSection = (title: string, icon: string, items: any[]) => {
-			if (items.length === 0) return ''
-			return `
-				<div>
-					<h3 class="text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400">
-						<span class="mr-2 h-4 w-4">${icon}</span>
-						${title}
-					</h3>
-					<div class="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-						${items.map(item => `
-							<a href="${item.url}" class="group block h-full min-h-[140px] overflow-hidden rounded-xl bg-white/90 p-4 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]">
-								<div class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
-									${item.meta.title}
-								</div>
-								<div class="mt-2 text-xs text-zinc-500 line-clamp-5 dark:text-zinc-400">
-									${item.excerpt || item.meta.description}
-								</div>
-							</a>
-						`).join('')}
-					</div>
-				</div>
-			`
-		}
-
-		html += renderSection(t['nav.projects'], RocketIcon, projects)
-		html += renderSection(t['blog.til'], PinIcon, tils)
-		html += renderSection(t['blog.series'], BookmarkIcon, devlogs)
-		
-		html += '</div>'
-		contentContainer.innerHTML = html
-	}
-
 	// Debounce y Listeners
-	let navTimeout: any
-	// Event Listeners para el Componente SearchBadges (Desktop)
+	// Event Listeners para el Componente SearchBadges (Desktop UI Logic: Placeholder etc)
 	if (desktopInput) {
-		let timeout: any
-		
-		// Escuchar evento custom del componente
-		desktopInput.addEventListener('searchInput', (e: any) => {
-			const { value, activeFilter: filter } = e.detail
-			activeFilter = filter
-			
-			clearTimeout(timeout)
-			timeout = setTimeout(() => {
-				searchNav(value)
-			}, 300)
-		})
 		
 		// Cuando se crea un badge
 		desktopInput.addEventListener('badgeCreated', (e: any) => {
 			// console.log('[Nav] badgeCreated event received', e.detail)
-			const { filterType, config } = e.detail
+			const { config } = e.detail
 			const label = config?.label || e.detail.label // Robust extraction
 			
-			activeFilter = filterType
 			// FORZAR LIMPIEZA DEL INPUT desde el controlador padre también
 			desktopInput.value = ''
-			// console.log('[Nav] Input forced clear. Value:', desktopInput.value)
 			
 			// RESTAURAR LÓGICA DE PLACEHOLDER Y PADDING
 			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
@@ -562,16 +251,12 @@ const currentPath = Astro.url.pathname
 			const searchIn = t['nav.search.in'] || 'en'
 			
 			desktopInput.placeholder = `${search} ${searchIn} ${translatedLabel}...`
-			// console.log('[Nav] Placeholder updated to:', desktopInput.placeholder)
-			// desktopInput.style.paddingLeft = '6.5rem' // Handled by component prop badgePadding="6.5rem"
 
-			// Mostrar contenido inicial filtrado inmediatamente
-			showFilteredInitialContent(filterType)
+			// showFilteredInitialContent(filterType) -> Ahora lo hace UnifiedSearchResults
 		})
 		
 		// Cuando se borra un badge
 		desktopInput.addEventListener('badgeRemoved', () => {
-			activeFilter = null
 			
 			// RESTAURAR LÓGICA DE PLACEHOLDER Y PADDING ORIGINAL
 			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
@@ -579,10 +264,8 @@ const currentPath = Astro.url.pathname
 			desktopInput.placeholder = t['nav.search'] || 'Buscar...'
 			desktopInput.style.paddingLeft = '2.5rem'
 
-			// Restaurar contenido inicial completo
-			showFilteredInitialContent(null)
-			// Si hay texto, volver a buscar sin filtro
-			if (desktopInput.value.trim()) searchNav(desktopInput.value)
+			// showFilteredInitialContent(null) -> Ahora lo hace UnifiedSearchResults
+			// if (desktopInput.value.trim()) searchNav(desktopInput.value) -> Ahora lo hace UnifiedSearchResults
 		})
 	}
 	
@@ -654,3 +337,5 @@ const currentPath = Astro.url.pathname
 		padding-top: 4rem;
 	}
 </style>
+
+

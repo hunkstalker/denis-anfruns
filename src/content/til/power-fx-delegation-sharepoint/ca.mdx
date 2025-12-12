@@ -1,0 +1,18 @@
+---
+title: "Delegació Power FX a SharePoint"
+description: "Com gestionar grans llistes i evitar el límit de 500/2000 elements."
+pubDate: "2025-01-20"
+tags: ["power-platform", "sharepoint", "power-fx"]
+lang: "ca"
+draft: true
+---
+
+# Delegació Power FX a SharePoint
+
+En treballar amb SharePoint, funcions com `Search` o `Filter` poden no ser delegables. Usa col·leccions prèvies o Vistes indexades.
+
+```powerfx
+Filter(Accounts, 'Created On' >= Date(2025,1,1))
+```
+
+Esta es una nota rápida sobre una lección aprendida.

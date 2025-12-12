@@ -1,0 +1,18 @@
+---
+title: "Overcoming the 5000 item limit"
+description: "Using indexed columns and filtered views."
+pubDate: "2025-08-20"
+tags: ["power-platform", "sharepoint", "power-fx"]
+lang: "en"
+draft: true
+---
+
+# Overcoming the 5000 item limit
+
+Do not try to load everything. Index the columns used in `Filter` and create SharePoint views that are already filtered.
+
+```powerfx
+View: "Active Items" (Filtered by Status='Active')
+```
+
+Esta es una nota rápida sobre una lección aprendida.

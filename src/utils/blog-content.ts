@@ -20,7 +20,9 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 		.map((post) => {
 			// post.id is like "stardraw/part-1/es.mdx"
 			// we want "stardraw/part-1"
-            const parts = post.id.split('/')
+			// post.id is like "stardraw/part-1/es.mdx"
+			// we want "stardraw/part-1"
+            const parts = post.id.split(/[/\\]/)
             parts.pop() // remove filename (es.mdx)
             const folder = parts.join('/')
             

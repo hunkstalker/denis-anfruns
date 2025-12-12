@@ -1,0 +1,18 @@
+---
+title: "Simplificant fórmules amb With"
+description: "Millora la llegibilitat i evita càlculs repetits."
+pubDate: "2025-05-28"
+tags: ["power-platform", "sharepoint", "power-fx"]
+lang: "ca"
+draft: true
+---
+
+# Simplificant fórmules amb With
+
+La funció `With` permet definir variables locals dins d'una fórmula, fent el codi més net i ràpid.
+
+```powerfx
+With({ profit: Price - Cost }, If(profit > 0, "Gain", "Loss"))
+```
+
+Esta es una nota rápida sobre una lección aprendida.
