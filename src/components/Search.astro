@@ -83,7 +83,7 @@ const recentPosts = allBlog
 								<div class='space-y-1'>
 									{recentTils.map(tilItem => (
 										<a
-											href={`/${lang}/til/${tilItem.slug.split('/').pop()}/`}
+											href={lang === 'es' ? `/til/${tilItem.slug.split('/')[0]}/` : `/${lang}/til/${tilItem.slug.split('/')[0]}/`}
 											class='group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
 											<h4 class='text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]'>
 												{tilItem.data.title}
@@ -114,7 +114,7 @@ const recentPosts = allBlog
 								<div class='space-y-1'>
 									{recentPosts.map(blogItem => (
 										<a
-											href={`/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
+											href={lang === 'es' ? `/blog/${getBaseSlug(blogItem.slug)}/` : `/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
 											class='group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
 											<h4 class='text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]'>
 												{blogItem.data.title}
