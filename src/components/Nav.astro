@@ -609,18 +609,43 @@ const currentPath = Astro.url.pathname
 	const menu = document.getElementById('side-menu')
 	const overlay = document.getElementById('menu-overlay')
 
-	// Alternar visibilidad del menú y el overlay
+	let isMenuOpen = false
+
+	function openMenu() {
+		overlay?.classList.remove('hidden')
+		// Forzar reflow/repaint antes de iniciar la transición
+		requestAnimationFrame(() => {
+			menu?.classList.remove('-translate-x-full', 'opacity-0')
+			overlay?.classList.remove('opacity-0')
+		})
+		
+		document.body.classList.add('overflow-hidden')
+		isMenuOpen = true
+	}
+
+	function closeMenu() {
+		menu?.classList.add('-translate-x-full', 'opacity-0')
+		overlay?.classList.add('opacity-0')
+		
+		document.body.classList.remove('overflow-hidden')
+		
+		// Esperar a la transición (300ms)
+		setTimeout(() => {
+			overlay?.classList.add('hidden')
+		}, 300)
+		isMenuOpen = false
+	}
+
 	function toggleMenu() {
-		// Agregar clases de transición solo cuando se interactúa por primera vez para evitar flash en carga
-		if (!menu?.classList.contains('transition-transform')) {
-			// No-op or simply remove the transition adding line since we don't want transitions
+		if (isMenuOpen) {
+			closeMenu()
+		} else {
+			openMenu()
 		}
-		menu?.classList.toggle('-translate-x-full')
-		overlay?.classList.toggle('hidden')
 	}
 
 	btn?.addEventListener('click', toggleMenu)
-	overlay?.addEventListener('click', toggleMenu)
+	overlay?.addEventListener('click', closeMenu) // Mejor close directa al overlay
 </script>
 
 <style>

@@ -13,8 +13,8 @@ const t = useTranslations(lang)
 
 const tilCollection = await getTils()
 const tils = tilCollection
-	.filter((p) => p.data.lang === lang)
-	.filter((p) => p.data.lang === lang && p.data.pubDate)
+	.filter(p => p.data.lang === lang)
+	.filter(p => p.data.lang === lang && p.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 ---
 
@@ -35,30 +35,28 @@ const tils = tilCollection
 	}
 </style>
 
-<aside class="space-y-6 sm:space-y-8 lg:col-span-4">
+<aside class='space-y-6 sm:space-y-8 lg:col-span-4'>
 	<div
-		class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50 sm:p-6 lg:sticky lg:top-24"
-	>
+		class='rounded-xl lg:border lg:border-zinc-200 lg:bg-zinc-50 lg:p-6 lg:dark:border-zinc-800 lg:dark:bg-zinc-900/50'>
 		<h2
-			class="mb-6 flex items-center gap-2 border-b border-zinc-200 pb-2 text-xl font-bold dark:border-zinc-700 dark:text-zinc-200"
-		>
+			class='flex items-center gap-2 border-b border-zinc-200 pb-2 text-xl font-bold dark:border-zinc-700 dark:text-zinc-200'>
 			{t('blog.til')}
 		</h2>
 
-		<div class="space-y-4">
-			{tils.length === 0 && <p class="text-sm italic text-zinc-500">{t('blog.withoutTILs')}</p>}
+		<p class='mb-6 mt-2 text-base text-zinc-500'>{t('blog.tilDescription')}</p>
+
+		<div class='space-y-4'>
+			{tils.length === 0 && <p class='text-sm italic text-zinc-500'>{t('blog.withoutTILs')}</p>}
 
 			{
 				tils.map((post, index) => (
-					<article 
-						class="til-card group relative flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:border-black/15 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-white/15 animate-fade-in-up"
-						style={`animation-delay: ${index * 100}ms`}
-					>
-						<div class="mb-1 flex items-center justify-between gap-2">
+					<article
+						class='til-card animate-fade-in-up group relative flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:border-black/15 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-white/15'
+						style={`animation-delay: ${index * 100}ms`}>
+						<div class='mb-1 flex items-center justify-between gap-2'>
 							<time
-								class="text-xs flex items-center gap-3 text-zinc-500"
-								datetime={post.data.pubDate.toISOString()}
-							>
+								class='text-xs flex items-center gap-3 text-zinc-500'
+								datetime={post.data.pubDate.toISOString()}>
 								{post.data.pubDate.toLocaleDateString(undefined, {
 									month: 'short',
 									day: 'numeric',
@@ -67,19 +65,18 @@ const tils = tilCollection
 							</time>
 						</div>
 
-						<p class="mb-4 line-clamp-2 dark:text-white">
+						<p class='mb-4 line-clamp-2 dark:text-white'>
 							<a
 								href={
 									lang === 'es'
 										? `/til/${post.slug.split('/')[0]}/`
 										: `/${lang}/til/${post.slug.split('/')[0]}/`
-								}
-							>
-								<span class="absolute inset-0" />
+								}>
+								<span class='absolute inset-0' />
 								{post.data.title}
 							</a>
 						</p>
-						<div class="flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]">
+						<div class='flex items-center gap-2 text-sm font-medium text-[--tangerine-hover] dark:text-[--tangerine]'>
 							Leer nota
 							<ArrowLink />
 						</div>
@@ -87,11 +84,5 @@ const tils = tilCollection
 				))
 			}
 		</div>
-
-		<div class="mt-6 border-t border-zinc-200 pt-6 text-center dark:border-zinc-700">
-			<p class="text-sm text-zinc-500">{t('blog.tilDescription')}</p>
-		</div>
 	</div>
 </aside>
-
-

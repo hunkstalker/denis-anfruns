@@ -9,6 +9,7 @@ import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 
 // Importación de Iconos SVG
 import SearchIcon from '../icons/search.svg'
+import CloseIcon from '../icons/close.svg'
 import PinIcon from '../icons/pin.svg?raw' // Importación "raw" para inyectar SVG directamente
 import BookmarkIcon from '../icons/bookmark.svg?raw'
 
@@ -44,30 +45,43 @@ const recentPosts = allBlog
 <div id='search-modal' class='fixed inset-0 z-50 hidden' role='dialog' aria-modal='true'>
 	<!-- Fondo Oscuro / Backdrop con efecto blur -->
 	<div
-		class='fixed inset-0 bg-zinc-900/30 backdrop-blur-sm'
+		class='fixed inset-0 bg-zinc-900/30 opacity-0 backdrop-blur-sm transition-opacity duration-300'
 		id='search-backdrop'>
 	</div>
 
-	<!-- Panel del Modal -->
-	<div class='fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20'>
+	<!-- Panel del Modal:
+         Mobile: Top-anchored, 90vh height (h-[90vh]), padding bottom implied by height not being 100%.
+         Desktop (sm+): Centered/Top padding standard behavior.
+    -->
+	<div
+		class='pointer-events-none fixed inset-0 z-10 flex flex-col items-center justify-start p-0 sm:p-6 md:p-20'>
 		<div
-			class='mx-auto max-w-5xl transform divide-y divide-zinc-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 dark:divide-zinc-800 dark:bg-zinc-900'>
-			<!-- Campo de Búsqueda (Input) -->
-			<div class='relative'>
-				<SearchIcon class='pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-zinc-400' />
+			id='search-panel'
+			class='pointer-events-auto flex h-[70vh] w-full -translate-y-4 transform flex-col overflow-hidden rounded-b-2xl bg-white opacity-0 shadow-2xl ring-1 ring-black/5 transition-all duration-300 ease-out dark:bg-zinc-900 sm:mx-auto sm:h-auto sm:max-h-[80vh] sm:max-w-5xl sm:rounded-xl'>
+			<!-- Campo de Búsqueda (Input) + Botón Cerrar -->
+			<div
+				class='relative flex shrink-0 items-center border-b border-zinc-100 dark:border-zinc-800'>
+				<SearchIcon class='pointer-events-none absolute left-4 h-5 w-5 text-zinc-400' />
 				<input
 					type='text'
-					class='h-12 w-full border-0 bg-transparent pl-11 pr-4 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-0 dark:text-white sm:text-sm'
+					class='h-14 w-full border-0 bg-transparent pl-11 pr-12 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-0 dark:text-white sm:h-12 sm:text-sm'
 					placeholder='Buscar...'
 					role='combobox'
 					aria-expanded='false'
 					aria-controls='options'
-					auto-focus
 				/>
+				<!-- Botón Cerrar (Mobile visible, could be visible on desktop too but typically click-outside is enough there) -->
+				<button
+					id='close-search-btn'
+					class='absolute right-4 p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'>
+					<CloseIcon class='h-5 w-5' />
+				</button>
 			</div>
 
 			<!-- Lista de Resultados (Contenedor con scroll) -->
-			<div id='search-results-container' class='max-h-96 scroll-py-3 overflow-y-auto p-3'>
+			<div
+				id='search-results-container'
+				class='min-h-0 flex-1 scroll-py-3 overflow-y-auto px-3 pb-10 pt-3'>
 				<!-- Contenido Inicial: Se muestra antes de buscar nada (Renderizado en Servidor) -->
 				<div id='initial-results-content'>
 					{/* Sección de TILs recientes */}
@@ -75,16 +89,20 @@ const recentPosts = allBlog
 						recentTils.length > 0 && (
 							<div class='px-2 py-2'>
 								<h3 class='text-xs mb-2 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400'>
-									<span class='mr-2 h-4 w-4'>
+									<span class='mr-2 h-4 w-4 mb-3'>
 										<Fragment set:html={PinIcon} />
 									</span>
 									{t('blog.til')}
 								</h3>
-								<div class='space-y-1'>
+								<div class='space-y-3'>
 									{recentTils.map(tilItem => (
 										<a
-											href={lang === 'es' ? `/til/${tilItem.slug.split('/')[0]}/` : `/${lang}/til/${tilItem.slug.split('/')[0]}/`}
-											class='group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
+											href={
+												lang === 'es'
+													? `/til/${tilItem.slug.split('/')[0]}/`
+													: `/${lang}/til/${tilItem.slug.split('/')[0]}/`
+											}
+											class='group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:shadow-lg hover:ring-1 hover:ring-[--tangerine] dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
 											<h4 class='text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]'>
 												{tilItem.data.title}
 											</h4>
@@ -106,16 +124,20 @@ const recentPosts = allBlog
 							<div
 								class={`px-2 py-2 ${recentTils.length > 0 ? 'mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-800' : ''}`}>
 								<h3 class='text-xs mb-2 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400'>
-									<span class='mr-2 h-4 w-4'>
+									<span class='mr-2 h-4 w-4 mb-3'>
 										<Fragment set:html={BookmarkIcon} />
 									</span>
 									{t('blog.series')}
 								</h3>
-								<div class='space-y-1'>
+								<div class='space-y-3'>
 									{recentPosts.map(blogItem => (
 										<a
-											href={lang === 'es' ? `/blog/${getBaseSlug(blogItem.slug)}/` : `/${lang}/blog/${getBaseSlug(blogItem.slug)}/`}
-											class='group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:ring-1 hover:ring-[--tangerine] hover:shadow-lg dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
+											href={
+												lang === 'es'
+													? `/blog/${getBaseSlug(blogItem.slug)}/`
+													: `/${lang}/blog/${getBaseSlug(blogItem.slug)}/`
+											}
+											class='group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:shadow-lg hover:ring-1 hover:ring-[--tangerine] dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
 											<h4 class='text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]'>
 												{blogItem.data.title}
 											</h4>
@@ -139,6 +161,11 @@ const recentPosts = allBlog
 					}
 				</div>
 			</div>
+
+			<!-- Spacer sólido inferior para tapar el corte del scroll -->
+			<div
+				class='pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-6 bg-white dark:bg-zinc-900'>
+			</div>
 		</div>
 	</div>
 </div>
@@ -154,15 +181,16 @@ const recentPosts = allBlog
 	// Referencias a elementos del DOM
 	const modal = document.getElementById('search-modal')
 	const backdrop = document.getElementById('search-backdrop')
+	const panel = document.getElementById('search-panel')
 	const input = modal?.querySelector('input')
 	const resultsContainer = modal?.querySelector('#search-results-container')
+	const closeBtn = document.getElementById('close-search-btn')
 	// Almacenar el contenido HTML inicial (renderizado por el servidor) para restaurarlo cuando no hay búsqueda
 	const defaultContent = resultsContainer?.innerHTML || ''
 
 	let pagefind: any = null
 
 	// Carga perezosa (Lazy Load) de Pagefind
-	// Solo se carga el script pesado de búsqueda cuando el usuario abre el modal
 	async function loadPagefind() {
 		if (pagefind) return
 		try {
@@ -178,10 +206,18 @@ const recentPosts = allBlog
 	function openSearch() {
 		modal?.classList.remove('hidden')
 		document.body.classList.add('overflow-hidden') // Bloquear scroll
+
+		// Animación de entrada
+		// Usamos requestAnimationFrame para asegurar que la clase 'hidden' se ha quitado y el navegador ha renderizado
+		requestAnimationFrame(() => {
+			backdrop?.classList.remove('opacity-0')
+			panel?.classList.remove('opacity-0', '-translate-y-4')
+		})
+
 		input?.focus()
 		loadPagefind()
 
-		// Restaurar contenido por defecto si el input está vacío
+		// Restaurar contenido por defecto
 		if (input && !input.value.trim() && resultsContainer) {
 			resultsContainer.innerHTML = defaultContent
 		}
@@ -189,9 +225,20 @@ const recentPosts = allBlog
 
 	// Función para CERRAR el buscador
 	function closeSearch() {
-		modal?.classList.add('hidden')
+		// Animación de salida
+		backdrop?.classList.add('opacity-0')
+		panel?.classList.add('opacity-0', '-translate-y-4')
+
 		document.body.classList.remove('overflow-hidden') // Desbloquear scroll
+
+		// Esperar a que termine la transición (300ms) antes de ocultar
+		setTimeout(() => {
+			modal?.classList.add('hidden')
+		}, 300)
 	}
+
+	// Listener del botón cerrar
+	closeBtn?.addEventListener('click', closeSearch)
 
 	// Función para EJECUTAR la búsqueda
 	async function performSearch(query: string) {

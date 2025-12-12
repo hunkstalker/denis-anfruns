@@ -4,13 +4,15 @@ import Nav from '../components/Nav.astro'
 import { type CollectionEntry } from 'astro:content'
 import { getBlogPosts, type BlogPost } from '../utils/blog-content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
+import { useTranslations } from '../i18n/utils'
 import TilAside from '../components/TilAside.astro'
 import DevLogCard from '../components/DevLogCard.astro'
 
 const lang = 'es'
-const rawPosts = (
-	await getBlogPosts()
-).filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
+const t = useTranslations(lang)
+const rawPosts = (await getBlogPosts()).filter(
+	p => getLangFromSlug(p.slug) === lang && p.data.pubDate,
+)
 
 const seriesMap = new Map<string, BlogPost[]>()
 const soloPosts: BlogPost[] = []
@@ -30,15 +32,13 @@ for (const post of rawPosts) {
 // 1. Ordenar por fecha de publicación
 // 2. Obtener el primer post de cada serie
 // 3. Utiliza la fecha de la última publicación (más reciente) para ordenar el feed.
-const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
-	list.sort(
-		(a: BlogPost, b: BlogPost) => {
-            if (!a.data.pubDate || !b.data.pubDate) {
-                return 0
-            }
-			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-        },
-	)
+const finalSeriesPosts = Array.from(seriesMap.values()).map(list => {
+	list.sort((a: BlogPost, b: BlogPost) => {
+		if (!a.data.pubDate || !b.data.pubDate) {
+			return 0
+		}
+		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+	})
 
 	const part1 = list[0]
 	const latestPart = list[list.length - 1]
@@ -54,31 +54,38 @@ const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
 	return entry
 })
 
-const articles = [...soloPosts, ...finalSeriesPosts].sort(
-	(a, b) => {
-        if (!a.data.pubDate || !b.data.pubDate) {
-             return 0
-        }
-        return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-    })
+const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
+	if (!a.data.pubDate || !b.data.pubDate) {
+		return 0
+	}
+	return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+})
 ---
 
-<BaseLayout siteTitle="Jardín Digital" lang={lang}>
+<BaseLayout siteTitle='Jardín Digital' lang={lang}>
 	<Nav lang={lang} />
-	<div class="container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28">
-		<div class="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-12">
+	<div class='container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28'>
+		<div class='grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-12'>
 			<!-- Columna principal: DevLogs -->
-			<div class="space-y-12 lg:col-span-8">
-				<h2
-					class="mb-6 flex items-center gap-2 border-b border-zinc-200 pb-2 text-2xl font-bold dark:border-zinc-700 dark:text-zinc-200"
-				>
-					DevLogs
-				</h2>
+			<div class='space-y-12 lg:col-span-8'>
+				<!-- Contenedor "invisible" para alinear con TilAside (p-0 sm:p-0 mobile / lg:p-6 desktop) -->
+				<div class='rounded-xl p-0 lg:border lg:border-transparent lg:p-6'>
+					<h2
+						class='flex items-center gap-2 border-b border-zinc-200 pb-2 text-xl font-bold dark:border-zinc-700 dark:text-zinc-200'>
+						DevLogs
+					</h2>
 
-				{articles.length === 0 && <p class="italic text-zinc-500">No hay DevLogs todavía.</p>}
+					<p class="mb-6 mt-2 text-base text-zinc-500">{t('blog.devLogDescription')}</p>
 
-				<div class="grid gap-4 sm:gap-6 lg:gap-8">
-					{articles.map((post, index) => <DevLogCard post={post} lang={lang} delay={index * 100} />)}
+					{articles.length === 0 && <p class='italic text-zinc-500'>No hay DevLogs todavía.</p>}
+
+					<div class='grid gap-4 sm:gap-6 lg:gap-8'>
+						{
+							articles.map((post, index) => (
+								<DevLogCard post={post} lang={lang} delay={index * 100} />
+							))
+						}
+					</div>
 				</div>
 			</div>
 

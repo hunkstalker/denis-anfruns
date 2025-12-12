@@ -22,11 +22,11 @@
 			const el = document.documentElement
 			if (theme === 'light') {
 				el.classList.remove('dark')
-				el.style.backgroundColor = '#ffffff'
+				// el.style.backgroundColor = '#ffffff'
 				el.style.colorScheme = 'light'
 			} else {
 				el.classList.add('dark')
-				el.style.backgroundColor = '#131313'
+				// el.style.backgroundColor = '#131313'
 				el.style.colorScheme = 'dark'
 			}
 		}
@@ -119,10 +119,10 @@
 
 				// Sincronizar estilos inline críticos para evitar flash/inconsistencias
 				if (isDark) {
-					el.style.backgroundColor = '#131313'
+					// el.style.backgroundColor = '#131313'
 					el.style.colorScheme = 'dark'
 				} else {
-					el.style.backgroundColor = '#ffffff'
+					// el.style.backgroundColor = '#ffffff'
 					el.style.colorScheme = 'light'
 				}
 

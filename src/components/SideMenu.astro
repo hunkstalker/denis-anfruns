@@ -11,7 +11,7 @@ const currentPath = Astro.url.pathname
 
 <aside
 	id="side-menu"
-	class="fixed inset-y-0 left-0 top-16 z-40 w-64 -translate-x-full transform border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+	class="fixed inset-y-0 left-0 top-16 z-40 w-64 -translate-x-full border-r border-zinc-200 bg-white opacity-0 transition-all duration-300 ease-in-out dark:border-zinc-800 dark:bg-zinc-900"
 >
 	<div class="p-6">
 		<nav class="flex flex-col">
@@ -36,4 +36,4 @@ const currentPath = Astro.url.pathname
 </aside>
 
 <!-- Overlay para cerrar al hacer click fuera -->
-<div id="menu-overlay" class="fixed inset-0 z-30 hidden bg-black/50 backdrop-blur-xl transition-opacity duration-300"></div>
+<div id="menu-overlay" class="fixed inset-0 z-30 hidden bg-black/50 backdrop-blur-xl opacity-0 transition-opacity duration-300"></div>
