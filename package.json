@@ -7,7 +7,9 @@
     "start": "astro dev",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
-    "bp": "pnpm verify:content && pnpm build && pnpm preview",
+    "bp": "pnpm normalize:content && pnpm verify:content && pnpm build && pnpm preview",
+    "t": "pnpm normalize:content && pnpm verify:content && pnpm build",
+    "normalize:content": "node scripts/normalize-til-meta.mjs",
     "verify:content": "node scripts/verify-content.mjs",
     "astro": "astro"
   },

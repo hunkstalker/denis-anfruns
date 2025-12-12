@@ -1,18 +1,37 @@
 ---
 title: "Power FX Delegation in SharePoint"
 description: "Handling large lists and avoiding the 500/2000 item limit."
-pubDate: "2025-02-10"
-tags: ["power-platform", "sharepoint", "power-fx"]
 lang: "en"
-draft: true
 ---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
 
 # Power FX Delegation in SharePoint
 
-When working with SharePoint, functions like `Search` or `Filter` might not delegate. Use pre-collections or Indexed Views.
+"Delegation" is the ability of Power Apps to say to the server: "You filter these 10 million records and give me only the 5 I need".
 
-```powerfx
-Filter(Accounts, 'Created On' >= Date(2025,1,1))
-```
+SharePoint has severe limitations with this. Many functions are not delegable, meaning Power Apps has to download the first 500 (configurable up to a maximum of 2000 in app settings) records and filter them **locally**. If your data is in record 2001, **you will never see it**.
 
-Esta es una nota rápida sobre una lección aprendida.
+### Common non-delegable functions
+*   Complex date manipulation (e.g., `Month(DateColumn)`).
+*   Complex text searches (e.g., `Search` on numeric columns).
+
+### Solution: Calculated Columns or Defaults
+
+Instead of calculating at runtime, prepare the data.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps',
+      code: `// ❌ Non-delegable (asks for everything and filters locally)
+Filter(Orders, Year(Created) = 2024)
+
+// ✅ Delegable (passes a date range to the server)
+Filter(Orders, Created >= Date(2024,1,1) && Created <= Date(2024,12,31))`, 
+      lang: 'power fx' 
+    }
+  ]}
+/>
+
+You've probably encountered the yellow warning triangle ⚠️ everywhere, but don't hate it; it's a good snitch. Use it to know where to optimize your apps.a lección aprendida.

@@ -61,11 +61,21 @@ async function verify() {
         const json = JSON.parse(content);
 
         // Check pubDate
-        if (json.pubDate) {
-          if (!isValidDate(json.pubDate)) {
+        if (!json.pubDate) {
+             console.error(`❌ ERROR en ${relativePath}: Faltan el campo obligatorio 'pubDate'`);
+             hasError = true;
+        } else if (!isValidDate(json.pubDate)) {
              console.error(`❌ ERROR en ${relativePath}: pubDate inválida (${json.pubDate})`);
              hasError = true;
-          }
+        }
+
+        // Check tags
+        if (!json.tags) {
+             console.error(`❌ ERROR en ${relativePath}: Faltan el campo obligatorio 'tags'`);
+             hasError = true;
+        } else if (!Array.isArray(json.tags)) {
+             console.error(`❌ ERROR en ${relativePath}: 'tags' debe ser un array`);
+             hasError = true;
         }
 
         // Check updatedDate

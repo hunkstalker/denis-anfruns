@@ -6,7 +6,7 @@ lang: "es"
 import CodeTabs from '../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../components/mdx/Callout.astro';
 
-Si cargas múltiples colecciones en el evento `App.OnStart` una detrás de otra con `;`, estás perdiendo tiempo. La función `Concurrent` evalúa todas las fórmulas al mismo tiempo.
+Si cargas múltiples colecciones en el evento `App.OnStart` una detrás de otra con `;;`, estás perdiendo tiempo. La función `Concurrent` evalúa todas las fórmulas al mismo tiempo en paralelo.
 
 <CodeTabs 
   items={[
@@ -28,7 +28,7 @@ Concurrent(
 
 Esto reduce el tiempo de inicio de la aplicación drásticamente, especialmente cuando conectas con múltiples fuentes de datos.
 
-Es ideal para cargas iniciales (`OnStart`) o botones que lanzan múltiples procesos independientes.
+Úsalo en el inicio de la aplicación (`OnStart`) o botones que lanzan muchos procesos independientes.
 
 <Callout type="warning" title="Ojo con el separador" filled>
   Recuerda que si tienes Power Apps configurado para la **región europea** tendrás que cambiar la coma `,` por punto y coma `;` en las fórmulas. Y Doble punto y coma `;;` para saltos de línea donde normalmente se pondría únicamente un punto y coma `;`.
