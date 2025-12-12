@@ -1,0 +1,61 @@
+---
+import ArrowUpRightIcon from '../../icons/arrow-up-right.svg?raw'
+
+interface Props {
+	href: string
+	title: string
+	description?: string
+	date?: Date
+	lang?: string
+	mode: 'desktop' | 'mobile'
+	isExtraItem?: boolean
+}
+
+const { href, title, description, date, lang = 'es', mode, isExtraItem = false } = Astro.props
+const isDesktop = mode === 'desktop'
+---
+
+{isDesktop ? (
+	<a
+		href={href}
+		class:list={[
+			'group relative block h-full min-h-[140px] overflow-hidden rounded-xl bg-white/90 p-5 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:shadow-lg hover:ring-1 hover:ring-[--tangerine] dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]',
+			{ 'extra-item hidden': isExtraItem }
+		]}>
+		<div class='mb-2 flex items-center justify-between'>
+			{date && (
+				<time
+					datetime={date.toISOString()}
+					class='text-[10px] font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500'>
+					{date.toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' })}
+				</time>
+			)}
+			<span class='opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[--tangerine] group-hover:opacity-100'>
+				<Fragment set:html={ArrowUpRightIcon} />
+			</span>
+		</div>
+		<div class='text-base font-semibold leading-tight text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-100 dark:group-hover:text-[--tangerine]'>
+			{title}
+		</div>
+		{description && (
+			<div class='text-xs mt-2 line-clamp-3 leading-relaxed text-zinc-500 dark:text-zinc-400'>
+				{description}
+			</div>
+		)}
+	</a>
+) : (
+	<a
+		href={href}
+		class='group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:shadow-lg hover:ring-1 hover:ring-[--tangerine] dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]'>
+		<h4 class='text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]'>
+			{title}
+		</h4>
+		{description ? (
+			<p class='text-xs mt-1 line-clamp-1 text-zinc-500 dark:text-zinc-400'>{description}</p>
+		) : date ? (
+			<div class='text-xs mt-1 flex items-center gap-2 text-zinc-500 dark:text-zinc-400'>
+				<time datetime={date.toISOString()}>{date.toLocaleDateString(lang)}</time>
+			</div>
+		) : null}
+	</a>
+)}

@@ -1,0 +1,150 @@
+---
+import { useTranslations } from '../../i18n/utils'
+import { getTils } from '../../utils/til-content'
+import { getBlogPosts } from '../../utils/blog-content'
+import { getProjects } from '../../utils/project-content'
+import { getLangFromSlug, getBaseSlug } from '../../utils/blogi18n'
+
+// Icons (raw SVG for server rendering)
+import PinIcon from '../../icons/pin.svg?raw'
+import BookmarkIcon from '../../icons/bookmark.svg?raw'
+import RocketIcon from '../../icons/rocket.svg?raw'
+
+// Components
+import SearchResultsClient from './SearchResultsClient'
+import SearchSection from './SearchSection.astro'
+
+interface Props {
+	lang: 'es' | 'en' | 'ca'
+	mode: 'mobile' | 'desktop'
+	inputId: string
+	resultsContainerId?: string
+}
+
+const { lang = 'es', mode, inputId, resultsContainerId = 'unified-results-container' } = Astro.props
+const t = useTranslations(lang)
+
+// Labels for React component
+const labels = {
+	'nav.projects': t('nav.projects'),
+	'nav.blog': t('nav.blog'),
+	'blog.til': t('blog.til'),
+	'blog.series': t('blog.series'),
+	'nav.noResults': t('nav.noResults'),
+}
+
+// --- SERVER LOGIC (Build Time) ---
+const allTils = await getTils()
+const allBlog = (await getBlogPosts()).filter(p =>
+	import.meta.env.PROD ? p.data.draft !== true : true,
+)
+const allProjects = await getProjects()
+
+// Helper to build href
+const buildHref = (type: 'til' | 'blog' | 'projects', slug: string) => {
+	const baseSlug = type === 'blog' ? getBaseSlug(slug) : slug.split('/')[0]
+	return lang === 'es' ? `/${type}/${baseSlug}/` : `/${lang}/${type}/${baseSlug}/`
+}
+
+// Transform data into card items
+const tilItems = allTils
+	.filter(p => p.data.lang === lang)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 12)
+	.map(item => ({
+		href: buildHref('til', item.slug),
+		title: item.data.title,
+		description: item.data.description,
+		date: item.data.pubDate,
+	}))
+
+const projectItems = allProjects
+	.filter(p => p.data.lang === lang)
+	.sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0))
+	.slice(0, 12)
+	.map(item => ({
+		href: buildHref('projects', item.slug),
+		title: item.data.title,
+		description: item.data.description,
+		date: item.data.pubDate,
+	}))
+
+// Deduplicate series for blog posts
+const blogItems = allBlog
+	.filter(p => getLangFromSlug(p.slug) === lang && p.data.pubDate)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.reduce(
+		(acc, post) => {
+			if (acc.length >= 12) return acc
+			const isSeries = post.data.series
+			if (isSeries) {
+				const seriesExists = acc.some(p => p.data.series === isSeries)
+				if (!seriesExists) {
+					const seriesPosts = allBlog
+						.filter(p => p.data.series === isSeries && getLangFromSlug(p.slug) === lang)
+						.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
+					const seriesHead = seriesPosts.length > 0 ? seriesPosts[0] : post
+					acc.push(seriesHead)
+				}
+			} else {
+				acc.push(post)
+			}
+			return acc
+		},
+		[] as typeof allBlog,
+	)
+	.map(item => ({
+		href: buildHref('blog', item.slug),
+		title: item.data.title,
+		description: item.data.description,
+		date: item.data.pubDate,
+	}))
+
+const hasContent = tilItems.length > 0 || projectItems.length > 0 || blogItems.length > 0
+---
+
+<SearchResultsClient
+	client:load
+	mode={mode}
+	inputId={inputId}
+	containerId={resultsContainerId}
+	labels={labels}>
+	{/* Server Rendered Initial Content */}
+	<div id={`${resultsContainerId}-content`}>
+		{hasContent ? (
+			<>
+				{/* Order: TIL → Projects → Devlogs */}
+				<SearchSection
+					title={t('blog.til')}
+					icon={PinIcon}
+					items={tilItems}
+					mode={mode}
+					lang={lang}
+					initialLimit={mode === 'desktop' ? 6 : 6}
+				/>
+				<SearchSection
+					title={t('nav.projects') || 'Projects'}
+					icon={RocketIcon}
+					items={projectItems}
+					mode={mode}
+					lang={lang}
+					initialLimit={3}
+					hasBorderTop={tilItems.length > 0 && mode === 'mobile'}
+				/>
+				<SearchSection
+					title={t('blog.series')}
+					icon={BookmarkIcon}
+					items={blogItems}
+					mode={mode}
+					lang={lang}
+					initialLimit={3}
+					hasBorderTop={(tilItems.length > 0 || projectItems.length > 0) && mode === 'mobile'}
+				/>
+			</>
+		) : (
+			<div class='py-10 text-center text-sm text-zinc-500 dark:text-zinc-400'>
+				<p>Escribe para buscar artículos y proyectos...</p>
+			</div>
+		)}
+	</div>
+</SearchResultsClient>

@@ -1,20 +1,19 @@
 ---
 // Importación de componentes UI
-import Button from './Button.astro'
-import SwitchBtnThemeMode from './SwitchBtnThemeMode.astro'
-import LanguagePicker from './LanguagePicker.astro'
+import Button from '../ui/Button.astro'
+import SwitchBtnThemeMode from '../ui/SwitchBtnThemeMode.astro'
+import LanguagePicker from '../ui/LanguagePicker.astro'
 import SideMenu from './SideMenu.astro'
-import Search from './Search.astro'
-import UnifiedSearchResults from './UnifiedSearchResults.astro'
-
+import Search from '../search/Search.astro'
+import SearchResults from '../search/SearchResults.astro'
 
 // Importación de utilidades de internacionalización y navegación
-import { useTranslations } from '../i18n/utils'
-import { navItems } from '../i18n/navigation'
+import { useTranslations } from '../../i18n/utils'
+import { navItems } from '../../i18n/navigation'
 
 // Importación de Iconos
-import MenuIcon from '../icons/menu.svg'
-import SearchIcon from '../icons/search.svg'
+import MenuIcon from '../../icons/menu.svg'
+import SearchIcon from '../../icons/search.svg'
 
 // Definición de las Props
 interface Props {
@@ -24,8 +23,8 @@ interface Props {
 // Extracción de props y configuración de traducciones
 const { lang = 'es' } = Astro.props
 // Importación de componentes UI
-import SearchBadges from '../../packages/astro-search-badges/src/SearchBadges.astro'
-import { ui } from '../i18n/ui'
+import SearchBadges from '../../../packages/astro-search-badges/src/SearchBadges.astro'
+import { ui } from '../../i18n/ui'
 
 const t = useTranslations(lang)
 
@@ -36,22 +35,22 @@ const filters = {
 		label: 'blog.til',
 		badge: 'TIL',
 		color: 'emerald',
-		filterType: 'til'
+		filterType: 'til',
 	},
 	projects: {
 		keys: { es: 'proyectos', en: 'projects', ca: 'projectes' },
 		label: 'nav.search.filter.projects',
 		badge: 'PRO',
 		color: 'blue',
-		filterType: 'project'
+		filterType: 'project',
 	},
 	devlog: {
 		keys: ['devlog', 'blog'],
 		label: 'blog.series',
 		badge: 'DEV',
 		color: 'purple',
-		filterType: 'blog'
-	}
+		filterType: 'blog',
+	},
 }
 
 // Pasar traducciones completas
@@ -61,13 +60,10 @@ const translations = ui
 const currentPath = Astro.url.pathname
 ---
 
-
-
 <nav
 	class='fixed left-0 right-0 top-0 z-50 border-b border-zinc-200/50 bg-white/70 shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70'>
 	<div class='container'>
 		<div class='flex items-center justify-between py-4 md:py-6'>
-			
 			<!-- Menú Hamburguesa (Móvil) -->
 			<div class='sm:hidden'>
 				<button id='menu-toggle'>
@@ -100,7 +96,6 @@ const currentPath = Astro.url.pathname
 
 			<!-- Zona Derecha (Buscador, Idioma, Tema) -->
 			<div class='flex items-center gap-4 md:gap-6'>
-				
 				<!-- Botón Lupa (Solo Móvil) -->
 				<button
 					id='search-mobile-btn'
@@ -113,18 +108,18 @@ const currentPath = Astro.url.pathname
 				<div class='group/search relative hidden md:block'>
 					<div class='relative'>
 						<span
-							class='absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 dark:text-zinc-400 z-10 pointer-events-none'>
+							class='pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-zinc-500 dark:text-zinc-400'>
 							<SearchIcon class='h-4 w-4' />
 						</span>
-						
+
 						<SearchBadges
 							filters={filters}
 							lang={lang}
 							translations={translations}
 							placeholder={t('nav.search') || 'Buscar...'}
-							width="w-96"
-							focusRingClass="focus:ring-[--tangerine]"
-							badgePadding="5.5rem"
+							width='w-96'
+							focusRingClass='focus:ring-[--tangerine]'
+							badgePadding='5.5rem'
 						/>
 					</div>
 
@@ -132,24 +127,22 @@ const currentPath = Astro.url.pathname
 					<!-- Overlay de fondo -->
 					<div
 						id='desktop-search-overlay'
-						class='fixed inset-x-0 top-[calc(100%+1px)] z-40 hidden h-screen bg-zinc-900/40 opacity-0 backdrop-blur-[2px] '>
+						class='fixed inset-x-0 top-[calc(100%+1px)] z-40 hidden h-screen bg-zinc-900/40 opacity-0 backdrop-blur-[2px]'>
 					</div>
 
 					<!-- Panel de Resultados (Mega-Dropdown) -->
 					<div
 						id='desktop-search-results'
 						class='invisible fixed inset-x-0 top-[6rem] z-50 mx-auto max-w-5xl origin-top -translate-y-4 transform overflow-hidden rounded-2xl border border-white/20 bg-white/40 opacity-0 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-out dark:border-white/10 dark:bg-zinc-900/50'>
-						
 						<!-- Contenido Unificado -->
 						<div class='w-full'>
-							<UnifiedSearchResults
+							<SearchResults
 								lang={lang}
-								mode="desktop"
-								inputId="search-badges-input"
-								resultsContainerId="desktop-unified-results"
+								mode='desktop'
+								inputId='search-badges-input'
+								resultsContainerId='desktop-unified-results'
 							/>
 						</div>
-
 					</div>
 				</div>
 
@@ -164,7 +157,7 @@ const currentPath = Astro.url.pathname
 <SideMenu lang={lang} />
 
 <script>
-	import { ui, defaultLang } from '../i18n/ui'
+	import { ui, defaultLang } from '../../i18n/ui'
 
 	// Lógica para abrir el buscador desde el botón móvil
 	const searchMobileBtn = document.getElementById('search-mobile-btn')
@@ -186,9 +179,9 @@ const currentPath = Astro.url.pathname
 	const desktopInput = document.getElementById('search-badges-input') as HTMLInputElement
 	const resultsContainer = document.getElementById('desktop-search-results')
 	const resultsOverlay = document.getElementById('desktop-search-overlay')
-	
+
 	let isOpen = false
-	
+
 	// Función para mostrar resultados/overlay
 	function showResults() {
 		if (resultsContainer && resultsOverlay) {
@@ -196,7 +189,7 @@ const currentPath = Astro.url.pathname
 			// Forzar reflow para animación
 			void resultsOverlay.offsetWidth
 			resultsOverlay.classList.remove('opacity-0')
-			
+
 			resultsContainer.classList.remove('invisible', '-translate-y-4', 'opacity-0')
 			document.body.classList.add('overflow-hidden') // Lock scroll
 			isOpen = true
@@ -209,7 +202,7 @@ const currentPath = Astro.url.pathname
 			resultsOverlay.classList.add('opacity-0')
 			resultsContainer.classList.add('-translate-y-4', 'opacity-0')
 			document.body.classList.remove('overflow-hidden') // Unlock scroll
-			
+
 			setTimeout(() => {
 				resultsOverlay.classList.add('hidden')
 				resultsContainer.classList.add('invisible')
@@ -227,37 +220,34 @@ const currentPath = Astro.url.pathname
 	// Cerrar al hacer clic fuera (Overlay)
 	resultsOverlay?.addEventListener('click', hideResults)
 
-
 	// Debounce y Listeners
 	// Event Listeners para el Componente SearchBadges (Desktop UI Logic: Placeholder etc)
 	if (desktopInput) {
-		
 		// Cuando se crea un badge
 		desktopInput.addEventListener('badgeCreated', (e: any) => {
 			// console.log('[Nav] badgeCreated event received', e.detail)
 			const { config } = e.detail
 			const label = config?.label || e.detail.label // Robust extraction
-			
+
 			// FORZAR LIMPIEZA DEL INPUT desde el controlador padre también
 			desktopInput.value = ''
-			
+
 			// RESTAURAR LÓGICA DE PLACEHOLDER Y PADDING
 			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
 			const t = ui[currentLang]
 			const translatedLabel = t[label as keyof typeof t] || label
-			
+
 			// Usar claves exactas de i18n/ui.ts
 			const search = t['nav.search'] || 'Buscar...'
 			const searchIn = t['nav.search.in'] || 'en'
-			
+
 			desktopInput.placeholder = `${search} ${searchIn} ${translatedLabel}...`
 
 			// showFilteredInitialContent(filterType) -> Ahora lo hace UnifiedSearchResults
 		})
-		
+
 		// Cuando se borra un badge
 		desktopInput.addEventListener('badgeRemoved', () => {
-			
 			// RESTAURAR LÓGICA DE PLACEHOLDER Y PADDING ORIGINAL
 			const currentLang = (document.documentElement.lang as keyof typeof ui) || defaultLang
 			const t = ui[currentLang]
@@ -268,7 +258,7 @@ const currentPath = Astro.url.pathname
 			// if (desktopInput.value.trim()) searchNav(desktopInput.value) -> Ahora lo hace UnifiedSearchResults
 		})
 	}
-	
+
 	// Teclas Globales
 	document.addEventListener('keydown', e => {
 		if (e.key === 'Escape') {
@@ -301,7 +291,7 @@ const currentPath = Astro.url.pathname
 			menu?.classList.remove('-translate-x-full', 'opacity-0')
 			overlay?.classList.remove('opacity-0')
 		})
-		
+
 		document.body.classList.add('overflow-hidden')
 		isMenuOpen = true
 	}
@@ -309,9 +299,9 @@ const currentPath = Astro.url.pathname
 	function closeMenu() {
 		menu?.classList.add('-translate-x-full', 'opacity-0')
 		overlay?.classList.add('opacity-0')
-		
+
 		document.body.classList.remove('overflow-hidden')
-		
+
 		// Esperar a la transición (300ms)
 		setTimeout(() => {
 			overlay?.classList.add('hidden')
@@ -337,5 +327,3 @@ const currentPath = Astro.url.pathname
 		padding-top: 4rem;
 	}
 </style>
-
-

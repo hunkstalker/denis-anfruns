@@ -1,13 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import Nav from '../../components/Nav.astro'
+import Nav from '../../components/layout/Nav.astro'
 import { type CollectionEntry } from 'astro:content'
 import { getBlogPosts, type BlogPost } from '../../utils/blog-content'
 import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../../utils/blogi18n'
 import { languages } from '../../i18n/ui'
 import { useTranslations } from '../../i18n/utils'
-import TilAside from '../../components/TilAside.astro'
-import DevLogCard from '../../components/DevLogCard.astro'
+import TilAside from '../../components/blog/TilAside.astro'
+import DevLogCard from '../../components/blog/DevLogCard.astro'
 
 export async function getStaticPaths() {
 	return Object.keys(languages)
@@ -83,6 +83,8 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort(
 				>
 					{t('blog.series')}
 				</h2>
+
+				<p class="mb-6 mt-2 text-base text-zinc-500">{t('blog.devLogDescription')}</p>
 
 				{articles.length === 0 && <p class="italic text-zinc-500">{t('blog.withoutArticles')}</p>}
 

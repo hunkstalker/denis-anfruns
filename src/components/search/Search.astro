@@ -2,9 +2,9 @@
 // Importación de utilidades de internalización (i18n)
 // (getTils/getBlogPosts ya no son necesarios aquí, están en el componente unificado)
 
-import SearchIcon from '../icons/search.svg'
-import CloseIcon from '../icons/close.svg'
-import UnifiedSearchResults from './UnifiedSearchResults.astro'
+import SearchIcon from '../../icons/search.svg'
+import CloseIcon from '../../icons/close.svg'
+import SearchResults from './SearchResults.astro'
 
 // Definición de las Props del componente
 interface Props {
@@ -32,13 +32,13 @@ const { lang = 'es' } = Astro.props
 		<!-- Contenedor del modal móvil -->
 		<div
 			id='search-panel'
-			class='pointer-events-auto flex h-[70vh] w-full sm:mx-auto sm:h-auto sm:max-h-[80vh] -translate-y-4 transform flex-col overflow-hidden rounded-b-2xl bg-white opacity-0 shadow-2xl ring-1 ring-black/5 transition-all duration-300 ease-out dark:bg-zinc-900 sm:max-w-5xl sm:rounded-xl'>
+			class='pointer-events-auto flex h-[70vh] w-full -translate-y-4 transform flex-col overflow-hidden rounded-b-2xl bg-white opacity-0 shadow-2xl ring-1 ring-black/5 transition-all duration-300 ease-out dark:bg-zinc-900 sm:mx-auto sm:h-auto sm:max-h-[80vh] sm:max-w-5xl sm:rounded-xl'>
 			<!-- Campo de Búsqueda (Input) + Botón Cerrar -->
 			<div
 				class='relative flex shrink-0 items-center border-b border-zinc-100 dark:border-zinc-800'>
 				<SearchIcon class='pointer-events-none absolute left-4 h-5 w-5 text-zinc-400' />
 				<input
-					id="mobile-search-input"
+					id='mobile-search-input'
 					type='text'
 					class='h-14 w-full border-0 bg-transparent pl-11 pr-12 text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-0 dark:text-white sm:h-12 sm:text-sm'
 					placeholder='Buscar...'
@@ -53,15 +53,14 @@ const { lang = 'es' } = Astro.props
 					<CloseIcon class='h-5 w-5' />
 				</button>
 			</div>
-			
-			<!-- Componente Unificado de Resultados -->
-			<UnifiedSearchResults
-				lang={lang}
-				mode="mobile"
-				inputId="mobile-search-input"
-				resultsContainerId="mobile-search-results"
-			/>
 
+			<!-- Componente Unificado de Resultados -->
+			<SearchResults
+				lang={lang}
+				mode='mobile'
+				inputId='mobile-search-input'
+				resultsContainerId='mobile-search-results'
+			/>
 		</div>
 	</div>
 </div>
@@ -75,12 +74,12 @@ const { lang = 'es' } = Astro.props
 	const panel = document.getElementById('search-panel')
 	const input = modal?.querySelector('input')
 	const closeBtn = document.getElementById('close-search-btn')
-	
+
 	// Función para ABRIR el buscador
 	function openSearch() {
 		modal?.classList.remove('hidden')
 		document.body.classList.add('overflow-hidden') // Bloquear scroll
-		
+
 		// Animación de entrada
 		requestAnimationFrame(() => {
 			backdrop?.classList.remove('opacity-0')
@@ -96,7 +95,7 @@ const { lang = 'es' } = Astro.props
 		// Animación de salida
 		backdrop?.classList.add('opacity-0')
 		panel?.classList.add('opacity-0', '-translate-y-4')
-		
+
 		document.body.classList.remove('overflow-hidden') // Desbloquear scroll
 
 		// Esperar a que termine la transición (300ms) antes de ocultar
@@ -104,7 +103,7 @@ const { lang = 'es' } = Astro.props
 			modal?.classList.add('hidden')
 			// Limpiar input al cerrar? Opcional
 			if (input) input.value = ''
-			// Disparar evento de limpiar resultados? 
+			// Disparar evento de limpiar resultados?
 			// Como UnifiedSearch escucha 'input', al limpiar el value deberíamos disparar el evento si queremos limpiar
 			// Pero mejor dejarlo con el estado actual por si reabre.
 		}, 300)

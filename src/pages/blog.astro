@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import Nav from '../components/Nav.astro'
+import Nav from '../components/layout/Nav.astro'
 import { type CollectionEntry } from 'astro:content'
 import { getBlogPosts, type BlogPost } from '../utils/blog-content'
 import { getLangFromSlug, getBaseSlug } from '../utils/blogi18n'
 import { useTranslations } from '../i18n/utils'
-import TilAside from '../components/TilAside.astro'
-import DevLogCard from '../components/DevLogCard.astro'
+import TilAside from '../components/blog/TilAside.astro'
+import DevLogCard from '../components/blog/DevLogCard.astro'
 
 const lang = 'es'
 const t = useTranslations(lang)

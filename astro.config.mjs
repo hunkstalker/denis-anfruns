@@ -14,6 +14,13 @@ export default defineConfig({
       prefixDefaultLocale: false
     }
   },
+  vite: {
+    build: {
+      rollupOptions: {
+        external: ['/pagefind/pagefind.js']
+      }
+    }
+  },
   experimental: {
     svgo: {
       svgo: true

@@ -1,7 +1,7 @@
 ---
-import Button from './Button.astro'
-import { useTranslations } from '../i18n/utils'
-import { navItems } from '../i18n/navigation'
+import Button from '../ui/Button.astro'
+import { useTranslations } from '../../i18n/utils'
+import { navItems } from '../../i18n/navigation'
 
 const { lang = 'es' } = Astro.props
 const t = useTranslations(lang)
