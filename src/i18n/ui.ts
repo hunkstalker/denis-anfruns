@@ -52,12 +52,12 @@ export const ui = {
     'blog.previousPost': 'Anterior',
     'blog.updated': 'Actualizado',
     'blog.tableOfContents': 'En esta página',
-
-    // MISC
     'toc.title': 'Tabla de contenidos',
     'series.github.title': 'Código fuente',
     'series.github.description': 'Explora, aprende y contribuye.',
     'series.github.button': 'Ver en GitHub',
+
+    // MISC
     'theme.toggle': 'Alternar tema',
     'theme.dark': 'Oscuro',
     'theme.light': 'Claro',
@@ -67,12 +67,13 @@ export const ui = {
     
     // SOBRE MÍ
     'about.title': 'Sobre mí',
-    'about.intro.title': 'Hola, soy Denis',
-    'about.intro.text': 'Soy un desarrollador Full Stack obsesionado con optimizar procesos y entender cómo funcionan las cosas por dentro. Me muevo entre la flexibilidad del código (React/Astro) y la potencia del Low Code (Power Platform).',
+    'about.intro.title': 'Hola, soy Denis Anfruns Millán',
+    'about.intro.text': 'Soy un desarrollador Full Stack en aprendizaje continuo. Me apasiona el rendimiento del software y las buenas prácticas, pero **mi objetivo final es pragmático: ofrecer al cliente un Mínimo Producto Viable flexible** y escalable a tiempo. Desarrollo soluciones adaptables a los cambios porque entiendo las necesidades de negocio. Me muevo entre la **estabilidad e innovación** con React + Astro y la eficacia de Power Platform (Power Apps - Power Automate - Power BI) y SharePoint.',
+    'about.intro.deal': 'Soluciones de alto rendimiento client-side, sitios dinámicos de gran experiencia para el usuario o soportes con Web API Nativas que garantizan una base sólida para el crecimiento son la base de mis proyectos.',
     'about.garden.title': 'El Jardín Digital',
-    'about.garden.text': 'Este sitio es mi "Jardín Digital". Aquí no solo publico proyectos terminados, sino que documento mis aprendizajes diarios (TILs) y experimento con nuevas arquitecturas. Creo firmemente en aprender en público.',
+    'about.garden.text': 'Este lugar es un **"Jardín Digital"**. Aquí no solo publicaré proyectos terminados, sino que documento mis desarrollos o experimentos así como pequeñas notas que me sirvan día a día (TILs). Me encanta enseñar y compartir así que espero que este repositorio nos sea de ayuda a ambos. Creo firmemente en el **Código Libre** ❤️',
     'about.personal.title': 'Más allá del código',
-    'about.personal.text': 'Cuando no estoy refactorizando componentes, probablemente me encontrarás desarrollando algún pequeño videojuego (una de mis pasiones), disfrutando de una buena película o serie, o inmerso en alguna partida.',
+    'about.personal.text': 'Cuando no estoy programando, te costará encontrarme 🤣 disfruto desconectando con una buena serie, película o perdiéndome en algún videojuego. También hago mis pinitos en desarrollo de videojuegos (pronto espero abrir una sección dedicada). Como detalle, estudié Diseño Industrial y tengo buena mano para el dibujo; aunque no me considere un gran creativo, **disfruto enormemente apreciando el arte y el diseño**.',
   },
   ca: {
     // NAVEGACIÓ
@@ -119,12 +120,12 @@ export const ui = {
     'blog.previousPost': 'Anterior',
     'blog.updated': 'Actualitzat',
     'blog.tableOfContents': 'En aquesta pàgina',
-
-    // MISC
     'toc.title': 'Taula de continguts',
     'series.github.title': 'Codi font',
     'series.github.description': 'Explora, aprèn i contribueix.',
     'series.github.button': 'Veure a GitHub',
+
+    // MISC
     'theme.toggle': 'Alternar tema',
     'theme.dark': 'Fosc',
     'theme.light': 'Clar',
@@ -135,20 +136,20 @@ export const ui = {
     // SOBRE MI
     'about.title': 'Sobre mi',
     'about.intro.title': 'Hola, soc el Denis',
-    'about.intro.text': 'Soc un desenvolupador Full Stack obsessionat amb optimitzar processos i entendre com funcionen les coses per dins. Em moc entre la flexibilitat del codi (React/Astro) i la potència del Low Code (Power Platform).',
+    'about.intro.text': 'Sóc un desenvolupador Full Stack en aprenentatge continu. M\'apassiona el rendiment del programari i les bones pràctiques, però **el meu objectiu final és pragmàtic: oferir al client un Producte Mínim Viable flexible**, i escalable en el menor temps possible. Desenvolupo solucions adaptables als canvis perquè entenc les necessitats de negoci. Em moc entre l\'**estabilitat i innovació** amb React + Astro i l\'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint.',
+    'about.intro.deal': 'Solucions d\'alt rendiment client-side, llocs dinàmics de gran experiència per a l\'usuari o suports amb Web API Natives que garanteixen una base sòlida per al creixement són la base dels meus projectes.',
     'about.garden.title': 'El Jardí Digital',
-    'about.garden.text': 'Aquest lloc és el meu "Jardí Digital". Aquí no només publico projectes acabats, sinó que documento els meus aprenentatges diaris (TILs) i experimento amb noves arquitectures. Crec firmament en aprendre en públic.',
+    'about.garden.text': 'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia (TILs). M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
     'about.personal.title': 'Més enllà del codi',
-    'about.personal.text': 'Quan no estic refactoritzant components, probablement em trobaràs desenvolupant algun petit videojoc (una de les meves passions), gaudint d\'una bona pel·lícula o sèrie, o immers en alguna partida.',
+    'about.personal.text': 'Quan no estic programant, segurament no em trobaràs 🤣 gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. També faig els meus intents en el desenvolupament de videojocs (aviat espero obrir una secció dedicada). Com a detall, vaig estudiar Disseny Industrial i tinc bona mà pel dibuix; encara que no em consideri un gran creatiu, **gaudeixo enormement apreciant l\'art i el disseny**.',
   },
   en: {
-    // NAVEGATION
-    'nav.home': 'HOME',
-    'nav.blog': 'BLOG',
-    'nav.projects': 'PROJECTS',
-    'nav.about': 'ABOUT',
-    'nav.videogames': 'video games',
-    'nav.devblog': 'dev blog',
+    'nav.home': 'Home',
+    'nav.blog': 'Blog',
+    'nav.projects': 'Projects',
+    'nav.about': 'About',
+    'nav.videogames': 'Video Games',
+    'nav.devblog': 'Dev Log',
     'nav.search': 'Search...',
     'nav.search.in': 'in',
     'nav.search.typeToSearch': 'Type to search in',
@@ -157,17 +158,17 @@ export const ui = {
     'nav.menu': 'Menu',
     'nav.search.label': 'Search',
 
-    // SEARCH
+    // SEARCH & BODY
     'search.all': 'All',
-    'search.project': 'PROJECTS',
+    'search.project': 'PRO',
     'search.til': 'TIL',
     'search.devblog': 'DEV',
     'header.role': 'Full Stack Developer',
     'header.years': 'years',
     'header.experience': 'of experience',
-    'header.valueProp': 'Development of maintainable and scalable solutions',
-    'footer.astro': 'Web powered by ',
-    'footer.github': 'Source Code in GitHub',
+    'header.valueProp': 'Developing maintainable and scalable solutions',
+    'footer.astro': 'Powered by ',
+    'footer.github': 'Source Code on GitHub',
     'footer.privacy': 'Privacy Policy',
 
     // BLOG
@@ -177,35 +178,40 @@ export const ui = {
     'blog.devLogDescription': 'Articles about the development of my projects.',
     'blog.withoutArticles': 'No DevLogs yet.',
     'blog.readArticle': 'Read DevLog',
-    'blog.til': 'Today I Learned',
-    'blog.withoutTILs': 'No TILs yet.',
-    'blog.tilDescription': 'Code snippets.',
+    'blog.til': 'TIL Notes',
+    'blog.withoutTILs': 'No TIL notes yet.',
+    'blog.tilDescription': 'Snippets of knowledge.',
     'blog.backToBlog': 'Back to Blog',
     'blog.backToTop': 'Back to Top',
     'blog.nextPost': 'Next',
     'blog.previousPost': 'Previous',
     'blog.updated': 'Updated',
-    'blog.tableOfContents': 'In this page',
-
-    // MISC
+    'blog.tableOfContents': 'On this page',
     'toc.title': 'Table of Contents',
     'series.github.title': 'Source code',
     'series.github.description': 'Explore, learn and contribute.',
     'series.github.button': 'View on GitHub',
+
+    // MISC
     'theme.toggle': 'Toggle theme',
     'theme.dark': 'Dark',
     'theme.light': 'Light',
     'code.copy': 'Copy code',
     'code.copied': 'Copied!',
     'language.changeTo': 'Change language to',
-    
-    // ABOUT
+
+    'home.welcome': 'Welcome to my Portfolio',
+    'home.description': 'I am a Full Stack developer passionate about technology and continuous learning.',
+    'home.latest.posts': 'Latest Posts',
+    'home.view.all': 'View all posts',
+    // ABOUT ME
     'about.title': 'About Me',
-    'about.intro.title': 'Hi, I\'m Denis',
-    'about.intro.text': 'I\'m a Full Stack developer obsessed with optimizing processes and understanding how things work under the hood. I move between the flexibility of code (React/Astro) and the power of Low Code (Power Platform).',
-    'about.garden.title': 'The Digital Garden',
-    'about.garden.text': 'This site is my "Digital Garden". Here I not only publish finished projects, but I document my daily learnings (TILs) and experiment with new architectures. I firmly believe in learning in public.',
-    'about.personal.title': 'Beyond Code',
-    'about.personal.text': 'When I\'m not refactoring components, you\'ll probably find me developing some small video game (one of my passions), enjoying a good movie or series, or immersed in a game.',
+    'about.intro.title': 'Hi, I\'m Denis Anfruns Millán',
+    'about.intro.text': 'I am a Full Stack developer in continuous learning. I am passionate about software performance and best practices, but **my ultimate goal is pragmatic: to offer the client a flexible, scalable Minimum Viable Product** in the shortest possible time. I develop solutions adaptable to changes because I understand business needs. I move between **stability and innovation** with React + Astro and the effectiveness of Power Platform (Power Apps - Power Automate - Power BI) and SharePoint.',
+    'about.intro.deal': 'High-performance client-side solutions, dynamic sites with great user experience, or supports with Native Web APIs that guarantee a solid foundation for growth are the basis of my projects.',
+    'about.garden.title': 'Digital Garden',
+    'about.garden.text': 'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I also document my developments or experiments as well as small notes that serve me day to day (TILs). I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
+    'about.personal.title': 'Beyond the Code',
+    'about.personal.text': 'When I\'m not coding, you probably won\'t find me 🤣 I enjoy disconnecting with a good series, movie, or getting lost in a video game. I also dabble in game development (I hope to open a dedicated section soon). As a detail, I studied Industrial Design and I have a good hand for drawing; although I don\'t consider myself a great creative, **I greatly enjoy appreciating art and design**.',
   },  
 } as const;

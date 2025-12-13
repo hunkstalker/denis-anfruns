@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Tall Bar (Right/Back) - represented by the 'x=256' in user snippet, actually usually the rightmost one is largest. -->
+  <!-- Official logo: 3 bars. 
+       1. Small (Left)
+       2. Medium (Middle)
+       3. Large (Right) -> Logic seems to indicate growing trend.
+       Wait, the logo is actually varying heights. 
+       Let's stick to the visual standard: Graph increasing.
+  -->
+  <rect x="22" y="2" width="6" height="28" rx="1" fill="#f2c811"/>
+  <rect x="13" y="10" width="6" height="20" rx="1" fill="#e4a80e"/>
+  <rect x="4" y="16" width="6" height="14" rx="1" fill="#d68c07"/>
+</svg>

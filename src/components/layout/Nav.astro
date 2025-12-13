@@ -80,7 +80,7 @@ const currentPath = Astro.url.pathname
 								lang === 'es' ? navItem.path : `/${lang}${navItem.path === '/' ? '' : navItem.path}`
 							const isActive =
 								currentPath === finalPath ||
-								(finalPath !== '/' && currentPath.startsWith(finalPath))
+								(navItem.path !== '/' && currentPath.startsWith(finalPath))
 							return (
 								<Button
 									text={t(navItem.key)}

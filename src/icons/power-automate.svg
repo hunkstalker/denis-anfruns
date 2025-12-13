@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Back Arrow part -->
+  <path d="M63 10L29 48L-5 10H63Z" fill="#56a4ff"/>
+  <!-- Main Arrow Body -->
+  <path d="M-5 86L63 10L97 48L63 86H-5Z" fill="#0078d4"/>
+  <!-- Shadow/Fold -->
+  <path d="M-5 86L63 10L80 29L29 86H-5Z" fill="#004e8c"/>
+</svg>
