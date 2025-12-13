@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Nav from '../../components/layout/Nav.astro'
+import { useTranslations } from '../../i18n/utils'
+import { languages } from '../../i18n/ui'
+
+export function getStaticPaths() {
+	return Object.keys(languages).map((lang) => ({ params: { lang } }))
+}
+
+const { lang } = Astro.params
+const t = useTranslations(lang as any)
+---
+
+<BaseLayout siteTitle={t('about.title')} lang={lang as any}>
+	<Nav lang={lang as any} />
+	<div class='container mx-auto px-6 py-24 sm:py-32'>
+		<div class='mx-auto max-w-3xl'>
+			<h1 class='mb-12 text-5xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-6xl'>
+				{t('about.title')}
+			</h1>
+
+			<div class='space-y-16'>
+				<section class='animate-fade-in-up'>
+					<h2 class='mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
+						{t('about.intro.title')}
+					</h2>
+					<p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400'>
+						{t('about.intro.text')}
+					</p>
+				</section>
+
+				<section class='animate-fade-in-up delay-100'>
+					<h2 class='mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
+						{t('about.garden.title')}
+					</h2>
+					<p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400'>
+						{t('about.garden.text')}
+					</p>
+				</section>
+
+				<section class='animate-fade-in-up delay-200'>
+					<h2 class='mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
+						{t('about.personal.title')}
+					</h2>
+					<p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400'>
+						{t('about.personal.text')}
+					</p>
+				</section>
+			</div>
+		</div>
+	</div>
+</BaseLayout>
+
+<style>
+	.animate-fade-in-up {
+		opacity: 0;
+		animation: fadeInUp 0.8s ease-out forwards;
+	}
+
+	.delay-100 {
+		animation-delay: 0.2s;
+	}
+	.delay-200 {
+		animation-delay: 0.4s;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
