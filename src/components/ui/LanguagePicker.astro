@@ -33,9 +33,14 @@ function getPathForLang(lang: string) {
 		// Si vamos a 'es' y no hay segmento, no hacemos nada (ya estamos en la raíz relativa)
 	}
 
-	const path = '/' + newSegments.join('/')
-	// Asegurar que no termine en doble barra si está vacío
-	return path === '//' ? '/' : path
+	let path = '/' + newSegments.join('/')
+	
+	// Ensure trailing slash for non-root paths to avoid 308 redirects
+	if (path !== '/' && !path.endsWith('/')) {
+		path += '/'
+	}
+
+	return path
 }
 ---
 
