@@ -146,12 +146,12 @@ export const ui = {
     // SOBRE MI
     'about.title': 'Sobre mi',
     'about.intro.title': 'Hola, sóc el Denis Anfruns Millán',
-    'about.intro.text': 'Sóc un desenvolupador Full Stack en aprenentatge continu. M\'apassiona el rendiment del software i les bones pràctiques, però **el meu objectiu final és pragmàtic: oferir al client un Producte Mínim Viable flexible**, i escalable a temps. Desenvolupo solucions adaptables als canvis perquè entenc les necessitats de negoci. Em moc entre l\'**estabilitat i innovació** amb React + Astro i l\'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint.',
+    'about.intro.text': 'Sóc un desenvolupador Full Stack al qual li apassiona el rendiment del software i les bones pràctiques, **però el meu perfil abans de tot és pragmàtic**. Entenc el desenvolupament com una solució als problemes que sorgeixen, solucions que han de ser adaptables als ràpids canvis. Em moc entre l\'**estabilitat i innovació** amb React + Astro i l\'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint, la suite Microsoft 365 present a la majoria d\'empreses.',
     'about.intro.deal': 'Solucions d\'alt rendiment client-side, llocs dinàmics de gran experiència per a l\'usuari o suports amb Web API Natives que garanteixen una base sòlida per al creixement són la base dels meus projectes.',
     'about.garden.title': 'El Jardí Digital',
     'about.garden.text': 'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia (TILs). M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
     'about.personal.title': 'Més enllà del codi',
-    'about.personal.text': 'Quan no estic programant, segurament no em trobaràs 🤣 gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. També faig els meus intents en el desenvolupament de videojocs (aviat espero obrir una secció dedicada). Com a detall, vaig estudiar Disseny Industrial i tinc bona mà pel dibuix; encara que no em consideri un gran creatiu, **gaudeixo enormement apreciant l\'art i el disseny**.',
+    'about.personal.text': 'Quan no estic programant, et costarà trobar-me 🤣 gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. També faig els meus intents en desenvolupament de videojocs (aviat espero obrir una secció dedicada). Com a detall, vaig estudiar Disseny Industrial i tinc bona mà pel dibuix; encara que no em consideri un gran creatiu, **gaudeixo enormement apreciant l\'art i el disseny**.',
   },
   en: {
     'nav.home': 'HOME',
@@ -218,11 +218,11 @@ export const ui = {
     // ABOUT ME
     'about.title': 'About Me',
     'about.intro.title': 'Hi, I\'m Denis Anfruns Millán',
-    'about.intro.text': 'I am a Full Stack developer in continuous learning. I am passionate about software performance and best practices, but **my ultimate goal is pragmatic: to offer the client a flexible, scalable Minimum Viable Product** on time. I develop solutions adaptable to changes because I understand business needs. I move between **stability and innovation** with React + Astro and the effectiveness of Power Platform (Power Apps - Power Automate - Power BI) and SharePoint.',
+    'about.intro.text': 'I am a Full Stack developer passionate about software performance and best practices, **but my profile is above all pragmatic**. I understand development as a solution to problems that arise, solutions that must be adaptable to rapid changes. I move between **stability and innovation** with React + Astro and the effectiveness of Power Platform (Power Apps - Power Automate - Power BI) and SharePoint, the Microsoft 365 suite present in most companies.',
     'about.intro.deal': 'High-performance client-side solutions, dynamic sites with great user experience, or supports with Native Web APIs that guarantee a solid foundation for growth are the basis of my projects.',
-    'about.garden.title': 'Digital Garden',
-    'about.garden.text': 'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I also document my developments or experiments as well as small notes that serve me day to day (TILs). I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
+    'about.garden.title': 'The Digital Garden',
+    'about.garden.text': 'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I verify my developments or experiments as well as small notes that serve me day to day (TILs). I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
     'about.personal.title': 'Beyond the Code',
-    'about.personal.text': 'When I\'m not coding, you probably won\'t find me 🤣 I enjoy disconnecting with a good series, movie, or getting lost in a video game. I also dabble in game development (I hope to open a dedicated section soon). As a detail, I studied Industrial Design and I have a good hand for drawing; although I don\'t consider myself a great creative, **I greatly enjoy appreciating art and design**.',
+    'about.personal.text': 'When I\'m not coding, you probably won\'t find me 🤣 I enjoy disconnecting with a good TV series, movie, or getting lost in a video game. I also dabble in game development (I hope to open a dedicated section soon). As a detail, I studied Industrial Design and I have a good hand for drawing; although I don\'t consider myself a great creative, **I greatly enjoy appreciating art and design**.',
   },  
 } as const;
