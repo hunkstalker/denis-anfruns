@@ -136,7 +136,7 @@ export const ui = {
     // SOBRE MI
     'about.title': 'Sobre mi',
     'about.intro.title': 'Hola, sóc el Denis Anfruns Millán',
-    'about.intro.text': 'Sóc un desenvolupador Full Stack en aprenentatge continu. M\'apassiona el rendiment del software i les bones pràctiques, però **el meu objectiu final és pragmàtic: oferir al client un Producte Mínim Viable flexible**, i escalable en el menor temps possible. Desenvolupo solucions adaptables als canvis perquè entenc les necessitats de negoci. Em moc entre l\'**estabilitat i innovació** amb React + Astro i l\'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint.',
+    'about.intro.text': 'Sóc un desenvolupador Full Stack en aprenentatge continu. M\'apassiona el rendiment del software i les bones pràctiques, però **el meu objectiu final és pragmàtic: oferir al client un Producte Mínim Viable flexible**, i escalable a temps. Desenvolupo solucions adaptables als canvis perquè entenc les necessitats de negoci. Em moc entre l\'**estabilitat i innovació** amb React + Astro i l\'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint.',
     'about.intro.deal': 'Solucions d\'alt rendiment client-side, llocs dinàmics de gran experiència per a l\'usuari o suports amb Web API Natives que garanteixen una base sòlida per al creixement són la base dels meus projectes.',
     'about.garden.title': 'El Jardí Digital',
     'about.garden.text': 'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia (TILs). M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
@@ -207,7 +207,7 @@ export const ui = {
     // ABOUT ME
     'about.title': 'About Me',
     'about.intro.title': 'Hi, I\'m Denis Anfruns Millán',
-    'about.intro.text': 'I am a Full Stack developer in continuous learning. I am passionate about software performance and best practices, but **my ultimate goal is pragmatic: to offer the client a flexible, scalable Minimum Viable Product** in the shortest possible time. I develop solutions adaptable to changes because I understand business needs. I move between **stability and innovation** with React + Astro and the effectiveness of Power Platform (Power Apps - Power Automate - Power BI) and SharePoint.',
+    'about.intro.text': 'I am a Full Stack developer in continuous learning. I am passionate about software performance and best practices, but **my ultimate goal is pragmatic: to offer the client a flexible, scalable Minimum Viable Product** on time. I develop solutions adaptable to changes because I understand business needs. I move between **stability and innovation** with React + Astro and the effectiveness of Power Platform (Power Apps - Power Automate - Power BI) and SharePoint.',
     'about.intro.deal': 'High-performance client-side solutions, dynamic sites with great user experience, or supports with Native Web APIs that guarantee a solid foundation for growth are the basis of my projects.',
     'about.garden.title': 'Digital Garden',
     'about.garden.text': 'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I also document my developments or experiments as well as small notes that serve me day to day (TILs). I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
