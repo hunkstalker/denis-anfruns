@@ -33,8 +33,8 @@ const { icon, targetId, highlightColor, gradient, class: className } = Astro.pro
             trigger.addEventListener('mouseenter', () => {
                 if (animatedGradient) {
                     const baseColors = animatedGradient.split(',').map(c => c.trim());
-                    // Double the colors to create a seamless loop
-                    const colors = [...baseColors, ...baseColors];
+                    // Duplica los colores + color inicial para crear un bucle continuo (11 elementos, el medio es el 50 %).
+                    const colors = [...baseColors, ...baseColors, baseColors[0]];
                     target.style.backgroundImage = `linear-gradient(to right, ${colors.join(', ')})`;
                     target.style.backgroundSize = '400% 100%';
                     target.style.backgroundClip = 'text';

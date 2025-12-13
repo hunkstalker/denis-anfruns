@@ -28,7 +28,7 @@ const technologies = [
     { name: 'Power BI', id: 'hl-bi', icon: PowerBiIcon, color: '#F2C811', className: 'text-[#F2C811]' },
     { name: 'SharePoint', id: 'hl-sp', icon: SharePointIcon, color: '#37C6D0', className: 'text-[#036C70]' },
     { name: 'Microsoft 365', id: 'hl-m365', icon: M365Icon, gradient: [
-        '#50e6ff', '#0078D4', '#7FBA00', '#F25022', '#800080', '#50e6ff'
+        '#50e6ff', '#0078D4', '#7FBA00', '#F25022', '#800080'
     ].join(', '), className: 'text-[#036C70]' }
 ];
 
@@ -109,9 +109,18 @@ const processText = (text: string) => {
 		animation-delay: 0.4s;
 	}
 
+    /* 
+       Cálculo para el loop infinito perfecto:
+       1. background-size: 400% -> La imagen es 4 veces el ancho del contenedor.
+       2. La imagen contiene [Colores, Colores] (duplicado).
+       3. Queremos desplazarnos exactamente la mitad de la imagen (un set de colores).
+       4. La fórmula de background-position % es: (ancho_contenedor - ancho_imagen) * porcentaje
+       5. Queremos movernos 2 unidades de ancho (la mitad de 4). El rango total de movimiento es 3 unidades (4 - 1).
+       6. Por tanto: 2 / 3 = 66.666%
+    */
     @keyframes gradient-move {
         0% { background-position: 0% 50%; }
-        100% { background-position: -200% 50%; }
+        100% { background-position: 66.666% 50%; }
     }
 
 	@keyframes fadeInUp {
