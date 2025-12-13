@@ -32,6 +32,7 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
                 heroImage?: string;
                 descriptionHeroImage?: string;
                 ogImage?: string;
+                new?: boolean;
             } | undefined) : undefined
 
 			// Validate and parse dates
@@ -70,7 +71,9 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
                 draft,
                 heroImage,
                 descriptionHeroImage,
-                ogImage
+                ogImage,
+                series: post.data.series || (parts.length > 0 ? parts[0] : undefined),
+                new: meta?.new ?? post.data.new
             }
             
             // updatedDate is optional in schema, add only if exists
