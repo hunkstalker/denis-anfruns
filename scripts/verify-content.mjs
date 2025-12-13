@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const CONTENT_ROOT = path.join(PROJECT_ROOT, 'src', 'content');
 
-const COLLECTIONS = ['blog', 'til', 'projects'];
+const COLLECTIONS = ['devlog', 'til', 'projects'];
 
 // Helper to recursively find meta.json files
 function findMetaFiles(dir, fileList = []) {
@@ -100,15 +100,15 @@ async function verify() {
     });
   }
 
-  // 2. SERIES CHECKS (Blog only logic primarily, but applicable if structure exists)
-  // Re-use finding logic for blog collection specifically for series
-  const blogDir = path.join(CONTENT_ROOT, 'blog');
-  if (fs.existsSync(blogDir)) {
-      const metaFiles = findMetaFiles(blogDir);
+  // 2. SERIES CHECKS (Devlog only logic primarily, but applicable if structure exists)
+  // Re-use finding logic for devlog collection specifically for series
+  const devlogDir = path.join(CONTENT_ROOT, 'devlog');
+  if (fs.existsSync(devlogDir)) {
+      const metaFiles = findMetaFiles(devlogDir);
       const seriesMap = {};
 
       metaFiles.forEach(metaPath => {
-        const relative = path.relative(blogDir, metaPath);
+        const relative = path.relative(devlogDir, metaPath);
         const parts = relative.split(path.sep);
         
         // Check if it looks like a part (parent folder is part-N)

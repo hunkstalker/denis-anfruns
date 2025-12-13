@@ -1,11 +1,11 @@
 ---
-import { type BlogPost } from '../../utils/blog-content'
+import { type DevlogPost } from '../../utils/devlog-content'
 import { getBaseSlug } from '../../utils/blogi18n'
 import { useTranslations } from '../../i18n/utils'
 import ArrowLink from '../../icons/arrow-link.svg'
 
 interface Props {
-	post: BlogPost
+	post: DevlogPost
 	lang: 'es' | 'en' | 'ca'
 	delay?: number
 }
@@ -14,7 +14,7 @@ const { post, lang, delay = 0 } = Astro.props
 const t = useTranslations(lang)
 
 const href =
-	lang === 'es' ? `/blog/${getBaseSlug(post.slug)}/` : `/${lang}/blog/${getBaseSlug(post.slug)}/`
+	lang === 'es' ? `/devlog/${getBaseSlug(post.slug)}/` : `/${lang}/devlog/${getBaseSlug(post.slug)}/`
 ---
 
 <style>

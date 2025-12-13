@@ -87,13 +87,7 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 		if (!btn) return
 
 		const el = document.documentElement
-		const safeGet = (k) => {
-			try {
-				return localStorage.getItem(k)
-			} catch {
-				return null
-			}
-		}
+
 		const safeSet = (k, v) => {
 			try {
 				localStorage.setItem(k, v)

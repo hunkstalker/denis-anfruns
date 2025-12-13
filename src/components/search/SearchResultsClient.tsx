@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { RocketIcon, PinIcon, BookmarkIcon, ArrowUpRightIcon } from './SearchIcons';
+import { RocketIcon, PinIcon, BookmarkIcon } from './SearchIcons';
 
 type SearchResult = {
   url: string;
@@ -34,7 +34,6 @@ interface SearchResultsClientProps {
 export default function SearchResultsClient({
   mode,
   inputId,
-  containerId, // Unused? We render our own container now.
   labels,
   counts,
   children,
@@ -52,7 +51,7 @@ export default function SearchResultsClient({
 
   useEffect(() => {
     // Determine language from document
-    const currentLang = document.documentElement.lang || 'es';
+
 
     const loadPagefind = async () => {
       try {
@@ -194,14 +193,14 @@ export default function SearchResultsClient({
     if (filter === 'all') return true;
     if (filter === 'project') return r.filters.type?.includes('project');
     if (filter === 'til') return r.filters.type?.includes('til');
-    if (filter === 'devlog') return !r.filters.type || r.filters.type.includes('blog');
+    if (filter === 'devlog') return !r.filters.type || r.filters.type.includes('devlog');
     return true;
   });
 
   // Calculate Sections (for rendering)
   const projects = filteredResults.filter(r => r.filters.type?.includes('project'));
   const tils = filteredResults.filter(r => r.filters.type?.includes('til'));
-  const blogs = filteredResults.filter(r => !r.filters.type || r.filters.type.includes('blog'));
+  const blogs = filteredResults.filter(r => !r.filters.type || r.filters.type.includes('devlog'));
 
   const hasResults = filteredResults.length > 0;
   const showInitialContent = !query.trim();

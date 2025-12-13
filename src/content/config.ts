@@ -8,7 +8,7 @@ const privacy = defineCollection({
   }),
 });
 
-const blog = defineCollection({
+const devlog = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
@@ -55,4 +55,4 @@ const projects = defineCollection({
   })
 })
 
-export const collections = { privacy, blog, til, projects }
+export const collections = { privacy, devlog, til, projects }

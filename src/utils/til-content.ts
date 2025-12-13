@@ -17,7 +17,7 @@ export async function getTils(): Promise<TilPost[]> {
 		const folder = post.slug.split('/')[0]
 		// Construct the expected path key for the glob result
 		const metaKey = `../content/til/${folder}/meta.json`
-		const meta = metaFiles[metaKey] as { pubDate?: string; tags?: string[] } | undefined
+		const meta = metaFiles[metaKey] as { pubDate?: string; tags?: string[]; draft?: boolean } | undefined
 
 		// Validar y parsear fecha
 		let pubDate: Date | undefined = post.data.pubDate
@@ -30,6 +30,9 @@ export async function getTils(): Promise<TilPost[]> {
 		if (meta?.tags && meta.tags.length > 0) {
 			tags = meta.tags
 		}
+        
+        // Merge draft
+        const draft = meta?.draft !== undefined ? meta.draft : post.data.draft
 
 		return {
 			...post,
@@ -37,6 +40,7 @@ export async function getTils(): Promise<TilPost[]> {
 				...post.data,
 				pubDate,
 				tags,
+                draft,
 			},
 		}
 	})

@@ -56,7 +56,7 @@ function parseFrontmatter(content) {
 }
 
 function removeMetadataFromContent(content, keysToRemove) {
-    return content.replace(FRONTMATTER_REGEX, (match, frontmatter) => {
+    return content.replace(FRONTMATTER_REGEX, (_, frontmatter) => {
         const lines = frontmatter.split('\n').filter(line => {
             const key = line.split(':')[0].trim();
             // Keep the line only if it's NOT in the keysToRemove list

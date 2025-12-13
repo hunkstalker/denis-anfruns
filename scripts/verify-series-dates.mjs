@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const CONTENT_DIR = path.join(PROJECT_ROOT, 'src', 'content', 'blog');
+const CONTENT_DIR = path.join(PROJECT_ROOT, 'src', 'content', 'devlog');
 
 // Helper to recursively find meta.json files
 function findMetaFiles(dir, fileList = []) {

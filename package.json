@@ -7,13 +7,17 @@
     "start": "astro dev",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
-    "bp": "pnpm normalize:content && pnpm verify:content && pnpm build && pnpm preview",
-    "t": "pnpm normalize:content && pnpm verify:content && pnpm build",
-    "normalize:content": "node scripts/normalize-til-meta.mjs",
+    "check": "astro check",
+    "verify-build-preview": "pnpm test && pnpm preview",
+    "test": "pnpm normalize:content && pnpm verify:content && pnpm check && pnpm build",
+    "normalize:content": "node scripts/normalize-content.mjs",
     "verify:content": "node scripts/verify-content.mjs",
+    "check:drafts": "node scripts/check-drafts.mjs",
+    "menu": "node scripts/menu.mjs",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.6",
     "@astrojs/mdx": "^4.3.12",
     "@astrojs/react": "^4.4.2",
     "@astrojs/tailwind": "^6.0.2",
@@ -24,7 +28,8 @@
     "react-dom": "^19.2.3",
     "react-icons": "^5.5.0",
     "shiki": "^3.19.0",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@playform/inline": "^0.1.2",

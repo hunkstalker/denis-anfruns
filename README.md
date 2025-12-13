@@ -64,13 +64,15 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 
 | Comando | Descripción |
 |---------|-------------|
+| `pnpm menu` | **Menú interactivo CLI** (Recomendado) |
 | `pnpm install` | Instalar dependencias |
 | `pnpm dev` | Servidor de desarrollo en `localhost:4321` |
 | `pnpm build` | Build de producción + índice Pagefind |
 | `pnpm preview` | Preview del build local |
 | `pnpm normalize:content` | Normaliza metadata de TILs (unifica en `meta.json`) |
 | `pnpm verify:content` | Verifica fechas e integridad del contenido |
-| `pnpm bp` | **Normaliza** + Verifica + Build + Preview (Recomendado) |
+| `pnpm check:drafts` | Lista contenido marcado como borrador |
+| `pnpm bp` | **Normaliza** + Verifica + Build + Preview |
 | `pnpm t` | **Normaliza** + Verifica + Build |
 
 > **Nota:** La búsqueda solo funciona en `preview` o producción (después de un comando que genere `pnpm build`).
@@ -90,12 +92,17 @@ src/content/til/
 ```
 
 ### DevLogs (Series)
+### DevLogs (Series)
 ```
-src/content/blog/
+src/content/devlog/
 └── nombre-serie/
-    ├── part-1.mdx  # frontmatter: series: "nombre-serie"
-    ├── part-2.mdx
-    └── meta.json
+    ├── part-1/
+    │   ├── meta.json
+    │   ├── es.mdx
+    │   ├── en.mdx
+    │   └── ca.mdx
+    └── part-2/
+        └── ...
 ```
 
 ### Frontmatter común

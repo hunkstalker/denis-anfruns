@@ -4,5 +4,6 @@
     "power-platform",
     "sharepoint",
     "power-fx"
-  ]
+  ],
+  "draft": true
 }

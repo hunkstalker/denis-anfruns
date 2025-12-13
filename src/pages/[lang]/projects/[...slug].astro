@@ -12,9 +12,9 @@ export async function getStaticPaths() {
 	const supportedLangs = Object.keys(languages).filter(lang => lang !== 'es')
 
 	return projects
-		.filter(post => {
-			const parts = post.slug.split('/')
-			const langParam = parts[parts.length - 1]
+		.filter(_ => {
+
+
 			// Allow spanish (default) or supported langs
 			// Assuming project slugs are like 'my-project/en', 'my-project/es' or just 'my-project' if default?
 			// The current convention for blog is folder/lang.

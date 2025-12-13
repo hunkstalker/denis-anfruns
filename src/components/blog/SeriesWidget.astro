@@ -1,5 +1,5 @@
 ---
-import { getBlogPosts, type BlogPost } from '../../utils/blog-content'
+import { getDevlogs, type DevlogPost } from '../../utils/devlog-content'
 import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../../utils/blogi18n'
 import CheckIcon from '../../icons/check.svg'
 
@@ -17,10 +17,10 @@ const badgetText = {
 
 const { seriesId, currentSlug, lang = 'es' } = Astro.props
 
-const allPosts = await getBlogPosts()
-const seriesPosts = allPosts
+const allDevlogs = await getDevlogs()
+const seriesPosts = allDevlogs
 	.filter((post) => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
-	.sort((a: BlogPost, b: BlogPost) => {
+	.sort((a: DevlogPost, b: DevlogPost) => {
         if (!a.data.pubDate || !b.data.pubDate) {
              return 0
         }
@@ -30,7 +30,7 @@ const seriesPosts = allPosts
 if (seriesPosts.length < 2) return null
 
 const getPath = (slug: string) =>
-	lang === 'es' ? `/blog/${getBaseSlug(slug)}/` : `/${lang}/blog/${getBaseSlug(slug)}/`
+	lang === 'es' ? `/devlog/${getBaseSlug(slug)}/` : `/${lang}/devlog/${getBaseSlug(slug)}/`
 ---
 
 <div class="series-widget">
@@ -42,7 +42,7 @@ const getPath = (slug: string) =>
 		<div class="absolute bottom-2 left-[11px] top-2 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800"></div>
 
 		{
-			seriesPosts.map((post: BlogPost, index) => {
+			seriesPosts.map((post: DevlogPost) => {
 				const isCurrent = post.slug === currentSlug
 				return (
 					<li class="group relative pl-8">
