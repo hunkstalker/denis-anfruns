@@ -8,6 +8,7 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   site: 'https://denis-anfruns.dev',
   integrations: [tailwind(), react(), mdx()],
+  prefetch: true,
   i18n: {
     defaultLocale: 'es',
     locales: ['es', 'en', 'ca'],

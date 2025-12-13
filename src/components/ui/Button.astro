@@ -23,6 +23,7 @@ const disabledClasses =
 
 {
 	active ? (
+		// Enlace activo, en el que se está
 		<a
 			href={link}
 			class={`${baseClasses} ${activeClasses} ${className}`}
@@ -31,13 +32,16 @@ const disabledClasses =
 			{text}
 		</a>
 	) : enabled ? (
+		// Enlace disponible, opciones a las que se puede navegar
 		<a
 			href={link}
+			data-astro-prefetch="hover"
 			class={`${baseClasses} ${enabledClasses} ${className}`}
 		>
 			{text}
 		</a>
 	) : (
+		// Enlace visible pero deshabilitado, opciones a las que no se puede navegar
 		<span class={`${baseClasses} ${disabledClasses} ${className}`} aria-disabled="true">
 			{text}
 		</span>
