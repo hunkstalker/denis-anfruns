@@ -43,6 +43,7 @@ export const ui = {
     'blog.devLogDescription': 'Artículos sobre el desarrollo de mis proyectos.',
     'blog.withoutArticles': 'No hay DevLogs todavía.',
     'blog.readArticle': 'Leer DevLog',
+    'blog.readNote': 'Leer nota',
     'blog.til': 'Notas TIL',
     'blog.withoutTILs': 'No hay notas TIL todavía.',
     'blog.tilDescription': 'Fragmentos de conocimiento.',
@@ -64,6 +65,8 @@ export const ui = {
     'code.copy': 'Copiar código',
     'code.copied': '¡Copiado!',
     'language.changeTo': 'Cambiar idioma a',
+    'home.latest.posts': 'Últimas publicaciones',
+    'home.view.all': 'Ver todo',
     
     // SOBRE MÍ
     'about.title': 'Sobre mí',
@@ -115,6 +118,7 @@ export const ui = {
     'blog.devLogDescription': 'Articles sobre el desenvolupament dels meus projectes.',
     'blog.withoutArticles': 'Encara no hi ha DevLogs.',
     'blog.readArticle': 'Llegir DevLog',
+    'blog.readNote': 'Llegir nota',
     'blog.til': 'Notes TIL',
     'blog.withoutTILs': 'Encara no hi ha notes TIL.',
     'blog.tilDescription': 'Fragments de coneixement.',
@@ -136,6 +140,8 @@ export const ui = {
     'code.copy': 'Copiar codi',
     'code.copied': 'Copiat!',
     'language.changeTo': 'Canviar idioma a',
+    'home.latest.posts': 'Últimes publicacions',
+    'home.view.all': 'Veure tot',
     
     // SOBRE MI
     'about.title': 'Sobre mi',
@@ -182,6 +188,7 @@ export const ui = {
     'blog.devLogDescription': 'Articles about the development of my projects.',
     'blog.withoutArticles': 'No DevLogs yet.',
     'blog.readArticle': 'Read DevLog',
+    'blog.readNote': 'Read note',
     'blog.til': 'TIL Notes',
     'blog.withoutTILs': 'No TIL notes yet.',
     'blog.tilDescription': 'Snippets of knowledge.',

@@ -7,7 +7,7 @@ import { getLangFromSlug, type SupportedLang } from '../../utils/blogi18n'
 import { languages } from '../../i18n/ui'
 import { useTranslations } from '../../i18n/utils'
 import TilAside from '../../components/blog/TilAside.astro'
-import DevLogCard from '../../components/blog/DevLogCard.astro'
+import BlogDevLogList from '../../components/blog/BlogDevLogList'
 
 export async function getStaticPaths() {
 	return Object.keys(languages)
@@ -89,14 +89,17 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort(
 
 					{articles.length === 0 && <p class="italic text-zinc-500">{t('blog.withoutArticles')}</p>}
 
-					<div class="grid gap-4 sm:gap-6 lg:gap-8">
-						{articles.map((post, index) => <DevLogCard post={post} lang={lang as 'es' | 'en' | 'ca'} delay={index * 100} />)}
-					</div>
+					<BlogDevLogList 
+						client:load 
+						posts={articles} 
+						lang={lang as 'es' | 'en' | 'ca'} 
+						labels={{ readArticle: t('blog.readArticle') }} 
+					/>
 				</div>
 			</div>
 
 			<!-- Columna lateral: TILs -->
-			<TilAside lang={lang} />
+			<TilAside lang={lang} limit={6} />
 		</div>
 	</div>
 </BaseLayout>

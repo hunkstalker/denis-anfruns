@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { TAGS } from '../data/tags';
 
 const privacy = defineCollection({
   type: 'content',
@@ -18,7 +19,7 @@ const devlog = defineCollection({
     heroImage: z.string().optional(),
     descriptionHeroImage: z.string().optional(),
     ogImage: z.string().optional(),
-    tags: z.array(z.string()).default([]).optional(),
+    tags: z.array(z.enum(TAGS)).default([]).optional(),
     series: z.string().optional(),
     seriesTitle: z.string().optional(),
     new: z.boolean().default(false),
@@ -33,7 +34,7 @@ const til = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     pubDate: z.coerce.date().optional(),
-    tags: z.array(z.string()).default([]).optional(),
+    tags: z.array(z.enum(TAGS)).default([]).optional(),
     lang: z.enum(['es', 'en', 'ca']).default('es'),
     draft: z.boolean().default(false),
   })
@@ -49,7 +50,7 @@ const projects = defineCollection({
     heroImage: z.string().optional(),
     descriptionHeroImage: z.string().optional(),
     ogImage: z.string().optional(),
-    tags: z.array(z.string()).default([]).optional(),
+    tags: z.array(z.enum(TAGS)).default([]).optional(),
     lang: z.enum(['es', 'en', 'ca']).default('es'),
     draft: z.boolean().default(false),
   })

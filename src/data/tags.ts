@@ -1,0 +1,33 @@
+export const TAGS = [
+	'astro',
+	'css',
+	'architecture',
+	'git',
+	'javascript',
+	'refactoring',
+	'clean-code',
+	'vite',
+	'power-platform',
+	'sharepoint',
+	'power-fx',
+	'react',
+	'fabricjs',
+	'canvas',
+	'backend',
+	'webapi',
+	'cfworkers',
+	'd1',
+	'kv',
+	'vue',
+	'firebase',
+	'html',
+	'arrays',
+	'performance',
+	'powerapps',
+	'devlog',
+	'ai',
+	'web3',
+	'svelte'
+] as const
+
+export type Tag = (typeof TAGS)[number]

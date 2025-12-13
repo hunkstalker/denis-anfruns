@@ -93,10 +93,10 @@ if (post.data.series) {
 				data-pagefind-meta={`description:${post.data.description}`}>
 				<div class='not-prose mb-8'>
 					<a
-						href="/devlog"
+						href={`/${lang}/blog`}
 						class='animate-fade-in-up mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]'>
 						<ChevronLeft />
-						Volver al Devlog
+						{t('blog.backToBlog')}
 					</a>
 
 					{
