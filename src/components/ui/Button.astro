@@ -4,11 +4,12 @@ interface Props {
 	link: string
 	enabled?: boolean
 	active?: boolean
+	class?: string
 }
-const { text, link, enabled = true, active = false } = Astro.props
+const { text, link, enabled = true, active = false, class: className = '' } = Astro.props
 
 const baseClasses =
-	'relative m-2 py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal'
+	'relative m-2 py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal inline-block text-center'
 
 const activeClasses = 
 	'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
@@ -24,7 +25,7 @@ const disabledClasses =
 	active ? (
 		<a
 			href={link}
-			class={`${baseClasses} ${activeClasses}`}
+			class={`${baseClasses} ${activeClasses} ${className}`}
 			aria-current="page"
 		>
 			{text}
@@ -32,12 +33,12 @@ const disabledClasses =
 	) : enabled ? (
 		<a
 			href={link}
-			class={`${baseClasses} ${enabledClasses}`}
+			class={`${baseClasses} ${enabledClasses} ${className}`}
 		>
 			{text}
 		</a>
 	) : (
-		<span class={`${baseClasses} ${disabledClasses}`} aria-disabled="true">
+		<span class={`${baseClasses} ${disabledClasses} ${className}`} aria-disabled="true">
 			{text}
 		</span>
 	)

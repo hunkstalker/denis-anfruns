@@ -81,12 +81,14 @@ const currentPath = Astro.url.pathname
 							const isActive =
 								currentPath === finalPath ||
 								(navItem.path !== '/' && currentPath.startsWith(finalPath))
+
 							return (
 								<Button
 									text={t(navItem.key)}
 									link={finalPath}
 									enabled={navItem.enabled}
 									active={navItem.enabled && isActive}
+									class="w-32"
 								/>
 							)
 						})
