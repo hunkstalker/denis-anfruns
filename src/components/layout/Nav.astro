@@ -77,7 +77,7 @@ const currentPath = Astro.url.pathname
 					{
 						navItems.filter(item => item.enabled).map(navItem => {
 							const finalPath =
-								lang === 'es' ? navItem.path : `/${lang}${navItem.path === '/' ? '' : navItem.path}`
+								lang === 'es' ? navItem.path : `/${lang}${navItem.path === '/' ? '/' : navItem.path}`
 							const isActive =
 								currentPath === finalPath ||
 								(navItem.path !== '/' && currentPath.startsWith(finalPath))
