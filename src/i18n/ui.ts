@@ -68,7 +68,11 @@ export const ui = {
     // SOBRE MÍ
     'about.title': 'Sobre mí',
     'about.intro.title': 'Hola, soy Denis Anfruns Millán',
-    'about.intro.text': 'Soy un desarrollador Full Stack en aprendizaje continuo. Me apasiona el rendimiento del software y las buenas prácticas, pero **mi objetivo final es pragmático: ofrecer al cliente un Mínimo Producto Viable flexible** y escalable a tiempo. Desarrollo soluciones adaptables a los cambios porque entiendo las necesidades de negocio. Me muevo entre la **estabilidad e innovación** con React + Astro y la eficacia de Power Platform (Power Apps - Power Automate - Power BI) y SharePoint.',
+    'about.intro.text': `Soy un desarrollador Full Stack al que le apasiona el rendimiento del software y 
+      las buenas prácticas, **pero mi perfil ante todo es pragmático**. Entiendo el desarrollo como una solución a los problemas que surgen, 
+      soluciones que deben ser adaptables a los rápidos cambios. Me muevo entre la **estabilidad e innovación** con React + Astro y 
+      la eficacia de Power Platform (Power Apps - Power Automate - Power BI) y SharePoint, la suite Microsoft 365 presente en la mayoría de empresas.`,
+
     'about.intro.deal': 'Soluciones de alto rendimiento client-side, sitios dinámicos de gran experiencia para el usuario o soportes con Web API Nativas que garantizan una base sólida para el crecimiento son la base de mis proyectos.',
     'about.garden.title': 'El Jardín Digital',
     'about.garden.text': 'Este lugar es un **"Jardín Digital"**. Aquí no solo publicaré proyectos terminados, sino que documento mis desarrollos o experimentos así como pequeñas notas que me sirvan día a día (TILs). Me encanta enseñar y compartir así que espero que este repositorio nos sea de ayuda a ambos. Creo firmemente en el **Código Libre** ❤️',

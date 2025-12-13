@@ -1,0 +1,61 @@
+---
+interface Props {
+  icon: string;
+  targetId: string;
+  highlightColor?: string;
+  gradient?: string;
+  class?: string;
+}
+
+const { icon, targetId, highlightColor, gradient, class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    "icon-trigger h-10 w-10 transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0",
+    className
+  ]}
+  set:html={icon}
+  data-target={targetId}
+  data-color={highlightColor}
+  data-animated-gradient={gradient}
+/>
+
+<script>
+    const triggers = document.querySelectorAll('.icon-trigger');
+    triggers.forEach((trigger) => {
+        const targetId = (trigger as HTMLElement).dataset.target;
+        const color = (trigger as HTMLElement).dataset.color;
+        const animatedGradient = (trigger as HTMLElement).dataset.animatedGradient;
+        const target = document.getElementById(targetId || '');
+
+        if (target) {
+            trigger.addEventListener('mouseenter', () => {
+                if (animatedGradient) {
+                    const baseColors = animatedGradient.split(',').map(c => c.trim());
+                    // Double the colors to create a seamless loop
+                    const colors = [...baseColors, ...baseColors];
+                    target.style.backgroundImage = `linear-gradient(to right, ${colors.join(', ')})`;
+                    target.style.backgroundSize = '400% 100%';
+                    target.style.backgroundClip = 'text';
+                    target.style.webkitBackgroundClip = 'text'; // Fallback for Safari
+                    target.style.color = 'transparent';
+                    target.style.animation = 'gradient-move 8s linear infinite';
+                } else if (color) {
+                    target.style.color = color;
+                    target.style.textShadow = `0 0 0.65px ${color}`;
+                }
+            });
+            trigger.addEventListener('mouseleave', () => {
+                    // Reset all styles
+                target.style.color = '';
+                target.style.textShadow = '';
+                target.style.backgroundImage = '';
+                target.style.backgroundSize = '';
+                target.style.backgroundClip = '';
+                target.style.webkitBackgroundClip = '';
+                target.style.animation = '';
+            });
+        }
+    });
+</script>

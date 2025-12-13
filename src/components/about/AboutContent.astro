@@ -7,7 +7,10 @@ import PowerAppsIcon from '../../icons/power-apps.svg?raw'
 import PowerAutomateIcon from '../../icons/power-automate.svg?raw'
 import PowerBiIcon from '../../icons/power-bi.svg?raw'
 import SharePointIcon from '../../icons/sharepoint.svg?raw'
+import M365Icon from '../../icons/m-365.svg?raw'
 
+import IconTrigger from './IconTrigger.astro'
+	
 interface Props {
 	lang: 'es' | 'en' | 'ca';
 }
@@ -15,8 +18,29 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
+// Aquí se definen las tecnologías que se mostrarán en el About
+const technologies = [
+    { name: 'React', id: 'hl-react', icon: ReactIcon, color: '#61DAFB', className: 'text-[#61DAFB]' },
+    { name: 'Astro', id: 'hl-astro', icon: AstroIcon, color: '#FF0080' },
+    { name: 'Power Platform', id: 'hl-power', icon: PowerPlatformIcon, color: '#00A36C' },
+    { name: 'Power Apps', id: 'hl-apps', icon: PowerAppsIcon, color: '#D946EF', className: 'text-[#742774]' },
+    { name: 'Power Automate', id: 'hl-automate', icon: PowerAutomateIcon, color: '#0078d4', className: 'text-[#0078d4]' },
+    { name: 'Power BI', id: 'hl-bi', icon: PowerBiIcon, color: '#F2C811', className: 'text-[#F2C811]' },
+    { name: 'SharePoint', id: 'hl-sp', icon: SharePointIcon, color: '#37C6D0', className: 'text-[#036C70]' },
+    { name: 'Microsoft 365', id: 'hl-m365', icon: M365Icon, gradient: [
+        '#50e6ff', '#0078D4', '#7FBA00', '#F25022', '#800080', '#50e6ff'
+    ].join(', '), className: 'text-[#036C70]' }
+];
+
 const processText = (text: string) => {
-	return text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-zinc-900 dark:text-[--tangerine-hover]">$1</strong>');
+    let processed = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-zinc-900 dark:text-[--tangerine-hover]">$1</strong>');
+    
+    technologies.forEach(tech => {
+        const regex = new RegExp(tech.name, 'g');
+        processed = processed.replace(regex, `<span id="${tech.id}" class="transition-colors duration-300">${tech.name}</span>`);
+    });
+    
+    return processed;
 }
 ---
 
@@ -31,63 +55,24 @@ const processText = (text: string) => {
                 <h2 class='mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
                     {t('about.intro.title')}
                 </h2>
-                <p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={processText(t('about.intro.text'))
-                    .replace(/React/g, '<span id="hl-react" class="transition-colors duration-300">React</span>')
-                    .replace(/Astro/g, '<span id="hl-astro" class="transition-colors duration-300">Astro</span>')
-                    .replace(/Power Platform/g, '<span id="hl-power" class="transition-colors duration-300">Power Platform</span>')
-                    .replace(/Power Apps/g, '<span id="hl-apps" class="transition-colors duration-300">Power Apps</span>')
-                    .replace(/Power Automate/g, '<span id="hl-automate" class="transition-colors duration-300">Power Automate</span>')
-                    .replace(/Power BI/g, '<span id="hl-bi" class="transition-colors duration-300">Power BI</span>')
-                    .replace(/SharePoint/g, '<span id="hl-sp" class="transition-colors duration-300">SharePoint</span>')}>
+                <p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={processText(t('about.intro.text'))}>
                 </p>
 
                 <div class="mt-8 flex gap-6">
-                    <div class="icon-trigger h-10 w-10 text-[#61DAFB] transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0" 
-                            set:html={ReactIcon} data-target="hl-react" data-color="#61DAFB" />
-                    
-                    <div class="icon-trigger h-10 w-10 transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0" 
-                            set:html={AstroIcon} data-target="hl-astro" data-color="#FF0080" />
-                    
-                    <div class="icon-trigger h-10 w-10 transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0" 
-                            set:html={PowerPlatformIcon} data-target="hl-power" data-color="#00A36C" />
-                    
-                    <div class="icon-trigger h-10 w-10 text-[#742774] transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0" 
-                            set:html={PowerAppsIcon} data-target="hl-apps" data-color="#D946EF" />
-                    
-                    <div class="icon-trigger h-10 w-10 text-[#0078d4] transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0" 
-                            set:html={PowerAutomateIcon} data-target="hl-automate" data-color="#0078d4" />
-                    
-                    <div class="icon-trigger h-10 w-10 text-[#F2C811] transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0" 
-                            set:html={PowerBiIcon} data-target="hl-bi" data-color="#F2C811" />
-
-                    <div class="icon-trigger h-10 w-10 text-[#036C70] transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0" 
-                            set:html={SharePointIcon} data-target="hl-sp" data-color="#37C6D0" />
+                    {technologies.map(tech => (
+                        <IconTrigger 
+                            icon={tech.icon} 
+                            targetId={tech.id} 
+                            highlightColor={tech.color} 
+                            gradient={tech.gradient} 
+                            class={tech.className} 
+                        />
+                    ))}
                 </div>
 
                 <p class='mt-6 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={t('about.intro.deal')}>
                 </p>
             </section>
-            
-            <script>
-                const triggers = document.querySelectorAll('.icon-trigger');
-                triggers.forEach((trigger) => {
-                    const targetId = (trigger as HTMLElement).dataset.target;
-                    const color = (trigger as HTMLElement).dataset.color;
-                    const target = document.getElementById(targetId || '');
-
-                    if (target && color) {
-                        trigger.addEventListener('mouseenter', () => {
-                            target.style.color = color;
-                            // Use text-shadow to simulate bold without changing layout size
-                            target.style.textShadow = `0 0 0.65px ${color}`;
-                        });
-                        trigger.addEventListener('mouseleave', () => {
-                            target.style.color = '';
-                            target.style.textShadow = '';
-                        });
-                    }
-                });
-            </script>
 
             <section class='animate-fade-in-up delay-100'>
                 <h2 class='mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
@@ -123,6 +108,11 @@ const processText = (text: string) => {
 	.delay-200 {
 		animation-delay: 0.4s;
 	}
+
+    @keyframes gradient-move {
+        0% { background-position: 0% 50%; }
+        100% { background-position: -200% 50%; }
+    }
 
 	@keyframes fadeInUp {
 		from {
