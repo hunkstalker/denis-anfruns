@@ -62,6 +62,10 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 
 ## 🚀 Comandos
 
+El proyecto incluye un **CLI interactivo** para facilitar las tareas comunes. Ejecuta `pnpm menu` para ver todas las opciones disponibles.
+
+![CLI Menu](public/images/cli-menu.png)
+
 | Comando | Descripción |
 |---------|-------------|
 | `pnpm menu` | **Menú interactivo CLI** (Recomendado) |
@@ -91,7 +95,6 @@ src/content/til/
     └── meta.json   # { pubDate, tags } - Generado/Validado automáticamente
 ```
 
-### DevLogs (Series)
 ### DevLogs (Series)
 ```
 src/content/devlog/
