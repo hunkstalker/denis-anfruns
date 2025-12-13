@@ -8,16 +8,22 @@ export const defaultLang = 'es';
 
 export const ui = {
   es: {
+    // NAVEGACIÓN
     'nav.home': 'INICIO',
     'nav.blog': 'BLOG',
     'nav.projects': 'PROYECTOS',
-    'nav.videogames': 'videojuegos',
+    'nav.about': 'SOBRE MÍ',
+    'nav.videogames': 'VIDEOJUEGOS',
     'nav.devblog': 'dev blog',
     'nav.search': 'Buscar...',
     'nav.search.in': 'en',
     'nav.search.typeToSearch': 'Escribe para buscar en',
     'nav.search.filter.projects': 'Proyectos',
     'nav.noResults': 'No se han encontrado resultados',
+    'nav.menu': 'Menú',
+    'nav.search.label': 'Buscar',
+
+    // BÚSQUEDA Y CUERPO
     'search.all': 'Todo',
     'search.project': 'PRO',
     'search.til': 'TIL',
@@ -29,6 +35,8 @@ export const ui = {
     'footer.astro': 'Web impulsada por ',
     'footer.github': 'Código Fuente en GitHub',
     'footer.privacy': 'Política de Privacidad',
+
+    // BLOG
     'blog.title': 'Bitácora Digital',
     'blog.description': 'Un espacio donde documento mi aprendizaje. Desde artículos profundos hasta pequeños fragmentos de código (TILs).',
     'blog.series': 'DevLogs',
@@ -44,6 +52,8 @@ export const ui = {
     'blog.previousPost': 'Anterior',
     'blog.updated': 'Actualizado',
     'blog.tableOfContents': 'En esta página',
+
+    // MISC
     'toc.title': 'Tabla de contenidos',
     'series.github.title': 'Código fuente',
     'series.github.description': 'Explora, aprende y contribuye.',
@@ -51,16 +61,25 @@ export const ui = {
     'theme.toggle': 'Alternar tema',
     'theme.dark': 'Oscuro',
     'theme.light': 'Claro',
-    'nav.menu': 'Menú',
-    'nav.search.label': 'Buscar',
     'code.copy': 'Copiar código',
     'code.copied': '¡Copiado!',
     'language.changeTo': 'Cambiar idioma a',
+    
+    // SOBRE MÍ
+    'about.title': 'Sobre mí',
+    'about.intro.title': 'Hola, soy Denis',
+    'about.intro.text': 'Soy un desarrollador Full Stack obsesionado con optimizar procesos y entender cómo funcionan las cosas por dentro. Me muevo entre la flexibilidad del código (React/Astro) y la potencia del Low Code (Power Platform).',
+    'about.garden.title': 'El Jardín Digital',
+    'about.garden.text': 'Este sitio es mi "Jardín Digital". Aquí no solo publico proyectos terminados, sino que documento mis aprendizajes diarios (TILs) y experimento con nuevas arquitecturas. Creo firmemente en aprender en público.',
+    'about.personal.title': 'Más allá del código',
+    'about.personal.text': 'Cuando no estoy refactorizando componentes, probablemente me encontrarás desarrollando algún pequeño videojuego (una de mis pasiones), disfrutando de una buena película o serie, o inmerso en alguna partida.',
   },
   ca: {
+    // NAVEGACIÓ
     'nav.home': 'INICI',
     'nav.blog': 'BLOG',
     'nav.projects': 'PROJECTES',
+    'nav.about': 'SOBRE MI',
     'nav.videogames': 'videojocs',
     'nav.devblog': 'dev blog',
     'nav.search': 'Cercar...',
@@ -68,6 +87,10 @@ export const ui = {
     'nav.search.typeToSearch': 'Escriu per cercar a',
     'nav.search.filter.projects': 'Projectes',
     'nav.noResults': "No s'han trobat resultats",
+    'nav.menu': 'Menú',
+    'nav.search.label': 'Cercar',
+
+    // BÚSQUEDA
     'search.all': 'Tots',
     'search.project': 'PROJECTES',
     'search.til': 'TIL',
@@ -79,6 +102,8 @@ export const ui = {
     'footer.astro': 'Web impulsada per ',
     'footer.github': 'Codi Font en GitHub',
     'footer.privacy': 'Política de Privacitat',
+
+    // BLOG
     'blog.title': 'Bitàcora Digital',
     'blog.description': 'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi (TILs).',
     'blog.series': 'DevLogs',
@@ -94,6 +119,8 @@ export const ui = {
     'blog.previousPost': 'Anterior',
     'blog.updated': 'Actualitzat',
     'blog.tableOfContents': 'En aquesta pàgina',
+
+    // MISC
     'toc.title': 'Taula de continguts',
     'series.github.title': 'Codi font',
     'series.github.description': 'Explora, aprèn i contribueix.',
@@ -101,16 +128,25 @@ export const ui = {
     'theme.toggle': 'Alternar tema',
     'theme.dark': 'Fosc',
     'theme.light': 'Clar',
-    'nav.menu': 'Menú',
-    'nav.search.label': 'Cercar',
     'code.copy': 'Copiar codi',
     'code.copied': 'Copiat!',
     'language.changeTo': 'Canviar idioma a',
+    
+    // SOBRE MI
+    'about.title': 'Sobre mi',
+    'about.intro.title': 'Hola, soc el Denis',
+    'about.intro.text': 'Soc un desenvolupador Full Stack obsessionat amb optimitzar processos i entendre com funcionen les coses per dins. Em moc entre la flexibilitat del codi (React/Astro) i la potència del Low Code (Power Platform).',
+    'about.garden.title': 'El Jardí Digital',
+    'about.garden.text': 'Aquest lloc és el meu "Jardí Digital". Aquí no només publico projectes acabats, sinó que documento els meus aprenentatges diaris (TILs) i experimento amb noves arquitectures. Crec firmament en aprendre en públic.',
+    'about.personal.title': 'Més enllà del codi',
+    'about.personal.text': 'Quan no estic refactoritzant components, probablement em trobaràs desenvolupant algun petit videojoc (una de les meves passions), gaudint d\'una bona pel·lícula o sèrie, o immers en alguna partida.',
   },
   en: {
+    // NAVEGATION
     'nav.home': 'HOME',
     'nav.blog': 'BLOG',
     'nav.projects': 'PROJECTS',
+    'nav.about': 'ABOUT',
     'nav.videogames': 'video games',
     'nav.devblog': 'dev blog',
     'nav.search': 'Search...',
@@ -118,6 +154,10 @@ export const ui = {
     'nav.search.typeToSearch': 'Type to search in',
     'nav.search.filter.projects': 'Projects',
     'nav.noResults': 'No results found',
+    'nav.menu': 'Menu',
+    'nav.search.label': 'Search',
+
+    // SEARCH
     'search.all': 'All',
     'search.project': 'PROJECTS',
     'search.til': 'TIL',
@@ -129,6 +169,8 @@ export const ui = {
     'footer.astro': 'Web powered by ',
     'footer.github': 'Source Code in GitHub',
     'footer.privacy': 'Privacy Policy',
+
+    // BLOG
     'blog.title': 'Digital Log',
     'blog.description': 'A space where I document my learning. From deep articles to small code snippets (TILs).',
     'blog.series': 'DevLogs',
@@ -144,6 +186,8 @@ export const ui = {
     'blog.previousPost': 'Previous',
     'blog.updated': 'Updated',
     'blog.tableOfContents': 'In this page',
+
+    // MISC
     'toc.title': 'Table of Contents',
     'series.github.title': 'Source code',
     'series.github.description': 'Explore, learn and contribute.',
@@ -151,10 +195,17 @@ export const ui = {
     'theme.toggle': 'Toggle theme',
     'theme.dark': 'Dark',
     'theme.light': 'Light',
-    'nav.menu': 'Menu',
-    'nav.search.label': 'Search',
     'code.copy': 'Copy code',
     'code.copied': 'Copied!',
     'language.changeTo': 'Change language to',
+    
+    // ABOUT
+    'about.title': 'About Me',
+    'about.intro.title': 'Hi, I\'m Denis',
+    'about.intro.text': 'I\'m a Full Stack developer obsessed with optimizing processes and understanding how things work under the hood. I move between the flexibility of code (React/Astro) and the power of Low Code (Power Platform).',
+    'about.garden.title': 'The Digital Garden',
+    'about.garden.text': 'This site is my "Digital Garden". Here I not only publish finished projects, but I document my daily learnings (TILs) and experiment with new architectures. I firmly believe in learning in public.',
+    'about.personal.title': 'Beyond Code',
+    'about.personal.text': 'When I\'m not refactoring components, you\'ll probably find me developing some small video game (one of my passions), enjoying a good movie or series, or immersed in a game.',
   },  
 } as const;
