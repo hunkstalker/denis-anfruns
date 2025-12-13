@@ -10,6 +10,7 @@ const packageJsonPath = path.join(__dirname, '../package.json');
 // Descriptions for known scripts to make the menu friendlier
 const DESCRIPTIONS = {
     'dev': '🚀 Start Development Server',
+    'build:preview': '📦 Build -> Preview (Fast)',
     'build': '🏗️  Build for Production',
     'preview': '👀 Preview Production Build',
     'check': '✅ Type Check (Astro)',
@@ -30,7 +31,7 @@ async function main() {
     const allScripts = Object.keys(scripts).filter(s => s !== 'start');
     
     // Define exact order for primary scripts
-    const PRIMARY_SCRIPTS = ['dev', 'test', 'verify-build-preview', 'preview', 'check:drafts'];
+    const PRIMARY_SCRIPTS = ['dev', 'build:preview', 'test', 'verify-build-preview', 'build', 'preview', 'check:drafts'];
     
     // Split into primary and secondary
     const primary = PRIMARY_SCRIPTS.filter(s => allScripts.includes(s));

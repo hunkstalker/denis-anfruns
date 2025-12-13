@@ -3,7 +3,8 @@
 import Button from '../ui/Button.astro'
 import ThemeToggle from '../ui/ThemeToggle.astro'
 import LanguagePicker from '../ui/LanguagePicker.astro'
-import SideMenu from './SideMenu.astro'
+import MenuToggle from './MenuToggle'
+import MobileMenu from './MobileMenu'
 import Search from '../search/Search.astro'
 import SearchResults from '../search/SearchResults.astro'
 
@@ -12,7 +13,7 @@ import { useTranslations } from '../../i18n/utils'
 import { navItems } from '../../i18n/navigation'
 
 // Importación de Iconos
-import MenuIcon from '../../icons/menu.svg'
+
 import SearchIcon from '../../icons/search.svg'
 
 // Definición de las Props
@@ -58,40 +59,44 @@ const translations = ui
 
 // Obtener ruta actual para resaltar el menú activo
 const currentPath = Astro.url.pathname
+
+const menuItems = navItems.map(item => {
+	const finalPath = lang === 'es' ? item.path : `/${lang}${item.path === '/' ? '' : item.path}`
+	const isActive = currentPath === finalPath || (item.path !== '/' && currentPath.startsWith(finalPath))
+	return {
+		label: t(item.key),
+		link: finalPath,
+		active: isActive,
+		enabled: item.enabled
+	}
+})
+
+
 ---
 
 <nav
 	class='fixed left-0 right-0 top-0 z-50 border-b border-zinc-200/50 bg-white/70 shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70'>
 	<div class='container'>
 		<div class='flex items-center justify-between py-4 md:py-6'>
-			<!-- Menú Hamburguesa (Móvil) -->
+			<!-- Menú Hamburguesa (Móvil) & Menu Portal -->
 			<div class='sm:hidden'>
-				<button id='menu-toggle' aria-label={t('nav.menu')}>
-					<MenuIcon />
-				</button>
+				<MenuToggle client:load label={t('nav.menu')} />
+				<MobileMenu client:load items={menuItems} />
 			</div>
 
 			<!-- Menú de Navegación Desktop (Enlaces) -->
 			<div class='hidden sm:inline-flex md:gap-1'>
 				<div class='text-center'>
 					{
-						navItems.filter(item => item.enabled).map(navItem => {
-							const finalPath =
-								lang === 'es' ? navItem.path : `/${lang}${navItem.path === '/' ? '/' : navItem.path}`
-							const isActive =
-								currentPath === finalPath ||
-								(navItem.path !== '/' && currentPath.startsWith(finalPath))
-
-							return (
-								<Button
-									text={t(navItem.key)}
-									link={finalPath}
-									enabled={navItem.enabled}
-									active={navItem.enabled && isActive}
-									class="w-32"
-								/>
-							)
-						})
+						menuItems.filter(item => item.enabled).map(item => (
+							<Button
+								text={item.label}
+								link={item.link}
+								enabled={item.enabled}
+								active={item.enabled && item.active}
+								class="w-32"
+							/>
+						))
 					}
 				</div>
 			</div>
@@ -156,7 +161,6 @@ const currentPath = Astro.url.pathname
 </nav>
 
 <Search lang={lang} />
-<SideMenu lang={lang} />
 
 <script>
 	import { ui, defaultLang } from '../../i18n/ui'
@@ -276,79 +280,6 @@ const currentPath = Astro.url.pathname
 			// showResults se activa por el evento 'focus' del input
 		}
 	})
-</script>
-
-<script>
-	// Lógica del Menú Lateral (Móvil)
-	const btn = document.getElementById('menu-toggle')
-	const menu = document.getElementById('side-menu')
-	const overlay = document.getElementById('menu-overlay')
-
-	let isMenuOpen = false
-
-	function openMenu() {
-		overlay?.classList.remove('hidden')
-		// Forzar reflow/repaint antes de iniciar la transición
-		requestAnimationFrame(() => {
-			menu?.classList.remove('-translate-x-full', 'opacity-0')
-			overlay?.classList.remove('opacity-0')
-		})
-
-		document.body.classList.add('overflow-hidden')
-		isMenuOpen = true
-	}
-
-	function closeMenu() {
-		menu?.classList.add('-translate-x-full', 'opacity-0')
-		overlay?.classList.add('opacity-0')
-
-		document.body.classList.remove('overflow-hidden')
-
-		// Esperar a la transición (300ms)
-		setTimeout(() => {
-			overlay?.classList.add('hidden')
-		}, 300)
-		isMenuOpen = false
-	}
-
-	function toggleMenu() {
-		if (isMenuOpen) {
-			closeMenu()
-		} else {
-			openMenu()
-		}
-	}
-
-	btn?.addEventListener('click', toggleMenu)
-	overlay?.addEventListener('click', closeMenu) // Mejor close directa al overlay
-
-	// --- SWIPE GESTURE (Swipe Left to Close) ---
-	let touchStartX = 0
-	let touchEndX = 0
-
-	menu?.addEventListener(
-		'touchstart',
-		(e) => {
-			touchStartX = e.changedTouches[0].screenX
-		},
-		{ passive: true },
-	)
-
-	menu?.addEventListener(
-		'touchend',
-		(e) => {
-			touchEndX = e.changedTouches[0].screenX
-			handleSwipeGesture()
-		},
-		{ passive: true },
-	)
-
-	function handleSwipeGesture() {
-		// Umbral de 50px para considerar un swipe válido
-		if (touchStartX - touchEndX > 50) {
-			closeMenu()
-		}
-	}
 </script>
 
 <style>

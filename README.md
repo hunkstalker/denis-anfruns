@@ -19,6 +19,7 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 - **Dark/Light mode**: Tema oscuro por defecto con toggle
 - **Responsive**: Mobile-first design
 - **Optimizado**: Static site generation, font preload, CSS crítico inline, SVGs optimizados
+- **Mobile Menu**: Gesto de swipe nativo (framer-motion) y estado compartido (nanostores)
 - **Accesible**: Auditoría a11y, soporte teclado, reduced-motion, focus management
 
 ---
@@ -28,7 +29,7 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 ```
 ├── src/
 │   ├── components/
-│   │   ├── layout/       # Nav, Header, Footer, BaseHead, SideMenu
+│   │   ├── layout/       # Nav, Header, Footer, MobileMenu (React)
 │   │   ├── search/       # Search modal, SearchResultsClient (React)
 │   │   ├── blog/         # DevLogCard, TilAside, SeriesWidget, TOC
 │   │   ├── ui/           # Button, LanguagePicker, ThemeToggle
@@ -47,6 +48,7 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 │   │   ├── blog.astro    # Lista de DevLogs
 │   │   ├── [lang]/       # Rutas localizadas (en, ca)
 │   │   └── til/, blog/   # Rutas dinámicas [...slug]
+│   ├── stores/           # Nanostores (estado global UI)
 │   ├── utils/            # Content helpers, i18n utils
 │   ├── icons/            # SVGs importables
 │   ├── styles/           # global.css
@@ -72,6 +74,7 @@ El proyecto incluye un **CLI interactivo** para facilitar las tareas comunes. Ej
 | `pnpm install` | Instalar dependencias |
 | `pnpm dev` | Servidor de desarrollo en `localhost:4321` |
 | `pnpm build` | Build de producción + índice Pagefind |
+| `pnpm build:preview` | Build + Preview (Rápido para diseño) |
 | `pnpm preview` | Preview del build local |
 | `pnpm normalize:content` | Normaliza metadata de TILs (unifica en `meta.json`) |
 | `pnpm verify:content` | Verifica fechas e integridad del contenido |
@@ -172,6 +175,8 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 | `@astrojs/react` | Componentes React (hidratación) |
 | `@astrojs/mdx` | Contenido en MDX |
 | `tailwindcss` | Estilos utility-first |
+| `framer-motion` | Animaciones y gestos (React) |
+| `nanostores` | Estado global ligero (Islands) |
 | `pagefind` | Búsqueda estática |
 | `shiki` | Syntax highlighting (incluye alias para PowerFx) |
 
