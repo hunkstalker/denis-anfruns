@@ -16,7 +16,7 @@ const currentPath = Astro.url.pathname
 	<div class="p-6">
 		<nav class="flex flex-col">
 			{
-				navItems.map((item) => {
+				navItems.filter(item => item.enabled).map((item) => {
 					const finalPath =
 						lang === 'es' ? item.path : `/${lang}${item.path === '/' ? '' : item.path}`
 					const isActive =
