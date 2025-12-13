@@ -1,0 +1,70 @@
+---
+title: "Scope CSS: Astro vs Frameworks JS"
+lang: "ca"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Entendre com el teu framework gestiona els estils CSS és crucial per evitar conflictes i mantenir el teu codi net. No tots els frameworks funcionen igual, i Astro té una aproximació molt particular.
+
+### L'enfocament "Normal" (React/Vue purs)
+
+En l'ecosistema tradicional de React, si importes un fitxer CSS en un component, aquest CSS sol ser **global**.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Button.jsx (React)', 
+      code: `import './Button.css'; // PERILL! Això és global
+
+export const Button = () => <button className="btn">Click</button>;`, 
+      lang: 'jsx' 
+    },
+    { 
+      label: 'Button.css', 
+      code: `.btn { color: red; } /* Afecta TOTS els elements amb classe .btn del web */`, 
+      lang: 'css' 
+    }
+  ]}
+/>
+
+Per evitar això, en React solem utilitzar **CSS Modules** (`Button.module.css`) o llibreries CSS-in-JS (Styled Components, Emotion).
+
+### L'enfocament d'Astro: Scoped per defecte
+
+Astro inverteix aquesta lògica per defecte. Quan escrius estils dins de l'etiqueta `<style>` en un component `.astro`, estan **automàticament aïllats (scoped)**.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Card.astro', 
+      code: `---
+// El teu JS
+---
+<div class="card">
+    <h1>Hola</h1>
+</div>
+
+<style>
+    /* Això NOMÉS afecta aquest component */
+    .card { background: blue; }
+    h1 { color: white; }
+</style>`, 
+      lang: 'astro' 
+    }
+  ]}
+/>
+
+Astro aconsegueix això afegint una classe hash única als teus elements (ex: `.card.astro-HASH123`) en temps de compilació.
+
+### Quan utilitzar què?
+
+1.  **Estils del Component**: Utilitza sempre l'etiqueta `<style>` al final del fitxer `.astro`. És segur, no requereix configuració extra i s'elimina automàticament si el component no s'utilitza.
+2.  **Estils Globals**: Si necessites alguna cosa que afecti tot el web (com resets, fonts o `utilities`), utilitza un fitxer `.css` a `src/styles/` i importa'l al teu Layout principal.
+3.  **CSS Modules**: Utilitza'ls només si prefereixes separar els estils en fitxers diferents però mantenint l'scope (ex: `Component.module.css`), encara que en Astro sol ser redundant.
+
+### Resum
+En Astro, **Co-locació** és la clau. Mantén els teus estils al costat del teu HTML en el mateix fitxer.
+> **Co-locació**: La pràctica d'agrupar el codi per *responsabilitat* (ex: un component) en lloc de per *tecnologia* (fitxers separats .html, .js, .css).
+
+Guanyaràs en mantenibilitat i rendiment.

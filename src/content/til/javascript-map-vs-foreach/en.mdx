@@ -1,0 +1,56 @@
+---
+title: "JavaScript: Map or ForEach?"
+lang: "en"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Two Array methods, two very different purposes. Choosing the right one communicates your intent to other developers (and your future self).
+
+### `map()`: The Transformer
+
+Use `.map` when you want to **transform** data.
+*   **Input**: An array of X elements.
+*   **Output**: A *new* array of X transformed elements.
+*   **Intent**: "I want to convert this into that".
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Map Example', 
+      code: `const prices = [10, 20, 30];
+const formatted = prices.map(price => \`\${price}€\`);
+// result: ["10€", "20€", "30€"]`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+### `forEach()`: The Executor
+
+Use `.forEach` when you want to **execute an action** (side effect) for each element.
+*   **Input**: An array.
+*   **Output**: `undefined` (nothing).
+*   **Intent**: "I want something to happen with this data (save to DB, paint on DOM, log)".
+
+It returns nothing, so you cannot chain it or assign its result to a variable.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'ForEach Example', 
+      code: `const buttons = document.querySelectorAll('button');
+
+buttons.forEach(btn => {
+  // Action: Modify the DOM (Side Effect)
+  btn.addEventListener('click', () => console.log('Click!'));
+});`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+### Quick Summary
+
+*   Do you need a new array? -> **`map`**
+*   Do you just want to iterate and do things? -> **`forEach`**

@@ -1,0 +1,43 @@
+---
+title: "Matemàtiques per a un loop infinit CSS perfecte"
+lang: "ca"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+Alguna vegada has intentat crear un carrusel o gradient infinit i has notat un "salt" al final? La clau perquè sigui imperceptible està en les matemàtiques.
+
+### El Problema
+Suposem que tens una imatge de fons que és 4 vegades més gran que el teu contenidor (`background-size: 400%`) i vols que es desplaci creant un bucle infinit.
+
+Si la teva imatge té un patró que es repeteix (per exemple `[A, B, A, B]`), i animes el `background-position` de `0%` a `-100%` (o valors similars), sovint veuràs un tall brusc.
+
+### La Solució Matemàtica
+
+Per a un loop perfecte, necessites calcular el punt exacte on la imatge torna a ser idèntica a l'inici.
+
+La fórmula per a `background-position` en percentatge és contraintuïtiva:
+> `(ample_contenidor - ample_imatge) * percentatge`
+
+Per a un `background-size: 400%`:
+1.  La imatge mesura 4 unitats. El contenidor mesura 1 unitat.
+2.  Volem desplaçar-nos **2 unitats** (la meitat de la imatge, suposant que hem duplicat el contingut per al loop).
+3.  El rang total de moviment possible és `4 - 1 = 3` unitats.
+4.  El percentatge objectiu és: `2 (desplaçament desitjat) / 3 (rang total) = 0.6666...`
+5.  O sigui: **66.666%**.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'CSS', 
+      code: `@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    /* El número màgic per a background-size: 400% */
+    100% { background-position: 66.666% 50%; }
+}`, 
+      lang: 'css' 
+    }
+  ]}
+/>
+
+Utilitzant aquest valor, quan l'animació arriba al 100%, la imatge està visualment en la posició idèntica al 0%, fent que el reinici de l'animació sigui invisible.

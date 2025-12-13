@@ -1,0 +1,78 @@
+---
+title: "Refactoring: From Repetitive Code to Data-Driven"
+lang: "en"
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+
+One of the most satisfying optimizations in programming is moving from an endless list of repeated code to an elegant data-driven structure.
+
+### The "Smell" Code
+
+Imagine you have to replace several words in a text and then display icons for each of them. The naive approach often looks like this:
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Before', 
+      code: `// Infinite manual replacements...
+const text = originalText
+    .replace('React', '<span id="hl-react">React</span>')
+    .replace('Astro', '<span id="hl-astro">Astro</span>')
+    .replace('Vue', '<span id="hl-vue">Vue</span>');
+
+// Infinite manual rendering...
+<Icon icon={ReactIcon} target="hl-react" />
+<Icon icon={AstroIcon} target="hl-astro" />
+<Icon icon={VueIcon} target="hl-vue" />`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+This is hard to maintain. If you want to add a technology, you have to touch the code in two or more places.
+
+### The Data-Driven Solution
+
+Instead of writing logic multiple times, define your data in a single "source of truth" (an array of objects) and let the code do the dirty work.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'After', 
+      code: `// 1. Centralized Configuration
+const technologies = [
+    { name: 'React', id: 'hl-react', icon: ReactIcon },
+    { name: 'Astro', id: 'hl-astro', icon: AstroIcon },
+    { name: 'Vue', id: 'hl-vue', icon: VueIcon }
+];
+
+// 2. Dynamic Replacement Logic
+let processedText = originalText;
+technologies.forEach(tech => {
+    // Why forEach here? (See note at the end)
+    // We use RegExp to replace all occurrences dynamically
+    processedText = processedText.replace(
+        new RegExp(tech.name, 'g'), 
+        \`<span id="\${tech.id}">\${tech.name}</span>\`
+    );
+});
+
+// 3. Dynamic Rendering
+// In your template (React/Astro/etc):
+{technologies.map(tech => (
+    <Icon icon={tech.icon} target={tech.id} />
+))}`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+### Advantages
+1.  **Maintainability**: To add something new, you simply add one line to the `technologies` array.
+2.  **Readability**: The logic of "what to do" is separated from the "data".
+3.  **Scalability**: You can have 3 or 300 technologies, the logic code doesn't change.
+
+## Recommended Reading
+
+*   [When to use Map and when ForEach?](/en/til/javascript-map-vs-foreach)
