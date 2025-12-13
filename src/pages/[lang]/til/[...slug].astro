@@ -1,8 +1,7 @@
 ---
 import { getTils, type TilPost } from '../../../utils/til-content'
-import BaseLayout from '../../../layouts/BaseLayout.astro'
-import Nav from '../../../components/layout/Nav.astro'
-import ChevronLeft from '../../../icons/chevron-left.svg'
+import ContentLayout from '../../../layouts/ContentLayout.astro'
+import BackLink from '../../../components/ui/BackLink.astro'
 import ChevronUp from '../../../icons/chevron-up.svg'
 import { languages } from '../../../i18n/ui'
 import { useTranslations } from '../../../i18n/utils'
@@ -58,59 +57,56 @@ const t = useTranslations(lang)
 	}
 </style>
 
-<BaseLayout siteTitle={`TIL: ${post.data.title}`} lang={lang} description={post.data.title}>
-	<Nav lang={lang} />
+<ContentLayout 
+	siteTitle={`TIL: ${post.data.title}`} 
+	title={post.data.title}
+	lang={lang} 
+	description={post.data.title}
+>
+	<div class="lg:col-span-8 lg:col-start-3">
+		<div class="mb-8">
+			<BackLink 
+				href={`/${lang}/blog`}
+				label={t('blog.backToBlog')}
+			/>
 
-	<div class="container mx-auto px-4 py-8 pt-20 md:pt-28">
-		<div class="mx-auto max-w-3xl">
-			<div class="mb-8">
-				<a
-					href={`/${lang}/blog`}
-					class="animate-fade-in-up mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
-				>
-					<ChevronLeft />
-					{t('blog.backToBlog')}
-				</a>
+			<h1 class="animate-fade-in-up delay-100 mb-6 text-3xl font-bold leading-tight dark:text-zinc-200 md:text-4xl">
+				{post.data.title}
+			</h1>
 
-				<h1 class="animate-fade-in-up delay-100 mb-4 text-3xl font-bold leading-tight dark:text-white md:text-4xl">
-					{post.data.title}
-				</h1>
-
-				<div
-					class="animate-fade-in-up delay-200 flex gap-3 border-b border-zinc-200 pb-6 font-mono text-sm text-zinc-500 dark:border-zinc-800"
-				>
-					<time datetime={post.data.pubDate!.toISOString()}>
-						{post.data.pubDate!.toLocaleDateString(lang, { dateStyle: 'long' })}
-					</time>
-					<span>/</span>
-					<div class="flex gap-2">
-						{(post.data.tags || []).map((tag) => <span>#{tag}</span>)}
-					</div>
+			<div class="animate-fade-in-up delay-200 flex flex-wrap gap-4 font-mono text-sm text-zinc-500">
+				<time datetime={post.data.pubDate!.toISOString()}>
+					{post.data.pubDate!.toLocaleDateString(lang, { dateStyle: 'long' })}
+				</time>
+				<div class="flex gap-2">
+					{(post.data.tags || []).map((tag) => <span>#{tag}</span>)}
 				</div>
 			</div>
 
-			<article
-				class="prose prose-lg max-w-none dark:prose-invert"
-				data-pagefind-body
-				data-pagefind-filter="type:til"
-			>
-				<Content />
-			</article>
-
-			<div class="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
-				<button
-					id="scroll-to-top"
-					class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
-				>
-					<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
-					{t('blog.backToTop')}
-				</button>
-			</div>
-
-			<div class="h-24"></div>
+			<hr class="animate-fade-in-up delay-300 mt-8 border-zinc-200 dark:border-zinc-800" />
 		</div>
+
+		<article
+			class="prose prose-lg max-w-none dark:prose-invert"
+			data-pagefind-body
+			data-pagefind-filter="type:til"
+		>
+			<Content />
+		</article>
+
+		<div class="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
+			<button
+				id="scroll-to-top"
+				class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
+			>
+				<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
+				{t('blog.backToTop')}
+			</button>
+		</div>
+
+		<div class="h-24"></div>
 	</div>
-</BaseLayout>
+</ContentLayout>
 
 <script>
 	document.getElementById('scroll-to-top')?.addEventListener('click', () => {

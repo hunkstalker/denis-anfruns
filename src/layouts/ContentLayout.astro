@@ -1,0 +1,29 @@
+---
+import BaseLayout from './BaseLayout.astro'
+import Nav from '../components/layout/Nav.astro'
+
+interface Props {
+  title: string;
+  description?: string;
+  lang: 'es' | 'en' | 'ca';
+  image?: string;
+  siteTitle?: string;
+}
+
+const { title, description, lang, image, siteTitle } = Astro.props;
+---
+
+<BaseLayout
+  siteTitle={siteTitle || title}
+  description={description}
+  lang={lang}
+  image={image}
+>
+  <Nav lang={lang} />
+
+  <div class="container mx-auto px-4 pb-12 pt-20 md:pt-28">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>

@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro'
-import Nav from '../../../components/layout/Nav.astro'
+import ContentLayout from '../../../layouts/ContentLayout.astro'
+import BackLink from '../../../components/ui/BackLink.astro'
 import { getTils } from '../../../utils/til-content'
 import { useTranslations } from '../../../i18n/utils'
 import { languages } from '../../../i18n/ui'
@@ -25,33 +25,36 @@ const tils = tilCollection
 
 ---
 
-<BaseLayout siteTitle={`TIL - ${t('blog.til')}`} lang={lang as SupportedLang}>
-	<Nav lang={lang as SupportedLang} />
-	<div class='container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28'>
-		<div class='mx-auto max-w-5xl'>
-			<div class="mb-6">
-				<a
-					href={lang === 'es' ? '/blog' : `/${lang}/blog`}
-					class="animate-fade-in-up mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
-				>
-					&larr; {t('blog.backToBlog')}
-				</a>
-			</div>
-
+<ContentLayout 
+	title={t('blog.til')}
+	siteTitle={`TIL - ${t('blog.til')}`}
+	lang={lang as SupportedLang}
+>
+	<div class="lg:col-span-12">
+		<div class="mb-8">
+			<BackLink 
+				href={lang === 'es' ? '/blog' : `/${lang}/blog`} 
+				label={t('blog.backToBlog')} 
+			/>
+			
 			<h1
-				class='mb-6 flex items-center gap-2 border-b border-zinc-200 pb-2 text-3xl font-bold dark:border-zinc-700 dark:text-zinc-200'>
+				class='mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200'>
 				{t('blog.til')}
 			</h1>
 
-			<p class='mb-8 text-lg text-zinc-500'>{t('blog.tilDescription')}</p>
+			<p class='text-lg text-zinc-500'>{t('blog.tilDescription')}</p>
+			<hr class="animate-fade-in-up mt-8 border-zinc-200 dark:border-zinc-800" />
+		</div>
 
-			<TilGrid 
-				client:load 
-				posts={tils} 
-				lang={lang as SupportedLang} 
-				labels={{ 
-					all: t('search.all'), 
-					noResults: t('blog.withoutTILs'),
-					readNote: t('blog.readNote')
-				}} 
-			/>
+		<TilGrid 
+			client:load 
+			posts={tils} 
+			lang={lang as SupportedLang} 
+			labels={{ 
+				all: t('search.all'), 
+				noResults: t('blog.withoutTILs'),
+				readNote: t('blog.readNote')
+			}} 
+		/>
+	</div>
+</ContentLayout>
