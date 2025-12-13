@@ -135,7 +135,7 @@ export const ui = {
     
     // SOBRE MI
     'about.title': 'Sobre mi',
-    'about.intro.title': 'Hola, soc el Denis',
+    'about.intro.title': 'Hola, sóc el Denis Anfruns Millán',
     'about.intro.text': 'Sóc un desenvolupador Full Stack en aprenentatge continu. M\'apassiona el rendiment del programari i les bones pràctiques, però **el meu objectiu final és pragmàtic: oferir al client un Producte Mínim Viable flexible**, i escalable en el menor temps possible. Desenvolupo solucions adaptables als canvis perquè entenc les necessitats de negoci. Em moc entre l\'**estabilitat i innovació** amb React + Astro i l\'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint.',
     'about.intro.deal': 'Solucions d\'alt rendiment client-side, llocs dinàmics de gran experiència per a l\'usuari o suports amb Web API Natives que garanteixen una base sòlida per al creixement són la base dels meus projectes.',
     'about.garden.title': 'El Jardí Digital',
