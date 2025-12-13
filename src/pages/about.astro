@@ -1,6 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'
-import Nav from '../components/layout/Nav.astro'
+import ContentLayout from '../layouts/ContentLayout.astro'
 import AboutContent from '../components/about/AboutContent.astro'
 import { useTranslations } from '../i18n/utils'
 
@@ -8,8 +7,7 @@ const lang = 'es'
 const t = useTranslations(lang)
 ---
 
-<BaseLayout siteTitle={t('about.title')} lang={lang}>
-	<Nav lang={lang} />
+<ContentLayout siteTitle={t('about.title')} lang={lang} title={t('about.title')}>
 	<AboutContent lang={lang} />
-</BaseLayout>
+</ContentLayout>
 

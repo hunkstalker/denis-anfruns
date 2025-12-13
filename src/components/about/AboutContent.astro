@@ -10,90 +10,123 @@ import SharePointIcon from '../../icons/sharepoint.svg?raw'
 import M365Icon from '../../icons/m-365.svg?raw'
 
 import IconTrigger from './IconTrigger.astro'
-	
+
 interface Props {
-	lang: 'es' | 'en' | 'ca';
+	lang: 'es' | 'en' | 'ca'
 }
 
-const { lang } = Astro.props;
-const t = useTranslations(lang);
+const { lang } = Astro.props
+const t = useTranslations(lang)
 
 // Aquí se definen las tecnologías que se mostrarán en el About
 const technologies = [
-    { name: 'React', id: 'hl-react', icon: ReactIcon, color: '#61DAFB', className: 'text-[#61DAFB]' },
-    { name: 'Astro', id: 'hl-astro', icon: AstroIcon, color: '#FF0080' },
-    { name: 'Power Platform', id: 'hl-power', icon: PowerPlatformIcon, color: '#00A36C' },
-    { name: 'Power Apps', id: 'hl-apps', icon: PowerAppsIcon, color: '#D946EF', className: 'text-[#742774]' },
-    { name: 'Power Automate', id: 'hl-automate', icon: PowerAutomateIcon, color: '#0078d4', className: 'text-[#0078d4]' },
-    { name: 'Power BI', id: 'hl-bi', icon: PowerBiIcon, color: '#F2C811', className: 'text-[#F2C811]' },
-    { name: 'SharePoint', id: 'hl-sp', icon: SharePointIcon, color: '#37C6D0', className: 'text-[#036C70]' },
-    { name: 'Microsoft 365', id: 'hl-m365', icon: M365Icon, gradient: [
-        '#50e6ff', '#0078D4', '#7FBA00', '#F25022', '#800080'
-    ].join(', '), className: 'text-[#036C70]' }
-];
+	{ name: 'React', id: 'hl-react', icon: ReactIcon, color: '#61DAFB', className: 'text-[#61DAFB]' },
+	{ name: 'Astro', id: 'hl-astro', icon: AstroIcon, color: '#FF0080' },
+	{ name: 'Power Platform', id: 'hl-power', icon: PowerPlatformIcon, color: '#00A36C' },
+	{
+		name: 'Power Apps',
+		id: 'hl-apps',
+		icon: PowerAppsIcon,
+		color: '#D946EF',
+		className: 'text-[#742774]',
+	},
+	{
+		name: 'Power Automate',
+		id: 'hl-automate',
+		icon: PowerAutomateIcon,
+		color: '#0078d4',
+		className: 'text-[#0078d4]',
+	},
+	{
+		name: 'Power BI',
+		id: 'hl-bi',
+		icon: PowerBiIcon,
+		color: '#F2C811',
+		className: 'text-[#F2C811]',
+	},
+	{
+		name: 'SharePoint',
+		id: 'hl-sp',
+		icon: SharePointIcon,
+		color: '#37C6D0',
+		className: 'text-[#036C70]',
+	},
+	{
+		name: 'Microsoft 365',
+		id: 'hl-m365',
+		icon: M365Icon,
+		gradient: ['#50e6ff', '#0078D4', '#7FBA00', '#F25022', '#800080'].join(', '),
+		className: 'text-[#036C70]',
+	},
+]
 
 const processText = (text: string) => {
-    let processed = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-zinc-900 dark:text-[--tangerine-hover]">$1</strong>');
-    
-    technologies.forEach(tech => {
-        const regex = new RegExp(tech.name, 'g');
-        processed = processed.replace(regex, `<span id="${tech.id}" class="transition-colors duration-300">${tech.name}</span>`);
-    });
-    
-    return processed;
+	let processed = text.replace(
+		/\*\*(.*?)\*\*/g,
+		'<strong class="font-bold text-zinc-900 dark:text-[--tangerine-hover]">$1</strong>',
+	)
+
+	technologies.forEach(tech => {
+		const regex = new RegExp(tech.name, 'g')
+		processed = processed.replace(
+			regex,
+			`<span id="${tech.id}" class="transition-colors duration-300">${tech.name}</span>`,
+		)
+	})
+
+	return processed
 }
 ---
 
-<div class='container mx-auto px-6 py-24 sm:py-32'>
-    <div class='mx-auto max-w-3xl'>
-        <h1 class='mb-12 text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-6xl' style={{ textWrap: 'balance' }}>
-            {t('about.title')}
-        </h1>
+<div class='col-span-1 lg:col-span-8 lg:col-start-3'>
+	<h1
+		class='mb-12 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl'
+		style={{ textWrap: 'balance' }}>
+		{t('about.title')}
+	</h1>
 
-        <div class='space-y-16'>
-            <section class='animate-fade-in-up'>
-                <h2 class='mb-6 text-xl font-bold text-zinc-900 dark:text-zinc-100 sm:text-2xl' style={{ textWrap: 'balance' }}>
-                    {t('about.intro.title')}
-                </h2>
-                <p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={processText(t('about.intro.text'))}>
-                </p>
+	<div class='prose prose-lg max-w-none space-y-16 dark:prose-invert'>
+		<section class='animate-fade-in-up'>
+			<h2 style={{ textWrap: 'balance' }}>
+				<span set:html={t('about.intro.title').replace(',', `, <span class="animate-wave ml-2 inline-block origin-[70%_70%]">🖖</span><br class="block sm:hidden" />`)} />
+			</h2>
+			<p set:html={processText(t('about.intro.text'))} />
 
-                <div class="mt-8 flex flex-wrap justify-center gap-4 sm:flex-nowrap sm:justify-start sm:gap-6">
-                    {technologies.map(tech => (
-                        <IconTrigger 
-                            icon={tech.icon} 
-                            targetId={tech.id} 
-                            highlightColor={tech.color} 
-                            gradient={tech.gradient} 
-                            class={tech.className} 
-                        />
-                    ))}
-                </div>
+			<div
+				class='not-prose mt-8 flex flex-wrap justify-center gap-4 sm:flex-nowrap sm:justify-start sm:gap-6'>
+				{
+					technologies.map(tech => (
+						<IconTrigger
+							icon={tech.icon}
+							targetId={tech.id}
+							highlightColor={tech.color}
+							gradient={tech.gradient}
+							class={tech.className}
+						/>
+					))
+				}
+			</div>
 
-                <p class='mt-6 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={t('about.intro.deal')}>
-                </p>
-            </section>
+			<p class='mt-6' set:html={t('about.intro.deal')} />
+		</section>
 
-            <section class='animate-fade-in-up delay-100'>
-                <h2 class='mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
-                    {t('about.garden.title')}
-                </h2>
-                <p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={processText(t('about.garden.text'))}>
-                </p>
-            </section>
+		<section class='animate-fade-in-up delay-100'>
+			<h2>
+				{t('about.garden.title')}
+			</h2>
+			<p set:html={processText(t('about.garden.text'))} />
+		</section>
 
-            <section class='animate-fade-in-up delay-200'>
-                <div class="flex items-center gap-3 mb-6">
-                    <h2 class='text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
-                        {t('about.personal.title')}
-                    </h2>
-                    <span class="text-2xl animate-bounce-slow cursor-default select-none">👾</span>
-                </div>
-                <p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={processText(t('about.personal.text'))}>
-                </p>
-            </section>
-        </div>
-    </div>
+		<section class='animate-fade-in-up delay-200'>
+			<h2>
+				{t('about.personal.title')}
+				<span class='animate-bounce-slow ml-2 inline-block cursor-default select-none text-2xl'
+					>👾</span
+				>
+			</h2>
+			<p set:html={processText(t('about.personal.text'))} />
+		</section>
+	</div>
 </div>
 
 <style>
@@ -109,19 +142,16 @@ const processText = (text: string) => {
 		animation-delay: 0.4s;
 	}
 
-    /* 
-       Cálculo para el loop infinito perfecto:
-       1. background-size: 400% -> La imagen es 4 veces el ancho del contenedor.
-       2. La imagen contiene [Colores, Colores] (duplicado).
-       3. Queremos desplazarnos exactamente la mitad de la imagen (un set de colores).
-       4. La fórmula de background-position % es: (ancho_contenedor - ancho_imagen) * porcentaje
-       5. Queremos movernos 2 unidades de ancho (la mitad de 4). El rango total de movimiento es 3 unidades (4 - 1).
-       6. Por tanto: 2 / 3 = 66.666%
-    */
-    @keyframes gradient-move {
-        0% { background-position: 0% 50%; }
-        100% { background-position: 66.666% 50%; }
-    }
+
+
+	@keyframes gradient-move {
+		0% {
+			background-position: 0% 50%;
+		}
+		100% {
+			background-position: 66.666% 50%;
+		}
+	}
 
 	@keyframes fadeInUp {
 		from {
@@ -135,8 +165,13 @@ const processText = (text: string) => {
 	}
 
 	@keyframes float {
-		0%, 100% { transform: translateY(0); }
-		50% { transform: translateY(-5px); }
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-5px);
+		}
 	}
 	.animate-bounce-slow {
 		animation: float 3s ease-in-out infinite;

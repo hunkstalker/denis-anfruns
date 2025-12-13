@@ -13,6 +13,33 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* Typography Improvements */
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+p, li {
+  text-wrap: pretty;
+}
+
+/* Animations */
+@keyframes wave {
+  0% { transform: translateY(0); }
+  5% { transform: translateY(-4px) rotate(-5deg); }
+  10% { transform: translateY(-10px) rotate(0deg); }
+  15% { transform: translateY(-4px) rotate(5deg); }
+  20% { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+.animate-wave {
+  animation-name: wave;
+  animation-duration: 7s;
+  animation-iteration-count: infinite;
+  transform-origin: center bottom;
+  display: inline-block;
+}
+
 .scrollbar-none {
   -ms-overflow-style: none;
   /* IE & Edge */

@@ -1,6 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro'
-import Nav from '../../components/layout/Nav.astro'
+import ContentLayout from '../../layouts/ContentLayout.astro'
 import AboutContent from '../../components/about/AboutContent.astro'
 import { useTranslations } from '../../i18n/utils'
 import { languages } from '../../i18n/ui'
@@ -13,8 +12,7 @@ const { lang } = Astro.params
 const t = useTranslations(lang as any)
 ---
 
-<BaseLayout siteTitle={t('about.title')} lang={lang as any}>
-	<Nav lang={lang as any} />
+<ContentLayout siteTitle={t('about.title')} lang={lang as any} title={t('about.title')}>
 	<AboutContent lang={lang as any} />
-</BaseLayout>
+</ContentLayout>
 
