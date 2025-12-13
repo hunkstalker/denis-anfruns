@@ -72,9 +72,22 @@ function getPathForLang(lang: string) {
 	const links = document.querySelectorAll('.language-link')
 	links.forEach((link) => {
 		link.addEventListener('click', (e) => {
-			const lang = (e.currentTarget as HTMLElement).dataset.lang
+			const target = e.currentTarget as HTMLAnchorElement
+			const lang = target.dataset.lang
 			if (lang) {
 				localStorage.setItem('selectedLang', lang)
+			}
+
+			// Persist query params (e.g. ?tag=react)
+			if (window.location.search) {
+				e.preventDefault()
+				const url = new URL(target.href)
+				// Merge current search params with target params (if any)
+				const currentParams = new URL(window.location.href).searchParams
+				currentParams.forEach((value, key) => {
+					url.searchParams.set(key, value)
+				})
+				window.location.href = url.toString()
 			}
 		})
 	})
