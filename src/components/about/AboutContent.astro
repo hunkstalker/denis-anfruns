@@ -46,19 +46,19 @@ const processText = (text: string) => {
 
 <div class='container mx-auto px-6 py-24 sm:py-32'>
     <div class='mx-auto max-w-3xl'>
-        <h1 class='mb-12 text-5xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-6xl'>
+        <h1 class='mb-12 text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-6xl' style={{ textWrap: 'balance' }}>
             {t('about.title')}
         </h1>
 
         <div class='space-y-16'>
             <section class='animate-fade-in-up'>
-                <h2 class='mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100'>
+                <h2 class='mb-6 text-xl font-bold text-zinc-900 dark:text-zinc-100 sm:text-2xl' style={{ textWrap: 'balance' }}>
                     {t('about.intro.title')}
                 </h2>
                 <p class='text-lg leading-relaxed text-zinc-600 dark:text-zinc-400' set:html={processText(t('about.intro.text'))}>
                 </p>
 
-                <div class="mt-8 flex gap-6">
+                <div class="mt-8 flex flex-wrap justify-center gap-4 sm:flex-nowrap sm:justify-start sm:gap-6">
                     {technologies.map(tech => (
                         <IconTrigger 
                             icon={tech.icon} 
