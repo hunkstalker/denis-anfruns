@@ -59,6 +59,7 @@ const privacyPath = lang === 'es' ? '/PrivacyPolicy' : `/${lang}/PrivacyPolicy`
 					<span class="hidden text-zinc-400 dark:text-zinc-600 md:block">•</span>
 					<a
 						href={`${privacyPath}/`}
+						data-astro-prefetch="hover"
 						class="transition-colors hover:text-zinc-900 dark:hover:text-zinc-200"
 					>
 						{t('footer.privacy')}
