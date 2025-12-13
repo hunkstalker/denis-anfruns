@@ -319,6 +319,34 @@ const currentPath = Astro.url.pathname
 
 	btn?.addEventListener('click', toggleMenu)
 	overlay?.addEventListener('click', closeMenu) // Mejor close directa al overlay
+
+	// --- SWIPE GESTURE (Swipe Left to Close) ---
+	let touchStartX = 0
+	let touchEndX = 0
+
+	menu?.addEventListener(
+		'touchstart',
+		(e) => {
+			touchStartX = e.changedTouches[0].screenX
+		},
+		{ passive: true },
+	)
+
+	menu?.addEventListener(
+		'touchend',
+		(e) => {
+			touchEndX = e.changedTouches[0].screenX
+			handleSwipeGesture()
+		},
+		{ passive: true },
+	)
+
+	function handleSwipeGesture() {
+		// Umbral de 50px para considerar un swipe válido
+		if (touchStartX - touchEndX > 50) {
+			closeMenu()
+		}
+	}
 </script>
 
 <style>
