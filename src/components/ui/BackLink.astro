@@ -25,11 +25,34 @@ const { href, label, class: className, hideIcon = false, id } = Astro.props;
 </a>
 
 <script>
+  const ORIGIN_KEY = 'backlink-origin'
   const goBackLink = document.getElementById('go-back-link')
+  
   if (goBackLink) {
+    // On first load, save the origin URL (only if coming from our site and not already saved)
+    const currentOrigin = sessionStorage.getItem(ORIGIN_KEY)
+    const isInternalReferrer = document.referrer && document.referrer.startsWith(window.location.origin)
+    const isPrivacyPage = (url: string) => url.toLowerCase().includes('privacypolicy')
+    
+    // Save origin only if:
+    // 1. No origin saved yet, OR
+    // 2. The saved origin is a privacy page (language change happened)
+    if (!currentOrigin || isPrivacyPage(currentOrigin)) {
+      if (isInternalReferrer && !isPrivacyPage(document.referrer)) {
+        sessionStorage.setItem(ORIGIN_KEY, document.referrer)
+      }
+    }
+
     goBackLink.addEventListener('click', (e) => {
       e.preventDefault()
-      if (document.referrer && document.referrer.startsWith(window.location.origin)) {
+      
+      const savedOrigin = sessionStorage.getItem(ORIGIN_KEY)
+      
+      if (savedOrigin && savedOrigin.startsWith(window.location.origin)) {
+        // Clear the saved origin and navigate
+        sessionStorage.removeItem(ORIGIN_KEY)
+        window.location.href = savedOrigin
+      } else if (isInternalReferrer) {
         window.location.href = document.referrer
       } else {
         history.back()
