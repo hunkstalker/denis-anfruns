@@ -13,13 +13,15 @@ const DESCRIPTIONS = {
 	'build:preview': '📦 Build -> Preview (Fast)',
 	build: '🏗️  Build for Production',
 	preview: '👀 Preview Production Build',
-	check: '✅ Type Check (Astro)',
+	check: '✅ Type Check (Astro & TS)',
 	'verify-build-preview': '✨ Full Pipeline: Test (Norm+Ver+Check+Build) -> Preview',
 	test: '🧪 Test Build: Normalize -> Verify -> Check -> Build',
 	'normalize:content': '🧹 Clean & Normalize Metadata',
 	'verify:content': '🔍 Verify Content Integrity',
 	'check:drafts': '📝 List Draft Content',
 	format: '🎨 Format Code & Sort CSS',
+	lint: '🚨 Check Code Quality (ESLint)',
+	'lint:fix': '✨ Fix Code Quality (ESLint Auto-fix)',
 	astro: '⭐ Run generic Astro command',
 }
 
@@ -34,13 +36,12 @@ async function main() {
 	// Define exact order for primary scripts
 	const PRIMARY_SCRIPTS = [
 		'dev',
-		'build:preview',
+		'lint:fix',
+		'format',
+		'check',
 		'test',
-		'verify-build-preview',
 		'build',
 		'preview',
-		'check:drafts',
-		'format',
 	]
 
 	// Split into primary and secondary

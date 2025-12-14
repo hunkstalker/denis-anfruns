@@ -135,7 +135,7 @@ async function verify() {
 								PartFolder: partFolder,
 							})
 						}
-					} catch (e) {
+					} catch (_e) {
 						// Already handled in global check
 					}
 				}

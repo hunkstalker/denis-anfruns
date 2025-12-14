@@ -66,7 +66,7 @@ function parseFrontmatter(content) {
 				try {
 					const validJson = value.replace(/'/g, '"')
 					data[key] = JSON.parse(validJson)
-				} catch (e) {
+				} catch (_e) {
 					data[key] = value
 						.slice(1, -1)
 						.split(',')
@@ -112,7 +112,7 @@ async function normalizeCollection(collectionName, isNested) {
 		if (fs.existsSync(metaPath)) {
 			try {
 				metaData = JSON.parse(fs.readFileSync(metaPath, 'utf-8'))
-			} catch (e) {
+			} catch (_e) {
 				console.error(`❌ Error parsing ${metaPath}:`, e.message)
 				return
 			}

@@ -42,7 +42,7 @@ function parseFrontmatter(content) {
 					// If tags are like ['a', 'b'], try to fix constraints.
 					const validJson = value.replace(/'/g, '"')
 					data[key] = JSON.parse(validJson)
-				} catch (e) {
+				} catch (_e) {
 					// Fallback for simple list
 					data[key] = value
 						.slice(1, -1)

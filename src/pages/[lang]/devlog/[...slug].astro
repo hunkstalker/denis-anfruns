@@ -164,7 +164,7 @@ if (post.data.series) {
 			<summary
 				class="flex cursor-pointer items-center gap-2 font-medium text-zinc-900 dark:text-zinc-100"
 			>
-				<ListIcon class="h-5 w-5 text-zinc-500" />
+				<ListIcon class="size-5 text-zinc-500" />
 				{t('blog.tableOfContents')}
 			</summary>
 			<div
@@ -231,7 +231,7 @@ if (post.data.series) {
 						// Closing
 						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
 						// Force reflow
-						tocContent.offsetHeight
+						const _reflow = tocContent.offsetHeight
 
 						tocContent.style.maxHeight = '0'
 						tocContent.style.opacity = '0'
@@ -246,7 +246,7 @@ if (post.data.series) {
 						tocContent.style.maxHeight = '0'
 						tocContent.style.opacity = '0'
 						// Force reflow
-						tocContent.offsetHeight
+						const _reflow = tocContent.offsetHeight
 
 						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
 						tocContent.style.opacity = '1'

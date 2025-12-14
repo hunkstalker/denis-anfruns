@@ -40,7 +40,7 @@ export default function TilCard({ post, lang, labels }: Props) {
 
 			<div className="mt-auto flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
 				{readText}
-				<ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+				<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
 			</div>
 		</article>
 	)

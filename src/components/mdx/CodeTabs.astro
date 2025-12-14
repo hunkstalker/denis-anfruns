@@ -17,8 +17,10 @@ const { items } = Astro.props
 
 import { useTranslations } from '../../i18n/utils'
 
+import type { Lang } from '../../i18n/ui'
+
 const lang = Astro.currentLocale || 'es'
-const t = useTranslations(lang as any)
+const t = useTranslations(lang as Lang)
 const copyLabel = t('code.copy')
 const copiedLabel = t('code.copied')
 
@@ -38,23 +40,41 @@ const highlightedItems = await Promise.all(
 					theme,
 					transformers: [
 						{
-							pre(node: any) {
-								node.properties.class =
-									(node.properties.class || '') + ' ' + commonClasses + ' astro-code'
+							pre(node) {
+								if (
+									typeof node === 'object' &&
+									node &&
+									'properties' in node &&
+									typeof node.properties === 'object' &&
+									node.properties
+								) {
+									// Safe access after check
+									node.properties.class =
+										(node.properties.class || '') + ' ' + commonClasses + ' astro-code'
+								}
 							},
 						},
 					],
 				})
-			} catch (e) {
+			} catch (_e) {
 				// Fallback to text if lang is not loaded
 				return highlighter.codeToHtml(item.code, {
 					lang: 'text',
 					theme,
 					transformers: [
 						{
-							pre(node: any) {
-								node.properties.class =
-									(node.properties.class || '') + ' ' + commonClasses + ' astro-code'
+							pre(node) {
+								if (
+									typeof node === 'object' &&
+									node &&
+									'properties' in node &&
+									typeof node.properties === 'object' &&
+									node.properties
+								) {
+									// Safe access after check
+									node.properties.class =
+										(node.properties.class || '') + ' ' + commonClasses + ' astro-code'
+								}
 							},
 						},
 					],

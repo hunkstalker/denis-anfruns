@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import type { Pagefind, PagefindResult } from '../../types/pagefind'
 import { RocketIcon, PinIcon, BookmarkIcon } from './SearchIcons'
 
 type SearchResult = {
@@ -41,7 +42,7 @@ export default function SearchResultsClient({
 	const [query, setQuery] = useState('')
 	const [results, setResults] = useState<SearchResult[]>([])
 	const [filter, setFilter] = useState<string>('all')
-	const [pagefind, setPagefind] = useState<any>(null)
+	const [pagefind, setPagefind] = useState<Pagefind | null>(null)
 	const initialContentRef = useRef<HTMLDivElement>(null)
 
 	// We need to sync with the existing input element if it exists outside React
@@ -86,12 +87,10 @@ export default function SearchResultsClient({
 			inputEl.addEventListener('focus', handleFocus)
 
 			if (mode === 'desktop') {
-				// @ts-ignore
 				inputEl.addEventListener('badgeCreated', (e: CustomEvent) => {
 					setFilter(e.detail.filterType)
 				})
 				inputEl.addEventListener('badgeRemoved', () => setFilter('all'))
-				// @ts-ignore
 				inputEl.addEventListener('searchInput', (e: CustomEvent) => {
 					const { value, activeFilter } = e.detail
 					setQuery(value)
@@ -157,11 +156,11 @@ export default function SearchResultsClient({
 
 			if (pagefind) {
 				const search = await pagefind.search(query)
-				const data = await Promise.all(search.results.map((r: any) => r.data()))
+				const data = await Promise.all(search.results.map((r: PagefindResult) => r.data()))
 				const currentLang = document.documentElement.lang || 'es'
 
 				// Filter by language
-				const langFiltered = data.filter((r: any) => {
+				const langFiltered = data.filter((r) => {
 					if (r.language) return r.language === currentLang
 					// URL Fallback
 					if (currentLang === 'es') return !r.url.startsWith('/en/') && !r.url.startsWith('/ca/')
@@ -241,10 +240,10 @@ export default function SearchResultsClient({
 		if (items.length === 0) return null
 		return (
 			<div
-				className={`${!isDesktop ? 'mt-4 border-t border-zinc-100 px-2 py-2 pt-4 first:mt-0 first:border-0 first:pt-2 dark:border-zinc-800' : ''}`}
+				className={`${!isDesktop ? 'mt-4 border-t border-zinc-100 p-2 pt-4 first:mt-0 first:border-0 first:pt-2 dark:border-zinc-800' : ''}`}
 			>
 				<h3 className="text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400">
-					<Icon className="mr-2 h-4 w-4" />
+					<Icon className="mr-2 size-4" />
 					{title}
 				</h3>
 				<div className={containerClass}>{items.map(renderItem)}</div>
@@ -307,7 +306,7 @@ export default function SearchResultsClient({
 			</div>
 
 			{/* Bottom Fade Gradient */}
-			<div className="pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent dark:from-zinc-900" />
+			<div className="pointer-events-none absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-white to-transparent dark:from-zinc-900" />
 		</div>
 	)
 }

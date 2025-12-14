@@ -16,7 +16,7 @@ export function getTilMeta(slug: string): TilMeta {
 			const fileContent = readFileSync(metaPath, 'utf-8')
 			return JSON.parse(fileContent)
 		}
-	} catch (error) {
+	} catch (_error) {
 		// console.warn removed
 	}
 

@@ -1,5 +1,9 @@
+import { ui, defaultLang } from './ui'
+
+export type UiKey = keyof (typeof ui)[typeof defaultLang]
+
 export interface NavItem {
-	key: string
+	key: UiKey
 	path: string
 	enabled: boolean
 	children?: readonly NavItem[]

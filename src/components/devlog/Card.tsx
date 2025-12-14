@@ -56,7 +56,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 
 				<div className="mt-2 flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
 					{labels.readArticle}
-					<ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+					<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
 				</div>
 			</article>
 		)
@@ -70,7 +70,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 					<img
 						src={image}
 						alt={post.data.title}
-						className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+						className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
 						loading="lazy"
 					/>
 				)}
@@ -116,7 +116,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 
 				<div className="mt-3 flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
 					{labels.readArticle}
-					<ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+					<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
 				</div>
 			</div>
 		</article>

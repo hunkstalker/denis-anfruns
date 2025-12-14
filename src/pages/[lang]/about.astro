@@ -8,10 +8,12 @@ export function getStaticPaths() {
 	return Object.keys(languages).map((lang) => ({ params: { lang } }))
 }
 
+import type { Lang } from '../../i18n/ui'
+
 const { lang } = Astro.params
-const t = useTranslations(lang as any)
+const t = useTranslations(lang as Lang)
 ---
 
-<ContentLayout siteTitle={t('about.title')} lang={lang as any} title={t('about.title')}>
-	<AboutContent lang={lang as any} />
+<ContentLayout siteTitle={t('about.title')} lang={lang as Lang} title={t('about.title')}>
+	<AboutContent lang={lang as Lang} />
 </ContentLayout>

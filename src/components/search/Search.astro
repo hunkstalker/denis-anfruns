@@ -34,13 +34,13 @@ const { lang = 'es' } = Astro.props
 		<!-- Contenedor del modal móvil -->
 		<div
 			id="search-panel"
-			class="pointer-events-auto flex h-[70vh] w-full -translate-y-4 transform flex-col overflow-hidden rounded-b-2xl bg-white opacity-0 shadow-2xl ring-1 ring-black/5 transition-all duration-300 ease-out dark:bg-zinc-900 sm:mx-auto sm:h-auto sm:max-h-[80vh] sm:max-w-5xl sm:rounded-xl"
+			class="pointer-events-auto flex h-[70vh] w-full -translate-y-4 flex-col overflow-hidden rounded-b-2xl bg-white opacity-0 shadow-2xl ring-1 ring-black/5 transition-all duration-300 ease-out dark:bg-zinc-900 sm:mx-auto sm:h-auto sm:max-h-[80vh] sm:max-w-5xl sm:rounded-xl"
 		>
 			<!-- Campo de Búsqueda (Input) + Botón Cerrar -->
 			<div
 				class="relative flex shrink-0 items-center border-b border-zinc-100 dark:border-zinc-800"
 			>
-				<SearchIcon class="pointer-events-none absolute left-4 h-5 w-5 text-zinc-400" />
+				<SearchIcon class="pointer-events-none absolute left-4 size-5 text-zinc-400" />
 				<input
 					id="mobile-search-input"
 					type="text"
@@ -55,7 +55,7 @@ const { lang = 'es' } = Astro.props
 					id="close-search-btn"
 					class="absolute right-4 p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
 				>
-					<CloseIcon class="h-5 w-5" />
+					<CloseIcon class="size-5" />
 				</button>
 			</div>
 

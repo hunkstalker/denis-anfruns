@@ -22,14 +22,14 @@ const { title, subtitle, imageUrl } = Astro.props
 	style="perspective: 1000px;"
 >
 	<div
-		class="card-inner relative h-full w-full overflow-hidden rounded-2xl bg-zinc-900 shadow-xl transition-all duration-200 ease-out"
+		class="card-inner relative size-full overflow-hidden rounded-2xl bg-zinc-900 shadow-xl transition-all duration-200 ease-out"
 		style="transform-style: preserve-3d; transform: rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));"
 	>
 		<!-- Background Image -->
 		<img
 			src={imageUrl}
 			alt={title}
-			class="absolute inset-0 h-full w-full object-cover"
+			class="absolute inset-0 size-full object-cover"
 			loading="lazy"
 		/>
 
@@ -67,7 +67,7 @@ const { title, subtitle, imageUrl } = Astro.props
 		</div>
 
 		<!-- Content -->
-		<div class="absolute bottom-0 left-0 right-0 z-10 p-4">
+		<div class="absolute bottom-0 inset-x-0 z-10 p-4">
 			<h3 class="text-lg font-bold text-white drop-shadow-md">{title}</h3>
 			{subtitle && <p class="text-sm text-zinc-200 drop-shadow-sm">{subtitle}</p>}
 		</div>

@@ -34,7 +34,7 @@ const MobileMenuItem = ({ item, closeMenu }: { item: MenuItem; closeMenu: () => 
 				>
 					{item.label}
 					<ChevronDown
-						className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+						className={`size-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
 					/>
 				</button>
 				<AnimatePresence>
@@ -121,7 +121,7 @@ export default function MobileMenu({ items }: Props) {
 						transition={{ duration: 0.2 }}
 						onClick={closeMenu}
 						onPointerDown={(e) => dragControls.start(e)}
-						className="fixed bottom-0 left-0 right-0 top-16 z-30 touch-none bg-black/50 backdrop-blur-sm"
+						className="fixed bottom-0 inset-x-0 top-16 z-30 touch-none bg-black/50 backdrop-blur-sm"
 					/>
 
 					{/* Menu Panel */}
@@ -142,7 +142,7 @@ export default function MobileMenu({ items }: Props) {
 						className="fixed bottom-0 left-0 top-16 z-40 w-64 border-r border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
 					>
 						{/* Filler to hide gap when dragging right */}
-						<div className="absolute bottom-0 right-full top-0 w-screen bg-white dark:bg-zinc-900" />
+						<div className="absolute inset-y-0 right-full w-screen bg-white dark:bg-zinc-900" />
 
 						<nav className="flex flex-col gap-1 pt-6">
 							{items.map((item) => {
