@@ -5,6 +5,7 @@ import ThemeToggle from '../ui/ThemeToggle.astro'
 import LanguagePicker from '../ui/LanguagePicker.astro'
 import MenuToggle from './MenuToggle'
 import MobileMenu from './MobileMenu'
+import NavDropdown from './NavDropdown'
 import Search from '../search/Search.astro'
 import SearchResults from '../search/SearchResults.astro'
 
@@ -60,18 +61,34 @@ const translations = ui
 // Obtener ruta actual para resaltar el menú activo
 const currentPath = Astro.url.pathname
 
+const getLocalizedPath = (path: string) =>
+	lang === 'es' ? path : `/${lang}${path === '/' ? '' : path}`
+
 const menuItems = navItems.map(item => {
-	const finalPath = lang === 'es' ? item.path : `/${lang}${item.path === '/' ? '' : item.path}`
-	const isActive = currentPath === finalPath || (item.path !== '/' && currentPath.startsWith(finalPath))
+	const finalPath = getLocalizedPath(item.path)
+	const isActive =
+		currentPath === finalPath || (item.path !== '/' && currentPath.startsWith(finalPath))
+
+	const children = item.children?.map(child => {
+		const childPath = getLocalizedPath(child.path)
+		const isChildActive =
+			currentPath === childPath || (child.path !== '/' && currentPath.startsWith(childPath))
+		return {
+			label: t(child.key),
+			link: childPath,
+			active: isChildActive,
+			enabled: child.enabled,
+		}
+	})
+
 	return {
 		label: t(item.key),
 		link: finalPath,
 		active: isActive,
-		enabled: item.enabled
+		enabled: item.enabled,
+		children,
 	}
 })
-
-
 ---
 
 <nav
@@ -88,15 +105,29 @@ const menuItems = navItems.map(item => {
 			<div class='hidden sm:inline-flex md:gap-1'>
 				<div class='text-center'>
 					{
-						menuItems.filter(item => item.enabled).map(item => (
-							<Button
-								text={item.label}
-								link={item.link}
-								enabled={item.enabled}
-								active={item.enabled && item.active}
-								class="w-32"
-							/>
-						))
+						menuItems
+							.filter(item => item.enabled)
+							.map(item =>
+								item.children ? (
+									<NavDropdown
+										client:load
+										label={item.label}
+										link={item.link}
+										enabled={item.enabled}
+										active={item.active}
+										items={item.children}
+										className='w-32'
+									/>
+								) : (
+									<Button
+										text={item.label}
+										link={item.link}
+										enabled={item.enabled}
+										active={item.enabled && item.active}
+										class='w-32'
+									/>
+								),
+							)
 					}
 				</div>
 			</div>
@@ -106,7 +137,7 @@ const menuItems = navItems.map(item => {
 				<!-- Botón Lupa (Solo Móvil) -->
 				<button
 					id='search-mobile-btn'
-					class='text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 md:hidden mr-3'
+					class='mr-3 text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 md:hidden'
 					aria-label={t('nav.search.label')}>
 					<SearchIcon class='h-5 w-5' />
 				</button>
