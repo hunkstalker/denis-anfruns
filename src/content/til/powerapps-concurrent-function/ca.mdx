@@ -1,10 +1,10 @@
 ---
-title: "Accelera la teva Power App amb Concurrent"
-lang: "ca"
+title: 'Accelera la teva Power App amb Concurrent'
+lang: 'ca'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
 
 Si carregues múltiples col·leccions a l'esdeveniment `App.OnStart` una darrere de l'altra amb `;;`, estàs perdent temps. La funció `Concurrent` avalua totes les fórmules alhora en paral·lel.
 
@@ -18,12 +18,12 @@ ClearCollect(Departamentos, ["IT", "HR", "Vendes"]);
 
 // ✅ Ràpid (paral·lel)
 Concurrent(
-    ClearCollect(Usuaris, Office365Users.SearchUser()),
-    ClearCollect(Departamentos, ["IT", "HR", "Vendes"])
-);`, 
-      lang: 'power fx' 
-    }
-  ]}
+ClearCollect(Usuaris, Office365Users.SearchUser()),
+ClearCollect(Departamentos, ["IT", "HR", "Vendes"])
+);`,
+lang: 'power fx'
+}
+]}
 />
 
 Això redueix el temps d'inici de l'aplicació dràsticament, especialment quan connectes amb múltiples fonts de dades.
@@ -31,5 +31,7 @@ Això redueix el temps d'inici de l'aplicació dràsticament, especialment quan 
 Fes-ho servir a l'inici de l'aplicació (`OnStart`) o botons que llancen molts processos independents.
 
 <Callout type="warning" title="Compte amb el separador" filled>
-  Recorda que si tens Power Apps configurat per a la **regió europea** hauràs de canviar la coma `,` per punt i coma `;` a les fórmules. I doble punt i coma `;;` per als salts de línia on normalment es posaria únicament un punt i coma `;`.
+	Recorda que si tens Power Apps configurat per a la **regió europea** hauràs de canviar la coma `,`
+	per punt i coma `;` a les fórmules. I doble punt i coma `;;` per als salts de línia on normalment
+	es posaria únicament un punt i coma `;`.
 </Callout>

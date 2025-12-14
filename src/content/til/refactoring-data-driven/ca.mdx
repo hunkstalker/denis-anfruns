@@ -1,9 +1,9 @@
 ---
-title: "Refactorització: De codi repetitiu a Data-Driven"
-lang: "ca"
+title: 'Refactorització: De codi repetitiu a Data-Driven'
+lang: 'ca'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 Una de les optimitzacions més satisfactòries en programació és passar d'una llista interminable de codi repetit a una elegant estructura basada en dades.
 
@@ -22,6 +22,7 @@ const text = originalText
     .replace('Vue', '<span id="hl-vue">Vue</span>');
 
 // Renderitzat manual infinit...
+
 <Icon icon={ReactIcon} target="hl-react" />
 <Icon icon={AstroIcon} target="hl-astro" />
 <Icon icon={VueIcon} target="hl-vue" />`, 
@@ -50,29 +51,30 @@ const technologies = [
 // 2. Lògica de reemplaçament dinàmica
 let processedText = originalText;
 technologies.forEach(tech => {
-    // Per què forEach aquí? (Veure nota al final)
-    // Utilitzem RegExp per reemplaçar totes les ocurrències dinàmicament
-    processedText = processedText.replace(
-        new RegExp(tech.name, 'g'), 
-        \`<span id="\${tech.id}">\${tech.name}</span>\`
-    );
+// Per què forEach aquí? (Veure nota al final)
+// Utilitzem RegExp per reemplaçar totes les ocurrències dinàmicament
+processedText = processedText.replace(
+new RegExp(tech.name, 'g'),
+\`<span id="\${tech.id}">\${tech.name}</span>\`
+);
 });
 
 // 3. Renderitzat dinàmic
 // En el teu template (React/Astro/etc):
 {technologies.map(tech => (
-    <Icon icon={tech.icon} target={tech.id} />
-))}`, 
-      lang: 'javascript' 
-    }
-  ]}
+<Icon icon={tech.icon} target={tech.id} />
+))}`,
+lang: 'javascript'
+}
+]}
 />
 
 ### Avantatges
+
 1.  **Mantenibilitat**: Per afegir alguna cosa nova, només afegeixes una línia a l'array `technologies`.
 2.  **Llegibilitat**: La lògica de "què fer" està separada de les "dades".
 3.  **Escalabilitat**: Pots tenir 3 o 300 tecnologies, el codi lògic no canvia.
 
 ## Lectura Recomanada
 
-*   [Quan utilitzar Map i quan ForEach?](/ca/til/javascript-map-vs-foreach)
+- [Quan utilitzar Map i quan ForEach?](/ca/til/javascript-map-vs-foreach)

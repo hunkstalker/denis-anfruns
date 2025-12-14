@@ -2,14 +2,14 @@
 	"folders": [
 		{
 			"path": ".",
-			"name": "🌐 Web Principal"
+			"name": "🌐 Web Principal",
 		},
 		{
 			"path": "packages/astro-search-badges",
-			"name": "📦 Astro Search Badges"
-		}
+			"name": "📦 Astro Search Badges",
+		},
 	],
 	"settings": {
-		"typescript.tsdk": "node_modules/typescript/lib"
-	}
+		"typescript.tsdk": "node_modules/typescript/lib",
+	},
 }

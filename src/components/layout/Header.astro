@@ -18,9 +18,15 @@ const years = experiencieYears()
 		animation: fadeInUp 0.8s ease-out forwards;
 	}
 
-	.delay-100 { animation-delay: 0.1s; }
-	.delay-200 { animation-delay: 0.2s; }
-	.delay-300 { animation-delay: 0.3s; }
+	.delay-100 {
+		animation-delay: 0.1s;
+	}
+	.delay-200 {
+		animation-delay: 0.2s;
+	}
+	.delay-300 {
+		animation-delay: 0.3s;
+	}
 
 	@keyframes fadeInUp {
 		from {
@@ -36,13 +42,13 @@ const years = experiencieYears()
 
 <header class="mt-6 text-center sm:mt-16 md:mt-24">
 	<h1
-		class="animate-fade-in-up transition-none mx-6 text-left text-[3.95rem] font-bold leading-[80px] tracking-wide text-zinc-900 drop-shadow-md dark:text-white sm:text-[4rem] md:mx-0 md:text-center lg:text-[5rem]"
+		class="animate-fade-in-up mx-6 text-left text-[3.95rem] font-bold leading-[80px] tracking-wide text-zinc-900 drop-shadow-md transition-none dark:text-white sm:text-[4rem] md:mx-0 md:text-center lg:text-[5rem]"
 	>
 		DENIS ANFRUNS MILLÁN
 	</h1>
 
 	<h2
-		class="animate-fade-in-up delay-100 transition-none text-lg mx-4 mb-2 mt-4 font-light tracking-wide dark:text-zinc-300 sm:mx-8 sm:mt-6 sm:text-xl md:mx-0 md:text-2xl xl:text-3xl"
+		class="animate-fade-in-up text-lg mx-4 mb-2 mt-4 font-light tracking-wide transition-none delay-100 dark:text-zinc-300 sm:mx-8 sm:mt-6 sm:text-xl md:mx-0 md:text-2xl xl:text-3xl"
 	>
 		{t('header.role')}
 		<span class="mx-1 font-normal text-zinc-500 sm:mx-2">|</span>
@@ -52,13 +58,13 @@ const years = experiencieYears()
 	</h2>
 
 	<p
-		class="animate-fade-in-up delay-200 transition-none sm:text-lg mx-4 mt-0 max-w-4xl text-base font-light dark:text-zinc-400 sm:mx-8 md:mx-0 md:mx-auto md:text-xl xl:text-2xl"
+		class="animate-fade-in-up sm:text-lg mx-4 mt-0 max-w-4xl text-base font-light transition-none delay-200 dark:text-zinc-400 sm:mx-8 md:mx-0 md:mx-auto md:text-xl xl:text-2xl"
 	>
 		{t('header.valueProp')}
 	</p>
 
 	<ul
-		class="animate-fade-in-up delay-300 mb-6 mt-8 flex flex-wrap justify-center gap-2 px-2 sm:mb-8 sm:mt-10 sm:gap-3 md:mb-10 md:mt-12"
+		class="animate-fade-in-up mb-6 mt-8 flex flex-wrap justify-center gap-2 px-2 delay-300 sm:mb-8 sm:mt-10 sm:gap-3 md:mb-10 md:mt-12"
 	>
 		{
 			SKILLS.map(({ name, Icon }) => (

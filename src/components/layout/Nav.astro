@@ -64,17 +64,17 @@ const currentPath = Astro.url.pathname
 const getLocalizedPath = (path: string) =>
 	lang === 'es' ? path : `/${lang}${path === '/' ? '' : path}`
 
-const menuItems = navItems.map(item => {
+const menuItems = navItems.map((item) => {
 	const finalPath = getLocalizedPath(item.path)
 	const isActive =
 		currentPath === finalPath || (item.path !== '/' && currentPath.startsWith(finalPath))
 
-	const children = item.children?.map(child => {
+	const children = item.children?.map((child) => {
 		const childPath = getLocalizedPath(child.path)
 		const isChildActive =
 			currentPath === childPath || (child.path !== '/' && currentPath.startsWith(childPath))
 		return {
-			label: t(child.key as keyof typeof ui[typeof lang]),
+			label: t(child.key as keyof (typeof ui)[typeof lang]),
 			link: childPath,
 			active: isChildActive,
 			enabled: child.enabled,
@@ -82,7 +82,7 @@ const menuItems = navItems.map(item => {
 	})
 
 	return {
-		label: t(item.key as keyof typeof ui[typeof lang]),
+		label: t(item.key as keyof (typeof ui)[typeof lang]),
 		link: finalPath,
 		active: isActive,
 		enabled: item.enabled,
@@ -93,22 +93,23 @@ const menuItems = navItems.map(item => {
 ---
 
 <nav
-	class='fixed left-0 right-0 top-0 z-50 border-b border-zinc-200/50 bg-white/70 shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70'>
-	<div class='container'>
-		<div class='flex items-center justify-between py-4 md:py-6'>
+	class="fixed left-0 right-0 top-0 z-50 border-b border-zinc-200/50 bg-white/70 shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70"
+>
+	<div class="container">
+		<div class="flex items-center justify-between py-4 md:py-6">
 			<!-- Menú Hamburguesa (Móvil) & Menu Portal -->
-			<div class='sm:hidden'>
+			<div class="sm:hidden">
 				<MenuToggle client:load label={t('nav.menu')} />
 				<MobileMenu client:load items={menuItems} />
 			</div>
 
 			<!-- Menú de Navegación Desktop (Enlaces) -->
-			<div class='hidden sm:inline-flex md:gap-1'>
-				<div class='text-center'>
+			<div class="hidden sm:inline-flex md:gap-1">
+				<div class="text-center">
 					{
 						menuItems
-							.filter(item => item.enabled)
-							.map(item =>
+							.filter((item) => item.enabled)
+							.map((item) =>
 								item.children ? (
 									<NavDropdown
 										client:load
@@ -117,7 +118,7 @@ const menuItems = navItems.map(item => {
 										enabled={item.enabled}
 										active={item.active}
 										items={item.children}
-										className='w-32'
+										className="w-32"
 									/>
 								) : (
 									<Button
@@ -125,7 +126,7 @@ const menuItems = navItems.map(item => {
 										link={item.link}
 										enabled={item.enabled}
 										active={item.enabled && item.active}
-										class='w-32'
+										class="w-32"
 										i18nKey={item.i18nKey}
 									/>
 								),
@@ -135,21 +136,23 @@ const menuItems = navItems.map(item => {
 			</div>
 
 			<!-- Zona Derecha (Buscador, Idioma, Tema) -->
-			<div class='flex items-center gap-4 md:gap-6'>
+			<div class="flex items-center gap-4 md:gap-6">
 				<!-- Botón Lupa (Solo Móvil) -->
 				<button
-					id='search-mobile-btn'
-					class='mr-3 text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 md:hidden'
-					aria-label={t('nav.search.label')}>
-					<SearchIcon class='h-5 w-5' />
+					id="search-mobile-btn"
+					class="mr-3 text-zinc-500 transition-colors hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 md:hidden"
+					aria-label={t('nav.search.label')}
+				>
+					<SearchIcon class="h-5 w-5" />
 				</button>
 
 				<!-- Barra de Búsqueda (Solo Desktop) - Estilo Híbrido -->
-				<div class='group/search relative hidden md:block'>
-					<div class='relative'>
+				<div class="group/search relative hidden md:block">
+					<div class="relative">
 						<span
-							class='pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-zinc-500 dark:text-zinc-400'>
-							<SearchIcon class='h-4 w-4' />
+							class="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center pl-3 text-zinc-500 dark:text-zinc-400"
+						>
+							<SearchIcon class="h-4 w-4" />
 						</span>
 
 						<SearchBadges
@@ -157,30 +160,32 @@ const menuItems = navItems.map(item => {
 							lang={lang}
 							translations={translations}
 							placeholder={t('nav.search') || 'Buscar...'}
-							width='w-96'
-							focusRingClass='focus:ring-[--tangerine]'
-							badgePadding='5.5rem'
+							width="w-96"
+							focusRingClass="focus:ring-[--tangerine]"
+							badgePadding="5.5rem"
 						/>
 					</div>
 
 					<!-- Mega-Dropdown de Resultados (Hybrid Overlay) -->
 					<!-- Overlay de fondo -->
 					<div
-						id='desktop-search-overlay'
-						class='fixed inset-x-0 top-[calc(100%+1px)] z-40 hidden h-screen bg-zinc-900/40 opacity-0 backdrop-blur-[2px]'>
+						id="desktop-search-overlay"
+						class="fixed inset-x-0 top-[calc(100%+1px)] z-40 hidden h-screen bg-zinc-900/40 opacity-0 backdrop-blur-[2px]"
+					>
 					</div>
 
 					<!-- Panel de Resultados (Mega-Dropdown) -->
 					<div
-						id='desktop-search-results'
-						class='invisible fixed inset-x-0 top-[6rem] z-50 mx-auto max-w-6xl origin-top -translate-y-4 transform overflow-hidden rounded-2xl border border-white/20 bg-white/40 opacity-0 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-out dark:border-white/10 dark:bg-zinc-900/50'>
+						id="desktop-search-results"
+						class="invisible fixed inset-x-0 top-[6rem] z-50 mx-auto max-w-6xl origin-top -translate-y-4 transform overflow-hidden rounded-2xl border border-white/20 bg-white/40 opacity-0 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-out dark:border-white/10 dark:bg-zinc-900/50"
+					>
 						<!-- Contenido Unificado -->
-						<div class='w-full'>
+						<div class="w-full">
 							<SearchResults
 								lang={lang}
-								mode='desktop'
-								inputId='search-badges-input'
-								resultsContainerId='desktop-unified-results'
+								mode="desktop"
+								inputId="search-badges-input"
+								resultsContainerId="desktop-unified-results"
 							/>
 						</div>
 					</div>
@@ -261,7 +266,7 @@ const menuItems = navItems.map(item => {
 
 	// Debounce y Listeners
 	// Event Listeners para el Componente SearchBadges (Desktop UI Logic: Placeholder etc)
-	
+
 	// Helper to get current lang (respects localStorage on 404 page)
 	const getLangForPlaceholder = (): keyof typeof ui => {
 		const is404 = document.getElementById('error-title') !== null
@@ -311,7 +316,7 @@ const menuItems = navItems.map(item => {
 	}
 
 	// Teclas Globales
-	document.addEventListener('keydown', e => {
+	document.addEventListener('keydown', (e) => {
 		if (e.key === 'Escape') {
 			if (isOpen) {
 				desktopInput?.blur()
@@ -332,7 +337,7 @@ const menuItems = navItems.map(item => {
 	if (is404Page) {
 		const savedLang = (localStorage.getItem('selectedLang') || 'es') as keyof typeof ui
 		const translations = ui[savedLang] || ui[defaultLang]
-		
+
 		// Update all elements with data-i18n attribute
 		document.querySelectorAll('[data-i18n]').forEach((el) => {
 			const key = el.getAttribute('data-i18n') as keyof typeof translations
@@ -343,9 +348,13 @@ const menuItems = navItems.map(item => {
 
 		// Update search input placeholders
 		const searchPlaceholder = translations['nav.search'] || 'Buscar...'
-		const desktopSearchInput = document.getElementById('search-badges-input') as HTMLInputElement | null
-		const mobileSearchInput = document.getElementById('mobile-search-input') as HTMLInputElement | null
-		
+		const desktopSearchInput = document.getElementById(
+			'search-badges-input',
+		) as HTMLInputElement | null
+		const mobileSearchInput = document.getElementById(
+			'mobile-search-input',
+		) as HTMLInputElement | null
+
 		if (desktopSearchInput) desktopSearchInput.placeholder = searchPlaceholder
 		if (mobileSearchInput) mobileSearchInput.placeholder = searchPlaceholder
 	}

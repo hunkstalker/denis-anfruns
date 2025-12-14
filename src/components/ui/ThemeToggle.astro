@@ -61,21 +61,21 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 	data-disable-hover-on-touch="true"
 	data-title-light={titleLight}
 	data-title-dark={titleDark}
-	class="group relative rounded-lg p-2 border-none transition-[background-color] duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 h-10 w-10 flex items-center justify-center"
+	class="group relative flex h-10 w-10 items-center justify-center rounded-lg border-none p-2 transition-[background-color] duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
 	type="button"
 	aria-label={t('theme.toggle')}
 	aria-pressed="true"
 >
 	<!-- Sun icon (visible in light mode) -->
 	<span
-		class="absolute inset-0 flex items-center justify-center transition-opacity duration-200 opacity-100 dark:opacity-0 text-zinc-500 group-hover:text-zinc-900"
+		class="absolute inset-0 flex items-center justify-center text-zinc-500 opacity-100 transition-opacity duration-200 group-hover:text-zinc-900 dark:opacity-0"
 	>
 		<Fragment set:html={themeSun} />
 	</span>
 
 	<!-- Moon icon (visible in dark mode) -->
 	<span
-		class="absolute inset-0 flex items-center justify-center transition-opacity duration-200 opacity-0 dark:opacity-100 text-zinc-400 dark:group-hover:text-white"
+		class="absolute inset-0 flex items-center justify-center text-zinc-400 opacity-0 transition-opacity duration-200 dark:opacity-100 dark:group-hover:text-white"
 	>
 		<Fragment set:html={themeMoon} />
 	</span>
@@ -98,7 +98,7 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 			const isDark = el.classList.contains('dark')
 			const titleLight = btn.getAttribute('data-title-light')
 			const titleDark = btn.getAttribute('data-title-dark')
-			
+
 			btn.setAttribute('aria-pressed', String(isDark))
 			btn.setAttribute('title', isDark ? titleLight : titleDark)
 		}
@@ -127,10 +127,10 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 			'click',
 			() => {
 				addTapFeedback()
-				
+
 				// Deshabilitar transiciones temporalmente
 				el.classList.add('disable-transitions')
-				
+
 				const isDark = el.classList.toggle('dark')
 
 				// Sincronizar estilos inline críticos para evitar flash/inconsistencias

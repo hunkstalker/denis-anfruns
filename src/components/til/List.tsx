@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import TilCard from './TilCard'
+import TilCard from './Card'
 import type { TilPost } from '../../utils/til-content'
 
 interface Props {

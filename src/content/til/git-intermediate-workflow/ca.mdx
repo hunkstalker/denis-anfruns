@@ -1,68 +1,72 @@
 ---
-title: "Flux de treball intermedi amb Git"
-lang: "ca"
+title: 'Flux de treball intermedi amb Git'
+lang: 'ca'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 Un cop domines el `commit` i `push`, és hora de millorar el teu flux de treball per gestionar branques, canvis temporals i revisions.
 
 ### 1. Gestió de Branques (Modern vs Clàssic)
+
 Crear i canviar de branques és essencial per no trencar `main`.
 
 <CodeTabs
-  items={[
-    {
-      label: 'Modern (Recomanat)',
-      code: `git switch -c feature/nova-funcionalitat  # Crear i canviar
+	items={[
+		{
+			label: 'Modern (Recomanat)',
+			code: `git switch -c feature/nova-funcionalitat  # Crear i canviar
 git switch main                           # Tornar a main`,
-      lang: 'bash'
-    },
-    {
-      label: 'Clàssic',
-      code: `git checkout -b feature/nova-funcionalitat # Crear i canviar
+			lang: 'bash',
+		},
+		{
+			label: 'Clàssic',
+			code: `git checkout -b feature/nova-funcionalitat # Crear i canviar
 git checkout main                           # Tornar a main`,
-      lang: 'bash'
-    }
-  ]}
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 2. Guardat Temporal (Stash)
+
 Tens canvis a mitges però necessites canviar de branca urgentment? No facis commit de coses trencades, fes servir la "butxaca".
 
 <CodeTabs
-  items={[
-    {
-      label: 'Bash',
-      code: `git stash                   # Guarda canvis i neteja el directori
+	items={[
+		{
+			label: 'Bash',
+			code: `git stash                   # Guarda canvis i neteja el directori
 git stash pop               # Recupera els últims canvis guardats
 git stash list              # Veure tot el que tens guardat`,
-      lang: 'bash'
-    }
-  ]}
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 3. Historial Llegible
+
 Veure l'historial per defecte pot ser aclaparador.
 
 <CodeTabs
-  items={[
-    {
-      label: 'Bash',
-      code: `git log --oneline --graph --all  # Arbre visual i compacte`,
-      lang: 'bash'
-    }
-  ]}
+	items={[
+		{
+			label: 'Bash',
+			code: `git log --oneline --graph --all  # Arbre visual i compacte`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 4. Desfer Canvis
+
 <CodeTabs
-  items={[
-    {
-      label: 'Bash',
-      code: `git restore arxiu.txt           # Descarta canvis locals
+	items={[
+		{
+			label: 'Bash',
+			code: `git restore arxiu.txt           # Descarta canvis locals
 git restore --staged arxiu.txt  # Treure de l'stage (unstage)`,
-      lang: 'bash'
-    }
-  ]}
+			lang: 'bash',
+		},
+	]}
 />

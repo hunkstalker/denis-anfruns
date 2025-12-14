@@ -1,17 +1,15 @@
 ---
-
 import { getDevlogs, type DevlogPost } from '../../utils/devlog-content'
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import BackLink from '../../components/ui/BackLink.astro'
-import TableOfContents from '../../components/blog/TableOfContents.astro'
-import SeriesWidget from '../../components/blog/SeriesWidget.astro'
-import SeriesGithubCard from '../../components/blog/SeriesGithubCard.astro'
+import TableOfContents from '../../components/devlog/TableOfContents.astro'
+import SeriesWidget from '../../components/devlog/SeriesWidget.astro'
+import SeriesGithubCard from '../../components/devlog/SeriesGithubCard.astro'
 import { getLangFromSlug, getBaseSlug } from '../../utils/blogi18n'
 import { useTranslations } from '../../i18n/utils'
 
 import ChevronUp from '../../icons/chevron-up.svg'
 import ChevronRight from '../../icons/chevron-right.svg'
-import ChevronLeft from '../../icons/chevron-left.svg'
 import ListIcon from '../../icons/list.svg'
 
 export async function getStaticPaths() {
@@ -37,9 +35,9 @@ if (post.data.series) {
 	const seriesPosts = allPosts
 		.filter((p) => p.data.series === post.data.series && getLangFromSlug(p.slug) === 'es')
 		.sort((a, b) => {
-            if (!a.data.pubDate || !b.data.pubDate) return 0
-            return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-        })
+			if (!a.data.pubDate || !b.data.pubDate) return 0
+			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+		})
 	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }
@@ -51,9 +49,15 @@ if (post.data.series) {
 		animation: fadeInUp 0.8s ease-out forwards;
 	}
 
-	.delay-100 { animation-delay: 0.1s; }
-	.delay-200 { animation-delay: 0.2s; }
-	.delay-300 { animation-delay: 0.3s; }
+	.delay-100 {
+		animation-delay: 0.1s;
+	}
+	.delay-200 {
+		animation-delay: 0.2s;
+	}
+	.delay-300 {
+		animation-delay: 0.3s;
+	}
 
 	@keyframes fadeInUp {
 		from {
@@ -98,7 +102,9 @@ if (post.data.series) {
 				)
 			}
 
-			<div class="animate-fade-in-up delay-100 mb-4 flex flex-wrap items-center gap-4 font-mono text-sm text-zinc-500">
+			<div
+				class="animate-fade-in-up mb-4 flex flex-wrap items-center gap-4 font-mono text-sm text-zinc-500 delay-100"
+			>
 				<time datetime={post.data.pubDate.toISOString()}>
 					{
 						post.data.pubDate.toLocaleString('es-ES', {
@@ -131,12 +137,12 @@ if (post.data.series) {
 			</div>
 
 			<h1
-				class="animate-fade-in-up delay-200 mb-6 text-balance text-3xl font-bold leading-tight dark:text-white md:text-5xl"
+				class="animate-fade-in-up mb-6 text-balance text-3xl font-bold leading-tight delay-200 dark:text-white md:text-5xl"
 			>
 				{post.data.title}
 			</h1>
 
-			<div class="animate-fade-in-up delay-300 flex flex-wrap gap-2">
+			<div class="animate-fade-in-up flex flex-wrap gap-2 delay-300">
 				{
 					post.data.tags.map((tag) => (
 						<span class="rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-sm font-medium text-zinc-600 dark:border-zinc-700/50 dark:bg-zinc-800 dark:text-zinc-400">
@@ -145,7 +151,7 @@ if (post.data.series) {
 					))
 				}
 			</div>
-			<hr class="animate-fade-in-up delay-300 mt-8 border-zinc-200 dark:border-zinc-800" />
+			<hr class="animate-fade-in-up mt-8 border-zinc-200 delay-300 dark:border-zinc-800" />
 		</div>
 
 		<!-- Mobile Table of Contents (Collapsible) -->
@@ -158,7 +164,10 @@ if (post.data.series) {
 				<ListIcon class="h-5 w-5 text-zinc-500" />
 				Tabla de contenidos
 			</summary>
-			<div class="toc-content overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 0; opacity: 0;">
+			<div
+				class="toc-content overflow-hidden transition-all duration-300 ease-in-out"
+				style="max-height: 0; opacity: 0;"
+			>
 				<div class="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-700">
 					<TableOfContents headings={headings} lang={lang} />
 				</div>
@@ -220,22 +229,22 @@ if (post.data.series) {
 						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
 						// Force reflow
 						tocContent.offsetHeight
-						
+
 						tocContent.style.maxHeight = '0'
 						tocContent.style.opacity = '0'
-						
+
 						setTimeout(() => {
 							tocDetails.open = false
 						}, 300)
 					} else {
 						// Opening
 						tocDetails.open = true
-						
+
 						tocContent.style.maxHeight = '0'
 						tocContent.style.opacity = '0'
 						// Force reflow
 						tocContent.offsetHeight
-						
+
 						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
 						tocContent.style.opacity = '1'
 
@@ -260,8 +269,6 @@ if (post.data.series) {
 			<TableOfContents headings={headings} lang={lang} />
 
 			{post.data.series && <SeriesGithubCard seriesId={post.data.series} />}
-
-
 		</div>
 	</aside>
 

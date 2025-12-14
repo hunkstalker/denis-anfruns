@@ -1,9 +1,9 @@
 ---
-title: "FOUC a Astro: Guia Definitiva, Part I (Script + Config)"
-lang: "ca"
+title: 'FOUC a Astro: Guia Definitiva, Part I (Script + Config)'
+lang: 'ca'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 El FOUC (Flash of Unstyled Content) és un dels problemes que més m'ha costat d'arreglar sempre. És un mal de cap. Ara, en aquest projecte em vaig trobar amb dos nivells de FOUC, i aquí explico com vaig solucionar tots dos.
 
@@ -14,11 +14,11 @@ El navegador pinta la pàgina en blanc per defecte abans de carregar els teus es
 
 Cal tenir en compte que això a més forma part de la lògica per controlar entre temes clar i fosc en iniciar el lloc.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'BaseLayout.astro', 
-      code: `<head>
+<CodeTabs
+	items={[
+		{
+			label: 'BaseLayout.astro',
+			code: `<head>
   <script is:inline>
     (function() {
       const theme = localStorage.getItem('theme');
@@ -36,10 +36,10 @@ Cal tenir en compte que això a més forma part de la lògica per controlar entr
       }
     })();
   </script>
-</head>`, 
-      lang: 'html' 
-    }
-  ]}
+</head>`,
+			lang: 'html',
+		},
+	]}
 />
 
 ## Nivell 2: El Salt de Layout (CSS Diferit)
@@ -60,12 +60,12 @@ Moure els plugins d'optimització **al final** de l'array `integrations` o... el
   // MALAMENT: inline() abans de mdx()
   // integrations: [tailwind(), react(), inline(), mdx()],
 
-  // BÉ: Optimitzacions al final (o deshabilitades si donen problemes)
-  integrations: [tailwind(), react(), mdx() /*, inline() */],
-});`, 
-      lang: 'javascript' 
-    }
-  ]}
+// BÉ: Optimitzacions al final (o deshabilitades si donen problemes)
+integrations: [tailwind(), react(), mdx() /*, inline() */],
+});`,
+lang: 'javascript'
+}
+]}
 />
 
 Aquesta integració injecta CSS a l'HTML, hauria de servir per optimitzar la càrrega, però almenys en el meu cas va ser a costa d'afegir-me aquest FOUC.

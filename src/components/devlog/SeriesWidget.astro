@@ -21,11 +21,11 @@ const allDevlogs = await getDevlogs()
 const seriesPosts = allDevlogs
 	.filter((post) => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
 	.sort((a: DevlogPost, b: DevlogPost) => {
-        if (!a.data.pubDate || !b.data.pubDate) {
-             return 0
-        }
-        return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-    })
+		if (!a.data.pubDate || !b.data.pubDate) {
+			return 0
+		}
+		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+	})
 
 if (seriesPosts.length < 2) return null
 
@@ -50,9 +50,7 @@ const getPath = (slug: string) =>
 							class="series-status absolute left-0 top-0.5 z-10 flex h-6 w-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950"
 							data-slug={post.slug}
 						>
-							<CheckIcon
-								class="check-icon h-3.5 w-3.5 text-white opacity-0 transition-opacity"
-							/>
+							<CheckIcon class="check-icon h-3.5 w-3.5 text-white opacity-0 transition-opacity" />
 							{isCurrent && (
 								<div class="current-dot absolute h-2 w-2 rounded-full bg-[--tangerine]" />
 							)}

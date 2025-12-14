@@ -17,7 +17,7 @@ interface NavDropdownProps {
 	className?: string
 }
 
-const NavDropdown = ({ label, link, active, enabled, items, className }: NavDropdownProps) => {
+const NavDropdown = ({ label, link, active, items, className }: NavDropdownProps) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
 
@@ -36,26 +36,28 @@ const NavDropdown = ({ label, link, active, enabled, items, className }: NavDrop
 		setTimeoutId(id)
 	}
 
-    // Base classes matching Button.astro structure but WITHOUT margins (margins moved to wrapper)
-    const baseClasses = 'relative py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal inline-block text-center'
-    
-    // Active/Enabled logic matching Button.astro
-    const stateClasses = active 
-        ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
-        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800'
+	// Base classes matching Button.astro structure but WITHOUT margins (margins moved to wrapper)
+	const baseClasses =
+		'relative py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal inline-block text-center'
+
+	// Active/Enabled logic matching Button.astro
+	const stateClasses = active
+		? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
+		: 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800'
 
 	return (
 		<div
-			className='relative inline-block text-left m-2'
+			className="relative m-2 inline-block text-left"
 			onMouseEnter={handleMouseEnter}
-			onMouseLeave={handleMouseLeave}>
+			onMouseLeave={handleMouseLeave}
+		>
 			{/* Main Button / Link - Matching Button.astro structure */}
 			<a
 				href={link}
 				className={`${baseClasses} ${stateClasses} ${className || ''}`}
 				aria-expanded={isOpen}
 			>
-                {label}
+				{label}
 			</a>
 
 			{/* Dropdown Panel */}
@@ -66,8 +68,9 @@ const NavDropdown = ({ label, link, active, enabled, items, className }: NavDrop
 						animate={{ opacity: 1, y: 0, x: '-50%' }}
 						exit={{ opacity: 0, y: 10, x: '-50%' }}
 						transition={{ duration: 0.2 }}
-						className='absolute top-full left-1/2 mt-2 w-48 rounded-xl border border-zinc-200/50 bg-white/80 p-2 shadow-2xl backdrop-blur-xl ring-1 ring-black/5 dark:border-white/10 dark:bg-zinc-900/80 dark:ring-white/10'>
-						<div className='flex flex-col gap-1'>
+						className="absolute left-1/2 top-full mt-2 w-48 rounded-xl border border-zinc-200/50 bg-white/80 p-2 shadow-2xl ring-1 ring-black/5 backdrop-blur-xl dark:border-white/10 dark:bg-zinc-900/80 dark:ring-white/10"
+					>
+						<div className="flex flex-col gap-1">
 							{items.map((item, index) => (
 								<a
 									key={index}
@@ -77,7 +80,8 @@ const NavDropdown = ({ label, link, active, enabled, items, className }: NavDrop
 										item.active
 											? 'bg-zinc-100 font-medium text-zinc-900 dark:bg-white/10 dark:text-white'
 											: 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-zinc-200'
-									}`}>
+									}`}
+								>
 									{item.label}
 								</a>
 							))}

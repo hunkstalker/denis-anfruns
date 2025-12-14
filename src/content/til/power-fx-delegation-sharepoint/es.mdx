@@ -1,10 +1,10 @@
 ---
-title: "Delegación Power FX en SharePoint"
-description: "Cómo manejar grandes listas y evitar el límite de 500/2000 items."
-lang: "es"
+title: 'Delegación Power FX en SharePoint'
+description: 'Cómo manejar grandes listas y evitar el límite de 500/2000 items.'
+lang: 'es'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 # Delegación Power FX en SharePoint
 
@@ -13,8 +13,9 @@ La "delegación" es la capacidad de Power Apps de decir al servidor: "Filtra tú
 SharePoint tiene limitaciones severas con esto. Muchas funciones no son delegables, lo que significa que Power Apps tiene que descargar los primeros 500 (configurable hasta un máximo de 2000 en la configuración de la app) registros y filtrarlos **localmente**. Si tu dato está en el registro 2001, **nunca lo verás**.
 
 ### Funciones no delegables comunes
-*   Manipulación de fechas compleja (ej: `Month(DateColumn)`).
-*   Búsquedas de texto complejas (ej: `Search` en columnas numéricas).
+
+- Manipulación de fechas compleja (ej: `Month(DateColumn)`).
+- Búsquedas de texto complejas (ej: `Search` en columnas numéricas).
 
 ### Solución: Columnas Calculadas o Predeterminados
 
@@ -28,10 +29,10 @@ En lugar de calcular en tiempo de ejecución, prepara los datos.
 Filter(Orders, Year(Created) = 2024)
 
 // ✅ Delegable (pasa un rango de fechas al servidor)
-Filter(Orders, Created >= Date(2024,1,1) && Created <= Date(2024,12,31))`, 
-      lang: 'power fx' 
-    }
-  ]}
+Filter(Orders, Created >= Date(2024,1,1) && Created <= Date(2024,12,31))`,
+lang: 'power fx'
+}
+]}
 />
 
 Ya te habrás encontrado el triángulo amarillo ⚠️ por todas partes, pero no lo odies es un buen chivato, aprovéchalo para saber dónde optimizar tus apps.

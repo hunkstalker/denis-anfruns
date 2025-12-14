@@ -1,25 +1,25 @@
 ---
-title: "Comandes bàsiques de Git per iniciar un projecte"
-lang: "ca"
+title: 'Comandes bàsiques de Git per iniciar un projecte'
+lang: 'ca'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 Llista ràpida de les comandes essencials per inicialitzar un repositori local i pujar-lo a GitHub per primera vegada.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git init
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
 git remote add origin {url-del-repositori}
-git push -u origin main`, 
-      lang: 'bash' 
-    }
-  ]}
+git push -u origin main`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### Què fa cada comanda
@@ -28,6 +28,6 @@ git push -u origin main`,
 - **`git add .`**: La paraula `add` serveix per afegir canvis a l'stage (preparació) i el punt `.` selecciona tots els fitxers.
 - **`git commit -m "Initial commit"`**: Crea el primer commit. El flag `-m` permet afegir el missatge del commit directament.
 - **`git branch -M main`**: Reanomena la branca actual a `main`.
-    > **Nota**: Això és útil si la teva configuració per defecte crea la branca com a `master`.
+  > **Nota**: Això és útil si la teva configuració per defecte crea la branca com a `master`.
 - **`git remote add origin ...`**: Vincula el repositori local amb el remot. `origin` és l'àlies que farem servir per referir-nos a l'URL del repositori (https://github.com/hunkstalker/stardraw).
 - **`git push -u origin main`**: Puja els canvis a GitHub. El flag `-u` vincula la teva branca local `main` amb la remota `origin/main`, permetent-te fer servir simplement `git push` en el futur.

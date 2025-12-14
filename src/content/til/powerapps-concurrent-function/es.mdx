@@ -1,10 +1,10 @@
 ---
-title: "Acelera tu Power App con Concurrent"
-lang: "es"
+title: 'Acelera tu Power App con Concurrent'
+lang: 'es'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
 
 Si cargas múltiples colecciones en el evento `App.OnStart` una detrás de otra con `;;`, estás perdiendo tiempo. La función `Concurrent` evalúa todas las fórmulas al mismo tiempo en paralelo.
 
@@ -18,12 +18,12 @@ ClearCollect(Departamentos, ["IT", "HR", "Ventas"]);
 
 // ✅ Rápido (paralelo)
 Concurrent(
-    ClearCollect(Usuarios, Office365Users.SearchUser()),
-    ClearCollect(Departamentos, ["IT", "HR", "Ventas"])
-);`, 
-      lang: 'power fx' 
-    }
-  ]}
+ClearCollect(Usuarios, Office365Users.SearchUser()),
+ClearCollect(Departamentos, ["IT", "HR", "Ventas"])
+);`,
+lang: 'power fx'
+}
+]}
 />
 
 Esto reduce el tiempo de inicio de la aplicación drásticamente, especialmente cuando conectas con múltiples fuentes de datos.
@@ -31,5 +31,7 @@ Esto reduce el tiempo de inicio de la aplicación drásticamente, especialmente 
 Úsalo en el inicio de la aplicación (`OnStart`) o botones que lanzan muchos procesos independientes.
 
 <Callout type="warning" title="Ojo con el separador" filled>
-  Recuerda que si tienes Power Apps configurado para la **región europea** tendrás que cambiar la coma `,` por punto y coma `;` en las fórmulas. Y Doble punto y coma `;;` para saltos de línea donde normalmente se pondría únicamente un punto y coma `;`.
+	Recuerda que si tienes Power Apps configurado para la **región europea** tendrás que cambiar la
+	coma `,` por punto y coma `;` en las fórmulas. Y Doble punto y coma `;;` para saltos de línea
+	donde normalmente se pondría únicamente un punto y coma `;`.
 </Callout>

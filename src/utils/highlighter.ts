@@ -20,7 +20,7 @@ export const getHighlighterInstance = async () => {
 				'mdx',
 				'markdown',
 				'diff',
-				'shell'
+				'shell',
 			],
 		})
 	}

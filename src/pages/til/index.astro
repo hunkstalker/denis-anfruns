@@ -3,48 +3,40 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import BackLink from '../../components/ui/BackLink.astro'
 import { getTils } from '../../utils/til-content'
 import { useTranslations } from '../../i18n/utils'
-import TilGrid from '../../components/blog/TilGrid'
+import Grid from '../../components/til/Grid'
 
 const lang = 'es'
 const t = useTranslations(lang)
 
 const tilCollection = await getTils()
 const tils = tilCollection
-	.filter(p => p.data.lang === lang)
-	.filter(p => p.data.lang === lang && p.data.pubDate)
+	.filter((p) => p.data.lang === lang)
+	.filter((p) => p.data.lang === lang && p.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 ---
 
-<ContentLayout
-	title={t('blog.til')}
-	siteTitle={`TIL - ${t('blog.til')}`}
-	lang={lang}
->
+<ContentLayout title={t('blog.til')} siteTitle={`TIL - ${t('blog.til')}`} lang={lang}>
 	<div class="lg:col-span-12">
 		<div class="mb-8">
-			<BackLink 
-				href={lang === 'es' ? '/blog' : `/${lang}/blog`} 
-				label={t('blog.backToBlog')} 
-			/>
-			
-			<h1
-				class='mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200'>
+			<BackLink href={lang === 'es' ? '/blog' : `/${lang}/blog`} label={t('blog.backToBlog')} />
+
+			<h1 class="mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200">
 				{t('blog.til')}
 			</h1>
 
-			<p class='text-lg text-zinc-500'>{t('blog.tilDescription')}</p>
+			<p class="text-lg text-zinc-500">{t('blog.tilDescription')}</p>
 			<hr class="animate-fade-in-up mt-8 border-zinc-200 dark:border-zinc-800" />
 		</div>
 
-		<TilGrid 
-			client:load 
-			posts={tils} 
-			lang={lang} 
-			labels={{ 
-				all: t('search.all'), 
+		<Grid
+			client:load
+			posts={tils}
+			lang={lang}
+			labels={{
+				all: t('search.all'),
 				noResults: t('blog.withoutTILs'),
-				readNote: t('blog.readNote')
-			}} 
+				readNote: t('blog.readNote'),
+			}}
 		/>
 	</div>
 </ContentLayout>

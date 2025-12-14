@@ -34,7 +34,7 @@ function getPathForLang(lang: string) {
 	}
 
 	let path = '/' + newSegments.join('/')
-	
+
 	// Ensure trailing slash for non-root paths to avoid 308 redirects
 	if (path !== '/' && !path.endsWith('/')) {
 		path += '/'
@@ -70,8 +70,19 @@ function getPathForLang(lang: string) {
 
 <script>
 	// CSS class constants for language button states
-	const ACTIVE_CLASSES = ['pointer-events-none', 'scale-110', 'cursor-default', 'text-[var(--tangerine-hover)]', 'dark:text-[var(--tangerine)]']
-	const INACTIVE_CLASSES = ['text-zinc-500', 'hover:text-zinc-800', 'dark:text-zinc-400', 'dark:hover:text-zinc-200']
+	const ACTIVE_CLASSES = [
+		'pointer-events-none',
+		'scale-110',
+		'cursor-default',
+		'text-[var(--tangerine-hover)]',
+		'dark:text-[var(--tangerine)]',
+	]
+	const INACTIVE_CLASSES = [
+		'text-zinc-500',
+		'hover:text-zinc-800',
+		'dark:text-zinc-400',
+		'dark:hover:text-zinc-200',
+	]
 
 	const links = document.querySelectorAll('.language-link')
 	const is404Page = document.getElementById('error-title') !== null

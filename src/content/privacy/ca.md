@@ -3,8 +3,6 @@ title: 'Política de Privacitat'
 lastUpdated: '17/11/2025'
 ---
 
-
-
 Darrera actualització: 17/11/2025
 
 ## 1. Responsable del Tractament
@@ -20,14 +18,14 @@ Aquesta web personal no recull dades personals dels visitants. No existeixen for
 
 Aquest lloc utilitza únicament **cookies tècniques de Cloudflare** amb la finalitat de protegir la web davant de bots i atacs. Aquestes cookies són:
 
-*   `cf_clearance`: permet que Cloudflare mantingui validat l'accés.
+- `cf_clearance`: permet que Cloudflare mantingui validat l'accés.
 
 Aquestes cookies:
 
-*   Són necessàries per al funcionament segur del lloc.
-*   No serveixen per a seguiment ni publicitat.
-*   No emmagatzemen informació personal identificable.
-*   Estan exemptes de consentiment segons la normativa vigent.
+- Són necessàries per al funcionament segur del lloc.
+- No serveixen per a seguiment ni publicitat.
+- No emmagatzemen informació personal identificable.
+- Estan exemptes de consentiment segons la normativa vigent.
 
 ## 4. Enllaços Externs
 

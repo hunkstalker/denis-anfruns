@@ -3,8 +3,6 @@ title: 'Privacy Policy'
 lastUpdated: '17/11/2025'
 ---
 
-
-
 Last updated: 17/11/2025
 
 ## 1. Data Controller
@@ -20,14 +18,14 @@ This personal website does not collect personal data from visitors. There are no
 
 This site only uses **technical cookies from Cloudflare** in order to protect the website against bots and attacks. These cookies are:
 
-*   `cf_clearance`: allows Cloudflare to keep access validated.
+- `cf_clearance`: allows Cloudflare to keep access validated.
 
 These cookies:
 
-*   Are necessary for the secure operation of the site.
-*   Are not used for tracking or advertising.
-*   Do not store personally identifiable information.
-*   Are exempt from consent according to current regulations.
+- Are necessary for the secure operation of the site.
+- Are not used for tracking or advertising.
+- Do not store personally identifiable information.
+- Are exempt from consent according to current regulations.
 
 ## 4. External Links
 

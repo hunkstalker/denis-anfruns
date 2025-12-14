@@ -1,11 +1,11 @@
 ---
-title: "Rendimiento con Collections"
-description: "Caché local para reducir llamadas de red en Canvas Apps."
-lang: "es"
+title: 'Rendimiento con Collections'
+description: 'Caché local para reducir llamadas de red en Canvas Apps.'
+lang: 'es'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
 
 # Rendimiento con Collections
 
@@ -25,22 +25,24 @@ Gallery1.Items = SP_CategoryList
 // ✅ Rápido: Carga una vez, lee mil veces desde memoria
 // En App.OnStart:
 Concurrent(
-    ClearCollect(colMenus, SP_MenuList),
-    ClearCollect(colCategories, SP_CategoryList)
+ClearCollect(colMenus, SP_MenuList),
+ClearCollect(colCategories, SP_CategoryList)
 );
 
 // En la Galería:
-Gallery1.Items = colCategories`, 
-      lang: 'power fx' 
-    }
-  ]}
+Gallery1.Items = colCategories`,
+lang: 'power fx'
+}
+]}
 />
 
 ### Beneficios
-*   **Velocidad instantánea**: La navegación entre pantallas se siente nativa porque los datos ya están ahí.
-*   **Menos "puntos caminantes"**: Reduces los indicadores de carga.
-*   **Delegación**: Puedes manipular las colecciones localmente sin las restricciones de delegación de SharePoint (para conjuntos de datos < 2000 items).
+
+- **Velocidad instantánea**: La navegación entre pantallas se siente nativa porque los datos ya están ahí.
+- **Menos "puntos caminantes"**: Reduces los indicadores de carga.
+- **Delegación**: Puedes manipular las colecciones localmente sin las restricciones de delegación de SharePoint (para conjuntos de datos < 2000 items).
 
 <Callout type="warning" title="Cuidado con el volumen" filled>
-  No intentes cargar tablas de 50.000 filas en una colección móvil. Limítate a datos maestros o de configuración. Para grandes volúmenes, sigue usando delegación directa.
+	No intentes cargar tablas de 50.000 filas en una colección móvil. Limítate a datos maestros o de
+	configuración. Para grandes volúmenes, sigue usando delegación directa.
 </Callout>

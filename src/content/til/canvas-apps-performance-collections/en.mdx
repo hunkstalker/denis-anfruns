@@ -1,11 +1,11 @@
 ---
-title: "Performance with Collections"
-description: "Local caching to reduce network calls in Canvas Apps."
-lang: "en"
+title: 'Performance with Collections'
+description: 'Local caching to reduce network calls in Canvas Apps.'
+lang: 'en'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
 
 # Performance with Collections
 
@@ -25,23 +25,25 @@ Gallery1.Items = SP_CategoryList
 // ✅ Fast: Load once, read a thousand times from memory
 // In App.OnStart:
 Concurrent(
-    ClearCollect(colMenus, SP_MenuList),
-    ClearCollect(colCategories, SP_CategoryList)
+ClearCollect(colMenus, SP_MenuList),
+ClearCollect(colCategories, SP_CategoryList)
 );
 
 // In the Gallery:
-Gallery1.Items = colCategories`, 
-      lang: 'power fx' 
-    }
-  ]}
+Gallery1.Items = colCategories`,
+lang: 'power fx'
+}
+]}
 />
 
 ### Benefits
-*   **Instant Speed**: Navigation between screens feels native because the data is already there.
-*   **Fewer "marching ants"**: You reduce loading indicators.
-*   **Delegation**: You can manipulate collections locally without SharePoint delegation restrictions (for datasets < 2000 items).
+
+- **Instant Speed**: Navigation between screens feels native because the data is already there.
+- **Fewer "marching ants"**: You reduce loading indicators.
+- **Delegation**: You can manipulate collections locally without SharePoint delegation restrictions (for datasets < 2000 items).
 
 <Callout type="warning" title="Mind the volume" filled>
-  Do not try to load tables of 50,000 rows into a mobile collection. Stick to master or configuration data. For large volumes, continue using direct delegation.
+	Do not try to load tables of 50,000 rows into a mobile collection. Stick to master or
+	configuration data. For large volumes, continue using direct delegation.
 </Callout>
 ```

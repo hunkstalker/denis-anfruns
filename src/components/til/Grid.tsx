@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import TilCard from './TilCard'
+import TilCard from './Card'
 import type { TilPost } from '../../utils/til-content'
 
 interface Props {
@@ -58,13 +58,13 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 		<div className="w-full">
 			{/* Filters */}
 			{/* Filters */}
-			<div className="mb-10 flex w-full gap-2 overflow-x-auto pb-4 md:flex-wrap md:pb-0 no-scrollbar items-center">
+			<div className="no-scrollbar mb-10 flex w-full items-center gap-2 overflow-x-auto pb-4 md:flex-wrap md:pb-0">
 				<button
 					onClick={() => setFilter('all')}
 					className={`w-24 shrink-0 rounded-full border py-1.5 text-center text-sm font-medium transition-colors ${
 						mounted && filter === 'all'
-							? 'bg-[--tangerine-hover] text-zinc-900 border-[--tangerine-hover] dark:bg-[--tangerine] dark:text-zinc-900 dark:border-[--tangerine]'
-							: 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:border-zinc-600'
+							? 'border-[--tangerine-hover] bg-[--tangerine-hover] text-zinc-900 dark:border-[--tangerine] dark:bg-[--tangerine] dark:text-zinc-900'
+							: 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800'
 					}`}
 				>
 					{labels.all}
@@ -75,8 +75,8 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 						onClick={() => setFilter(tag)}
 						className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
 							mounted && filter === tag
-								? 'bg-[--tangerine-hover] text-zinc-900 border-[--tangerine-hover] dark:bg-[--tangerine] dark:text-zinc-900 dark:border-[--tangerine]'
-								: 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:border-zinc-600'
+								? 'border-[--tangerine-hover] bg-[--tangerine-hover] text-zinc-900 dark:border-[--tangerine] dark:bg-[--tangerine] dark:text-zinc-900'
+								: 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800'
 						}`}
 					>
 						#{tag}
@@ -85,17 +85,14 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 			</div>
 
 			{/* Grid */}
-			<motion.div 
-				layout
-				className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative"
-			>
-				<AnimatePresence mode='popLayout'>
+			<motion.div layout className="relative grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+				<AnimatePresence mode="popLayout">
 					{filteredPosts.length === 0 && (
-						<motion.p 
+						<motion.p
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
-							className="italic text-zinc-500 col-span-full"
+							className="col-span-full italic text-zinc-500"
 						>
 							{labels.noResults}
 						</motion.p>
@@ -110,7 +107,12 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 							transition={{ duration: 0.2 }}
 							className="h-full"
 						>
-							<TilCard post={post} lang={lang} index={index} labels={{ readNote: labels.readNote }} />
+							<TilCard
+								post={post}
+								lang={lang}
+								index={index}
+								labels={{ readNote: labels.readNote }}
+							/>
 						</motion.div>
 					))}
 				</AnimatePresence>

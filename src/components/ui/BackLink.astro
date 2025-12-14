@@ -2,61 +2,63 @@
 import ChevronLeft from '../../icons/chevron-left.svg'
 
 interface Props {
-  href: string;
-  label: string;
-  class?: string;
-  hideIcon?: boolean;
-  id?: string;
+	href: string
+	label: string
+	class?: string
+	hideIcon?: boolean
+	id?: string
 }
 
-const { href, label, class: className, hideIcon = false, id } = Astro.props;
+const { href, label, class: className, hideIcon = false, id } = Astro.props
 ---
 
 <a
-  href={href}
-  id={id || (className?.includes('go-back') ? 'go-back-link' : undefined)}
-  data-astro-prefetch
-  class:list={[
-    "animate-fade-in-up mb-6 mt-2.5 flex w-fit items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]",
-    className
-  ]}
+	href={href}
+	id={id || (className?.includes('go-back') ? 'go-back-link' : undefined)}
+	data-astro-prefetch
+	class:list={[
+		'animate-fade-in-up mb-6 mt-2.5 flex w-fit items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]',
+		className,
+	]}
 >
-  {!hideIcon && <ChevronLeft />} {label}
+	{!hideIcon && <ChevronLeft />}
+	{label}
 </a>
 
 <script>
-  const ORIGIN_KEY = 'backlink-origin'
-  const goBackLink = document.getElementById('go-back-link')
-  
-  if (goBackLink) {
-    // On first load, save the origin URL (only if coming from our site and not already saved)
-    const currentOrigin = sessionStorage.getItem(ORIGIN_KEY)
-    const isInternalReferrer = document.referrer && document.referrer.startsWith(window.location.origin)
-    const isPrivacyPage = (url: string) => url.toLowerCase().includes('privacypolicy')
-    
-    // Save origin only if:
-    // 1. No origin saved yet, OR
-    // 2. The saved origin is a privacy page (language change happened)
-    if (!currentOrigin || isPrivacyPage(currentOrigin)) {
-      if (isInternalReferrer && !isPrivacyPage(document.referrer)) {
-        sessionStorage.setItem(ORIGIN_KEY, document.referrer)
-      }
-    }
+	const ORIGIN_KEY = 'backlink-origin'
+	const goBackLink = document.getElementById('go-back-link')
 
-    goBackLink.addEventListener('click', (e) => {
-      e.preventDefault()
-      
-      const savedOrigin = sessionStorage.getItem(ORIGIN_KEY)
-      
-      if (savedOrigin && savedOrigin.startsWith(window.location.origin)) {
-        // Clear the saved origin and navigate
-        sessionStorage.removeItem(ORIGIN_KEY)
-        window.location.href = savedOrigin
-      } else if (isInternalReferrer) {
-        window.location.href = document.referrer
-      } else {
-        history.back()
-      }
-    })
-  }
+	if (goBackLink) {
+		// On first load, save the origin URL (only if coming from our site and not already saved)
+		const currentOrigin = sessionStorage.getItem(ORIGIN_KEY)
+		const isInternalReferrer =
+			document.referrer && document.referrer.startsWith(window.location.origin)
+		const isPrivacyPage = (url: string) => url.toLowerCase().includes('privacypolicy')
+
+		// Save origin only if:
+		// 1. No origin saved yet, OR
+		// 2. The saved origin is a privacy page (language change happened)
+		if (!currentOrigin || isPrivacyPage(currentOrigin)) {
+			if (isInternalReferrer && !isPrivacyPage(document.referrer)) {
+				sessionStorage.setItem(ORIGIN_KEY, document.referrer)
+			}
+		}
+
+		goBackLink.addEventListener('click', (e) => {
+			e.preventDefault()
+
+			const savedOrigin = sessionStorage.getItem(ORIGIN_KEY)
+
+			if (savedOrigin && savedOrigin.startsWith(window.location.origin)) {
+				// Clear the saved origin and navigate
+				sessionStorage.removeItem(ORIGIN_KEY)
+				window.location.href = savedOrigin
+			} else if (isInternalReferrer) {
+				window.location.href = document.referrer
+			} else {
+				history.back()
+			}
+		})
+	}
 </script>

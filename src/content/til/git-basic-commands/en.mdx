@@ -1,25 +1,25 @@
 ---
-title: "Basic Git commands to start a project"
-lang: "en"
+title: 'Basic Git commands to start a project'
+lang: 'en'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 Quick list of essential commands to initialize a local repository and push it to GitHub for the first time.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git init
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
 git remote add origin {repository-url}
-git push -u origin main`, 
-      lang: 'bash' 
-    }
-  ]}
+git push -u origin main`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### What each command does
@@ -28,6 +28,6 @@ git push -u origin main`,
 - **`git add .`**: The `add` command stages changes for commit, and the dot `.` selects all files.
 - **`git commit -m "Initial commit"`**: Creates the first commit. The `-m` flag allows you to add the commit message directly.
 - **`git branch -M main`**: Renames the current branch to `main`.
-    > **Note**: This is useful if your default configuration creates the branch as `master`.
+  > **Note**: This is useful if your default configuration creates the branch as `master`.
 - **`git remote add origin ...`**: Links the local repository with the remote. `origin` is the alias we'll use to refer to the repository URL (https://github.com/hunkstalker/stardraw).
 - **`git push -u origin main`**: Pushes changes to GitHub. The `-u` flag links your local `main` branch with the remote `origin/main`, allowing you to simply use `git push` in the future.

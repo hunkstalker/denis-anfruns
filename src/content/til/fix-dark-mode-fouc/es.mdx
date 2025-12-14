@@ -1,9 +1,9 @@
 ---
-title: "FOUC en Astro: Guía Definitiva, Parte I (Script + Config)"
-lang: "es"
+title: 'FOUC en Astro: Guía Definitiva, Parte I (Script + Config)'
+lang: 'es'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 El FOUC (Flash of Unstyled Content) es uno de los problemas que más me ha cstado de arreglar siempre. Es un dolor de cabeza. Ahora, en este proyecto me encontré con dos niveles de FOUC, y aquí explico cómo solucioné ambos.
 
@@ -14,11 +14,11 @@ El navegador pinta la página en blanco por defecto antes de cargar los estilos 
 
 Hay que tener en cuenta que esto además forma parte de la lógica para controlar entre temas claro y oscuro al iniciar el sitio.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'BaseLayout.astro', 
-      code: `<head>
+<CodeTabs
+	items={[
+		{
+			label: 'BaseLayout.astro',
+			code: `<head>
   <script is:inline>
     (function() {
       const theme = localStorage.getItem('theme');
@@ -36,10 +36,10 @@ Hay que tener en cuenta que esto además forma parte de la lógica para controla
       }
     })();
   </script>
-</head>`, 
-      lang: 'html' 
-    }
-  ]}
+</head>`,
+			lang: 'html',
+		},
+	]}
 />
 
 ## Nivel 2: El Salto de Layout (CSS Diferido)
@@ -60,15 +60,15 @@ Mover los plugins de optimización **al final** del array `integrations` o... lo
   // MAL: inline() antes de mdx()
   // integrations: [tailwind(), react(), inline(), mdx()],
 
-  // BIEN: Optimizaciones al final (o deshabilitadas si dan problemas)
-  integrations: [tailwind(), react(), mdx() /*, inline() */],
-});`, 
-      lang: 'javascript' 
-    }
-  ]}
+// BIEN: Optimizaciones al final (o deshabilitadas si dan problemas)
+integrations: [tailwind(), react(), mdx() /*, inline() */],
+});`,
+lang: 'javascript'
+}
+]}
 />
 
- Esta integración inyecta CSS en el HTML, debería de servir para optimizar la carga, pero al menos en mi caso fue a costa de añadirme ese FOUC.
+Esta integración inyecta CSS en el HTML, debería de servir para optimizar la carga, pero al menos en mi caso fue a costa de añadirme ese FOUC.
 Por ahora su eliminiación no me ha afectado en nada aparente.
 
 > **Lección:** La estabilidad visual (CLS) es más importante que ahorrar 2ms de carga. Si una optimización rompe la experiencia, fuera.

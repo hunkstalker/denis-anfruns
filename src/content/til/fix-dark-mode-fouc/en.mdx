@@ -1,9 +1,9 @@
 ---
-title: "FOUC in Astro: Ultimate Guide, Part I (Script + Config)"
-lang: "en"
+title: 'FOUC in Astro: Ultimate Guide, Part I (Script + Config)'
+lang: 'en'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 FOUC (Flash of Unstyled Content) is one of the hardest problems I've always struggled to fix. It's a headache. Now, in this project I encountered two levels of FOUC, and here is how I solved both.
 
@@ -14,11 +14,11 @@ The browser paints the page white by default before loading your dark styles.
 
 Keep in mind that this is also part of the logic to control between light and dark themes when initializing the site.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'BaseLayout.astro', 
-      code: `<head>
+<CodeTabs
+	items={[
+		{
+			label: 'BaseLayout.astro',
+			code: `<head>
   <script is:inline>
     (function() {
       const theme = localStorage.getItem('theme');
@@ -36,10 +36,10 @@ Keep in mind that this is also part of the logic to control between light and da
       }
     })();
   </script>
-</head>`, 
-      lang: 'html' 
-    }
-  ]}
+</head>`,
+			lang: 'html',
+		},
+	]}
 />
 
 ## Level 2: The Layout Shift (Deferred CSS)
@@ -60,12 +60,12 @@ Move optimization plugins to the **end** of the `integrations` array or... what 
   // BAD: inline() before mdx()
   // integrations: [tailwind(), react(), inline(), mdx()],
 
-  // GOOD: Optimizations at the end (or disabled if problematic)
-  integrations: [tailwind(), react(), mdx() /*, inline() */],
-});`, 
-      lang: 'javascript' 
-    }
-  ]}
+// GOOD: Optimizations at the end (or disabled if problematic)
+integrations: [tailwind(), react(), mdx() /*, inline() */],
+});`,
+lang: 'javascript'
+}
+]}
 />
 
 This integration inlines CSS into the HTML, it should serve to optimize loading, but at least in my case it came at the cost of adding that FOUC.

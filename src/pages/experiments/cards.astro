@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Nav from '../../components/layout/Nav.astro'
+import ParallaxCard from '../../components/experiments/ParallaxCard.astro'
+import HoloCard from '../../components/experiments/HoloCard.astro'
+
+const lang = 'es'
+---
+
+<BaseLayout siteTitle="Experimentos - Parallax Cards" lang={lang}>
+	<Nav lang={lang} />
+
+	<main class="container mx-auto px-4 pb-12 pt-24 md:pt-32">
+		<div class="mb-12 text-center">
+			<h1 class="text-4xl font-bold text-zinc-900 dark:text-white md:text-5xl">
+				🧪 Lab de Experimentos
+			</h1>
+			<p class="text-lg mt-4 text-zinc-500 dark:text-zinc-400">
+				Efectos CSS avanzados y componentes experimentales
+			</p>
+			<p class="mt-2 text-sm text-amber-600 dark:text-amber-400">
+				⚠️ Esta página no está enlazada en la navegación principal
+			</p>
+		</div>
+
+		<section class="mb-16">
+			<h2 class="mb-8 text-2xl font-bold text-zinc-800 dark:text-zinc-200">
+				Parallax Cards (Fase 1: Tilt & Shine)
+			</h2>
+
+			<div class="flex flex-wrap items-center justify-center gap-8">
+				<!-- Card de ejemplo -->
+				<ParallaxCard
+					title="Efecto Tilt"
+					subtitle="Mueve el mouse sobre la card"
+					imageUrl="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?w=400&h=560&fit=crop"
+				/>
+
+				<ParallaxCard
+					title="Variante Holo (Básica)"
+					subtitle="Gradiente simple"
+					imageUrl="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=560&fit=crop"
+					variant="holo"
+				/>
+			</div>
+		</section>
+
+		<section class="mb-16">
+			<h2 class="mb-8 text-2xl font-bold text-zinc-800 dark:text-zinc-200">
+				Holo Cards (Fase 2: Advanced Effects)
+			</h2>
+
+			<div class="flex flex-wrap items-center justify-center gap-8">
+				<!-- Card Holo Avanzada -->
+				<HoloCard
+					title="Efecto Cosmos"
+					subtitle="Fondo dinámico 🌌"
+					imageUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=560&fit=crop"
+				/>
+			</div>
+		</section>
+
+		<section class="rounded-xl bg-zinc-100 p-6 dark:bg-zinc-800/50">
+			<h3 class="text-lg mb-4 font-bold text-zinc-800 dark:text-zinc-200">
+				💡 Técnicas utilizadas
+			</h3>
+			<ul class="space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+				<li>
+					• <strong>CSS Variables</strong> - <code>--pointer-x</code>, <code>--rotate-y</code> actualizadas
+					por JS
+				</li>
+				<li>
+					• <strong>Transform 3D</strong> - <code>perspective()</code> + <code>rotateX/Y</code>
+				</li>
+				<li>• <strong>Gradientes dinámicos</strong> - Brillo que sigue el cursor</li>
+				<li>• <strong>Transitions suaves</strong> - Para animación fluida</li>
+			</ul>
+		</section>
+	</main>
+</BaseLayout>

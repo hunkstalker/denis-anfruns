@@ -4,7 +4,7 @@ import BackLink from '../../../components/ui/BackLink.astro'
 import { getDevlogs, type DevlogPost } from '../../../utils/devlog-content'
 import { getLangFromSlug } from '../../../utils/blogi18n'
 import { useTranslations } from '../../../i18n/utils'
-import BlogDevLogList from '../../../components/blog/BlogDevLogList'
+import DevLogGrid from '../../../components/devlog/Grid'
 
 export function getStaticPaths() {
 	return [{ params: { lang: 'en' } }, { params: { lang: 'ca' } }]
@@ -15,7 +15,7 @@ const t = useTranslations(lang as 'en' | 'ca')
 
 // Obtener y filtrar posts
 const rawPosts = (await getDevlogs()).filter(
-	p => getLangFromSlug(p.slug) === lang && p.data.pubDate,
+	(p) => getLangFromSlug(p.slug) === lang && p.data.pubDate,
 )
 
 // Lógica de Agrupación por Series
@@ -33,7 +33,7 @@ for (const post of rawPosts) {
 }
 
 // Procesar series (mismo lógica que index principal)
-const finalSeriesPosts = Array.from(seriesMap.values()).map(list => {
+const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
 	list.sort((a: DevlogPost, b: DevlogPost) => {
 		if (!a.data.pubDate || !b.data.pubDate) return 0
 		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
@@ -65,29 +65,25 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
 >
 	<div class="lg:col-span-12">
 		<div class="mb-8">
-			<BackLink 
-				href={`/${lang}/blog`} 
-				label={t('blog.backToBlog')} 
-			/>
-			
-			<h1
-				class='mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200'>
-				DevLogs
-			</h1>
+			<BackLink href={`/${lang}/blog`} label={t('blog.backToBlog')} />
 
-			<p class='text-lg text-zinc-500'>{t('blog.devLogDescription')}</p>
+			<h1 class="mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200">DevLogs</h1>
+
+			<p class="text-lg text-zinc-500">{t('blog.devLogDescription')}</p>
 			<hr class="animate-fade-in-up mt-8 border-zinc-200 dark:border-zinc-800" />
 		</div>
 
-        {articles.length === 0 ? (
-            <p class='italic text-zinc-500'>{t('blog.withoutArticles')}</p>
-        ) : (
-            <BlogDevLogList 
-                client:load 
-                posts={articles} 
-                lang={lang as 'en' | 'ca'} 
-                labels={{ readArticle: t('blog.readArticle') }} 
-            />
-        )}
+		{
+			articles.length === 0 ? (
+				<p class="italic text-zinc-500">{t('blog.withoutArticles')}</p>
+			) : (
+				<DevLogGrid
+					client:load
+					posts={articles}
+					lang={lang as 'en' | 'ca'}
+					labels={{ readArticle: t('blog.readArticle') }}
+				/>
+			)
+		}
 	</div>
 </ContentLayout>

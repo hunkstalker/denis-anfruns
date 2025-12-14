@@ -1,9 +1,9 @@
 ---
-title: "Refactoring: From Repetitive Code to Data-Driven"
-lang: "en"
+title: 'Refactoring: From Repetitive Code to Data-Driven'
+lang: 'en'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 One of the most satisfying optimizations in programming is moving from an endless list of repeated code to an elegant data-driven structure.
 
@@ -22,6 +22,7 @@ const text = originalText
     .replace('Vue', '<span id="hl-vue">Vue</span>');
 
 // Infinite manual rendering...
+
 <Icon icon={ReactIcon} target="hl-react" />
 <Icon icon={AstroIcon} target="hl-astro" />
 <Icon icon={VueIcon} target="hl-vue" />`, 
@@ -50,29 +51,30 @@ const technologies = [
 // 2. Dynamic Replacement Logic
 let processedText = originalText;
 technologies.forEach(tech => {
-    // Why forEach here? (See note at the end)
-    // We use RegExp to replace all occurrences dynamically
-    processedText = processedText.replace(
-        new RegExp(tech.name, 'g'), 
-        \`<span id="\${tech.id}">\${tech.name}</span>\`
-    );
+// Why forEach here? (See note at the end)
+// We use RegExp to replace all occurrences dynamically
+processedText = processedText.replace(
+new RegExp(tech.name, 'g'),
+\`<span id="\${tech.id}">\${tech.name}</span>\`
+);
 });
 
 // 3. Dynamic Rendering
 // In your template (React/Astro/etc):
 {technologies.map(tech => (
-    <Icon icon={tech.icon} target={tech.id} />
-))}`, 
-      lang: 'javascript' 
-    }
-  ]}
+<Icon icon={tech.icon} target={tech.id} />
+))}`,
+lang: 'javascript'
+}
+]}
 />
 
 ### Advantages
+
 1.  **Maintainability**: To add something new, you simply add one line to the `technologies` array.
 2.  **Readability**: The logic of "what to do" is separated from the "data".
 3.  **Scalability**: You can have 3 or 300 technologies, the logic code doesn't change.
 
 ## Recommended Reading
 
-*   [When to use Map and when ForEach?](/en/til/javascript-map-vs-foreach)
+- [When to use Map and when ForEach?](/en/til/javascript-map-vs-foreach)

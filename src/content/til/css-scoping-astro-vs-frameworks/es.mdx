@@ -1,9 +1,9 @@
 ---
-title: "Scope CSS: Astro vs Frameworks JS"
-lang: "es"
+title: 'Scope CSS: Astro vs Frameworks JS'
+lang: 'es'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 Entender cómo tu framework maneja los estilos CSS es crucial para evitar conflictos y mantener tu código limpio. No todos los frameworks funcionan igual, y Astro tiene una aproximación muy particular.
 
@@ -49,10 +49,12 @@ Astro invierte esta lógica por defecto. Cuando escribes estilos dentro de la et
     /* Esto SOLO afecta a este componente */
     .card { background: blue; }
     h1 { color: white; }
-</style>`, 
-      lang: 'astro' 
+</style>`,
+
+      lang: 'astro'
     }
-  ]}
+
+]}
 />
 
 Astro logra esto añadiendo una clase hash única a tus elementos (ej: `.card.astro-HASH123`) en tiempo de compilación.
@@ -64,7 +66,9 @@ Astro logra esto añadiendo una clase hash única a tus elementos (ej: `.card.as
 3.  **CSS Modules**: Úsalos solo si prefieres separar los estilos en archivos distintos pero manteniendo el scope (ej: `Component.module.css`), aunque en Astro suele ser redundante.
 
 ### Resumen
+
 En Astro, **Co-locación** es la clave. Mantén tus estilos junto a tu HTML en el mismo archivo.
-> **Co-locación**: La práctica de agrupar el código por *responsabilidad* (ej: un componente) en lugar de por *tecnología* (archivos separados .html, .js, .css).
+
+> **Co-locación**: La práctica de agrupar el código por _responsabilidad_ (ej: un componente) en lugar de por _tecnología_ (archivos separados .html, .js, .css).
 
 Ganarás en mantenibilidad y rendimiento.

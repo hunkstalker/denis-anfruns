@@ -6,33 +6,51 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 <BaseLayout siteTitle={siteTitle}>
 	<Nav />
-	
-	<main id="main-content" class="relative flex flex-grow flex-col items-center justify-center overflow-hidden min-h-[60vh] transition-opacity duration-500">
+
+	<main
+		id="main-content"
+		class="relative flex min-h-[60vh] flex-grow flex-col items-center justify-center overflow-hidden transition-opacity duration-500"
+	>
 		<!-- Giant 404 Background -->
-		<div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" aria-hidden="true">
-			<span class="text-[20rem] sm:text-[28rem] md:text-[36rem] font-black text-zinc-200/50 dark:text-zinc-800/50 leading-none">
+		<div
+			class="pointer-events-none absolute inset-0 flex select-none items-center justify-center"
+			aria-hidden="true"
+		>
+			<span
+				class="text-[20rem] font-black leading-none text-zinc-200/50 dark:text-zinc-800/50 sm:text-[28rem] md:text-[36rem]"
+			>
 				404
 			</span>
 		</div>
-		
+
 		<!-- Foreground Content -->
-		<div class="relative z-10 text-center px-4">
+		<div class="relative z-10 px-4 text-center">
 			<h1
 				id="error-title"
-				class="animate-fade-in-up text-balance text-4xl font-black leading-tight tracking-tight sm:text-5xl md:text-6xl max-w-2xl mx-auto"
-			></h1>
+				class="animate-fade-in-up md:text-6xl mx-auto max-w-2xl text-balance text-4xl font-black leading-tight tracking-tight sm:text-5xl"
+			>
+			</h1>
 			<p
 				id="error-msg"
-				class="animate-fade-in-up delay-100 mt-6 text-lg text-zinc-500 text-balance max-w-lg mx-auto dark:text-zinc-400"
-			></p>
+				class="animate-fade-in-up text-lg mx-auto mt-6 max-w-lg text-balance text-zinc-500 delay-100 dark:text-zinc-400"
+			>
+			</p>
 		</div>
 	</main>
 
 	<!-- Terminal Overlay - Always Visible -->
-	<div id="terminal-overlay" class="fixed inset-0 z-50 font-mono text-zinc-900 dark:text-white overflow-hidden pointer-events-none">
+	<div
+		id="terminal-overlay"
+		class="pointer-events-none fixed inset-0 z-50 overflow-hidden font-mono text-zinc-900 dark:text-white"
+	>
 		<!-- Left-aligned terminal window -->
-		<div class="absolute left-0 top-0 h-full w-full md:w-1/2 lg:w-1/3 p-4 md:p-8 flex flex-col justify-end pb-20">
-			<div id="terminal-logs" class="flex flex-col gap-1 text-xs md:text-sm font-bold tracking-wider max-h-full overflow-hidden">
+		<div
+			class="absolute left-0 top-0 flex h-full w-full flex-col justify-end p-4 pb-20 md:w-1/2 md:p-8 lg:w-1/3"
+		>
+			<div
+				id="terminal-logs"
+				class="text-xs flex max-h-full flex-col gap-1 overflow-hidden font-bold tracking-wider md:text-sm"
+			>
 				<div id="command-line" class="flex items-center">
 					<span class="mr-2">&gt;</span>
 					<span id="type-target"></span>
@@ -48,12 +66,20 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		opacity: 0;
 		animation: fadeInUp 0.8s ease-out forwards;
 	}
-	
-	.delay-100 { animation-delay: 0.1s; }
+
+	.delay-100 {
+		animation-delay: 0.1s;
+	}
 
 	@keyframes fadeInUp {
-		from { opacity: 0; transform: translateY(20px); }
-		to { opacity: 1; transform: translateY(0); }
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.animate-blink-retro {
@@ -61,8 +87,13 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	}
 
 	@keyframes blinkRetro {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0; }
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
 	}
 </style>
 
@@ -86,14 +117,14 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	// COMMANDS REGISTRY - Add new commands here!
 	// Each command defines: logs, barSize, duration, redirect, and optional hooks
 	// ============================================================
-	
+
 	type Command = {
 		logs: string[]
-		barSize?: number       // Default: 30
-		duration?: number      // Duration in ms (default: 1000)
-		logDelay?: number      // Delay between logs in ms (default: 0)
-		redirect: 'home' | 'about' | string  // 'home', 'about', or custom path
-		onBeforeRedirect?: () => void  // Optional hook before redirect
+		barSize?: number // Default: 30
+		duration?: number // Duration in ms (default: 1000)
+		logDelay?: number // Delay between logs in ms (default: 0)
+		redirect: 'home' | 'about' | string // 'home', 'about', or custom path
+		onBeforeRedirect?: () => void // Optional hook before redirect
 	}
 
 	const commands: Record<string, Command> = {
@@ -132,20 +163,20 @@ const siteTitle = 'Denis Anfruns - Error 404'
 				'> WAKE_UP_NEO...',
 				'> THE_MATRIX_HAS_YOU...',
 				'> FOLLOWING_THE_WHITE_RABBIT...',
-				'> REBOOTING_REALITY...'
+				'> REBOOTING_REALITY...',
 			],
-			redirect: 'home'
+			redirect: 'home',
 		},
 
 		// ABOUT Easter Egg - Activates all hover effects on About page
-		'ABOUT': {
+		ABOUT: {
 			logs: [
 				'> ACCESSING_PERSONNEL_DATABASE...',
 				'> USER_PROFILE: DENIS_ANFRUNS MILLÁN',
 				'> LOADING_FULL_SPECTRUM_VIEW...',
 				'> ACTIVATING_ALL_TECH_SIGNATURES...',
 				'> DISPLAY_MODE: RAINBOW',
-				'> REDIRECTING_TO_ABOUT...'
+				'> REDIRECTING_TO_ABOUT...',
 			],
 			barSize: 50,
 			duration: 2500,
@@ -153,7 +184,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			redirect: 'about',
 			onBeforeRedirect: () => {
 				localStorage.setItem('about-activate-all', 'true')
-			}
+			},
 		},
 
 		// ============================================================
@@ -175,7 +206,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		for (const log of cmd.logs) {
 			await typeLog(log)
 			if (cmd.logDelay) {
-				await new Promise(r => setTimeout(r, cmd.logDelay))
+				await new Promise((r) => setTimeout(r, cmd.logDelay))
 			}
 		}
 
@@ -220,7 +251,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	// Text Update
 	const titleElement = document.getElementById('error-title')
 	const msgElement = document.getElementById('error-msg')
-	
+
 	if (titleElement) titleElement.textContent = t.title
 	if (msgElement) msgElement.textContent = t.msg
 
@@ -236,7 +267,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	hiddenInput.type = 'text'
 	hiddenInput.autocomplete = 'off'
 	hiddenInput.style.fontSize = '16px'
-	
+
 	hiddenForm.appendChild(hiddenInput)
 	document.body.appendChild(hiddenForm)
 
@@ -249,7 +280,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			hiddenInput.focus()
 		}
 	})
-	
+
 	// Auto-focus on load (only if not focused on something else)
 	if (!document.activeElement || document.activeElement === document.body) {
 		hiddenInput.focus()
@@ -262,12 +293,12 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	// Helper: Type a log line with cursor effect
 	async function typeLog(text: string) {
 		if (!terminalLogs) return
-		
+
 		const p = document.createElement('div')
 		p.textContent = text
 		p.className = 'opacity-0'
 		p.style.borderRight = '2px solid transparent'
-		
+
 		terminalLogs.appendChild(p)
 		terminalLogs.scrollTop = terminalLogs.scrollHeight
 
@@ -275,8 +306,8 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			p.classList.remove('opacity-0')
 			p.style.borderRightColor = 'currentColor'
 		})
-		
-		await new Promise(r => setTimeout(r, Math.random() * 50 + 20))
+
+		await new Promise((r) => setTimeout(r, Math.random() * 50 + 20))
 		p.style.borderRightColor = 'transparent'
 	}
 
@@ -285,25 +316,25 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	// durationMs: total duration in ms (default ~1000ms)
 	async function showProgressBar(barSize: number = 30, durationMs: number = 1000) {
 		if (!terminalLogs) return
-		
+
 		const pBar = document.createElement('div')
 		pBar.className = 'mt-4 font-bold whitespace-pre mb-20'
 		terminalLogs.appendChild(pBar)
-		
+
 		const totalChars = barSize
 		const steps = 50 // Number of updates
 		const stepDelay = durationMs / steps
-		
-		for (let i = 0; i <= 100; i += (100 / steps)) {
+
+		for (let i = 0; i <= 100; i += 100 / steps) {
 			const percent = Math.round(i)
 			const filled = Math.round((percent / 100) * totalChars)
 			const empty = totalChars - filled
 			pBar.textContent = `> LOADING... [${'#'.repeat(filled)}${'.'.repeat(empty)}] ${percent}%`
 			terminalLogs.scrollTop = terminalLogs.scrollHeight
-			await new Promise(r => setTimeout(r, stepDelay))
+			await new Promise((r) => setTimeout(r, stepDelay))
 		}
-		
-		await new Promise(r => setTimeout(r, 200))
+
+		await new Promise((r) => setTimeout(r, 200))
 	}
 
 	// Input handling
@@ -312,7 +343,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 		const val = (e.target as HTMLInputElement).value.toUpperCase()
 		const cleanVal = val.replace(/[^A-Z0-9 ]/g, '')
-		
+
 		if (val !== cleanVal) hiddenInput.value = cleanVal
 		if (typeTarget) typeTarget.textContent = cleanVal
 	})

@@ -9,34 +9,32 @@ import ChevronLeft from '../../../icons/chevron-left.svg'
 
 export async function getStaticPaths() {
 	const projects = await getProjects()
-	const supportedLangs = Object.keys(languages).filter(lang => lang !== 'es')
+	const supportedLangs = Object.keys(languages).filter((lang) => lang !== 'es')
 
 	return projects
-		.filter(_ => {
-
-
+		.filter((_) => {
 			// Allow spanish (default) or supported langs
 			// Assuming project slugs are like 'my-project/en', 'my-project/es' or just 'my-project' if default?
 			// The current convention for blog is folder/lang.
-			return true 
+			return true
 		})
-		.map(post => {
+		.map((post) => {
 			const parts = post.slug.split('/')
-            // If slug ends with supported lang, use it. Else default to 'es'.
-            // Actually, we should enforce the same structure as blog if possible.
-            // Let's assume folder structure project-name/es.mdx, project-name/en.mdx
+			// If slug ends with supported lang, use it. Else default to 'es'.
+			// Actually, we should enforce the same structure as blog if possible.
+			// Let's assume folder structure project-name/es.mdx, project-name/en.mdx
 			const langParam = parts[parts.length - 1]
-            const lang = supportedLangs.includes(langParam) ? langParam as 'en' | 'ca' : 'es'
-			
-            // Base slug logic
-            let baseSlug = post.slug
-            if (supportedLangs.includes(langParam)) {
-                baseSlug = parts.slice(0, -1).join('/')
-            } else {
-                 if (parts[parts.length-1] === 'es') {
-                     baseSlug = parts.slice(0, -1).join('/')
-                 }
-            }
+			const lang = supportedLangs.includes(langParam) ? (langParam as 'en' | 'ca') : 'es'
+
+			// Base slug logic
+			let baseSlug = post.slug
+			if (supportedLangs.includes(langParam)) {
+				baseSlug = parts.slice(0, -1).join('/')
+			} else {
+				if (parts[parts.length - 1] === 'es') {
+					baseSlug = parts.slice(0, -1).join('/')
+				}
+			}
 
 			return {
 				params: {
@@ -58,43 +56,45 @@ const { Content } = await post.render()
 	siteTitle={post.data.title}
 	lang={lang}
 	description={post.data.description}
-	image={post.data.ogImage ?? post.data.heroImage}>
+	image={post.data.ogImage ?? post.data.heroImage}
+>
 	<Nav lang={lang} />
 
-	<div class='container mx-auto px-4 py-8 pt-20 md:pt-28'>
+	<div class="container mx-auto px-4 py-8 pt-20 md:pt-28">
 		<article
-			class='prose max-w-none dark:prose-invert lg:prose-xl mx-auto'
+			class="prose mx-auto max-w-none dark:prose-invert lg:prose-xl"
 			data-pagefind-body
 			data-pagefind-filter="type:project"
 			data-pagefind-meta={`description:${post.data.description}`}
-			data-pagefind-weight="8">
-			
-            <div class='not-prose mb-8'>
-                <a
-                    href={`/${lang}/#projects`} 
-                    class='mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]'>
-                    <ChevronLeft />
-                    {t('nav.projects') || 'Projects'}
-                </a>
+			data-pagefind-weight="8"
+		>
+			<div class="not-prose mb-8">
+				<a
+					href={`/${lang}/#projects`}
+					class="mb-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
+				>
+					<ChevronLeft />
+					{t('nav.projects') || 'Projects'}
+				</a>
 
-                <h1 class='mb-4 text-balance text-3xl font-bold leading-tight dark:text-white md:text-5xl'>
-                    {post.data.title}
-                </h1>
-                 {
-                    post.data.heroImage && (
-                        <div class='mb-8 overflow-hidden rounded-xl'>
-                            <img
-                                src={post.data.heroImage}
-                                alt={post.data.title}
-                                class='h-auto w-full object-cover shadow-lg transition-transform hover:scale-105 duration-700'
-                            />
-                        </div>
-                    )
-                }
-            </div>
+				<h1 class="mb-4 text-balance text-3xl font-bold leading-tight dark:text-white md:text-5xl">
+					{post.data.title}
+				</h1>
+				{
+					post.data.heroImage && (
+						<div class="mb-8 overflow-hidden rounded-xl">
+							<img
+								src={post.data.heroImage}
+								alt={post.data.title}
+								class="h-auto w-full object-cover shadow-lg transition-transform duration-700 hover:scale-105"
+							/>
+						</div>
+					)
+				}
+			</div>
 
 			<Content />
 		</article>
 	</div>
-    <div class='h-16 md:h-24'></div>
+	<div class="h-16 md:h-24"></div>
 </BaseLayout>

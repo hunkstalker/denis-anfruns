@@ -66,7 +66,7 @@ const processText = (text: string) => {
 		'<strong class="font-bold text-zinc-900 dark:text-[--tangerine-hover]">$1</strong>',
 	)
 
-	technologies.forEach(tech => {
+	technologies.forEach((tech) => {
 		const regex = new RegExp(tech.name, 'g')
 		processed = processed.replace(
 			regex,
@@ -78,24 +78,31 @@ const processText = (text: string) => {
 }
 ---
 
-<div class='col-span-1 lg:col-span-8 lg:col-start-3'>
+<div class="col-span-1 lg:col-span-8 lg:col-start-3">
 	<h1
-		class='mb-12 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl'
-		style={{ textWrap: 'balance' }}>
+		class="mb-12 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl"
+		style={{ textWrap: 'balance' }}
+	>
 		{t('about.title')}
 	</h1>
 
-	<div class='prose prose-lg max-w-none space-y-16 dark:prose-invert'>
-		<section class='animate-fade-in-up'>
+	<div class="prose prose-lg max-w-none space-y-16 dark:prose-invert">
+		<section class="animate-fade-in-up">
 			<h2 style={{ textWrap: 'balance' }}>
-				<span set:html={t('about.intro.title').replace(',', `, <span class="animate-wave ml-2 inline-block origin-[70%_70%]">🖖</span><br class="block sm:hidden" />`)} />
+				<span
+					set:html={t('about.intro.title').replace(
+						',',
+						`, <span class="animate-wave ml-2 inline-block origin-[70%_70%]">🖖</span><br class="block sm:hidden" />`,
+					)}
+				/>
 			</h2>
 			<p set:html={processText(t('about.intro.text'))} />
 
 			<div
-				class='not-prose mt-8 flex flex-wrap justify-center gap-4 sm:flex-nowrap sm:justify-start sm:gap-6'>
+				class="not-prose mt-8 flex flex-wrap justify-center gap-4 sm:flex-nowrap sm:justify-start sm:gap-6"
+			>
 				{
-					technologies.map(tech => (
+					technologies.map((tech) => (
 						<IconTrigger
 							icon={tech.icon}
 							targetId={tech.id}
@@ -107,20 +114,20 @@ const processText = (text: string) => {
 				}
 			</div>
 
-			<p class='mt-6' set:html={processText(t('about.intro.deal'))} />
+			<p class="mt-6" set:html={processText(t('about.intro.deal'))} />
 		</section>
 
-		<section class='animate-fade-in-up delay-100'>
+		<section class="animate-fade-in-up delay-100">
 			<h2>
 				{t('about.garden.title')}
 			</h2>
 			<p set:html={processText(t('about.garden.text'))} />
 		</section>
 
-		<section class='animate-fade-in-up delay-200'>
+		<section class="animate-fade-in-up delay-200">
 			<h2>
 				{t('about.personal.title')}
-				<span class='animate-bounce-slow ml-2 inline-block cursor-default select-none text-2xl'
+				<span class="animate-bounce-slow ml-2 inline-block cursor-default select-none text-2xl"
 					>👾</span
 				>
 			</h2>
@@ -141,8 +148,6 @@ const processText = (text: string) => {
 	.delay-200 {
 		animation-delay: 0.4s;
 	}
-
-
 
 	@keyframes gradient-move {
 		0% {

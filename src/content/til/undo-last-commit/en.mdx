@@ -1,33 +1,35 @@
 ---
-title: "Undo last commit and force push (Git God Mode)"
-lang: "en"
+title: 'Undo last commit and force push (Git God Mode)'
+lang: 'en'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
 
 Sometimes we mess up the last commit badly and a simple `revert` isn't enough. We want to wipe it off the face of the earth (locally and remotely) as if it never happened.
 
 <Callout type="warning" title="Danger: Destructive" filled={true}>
-  This method **deletes changes**. If you work in a team, make sure no one has pulled your changes before doing this, or you will have problems.
+	This method **deletes changes**. If you work in a team, make sure no one has pulled your changes
+	before doing this, or you will have problems.
 </Callout>
 
 ### 1. Fix message or forgotten file (Quick Option)
 
 If you just made a typo in the message or forgot to add a file, you don't need to reset. Add the changes and "amend" the commit. This replaces the last commit with a new one fixing the mistake.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git add .
-git commit --amend`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git add .
+git commit --amend`,
+			lang: 'bash',
+		},
+	]}
 />
 
 When you run this, your default text editor (Vim, Nano, VS Code...) will open with the previous commit message.
+
 1. Edit the message if you like.
 2. **Save and close the file** (in Vim: `:wq`).
 3. Git will detect you are done and create the new commit replacing the old one.
@@ -36,28 +38,28 @@ When you run this, your default text editor (Vim, Nano, VS Code...) will open wi
 
 We use `reset --soft` to undo the commit but **keep your changes** staged. This way you can fix what was wrong, add what was missing, and commit again.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git reset --soft HEAD~1`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git reset --soft HEAD~1`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 3. Overwrite history (Remote)
 
 Now your local repo is "in the past" but GitHub is still "in the future". If you try a normal push, git will reject you. You need to force write so the remote accepts your old version as the "absolute truth".
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git push origin +main`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git push origin +main`,
+			lang: 'bash',
+		},
+	]}
 />
 
 > **Note**: The `+` symbol before the branch name (`+main`) is shorthand syntax for `--force`. It does the same thing but makes you feel more like a hacker.
@@ -67,33 +69,34 @@ Now your local repo is "in the past" but GitHub is still "in the future". If you
 If `git reset --soft` is like backspacing, `git reset --hard` is like burning the paper and starting fresh. It's the nuclear option for when you **don't want to recover anything** from your last commit.
 
 <Callout type="warning" title="Extreme Danger" filled={true}>
-  This command **permanently deletes** all changes in your uncommitted files. There is no (easy) going back. Use only if you are 100% sure your recent work is trash.
+	This command **permanently deletes** all changes in your uncommitted files. There is no (easy)
+	going back. Use only if you are 100% sure your recent work is trash.
 </Callout>
 
 ### 1. Erase all traces (Local)
 
 This moves the pointer back and syncs your working directory to that old state.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git reset --hard HEAD~1`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git reset --hard HEAD~1`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 2. Force history (Remote)
 
 Just like with soft reset, the remote will reject this because you rewrote the past.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git push origin +main`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git push origin +main`,
+			lang: 'bash',
+		},
+	]}
 />

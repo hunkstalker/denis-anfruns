@@ -3,8 +3,6 @@ title: 'Política de Privacidad'
 lastUpdated: '17/11/2025'
 ---
 
-
-
 Última actualización: 17/11/2025
 
 ## 1. Responsable del Tratamiento
@@ -20,14 +18,14 @@ Esta web personal no recopila datos personales de los visitantes. No existen for
 
 Este sitio utiliza únicamente **cookies técnicas de Cloudflare** con la finalidad de proteger la web frente a bots y ataques. Estas cookies son:
 
-*   `cf_clearance`: permite que Cloudflare mantenga validado el acceso.
+- `cf_clearance`: permite que Cloudflare mantenga validado el acceso.
 
 Estas cookies:
 
-*   Son necesarias para el funcionamiento seguro del sitio.
-*   No sirven para seguimiento ni publicidad.
-*   No almacenan información personal identificable.
-*   Están exentas de consentimiento según la normativa vigente.
+- Son necesarias para el funcionamiento seguro del sitio.
+- No sirven para seguimiento ni publicidad.
+- No almacenan información personal identificable.
+- Están exentas de consentimiento según la normativa vigente.
 
 ## 4. Enlaces Externos
 

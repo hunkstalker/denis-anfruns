@@ -1,68 +1,72 @@
 ---
-title: "Flujo de trabajo intermedio con Git"
-lang: "es"
+title: 'Flujo de trabajo intermedio con Git'
+lang: 'es'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 Una vez dominas el `commit` y `push`, es hora de mejorar tu flujo de trabajo para manejar ramas, cambios temporales y revisiones.
 
 ### 1. Gestión de Ramas (Moderno vs Clásico)
+
 Crear y cambiar de ramas es esencial para no romper `main`.
 
 <CodeTabs
-  items={[
-    {
-      label: 'Moderno (Recomendado)',
-      code: `git switch -c feature/nueva-funcionalidad  # Crear y cambiar
+	items={[
+		{
+			label: 'Moderno (Recomendado)',
+			code: `git switch -c feature/nueva-funcionalidad  # Crear y cambiar
 git switch main                           # Volver a main`,
-      lang: 'bash'
-    },
-    {
-      label: 'Clásico',
-      code: `git checkout -b feature/nueva-funcionalidad # Crear y cambiar
+			lang: 'bash',
+		},
+		{
+			label: 'Clásico',
+			code: `git checkout -b feature/nueva-funcionalidad # Crear y cambiar
 git checkout main                           # Volver a main`,
-      lang: 'bash'
-    }
-  ]}
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 2. Guardado Temporal (Stash)
+
 ¿Tienes cambios a medias pero necesitas cambiar de rama urgentemente? No hagas commit de cosas rotas, usa el "bolsillo".
 
 <CodeTabs
-  items={[
-    {
-      label: 'Bash',
-      code: `git stash                   # Guarda cambios y limpia el directorio
+	items={[
+		{
+			label: 'Bash',
+			code: `git stash                   # Guarda cambios y limpia el directorio
 git stash pop               # Recupera los últimos cambios guardados
 git stash list              # Ve todo lo que tienes guardado`,
-      lang: 'bash'
-    }
-  ]}
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 3. Historial Legible
+
 Ver el historial por defecto puede ser abrumador.
 
 <CodeTabs
-  items={[
-    {
-      label: 'Bash',
-      code: `git log --oneline --graph --all  # Árbol visual y compacto`,
-      lang: 'bash'
-    }
-  ]}
+	items={[
+		{
+			label: 'Bash',
+			code: `git log --oneline --graph --all  # Árbol visual y compacto`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 4. Deshacer Cambios
+
 <CodeTabs
-  items={[
-    {
-      label: 'Bash',
-      code: `git restore archivo.txt           # Descarta cambios locales
+	items={[
+		{
+			label: 'Bash',
+			code: `git restore archivo.txt           # Descarta cambios locales
 git restore --staged archivo.txt  # Saca del stage (unstage)`,
-      lang: 'bash'
-    }
-  ]}
+			lang: 'bash',
+		},
+	]}
 />

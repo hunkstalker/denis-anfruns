@@ -8,19 +8,25 @@ interface Props {
 	id?: string
 	i18nKey?: string // Key for dynamic translation on 404 page
 }
-const { text, link, enabled = true, active = false, class: className = '', id, i18nKey } = Astro.props
+const {
+	text,
+	link,
+	enabled = true,
+	active = false,
+	class: className = '',
+	id,
+	i18nKey,
+} = Astro.props
 
 const baseClasses =
 	'relative m-2 py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal inline-block text-center'
 
-const activeClasses = 
-	'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
+const activeClasses = 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
 
-const enabledClasses = 
+const enabledClasses =
 	'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800'
 
-const disabledClasses = 
-	'cursor-default text-zinc-300 dark:text-zinc-600'
+const disabledClasses = 'cursor-default text-zinc-300 dark:text-zinc-600'
 ---
 
 {
@@ -48,7 +54,11 @@ const disabledClasses =
 		</a>
 	) : (
 		// Enlace visible pero deshabilitado, opciones a las que no se puede navegar
-		<span class={`${baseClasses} ${disabledClasses} ${className}`} aria-disabled="true" data-i18n={i18nKey}>
+		<span
+			class={`${baseClasses} ${disabledClasses} ${className}`}
+			aria-disabled="true"
+			data-i18n={i18nKey}
+		>
 			{text}
 		</span>
 	)

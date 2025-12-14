@@ -1,0 +1,127 @@
+---
+/**
+ * ParallaxCard - Card con efecto de inclinación 3D y brillo
+ *
+ * Técnicas:
+ * - CSS Variables actualizadas por JS según posición del mouse
+ * - Transform 3D con perspective
+ * - Gradiente de brillo que sigue el cursor
+ */
+
+interface Props {
+	title: string
+	subtitle?: string
+	imageUrl: string
+	variant?: 'default' | 'holo'
+}
+
+const { title, subtitle, imageUrl, variant = 'default' } = Astro.props
+---
+
+<div class="parallax-card group relative h-[350px] w-[250px] cursor-pointer" data-variant={variant}>
+	<div
+		class="card-inner relative h-full w-full overflow-hidden rounded-2xl bg-zinc-900 shadow-xl"
+		style="transform-style: preserve-3d; transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));"
+	>
+		<!-- Background Image -->
+		<img
+			src={imageUrl}
+			alt={title}
+			class="absolute inset-0 h-full w-full object-cover"
+			loading="lazy"
+		/>
+
+		<!-- Overlay gradient -->
+		<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+		<!-- Shine effect -->
+		<div
+			class="shine pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			style="background: radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(255,255,255,0.35) 0%, transparent 60%);"
+		>
+		</div>
+
+		<!-- Glare effect -->
+		<div
+			class="glare pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+			style="background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);"
+		>
+		</div>
+
+		<!-- Holo effect -->
+		{
+			variant === 'holo' && (
+				<div
+					class="holo pointer-events-none absolute inset-0 opacity-0 mix-blend-color-dodge transition-opacity duration-300 group-hover:opacity-60"
+					style="background: linear-gradient(105deg, hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%));"
+				/>
+			)
+		}
+
+		<!-- Content -->
+		<div class="absolute bottom-0 left-0 right-0 p-4">
+			<h3 class="text-lg font-bold text-white">{title}</h3>
+			{subtitle && <p class="text-sm text-zinc-300">{subtitle}</p>}
+		</div>
+	</div>
+</div>
+
+<script>
+	// Get all parallax cards
+	const cards = document.querySelectorAll('.parallax-card')
+
+	cards.forEach((card) => {
+		const cardEl = card as HTMLElement
+		const inner = card.querySelector('.card-inner') as HTMLElement
+		if (!inner) return
+
+		// Mouse move handler
+		const handleMouseMove = (e: MouseEvent) => {
+			const rect = cardEl.getBoundingClientRect()
+
+			// Get mouse position relative to card (0-100)
+			const x = ((e.clientX - rect.left) / rect.width) * 100
+			const y = ((e.clientY - rect.top) / rect.height) * 100
+
+			// Calculate rotation (±15 degrees)
+			const rotateY = ((x - 50) / 50) * 15 // Left-right tilt
+			const rotateX = ((y - 50) / 50) * -15 // Up-down tilt (inverted)
+
+			// Apply CSS variables
+			cardEl.style.setProperty('--pointer-x', `${x}%`)
+			cardEl.style.setProperty('--pointer-y', `${y}%`)
+			inner.style.setProperty('--rotate-x', `${rotateX}deg`)
+			inner.style.setProperty('--rotate-y', `${rotateY}deg`)
+		}
+
+		// Mouse leave - reset
+		const handleMouseLeave = () => {
+			inner.style.setProperty('--rotate-x', '0deg')
+			inner.style.setProperty('--rotate-y', '0deg')
+		}
+
+		// Add listeners
+		cardEl.addEventListener('mousemove', handleMouseMove as EventListener)
+		cardEl.addEventListener('mouseleave', handleMouseLeave)
+	})
+</script>
+
+<style>
+	.parallax-card {
+		/* Default CSS variable values */
+		--pointer-x: 50%;
+		--pointer-y: 50%;
+	}
+
+	.card-inner {
+		/* Smooth transition for the tilt effect */
+		transition: transform 0.1s ease-out;
+	}
+
+	.parallax-card:hover .card-inner {
+		/* Slight lift on hover */
+		box-shadow:
+			0 25px 50px -12px rgba(0, 0, 0, 0.5),
+			0 0 30px rgba(255, 255, 255, 0.1);
+	}
+</style>

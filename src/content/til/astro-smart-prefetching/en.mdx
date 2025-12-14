@@ -1,33 +1,34 @@
 ---
-title: "Smart Prefetching: Balancing Speed and Resources"
-lang: "en"
+title: 'Smart Prefetching: Balancing Speed and Resources'
+lang: 'en'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
 
 When dealing with a multi-language website, the temptation is strong: "What if I background load (prefetch) all languages right upon entry so the switch is instant?"
 
 ### The Hidden Cost of "Eager Loading"
 
 Massively loading pages that the user might never visit has consequences:
+
 1.  **Data Waste**: If a user enters in Spanish and never switches, you have downloaded double or triple the weight uselessly.
 2.  **Battery and CPU**: The browser has to parse and process those extra resources.
-3.  **Saturation**: If your site has many images, aggressive prefetching competes for bandwidth with the content the user *is* actually viewing right now.
+3.  **Saturation**: If your site has many images, aggressive prefetching competes for bandwidth with the content the user _is_ actually viewing right now.
 
 ### The Smart Strategy: Prefetch on Hover
 
 Astro offers a perfect solution that anticipates **intent** rather than assuming behavior.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Strategy', 
-      code: `<a href="/en" data-astro-prefetch="hover">
+<CodeTabs
+	items={[
+		{
+			label: 'Strategy',
+			code: `<a href="/en" data-astro-prefetch="hover">
   English
-</a>`, 
-      lang: 'html' 
-    }
-  ]}
+</a>`,
+			lang: 'html',
+		},
+	]}
 />
 
 1.  The user moves the mouse towards the language button (clear intent).
@@ -35,4 +36,5 @@ Astro offers a perfect solution that anticipates **intent** rather than assuming
 3.  It takes about ~200ms to click. By then, the page is already cached.
 
 ### Result
+
 You get the same feeling of **instant navigation** (0ms) but only consume resources when there is a high probability that the user needs them. It's the perfect balance.

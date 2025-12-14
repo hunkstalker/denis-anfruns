@@ -1,0 +1,113 @@
+---
+/**
+ * HoloCard - Card con efecto holográfico "Cosmos" avanzado
+ *
+ * Técnicas Avanzadas:
+ * - Múltiples capas de background para efecto nebula/estrellas
+ * - Movimiento parallax inverso del fondo (profundidad)
+ * - Blend modes para fusión realista
+ */
+
+interface Props {
+	title: string
+	subtitle?: string
+	imageUrl: string
+}
+
+const { title, subtitle, imageUrl } = Astro.props
+---
+
+<div
+	class="holo-card group relative h-[350px] w-[250px] cursor-pointer"
+	style="perspective: 1000px;"
+>
+	<div
+		class="card-inner relative h-full w-full overflow-hidden rounded-2xl bg-zinc-900 shadow-xl transition-all duration-200 ease-out"
+		style="transform-style: preserve-3d; transform: rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg));"
+	>
+		<!-- Background Image -->
+		<img
+			src={imageUrl}
+			alt={title}
+			class="absolute inset-0 h-full w-full object-cover"
+			loading="lazy"
+		/>
+
+		<!-- Overlay to allow blend modes to work better -->
+		<div class="absolute inset-0 bg-black/20"></div>
+
+		<!-- 
+			COSMOS HOLO EFFECT 
+			Un patrón complejo de gradientes que se mueve opuesto al mouse
+		-->
+		<div
+			class="cosmos-foil pointer-events-none absolute inset-0 opacity-0 mix-blend-screen transition-opacity duration-300 group-hover:opacity-100"
+			style="
+				background-image: 
+					/* Estrellas brillantes */
+					radial-gradient(1px 1px at 10% 10%, rgba(255,255,255,0.9), transparent),
+					radial-gradient(1px 1px at 20% 20%, rgba(255,255,255,0.8), transparent),
+					radial-gradient(2px 2px at 30% 70%, rgba(255,255,255,0.8), transparent),
+					radial-gradient(2px 2px at 80% 40%, rgba(255,255,255,0.7), transparent),
+					/* Nebulosa suave */
+					radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.4), transparent 60%),
+					radial-gradient(circle at 15% 15%, rgba(64, 224, 208, 0.3), transparent 50%),
+					radial-gradient(circle at 85% 85%, rgba(255, 69, 0, 0.2), transparent 50%);
+				background-size: 150% 150%;
+				background-position: var(--background-x, 50%) var(--background-y, 50%);
+			"
+		>
+		</div>
+
+		<!-- Glare overlay similar to standard card -->
+		<div
+			class="glare pointer-events-none absolute inset-0 opacity-0 mix-blend-overlay transition-opacity duration-300 group-hover:opacity-100"
+			style="background: linear-gradient(125deg, transparent 40%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.2) 50%, transparent 55%);"
+		>
+		</div>
+
+		<!-- Content -->
+		<div class="absolute bottom-0 left-0 right-0 z-10 p-4">
+			<h3 class="text-lg font-bold text-white drop-shadow-md">{title}</h3>
+			{subtitle && <p class="text-sm text-zinc-200 drop-shadow-sm">{subtitle}</p>}
+		</div>
+	</div>
+</div>
+
+<script>
+	const cards = document.querySelectorAll('.holo-card')
+
+	cards.forEach((card) => {
+		const cardEl = card as HTMLElement
+		const inner = card.querySelector('.card-inner') as HTMLElement
+		if (!inner) return
+
+		const handleMouseMove = (e: MouseEvent) => {
+			const rect = cardEl.getBoundingClientRect()
+			const x = ((e.clientX - rect.left) / rect.width) * 100
+			const y = ((e.clientY - rect.top) / rect.height) * 100
+
+			// Tilt calculation
+			const rotateY = ((x - 50) / 50) * 15
+			const rotateX = ((y - 50) / 50) * -15
+
+			// Background movement (Opposite to mouse for depth)
+			// Move background range: 40% to 60% based on mouse 0% to 100%
+			const bgX = 50 + (x - 50) * -0.5
+			const bgY = 50 + (y - 50) * -0.5
+
+			cardEl.style.setProperty('--rotate-x', `${rotateX}deg`)
+			cardEl.style.setProperty('--rotate-y', `${rotateY}deg`)
+			inner.style.setProperty('--background-x', `${bgX}%`)
+			inner.style.setProperty('--background-y', `${bgY}%`)
+		}
+
+		const handleMouseLeave = () => {
+			cardEl.style.setProperty('--rotate-x', '0deg')
+			cardEl.style.setProperty('--rotate-y', '0deg')
+		}
+
+		cardEl.addEventListener('mousemove', handleMouseMove as EventListener)
+		cardEl.addEventListener('mouseleave', handleMouseLeave)
+	})
+</script>

@@ -1,11 +1,8 @@
 {
-  "pubDate": "2023-03-15",
-  "tags": [
-    "devlog",
-    "architecture"
-  ],
-  "heroImage": "/placeholder-social.jpg",
-  "series": "future-architecture",
-  "seriesTitle": "Future Architecture",
-  "draft": true
+	"pubDate": "2023-03-15",
+	"tags": ["devlog", "architecture"],
+	"heroImage": "/placeholder-social.jpg",
+	"series": "future-architecture",
+	"seriesTitle": "Future Architecture",
+	"draft": true
 }

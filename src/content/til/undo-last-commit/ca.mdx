@@ -1,33 +1,35 @@
 ---
 title: "Desfer l'últim commit i forçar canvis (Git God Mode)"
-lang: "ca"
+lang: 'ca'
 ---
 
-import CodeTabs from '../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
 
 De vegades fiquem la pota fins al fons en l'últim commit i no n'hi ha prou amb un simple `revert`. Volem esborrar-lo de la faç de la terra (local i remotament) com si mai hagués existit.
 
 <Callout type="warning" title="Perill: Destructiu" filled={true}>
-  Aquest mètode **elimina canvis**. Si treballes en equip, assegura't que ningú hagi baixat els teus canvis abans de fer això o tindràs problemes.
+	Aquest mètode **elimina canvis**. Si treballes en equip, assegura't que ningú hagi baixat els teus
+	canvis abans de fer això o tindràs problemes.
 </Callout>
 
 ### 1. Corregir missatge o fitxer oblidat (Opció Ràpida)
 
 Si només t'has equivocat en el missatge o t'has deixat un fitxer fora, no cal fer reset. Afegeix els canvis i "esmena" el commit. Això reemplaça l'últim commit per un de nou corregint l'error.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git add .
-git commit --amend`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git add .
+git commit --amend`,
+			lang: 'bash',
+		},
+	]}
 />
 
 En executar això, s'obrirà el teu editor de text predeterminat (Vim, Nano, VS Code...) amb el missatge del commit anterior.
+
 1. Modifica el missatge si vols.
 2. **Desa i tanca el fitxer** (a Vim: `:wq`).
 3. Git detectarà que has acabat i crearà el nou commit reemplaçant el vell.
@@ -36,28 +38,28 @@ En executar això, s'obrirà el teu editor de text predeterminat (Vim, Nano, VS 
 
 Fem servir `reset --soft` per desfer el commit però **mantenir els teus canvis** preparats (staged). Així pots corregir el que estava malament, afegir el que faltava i tornar a fer el commit.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git reset --soft HEAD~1`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git reset --soft HEAD~1`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 3. Matxucar la història (Remot)
 
 Ara el teu repo local està "en el passat" però GitHub encara està "en el futur". Si intentes fer un push normal, git et rebutjarà. Necessites forçar l'escriptura perquè el remot accepti la teva versió antiga com a "veritat absoluta".
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git push origin +main`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git push origin +main`,
+			lang: 'bash',
+		},
+	]}
 />
 
 > **Nota**: El símbol `+` abans del nom de la branca (`+main`) és una sintaxi curta per a `--force`. Fa el mateix però et fa sentir més hacker.
@@ -67,33 +69,35 @@ Ara el teu repo local està "en el passat" però GitHub encara està "en el futu
 Si `git reset --soft` és com desfer l'escriptura, `git reset --hard` és com cremar el paper i començar de nou. És l'opció nuclear per quan **no vols recuperar res** del que vas fer a l'últim commit.
 
 <Callout type="warning" title="Perill Extrem" filled={true}>
-  Aquesta comanda **elimina permanentment** tots els canvis als teus fitxers que no hagis commitejat. No hi ha marxa enrere (fàcil). Fes-ho servir només si estàs 100% segur que la teva feina recent és escombraries.
+	Aquesta comanda **elimina permanentment** tots els canvis als teus fitxers que no hagis
+	commitejat. No hi ha marxa enrere (fàcil). Fes-ho servir només si estàs 100% segur que la teva
+	feina recent és escombraries.
 </Callout>
 
 ### 1. Esborrar rastre (Local)
 
 Això mou el punter enrere i sincronitza el teu directori de treball amb aquell estat antic.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git reset --hard HEAD~1`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git reset --hard HEAD~1`,
+			lang: 'bash',
+		},
+	]}
 />
 
 ### 2. Forçar la història (Remot)
 
 Igual que amb el soft reset, el remot rebutjarà això perquè has reescrit el passat.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'Bash', 
-      code: `git push origin +main`, 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git push origin +main`,
+			lang: 'bash',
+		},
+	]}
 />

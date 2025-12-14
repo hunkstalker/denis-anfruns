@@ -13,7 +13,7 @@ export default function MenuToggle({ label }: Props) {
 		<button
 			onClick={() => isMenuOpen.set(!$isMenuOpen)}
 			aria-label={label}
-			className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors p-2"
+			className="p-2 text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
 		>
 			{$isMenuOpen ? <X size={24} /> : <Menu size={24} />}
 		</button>

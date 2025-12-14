@@ -1,67 +1,67 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const contentDir = path.join(__dirname, '../src/content');
-const collections = ['devlog', 'til'];
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const contentDir = path.join(__dirname, '../src/content')
+const collections = ['devlog', 'til']
 
-console.log('🔍 Buscando contenido en borrador (draft: true)...\n');
+console.log('🔍 Buscando contenido en borrador (draft: true)...\n')
 
-let foundDrafts = 0;
+let foundDrafts = 0
 
 function checkDirectory(dir) {
-    if (!fs.existsSync(dir)) return;
+	if (!fs.existsSync(dir)) return
 
-    const items = fs.readdirSync(dir, { withFileTypes: true });
+	const items = fs.readdirSync(dir, { withFileTypes: true })
 
-    for (const item of items) {
-        const fullPath = path.join(dir, item.name);
-        
-        if (item.isDirectory()) {
-            // Recurse
-            checkDirectory(fullPath);
-        } else if (item.isFile()) {
-            const ext = path.extname(item.name).toLowerCase();
-            const relativePath = path.relative(contentDir, fullPath);
+	for (const item of items) {
+		const fullPath = path.join(dir, item.name)
 
-            // Check meta.json
-            if (item.name === 'meta.json') {
-                try {
-                    const content = fs.readFileSync(fullPath, 'utf-8');
-                    const json = JSON.parse(content);
-                    if (json.draft === true) {
-                        console.log(`📝 [DRAFT] ${relativePath} (meta.json)`);
-                        foundDrafts++;
-                    }
-                } catch (e) {
-                    console.error(`❌ Error reading ${item.name}:`, e.message);
-                }
-            }
-            // Check MD/MDX frontmatter
-            else if (ext === '.md' || ext === '.mdx') {
-                try {
-                    const content = fs.readFileSync(fullPath, 'utf-8');
-                    // Simple frontmatter extraction
-                    const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-                    if (match && match[1]) {
-                        const frontmatter = match[1];
-                        // Check for draft: true in YAML (simple regex)
-                        if (/^draft:\s*true/m.test(frontmatter)) {
-                            console.log(`📝 [DRAFT] ${relativePath}`);
-                            foundDrafts++;
-                        }
-                    }
-                } catch (e) {
-                    console.error(`❌ Error reading ${item.name}:`, e.message);
-                }
-            }
-        }
-    }
+		if (item.isDirectory()) {
+			// Recurse
+			checkDirectory(fullPath)
+		} else if (item.isFile()) {
+			const ext = path.extname(item.name).toLowerCase()
+			const relativePath = path.relative(contentDir, fullPath)
+
+			// Check meta.json
+			if (item.name === 'meta.json') {
+				try {
+					const content = fs.readFileSync(fullPath, 'utf-8')
+					const json = JSON.parse(content)
+					if (json.draft === true) {
+						console.log(`📝 [DRAFT] ${relativePath} (meta.json)`)
+						foundDrafts++
+					}
+				} catch (e) {
+					console.error(`❌ Error reading ${item.name}:`, e.message)
+				}
+			}
+			// Check MD/MDX frontmatter
+			else if (ext === '.md' || ext === '.mdx') {
+				try {
+					const content = fs.readFileSync(fullPath, 'utf-8')
+					// Simple frontmatter extraction
+					const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
+					if (match && match[1]) {
+						const frontmatter = match[1]
+						// Check for draft: true in YAML (simple regex)
+						if (/^draft:\s*true/m.test(frontmatter)) {
+							console.log(`📝 [DRAFT] ${relativePath}`)
+							foundDrafts++
+						}
+					}
+				} catch (e) {
+					console.error(`❌ Error reading ${item.name}:`, e.message)
+				}
+			}
+		}
+	}
 }
 
 for (const collection of collections) {
-    checkDirectory(path.join(contentDir, collection));
+	checkDirectory(path.join(contentDir, collection))
 }
 
-console.log(`\n✨ Finalizado. Se han encontrado ${foundDrafts} borradores.`);
+console.log(`\n✨ Finalizado. Se han encontrado ${foundDrafts} borradores.`)

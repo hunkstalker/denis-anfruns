@@ -27,7 +27,7 @@ export const TAGS = [
 	'devlog',
 	'ai',
 	'web3',
-	'svelte'
+	'svelte',
 ] as const
 
 export type Tag = (typeof TAGS)[number]

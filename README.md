@@ -68,19 +68,19 @@ El proyecto incluye un **CLI interactivo** para facilitar las tareas comunes. Ej
 
 ![CLI Menu](public/images/cli-menu.png)
 
-| Comando | Descripción |
-|---------|-------------|
-| `pnpm menu` | **Menú interactivo CLI** (Recomendado) |
-| `pnpm install` | Instalar dependencias |
-| `pnpm dev` | Servidor de desarrollo en `localhost:4321` |
-| `pnpm build` | Build de producción + índice Pagefind |
-| `pnpm build:preview` | Build + Preview (Rápido para diseño) |
-| `pnpm preview` | Preview del build local |
+| Comando                  | Descripción                                         |
+| ------------------------ | --------------------------------------------------- |
+| `pnpm menu`              | **Menú interactivo CLI** (Recomendado)              |
+| `pnpm install`           | Instalar dependencias                               |
+| `pnpm dev`               | Servidor de desarrollo en `localhost:4321`          |
+| `pnpm build`             | Build de producción + índice Pagefind               |
+| `pnpm build:preview`     | Build + Preview (Rápido para diseño)                |
+| `pnpm preview`           | Preview del build local                             |
 | `pnpm normalize:content` | Normaliza metadata de TILs (unifica en `meta.json`) |
-| `pnpm verify:content` | Verifica fechas e integridad del contenido |
-| `pnpm check:drafts` | Lista contenido marcado como borrador |
-| `pnpm bp` | **Normaliza** + Verifica + Build + Preview |
-| `pnpm t` | **Normaliza** + Verifica + Build |
+| `pnpm verify:content`    | Verifica fechas e integridad del contenido          |
+| `pnpm check:drafts`      | Lista contenido marcado como borrador               |
+| `pnpm bp`                | **Normaliza** + Verifica + Build + Preview          |
+| `pnpm t`                 | **Normaliza** + Verifica + Build                    |
 
 > **Nota:** La búsqueda solo funciona en `preview` o producción (después de un comando que genere `pnpm build`).
 
@@ -89,6 +89,7 @@ El proyecto incluye un **CLI interactivo** para facilitar las tareas comunes. Ej
 ## 📝 Content Collections
 
 ### TILs (Today I Learned)
+
 ```
 src/content/til/
 └── nombre-til/
@@ -99,6 +100,7 @@ src/content/til/
 ```
 
 ### DevLogs (Series)
+
 ```
 src/content/devlog/
 └── nombre-serie/
@@ -112,16 +114,17 @@ src/content/devlog/
 ```
 
 ### Frontmatter común
+
 ```yaml
 ---
-title: "Título del artículo"
-description: "Descripción breve"
+title: 'Título del artículo'
+description: 'Descripción breve'
 # pubDate y tags se mueven a meta.json en TILs automáticamente
-pubDate: "2024-12-01" 
-tags: ["tag1", "tag2"]
-lang: "es"  # es | en | ca
-draft: false  # true = no se publica en producción
-series: "nombre-serie"  # solo para DevLogs
+pubDate: '2024-12-01'
+tags: ['tag1', 'tag2']
+lang: 'es' # es | en | ca
+draft: false # true = no se publica en producción
+series: 'nombre-serie' # solo para DevLogs
 ---
 ```
 
@@ -139,6 +142,7 @@ Traducciones en `src/i18n/ui.ts`. Uso en componentes:
 import { useTranslations } from '../i18n/utils'
 const t = useTranslations(lang)
 ---
+
 <h1>{t('header.role')}</h1>
 ```
 
@@ -169,28 +173,30 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 
 ## 📦 Dependencias principales
 
-| Paquete | Uso |
-|---------|-----|
-| `astro` | Framework SSG |
-| `@astrojs/react` | Componentes React (hidratación) |
-| `@astrojs/mdx` | Contenido en MDX |
-| `tailwindcss` | Estilos utility-first |
-| `framer-motion` | Animaciones y gestos (React) |
-| `nanostores` | Estado global ligero (Islands) |
-| `pagefind` | Búsqueda estática |
-| `shiki` | Syntax highlighting (incluye alias para PowerFx) |
+| Paquete          | Uso                                              |
+| ---------------- | ------------------------------------------------ |
+| `astro`          | Framework SSG                                    |
+| `@astrojs/react` | Componentes React (hidratación)                  |
+| `@astrojs/mdx`   | Contenido en MDX                                 |
+| `tailwindcss`    | Estilos utility-first                            |
+| `framer-motion`  | Animaciones y gestos (React)                     |
+| `nanostores`     | Estado global ligero (Islands)                   |
+| `pagefind`       | Búsqueda estática                                |
+| `shiki`          | Syntax highlighting (incluye alias para PowerFx) |
 
 ---
 
 ## 🛠️ Desarrollo
 
 ### Añadir un nuevo TIL
+
 1. Crear carpeta en `src/content/til/nombre-til/`
 2. Crear `es.mdx`, `en.mdx`, `ca.mdx` con frontmatter básico (título, lang).
 3. **Opcional**: Añadir `pubDate` y `tags` en `es.mdx` o crear `meta.json` manualmente.
 4. Al hacer `pnpm bp`, el sistema normalizará automáticamente los metadatos moviéndolos a `meta.json`.
 
 ### Añadir nuevo idioma
+
 1. Añadir key en `src/i18n/ui.ts` → `languages`
 2. Añadir traducciones en el objeto de ese idioma
 3. Crear páginas en `src/pages/[lang]/`

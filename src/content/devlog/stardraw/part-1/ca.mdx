@@ -6,8 +6,8 @@ descriptionHeroImage: "Captura d'un test de Konva"
 lang: 'ca'
 ---
 
-import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import GithubCommitLink from '../../../../components/mdx/GithubCommitLink.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro'
+import GithubCommitLink from '../../../../components/mdx/GithubCommitLink.astro'
 
 Inicio la secció amb aquest article dedicat al que probablement serà el meu primer desenvolupament públic. Aquests articles no pretenen ser guies per ensenyar res a ningú, més aviat és un diari del procés de desenvolupament.
 
@@ -48,36 +48,60 @@ Parts importants que vull mantenir són la <span class='text-[--tangerine-hover]
 ### Stack Tecnològic
 
 #### 1. React 19 + Vite + TypeScript
+
 No he treballat gaire en projectes des de zero amb React, però per tot el que tinc llegit fins ara sé que és una tecnologia madura, de llarg recorregut i amb moltes biblioteques que li donen suport que faciliten fer molta varietat de coses, i per això la trio. Però el més important, com he mencionat, tinc en concret la necessitat d'aprendre'l bé per la meva feina juntament amb TypeScript així que això està decidit des de l'inici.
 
 #### 2. Biblioteca de canvas
+
 Aquesta seria la peça més important del projecte, òbviament és una cosa que no construiré de zero, avui no 🤣, i com no tinc ni idea de com desenvolupar aquest tipus d'aplicació li pregunto a Gemini 3 a veure què em recomana usar i la seva resposta és <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Konva</span>. Segons em diu, Konva és una biblioteca per al maneig del canvas.
 
-<div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl rounded-tl-none border border-blue-100 dark:border-blue-800/50 text-blue-900 dark:text-blue-100 relative mb-6 mt-2 shadow-sm">
-  <p class="m-0 italic">"Treballar directament amb l'API de Canvas del navegador és verbós i complex de mantenir. Konva ens ofereix una abstracció orientada a objectes (capes, grups, formes) i `react-konva` ens permet manejar-ho de forma declarativa, integrant-se perfectament amb el cicle de vida de React."</p>
+<div class="relative mb-6 mt-2 rounded-xl rounded-tl-none border border-blue-100 bg-blue-50 p-4 text-blue-900 shadow-sm dark:border-blue-800/50 dark:bg-blue-900/20 dark:text-blue-100">
+	<p class="m-0 italic">
+		"Treballar directament amb l'API de Canvas del navegador és verbós i complex de mantenir. Konva
+		ens ofereix una abstracció orientada a objectes (capes, grups, formes) i `react-konva` ens
+		permet manejar-ho de forma declarativa, integrant-se perfectament amb el cicle de vida de
+		React."
+	</p>
 </div>
 
 Bé, i com no em quedaré amb la primera opció segueixo buscant alternatives, i pel camí descobreixo <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Fabric.js</span>, que també és una biblioteca per al maneig del canvas força utilitzada. Davant la indecisió i com soc una mica fanàtic del rendiment busco documentació al respecte i trobo un article recent.
 
-<a href="https://medium.com/@www.blog4j.com/konva-js-vs-fabric-js-in-depth-technical-comparison-and-use-case-analysis-9c247968dd0f" target="_blank noreferrer noopener">Konva.js vs Fabric.js: In-depth Technical Comparison and Use Case Analysis</a>
+<a
+	href="https://medium.com/@www.blog4j.com/konva-js-vs-fabric-js-in-depth-technical-comparison-and-use-case-analysis-9c247968dd0f"
+	target="_blank noreferrer noopener"
+>
+	Konva.js vs Fabric.js: In-depth Technical Comparison and Use Case Analysis
+</a>
 
 La conclusió que es treu és que Konva ofereix un millor rendiment quan s'enfronta a molta càrrega. En el cas de Fabric.js, no és mala biblioteca en absolut, el seu avantatge és que és més fàcil d'utilitzar a canvi de menor rendiment.
 
 És difícil decidir, el que penso és que és probable que el rendiment que ofereix Konva no l'arribi a aprofitar mai ja que expliquen que està orientat a la creació de jocs, i això és dir molt. Fabric.js pel seu costat és probable que m'ajudi a no escalfar-me massa el cap i per tant a no perdre massa temps... i escolta! si canvio d'opinió crec que mai és tard per refactoritzar i provar amb Konva un cop el projecte estigui acabat. Així que per ara crec que provaré amb Fabric.js.
 
 #### 3. Maneig d'estats globals
+
 Això ho tinc bastant clar. <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Zustand</span> és una biblioteca lleugera i molt utilitzada. No és l'única opció, i pel camí llegeixo sobre un nou competidor que té molt millor rendiment, <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Overwatch TS</span>, però em quedo amb Zustand perquè tampoc és pla de complicar-me. M'apunto el d'Overwatch per a algun futur projecte. Aquí la meta és aprendre React i per això no m'he de complicar massa, a més aquesta filosofia és la correcta si no vull acabar abandonant el projecte, necessito trencar la barrera i publicar el meu primer projecte.
 
 Us deixo amb un article que compara dues de les principals biblioteques de maneig d'estats globals i Overwatch TS. O sigui, de veritat, si és cert el d'Overwatch TS sembla que els passa la mà per la cara. Però és una mica el mateix cas de Konva ¿val la pena per a projectes petits de baixes exigències?
 
-<a href="https://medium.com/@karandeepsinghworkspace/redux-toolkit-vs-zustand-vs-overwatch-who-wins-the-performance-benchmark-e090a504b1e7" target="_blank noreferrer noopener">Redux Toolkit vs Zustand vs Overwatch: Who wins the performance benchmark?</a>
+<a
+	href="https://medium.com/@karandeepsinghworkspace/redux-toolkit-vs-zustand-vs-overwatch-who-wins-the-performance-benchmark-e090a504b1e7"
+	target="_blank noreferrer noopener"
+>
+	Redux Toolkit vs Zustand vs Overwatch: Who wins the performance benchmark?
+</a>
 
 #### 4. Eines auxiliars
+
 Vaig preguntar a Gemini 3 algunes coses respecte a si Fabric.js o Konva oferien funcionalitats per organitzar capes o elements de la UI fàcilment amb Drag & Drop i em va recomanar utilitzar <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>SortableJS</span>.
 
 Suposo que més endavant quan arribi al tema ho investigaré millor, però per ara vaig veure aquest altre article que compara tres biblioteques per manejar drag & drop en React.
 
-<a href="https://npm-compare.com/es-ES/react-dnd,sortablejs,vuedraggable" target="_blank noreferrer noopener">react-dnd, sortablejs, vuedraggable</a>
+<a
+	href="https://npm-compare.com/es-ES/react-dnd,sortablejs,vuedraggable"
+	target="_blank noreferrer noopener"
+>
+	react-dnd, sortablejs, vuedraggable
+</a>
 
 Finalment, mentre feia proves vaig començar a usar les icones <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>lucide-react</span> així que en aquest projecte les seguiré usant.
 
@@ -86,36 +110,37 @@ Finalment, mentre feia proves vaig començar a usar les icones <span class='text
 El bàsic, creo el projecte amb Vite i un template de React amb TypeScript.
 Després, instal·lar Fabric.js, Zustand, Tailwind i lucide-react.
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'npm', 
-      code: 'npm create vite@latest -- --template react-ts\nnpm install fabric zustand tailwindcss lucide-react', 
-      lang: 'bash' 
-    },
-    { 
-      label: 'pnpm', 
-      code: 'pnpm create vite@latest -- --template react-ts\npnpm add fabric zustand tailwindcss lucide-react', 
-      lang: 'bash' 
-    },
-    { 
-      label: 'yarn', 
-      code: 'yarn create vite --template react-ts\nyarn add fabric zustand tailwindcss lucide-react', 
-      lang: 'bash' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'npm',
+			code: 'npm create vite@latest -- --template react-ts\nnpm install fabric zustand tailwindcss lucide-react',
+			lang: 'bash',
+		},
+		{
+			label: 'pnpm',
+			code: 'pnpm create vite@latest -- --template react-ts\npnpm add fabric zustand tailwindcss lucide-react',
+			lang: 'bash',
+		},
+		{
+			label: 'yarn',
+			code: 'yarn create vite --template react-ts\nyarn add fabric zustand tailwindcss lucide-react',
+			lang: 'bash',
+		},
+	]}
 />
 
 Respecte a Tailwind, explicaré un moment els següents passos. Des de la versió 4 Tailwind s'integra amb Vite mitjançant un plugin, un cop instal·lat tailwindcss, on abans calia inicialitzar-lo ara cal instal·lar el plugin. Executarem aquest comandament per instal·lar-lo com a dependència de desenvolupament amb -D.
 
-<CodeTabs 
-  items={[
-    { label: 'npm', code: 'npm install -D @tailwindcss/vite', lang: 'bash' },
-    { label: 'pnpm', code: 'pnpm add -D @tailwindcss/vite', lang: 'bash' },
-    { label: 'yarn', code: 'yarn add -D @tailwindcss/vite', lang: 'bash' }
-  ]}
+<CodeTabs
+	items={[
+		{ label: 'npm', code: 'npm install -D @tailwindcss/vite', lang: 'bash' },
+		{ label: 'pnpm', code: 'pnpm add -D @tailwindcss/vite', lang: 'bash' },
+		{ label: 'yarn', code: 'yarn add -D @tailwindcss/vite', lang: 'bash' },
+	]}
 />
-Un cop instal·lat el plugin, cal afegir-lo a l'arxiu de configuració de Vite fent l'import de tailwind i afegint-lo com a plugin.
+Un cop instal·lat el plugin, cal afegir-lo a l'arxiu de configuració de Vite fent l'import de
+tailwind i afegint-lo com a plugin.
 
 <CodeTabs 
   items={[
@@ -155,14 +180,14 @@ export default defineConfig({
 
 I ara reemplaça el contingut d'`index.css` pel següent import:
 
-<CodeTabs 
-  items={[
-    { 
-      label: 'index.css', 
-      code: `@import "tailwindcss"`, 
-      lang: 'css' 
-    }
-  ]}
+<CodeTabs
+	items={[
+		{
+			label: 'index.css',
+			code: `@import "tailwindcss"`,
+			lang: 'css',
+		},
+	]}
 />
 
 Ja arribem als últims passos, cal netejar una mica el codi per defecte que genera la plantilla de Vite. Només hem d'eliminar l'arxiu `src/App.css`, netejar l'arxiu `src/App.tsx` i assegurar-nos que `src/main.tsx` contingui el bàsic.
@@ -190,6 +215,7 @@ import './index.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
+
   <StrictMode>
     <App />
   </StrictMode>,
@@ -204,16 +230,19 @@ Esborraré també els arxius `assets/react.svg` i `assets/vite.svg`.
 
 Ara, idealment, cada vegada que completem una peça de codi, canvi o característica el seu és guardar canvis a git amb un commit, però no tenim repositori inicialitzat, per la qual cosa l'inicialitzarem creant el repositori de git local i després el pujarem a GitHub.
 
-<CodeTabs 
-  items={[
-    { label: 'bash', code: `git init
+<CodeTabs
+	items={[
+		{
+			label: 'bash',
+			code: `git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
 git remote add origin https://github.com/hunkstalker/stardraw
-git push -u origin main`, 
-lang: 'bash' }
-  ]}
+git push -u origin main`,
+			lang: 'bash',
+		},
+	]}
 />
 
 Recordatori:
@@ -224,7 +253,7 @@ Recordatori:
 - **`git add .`**: La paraula `add` serveix per afegir canvis a l'stage (preparació) i el punt `.` selecciona tots els arxius.
 - **`git commit -m "Initial commit"`**: Crea el primer commit. El flag `-m` permet afegir el missatge del commit directament.
 - **`git branch -M main`**: Renombra la branca actual a `main`.
-    > **Nota**: Això és útil si la teva configuració per defecte crea la branca com a `master`.
+  > **Nota**: Això és útil si la teva configuració per defecte crea la branca com a `master`.
 - **`git remote add origin ...`**: Vincula el repositori local amb el remot. `origin` és l'àlies que usarem per referir-nos a la URL del repositori (https://github.com/hunkstalker/stardraw).
 - **`git push -u origin main`**: Puja els canvis a GitHub. El flag `-u` vincula la teva branca local `main` amb la remota `origin/main`, permetent-te usar simplement `git push` en el futur.
 
@@ -232,11 +261,11 @@ Recordatori:
 
 Al final de cada article tractaré de deixar l'enllaç al commit a GitHub concret perquè es pugui veure com va quedar el codi exacte en aquest punt.
 
-<div class="mt-4 mb-6">
-  <GithubCommitLink 
-    href="https://github.com/hunkstalker/stardraw/tree/b1850d4a0043bd86df6b08dbb607b3b89fe7396f"
-    title="Codi final - Initial commit"
-  />
+<div class="mb-6 mt-4">
+	<GithubCommitLink
+		href="https://github.com/hunkstalker/stardraw/tree/b1850d4a0043bd86df6b08dbb607b3b89fe7396f"
+		title="Codi final - Initial commit"
+	/>
 </div>
 
 Bé! I amb això tinc tot el procés inicial de crear un projecte a Vite + React deixant-lo completament net. I el tenim pujat a GitHub. Aquí quedarà per quan qualsevol vulgui consultar-lo. <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Això no és una guia, però podeu aprendre amb mi.</span>

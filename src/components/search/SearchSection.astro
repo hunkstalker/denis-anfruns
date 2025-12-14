@@ -10,71 +10,74 @@ interface CardItem {
 
 interface Props {
 	title: string
-	icon: string  // Raw SVG string
+	icon: string // Raw SVG string
 	items: CardItem[]
 	mode: 'desktop' | 'mobile'
 	lang?: string
-	initialLimit?: number  // Items shown initially (rest are hidden as extra-item)
+	initialLimit?: number // Items shown initially (rest are hidden as extra-item)
 	hasBorderTop?: boolean // For mobile sections after the first
 	type: 'til' | 'project' | 'devlog'
 }
 
-const { 
-	title, 
-	icon, 
-	items, 
-	mode, 
-	lang = 'es', 
+const {
+	title,
+	icon,
+	items,
+	mode,
+	lang = 'es',
 	initialLimit = 3,
 	hasBorderTop = false,
-	type
+	type,
 } = Astro.props
 
 const isDesktop = mode === 'desktop'
 const displayItems = isDesktop ? items : items.slice(0, initialLimit)
 ---
 
-{items.length > 0 && (
-	<div 
-		class:list={[
-			isDesktop ? 'mb-6' : 'px-2 py-2',
-			{ 'mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-800': hasBorderTop && !isDesktop }
-		]}
-		data-section={type}>
-		<h3 class:list={[
-			'flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400',
-			isDesktop ? 'text-xs mb-3' : 'text-xs mb-2'
-		]}>
-			<span class:list={[isDesktop ? 'mb-2 mr-2 h-4 w-4' : 'mb-3 mr-2 h-4 w-4']}>
-				<Fragment set:html={icon} />
-			</span>
-			{title}
-		</h3>
-		<div class={isDesktop ? 'grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3' : 'space-y-3'}>
-			{isDesktop ? (
-				items.map((item, index) => (
-					<SearchCard
-						href={item.href}
-						title={item.title}
-						description={item.description}
-						date={item.date}
-						lang={lang}
-						mode={mode}
-						isExtraItem={index >= initialLimit}
-					/>
-				))
-			) : (
-				displayItems.map(item => (
-					<SearchCard
-						href={item.href}
-						title={item.title}
-						description={item.description}
-						date={item.date}
-						lang={lang}
-						mode={mode}
-					/>
-				))
-			)}
+{
+	items.length > 0 && (
+		<div
+			class:list={[
+				isDesktop ? 'mb-6' : 'px-2 py-2',
+				{ 'mt-4 border-t border-zinc-100 pt-4 dark:border-zinc-800': hasBorderTop && !isDesktop },
+			]}
+			data-section={type}
+		>
+			<h3
+				class:list={[
+					'flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400',
+					isDesktop ? 'text-xs mb-3' : 'text-xs mb-2',
+				]}
+			>
+				<span class:list={[isDesktop ? 'mb-2 mr-2 h-4 w-4' : 'mb-3 mr-2 h-4 w-4']}>
+					<Fragment set:html={icon} />
+				</span>
+				{title}
+			</h3>
+			<div class={isDesktop ? 'grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3' : 'space-y-3'}>
+				{isDesktop
+					? items.map((item, index) => (
+							<SearchCard
+								href={item.href}
+								title={item.title}
+								description={item.description}
+								date={item.date}
+								lang={lang}
+								mode={mode}
+								isExtraItem={index >= initialLimit}
+							/>
+						))
+					: displayItems.map((item) => (
+							<SearchCard
+								href={item.href}
+								title={item.title}
+								description={item.description}
+								date={item.date}
+								lang={lang}
+								mode={mode}
+							/>
+						))}
+			</div>
 		</div>
-	</div>
-)}
+	)
+}

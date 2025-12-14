@@ -39,7 +39,7 @@ const labels = {
 
 // --- SERVER LOGIC (Build Time) ---
 const allTils = await getTils()
-const allDevlog = (await getDevlogs()).filter(p =>
+const allDevlog = (await getDevlogs()).filter((p) =>
 	import.meta.env.PROD ? p.data.draft !== true : true,
 )
 const allProjects = await getProjects()
@@ -52,10 +52,10 @@ const buildHref = (type: 'til' | 'devlog' | 'projects', slug: string) => {
 
 // Transform data into card items
 const tilItems = allTils
-	.filter(p => p.data.lang === lang)
+	.filter((p) => p.data.lang === lang)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 12)
-	.map(item => ({
+	.map((item) => ({
 		href: buildHref('til', item.slug),
 		title: item.data.title,
 		description: item.data.description,
@@ -63,10 +63,10 @@ const tilItems = allTils
 	}))
 
 const projectItems = allProjects
-	.filter(p => p.data.lang === lang)
+	.filter((p) => p.data.lang === lang)
 	.sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0))
 	.slice(0, 12)
-	.map(item => ({
+	.map((item) => ({
 		href: buildHref('projects', item.slug),
 		title: item.data.title,
 		description: item.data.description,
@@ -75,17 +75,17 @@ const projectItems = allProjects
 
 // Deduplicate series for devlog posts
 const devlogItems = allDevlog
-	.filter(p => getLangFromSlug(p.slug) === lang && p.data.pubDate)
+	.filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.reduce(
 		(acc, post) => {
 			if (acc.length >= 12) return acc
 			const isSeries = post.data.series
 			if (isSeries) {
-				const seriesExists = acc.some(p => p.data.series === isSeries)
+				const seriesExists = acc.some((p) => p.data.series === isSeries)
 				if (!seriesExists) {
 					const seriesPosts = allDevlog
-						.filter(p => p.data.series === isSeries && getLangFromSlug(p.slug) === lang)
+						.filter((p) => p.data.series === isSeries && getLangFromSlug(p.slug) === lang)
 						.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf())
 					const seriesHead = seriesPosts.length > 0 ? seriesPosts[0] : post
 					acc.push(seriesHead)
@@ -97,7 +97,7 @@ const devlogItems = allDevlog
 		},
 		[] as typeof allDevlog,
 	)
-	.map(item => ({
+	.map((item) => ({
 		href: buildHref('devlog', item.slug),
 		title: item.data.title,
 		description: item.data.description,
@@ -116,51 +116,54 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || devlogItems
 	counts={{
 		til: tilItems.length,
 		project: projectItems.length,
-		devlog: devlogItems.length
-	}}>
+		devlog: devlogItems.length,
+	}}
+>
 	{/* Server Rendered Initial Content */}
 	<div id={`${resultsContainerId}-content`}>
-		{hasContent ? (
-			<>
-				<h3 class="mb-4 hidden text-center text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 md:block">
-					{t('blog.recent')}
-				</h3>
+		{
+			hasContent ? (
+				<>
+					<h3 class="text-xs mb-4 hidden text-center font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 md:block">
+						{t('blog.recent')}
+					</h3>
 
-				{/* Order: TIL → Projects → Devlogs */}
-				<SearchSection
-					title={t('blog.til')}
-					icon={PinIcon}
-					items={tilItems}
-					mode={mode}
-					lang={lang}
-					initialLimit={mode === 'desktop' ? 6 : 6}
-					type="til"
-				/>
-				<SearchSection
-					title={t('nav.projects') || 'Projects'}
-					icon={RocketIcon}
-					items={projectItems}
-					mode={mode}
-					lang={lang}
-					initialLimit={3}
-					hasBorderTop={tilItems.length > 0 && mode === 'mobile'}
-					type="project"
-				/>
-				<SearchSection
-					title={t('blog.series')}
-					icon={BookmarkIcon}
-					items={devlogItems}
-					mode={mode}
-					lang={lang}
-					initialLimit={3}
-					hasBorderTop={(tilItems.length > 0 || projectItems.length > 0) && mode === 'mobile'}
-					type="devlog"
-				/>
-			</>
-		) : (
-			<div class='py-10 text-center text-sm text-zinc-500 dark:text-zinc-400'>
-				<p>Escribe para buscar artículos y proyectos...</p>
-			</div>
-		)}
+					{/* Order: TIL → Projects → Devlogs */}
+					<SearchSection
+						title={t('blog.til')}
+						icon={PinIcon}
+						items={tilItems}
+						mode={mode}
+						lang={lang}
+						initialLimit={mode === 'desktop' ? 6 : 6}
+						type="til"
+					/>
+					<SearchSection
+						title={t('nav.projects') || 'Projects'}
+						icon={RocketIcon}
+						items={projectItems}
+						mode={mode}
+						lang={lang}
+						initialLimit={3}
+						hasBorderTop={tilItems.length > 0 && mode === 'mobile'}
+						type="project"
+					/>
+					<SearchSection
+						title={t('blog.series')}
+						icon={BookmarkIcon}
+						items={devlogItems}
+						mode={mode}
+						lang={lang}
+						initialLimit={3}
+						hasBorderTop={(tilItems.length > 0 || projectItems.length > 0) && mode === 'mobile'}
+						type="devlog"
+					/>
+				</>
+			) : (
+				<div class="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+					<p>Escribe para buscar artículos y proyectos...</p>
+				</div>
+			)
+		}
 	</div>
 </SearchResultsClient>
