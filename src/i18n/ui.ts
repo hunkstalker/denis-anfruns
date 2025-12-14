@@ -83,7 +83,15 @@ export const ui = {
     'about.garden.title': 'El Jardín Digital',
     'about.garden.text': 'Este lugar es un **"Jardín Digital"**. Aquí no solo publicaré proyectos terminados, sino que documento mis desarrollos o experimentos así como pequeñas notas que me sirvan día a día (TILs). Me encanta enseñar y compartir así que espero que este repositorio nos sea de ayuda a ambos. Creo firmemente en el **Código Libre** ❤️',
     'about.personal.title': 'Más allá del código',
-    'about.personal.text': 'Cuando no estoy programando, te costará encontrarme 🤣 disfruto desconectando con una buena serie, película o perdiéndome en algún videojuego. Como detalle, estudié Diseño Industrial y tengo buena mano para el dibujo; no me considero un gran creativo, pero paso tiempo ojeando obras de artistas independientes. Aprecio mucho el arte y el diseño, por lo que le doy gran importancia a la **comunicación visual** y a **lo que transmite**.' ,
+    'about.personal.text': `Cuando no estoy programando, te costará encontrarme 🤣 
+      disfruto desconectando con una buena serie, película o perdiéndome en algún videojuego. 
+      **Soy fan de Star Trek, Stargate** y nunca me canso de los **videojuegos retro**, me llenan de nostalgia. 
+      <br><br>
+      Como detalle, **estudié Diseño Industrial** y tengo buena mano para el dibujo; no me considero un gran creativo, 
+      pero paso tiempo ojeando obras de artistas independientes. Aprecio mucho el arte y el diseño, por lo que le 
+      doy gran importancia a la **comunicación visual** y a **lo que transmite**.
+      <br><br>
+      Por último espero que disfrutes y aprendas del contenido de mi sitio y te hago saber que tienes algunos easter eggs repartidos, así que diviértete encontrándolos.` ,
   },
   ca: {
     // NAVEGACIÓ
@@ -157,7 +165,15 @@ export const ui = {
     'about.garden.title': 'El Jardí Digital',
     'about.garden.text': 'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia (TILs). M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
     'about.personal.title': 'Més enllà del codi',
-    'about.personal.text': "Quan no estic programant, et costarà trobar-me 🤣 gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. Com a detall, vaig estudiar Disseny Industrial i tinc bona mà per al dibuix; no em considero un gran creatiu, però passo temps mirant obres d'artistes independents. Aprecio molt l'art i el disseny, per la qual cosa li dono gran importància a la **comunicació visual** i al **que transmet**.",
+    'about.personal.text': `Quan no estic programant, et costarà trobar-me 🤣 
+      gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. 
+      **Soc fan de Star Trek, Stargate** i mai em canso dels **videojocs retro**, m'omplen de nostàlgia. 
+      <br><br>
+      Com a detall, **vaig estudiar Disseny Industrial** i tinc bona mà per al dibuix; no em considero un gran creatiu, 
+      però passo temps mirant obres d'artistes independents. Aprecio molt l'art i el disseny, per la qual cosa li 
+      dono gran importància a la **comunicació visual** i al **que transmet**.
+      <br><br>
+      Per últim espero que gaudeixis i aprenguis del contingut del meu lloc i et faig saber que tens alguns easter eggs repartits, així que diverteix-te trobant-los.`,
   },
   en: {
     // NAVEGACIÓ
@@ -233,6 +249,14 @@ export const ui = {
     'about.garden.title': 'The Digital Garden',
     'about.garden.text': 'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I verify my developments or experiments as well as small notes that serve me day to day (TILs). I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
     'about.personal.title': 'Beyond the Code',
-    'about.personal.text': "When I'm not coding, you'll have a hard time finding me 🤣 I enjoy disconnecting with a good series, movie, or getting lost in a video game. As a detail, I studied Industrial Design and I'm pretty good at drawing; I don't consider myself a great creative, but I spend time browsing works by independent artists. I greatly appreciate art and design, which is why I place great importance on **visual communication** and **what it conveys**.",
+    'about.personal.text': `When I'm not coding, you'll have a hard time finding me 🤣 
+      I enjoy disconnecting with a good series, movie, or getting lost in a video game. 
+      **I'm a fan of Star Trek, Stargate** and I never get tired of **retro video games**, they fill me with nostalgia. 
+      <br><br>
+      As a detail, **I studied Industrial Design** and I'm pretty good at drawing; I don't consider myself a great creative, 
+      but I spend time browsing works by independent artists. I greatly appreciate art and design, which is why I place 
+      great importance on **visual communication** and **what it conveys**.
+      <br><br>
+      Finally, I hope you enjoy and learn from my site's content and I let you know that there are some easter eggs scattered around, so have fun finding them!`,
   },  
 } as const;
