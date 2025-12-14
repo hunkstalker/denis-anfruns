@@ -201,9 +201,20 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	hiddenForm.appendChild(hiddenInput)
 	document.body.appendChild(hiddenForm)
 
-	// Focus handling
-	document.addEventListener('click', () => hiddenInput.focus())
-	hiddenInput.focus()
+	// Focus handling - only focus terminal when clicking outside interactive elements
+	document.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement
+		// Don't steal focus from nav, search, buttons, links, inputs, etc.
+		const isInteractive = target.closest('nav, a, button, input, [role="button"], [data-search]')
+		if (!isInteractive) {
+			hiddenInput.focus()
+		}
+	})
+	
+	// Auto-focus on load (only if not focused on something else)
+	if (!document.activeElement || document.activeElement === document.body) {
+		hiddenInput.focus()
+	}
 
 	if (typeTarget) typeTarget.style.whiteSpace = 'pre'
 
