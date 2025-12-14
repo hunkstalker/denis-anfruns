@@ -9,6 +9,7 @@ export const defaultLang = 'es';
 export const ui = {
   es: {
     // NAVEGACIÓN
+    'site.title': 'Denis Anfruns',
     'nav.home': 'INICIO',
     'nav.blog': 'BLOG',
     'nav.projects': 'PROYECTOS',
@@ -40,9 +41,11 @@ export const ui = {
     'blog.title': 'Bitácora Digital',
     'blog.description': 'Un espacio donde documento mi aprendizaje. Desde artículos profundos hasta pequeños fragmentos de código (TILs).',
     'blog.series': 'DevLogs',
+    'blog.recent': 'Más Recientes',
     'blog.devLogDescription': 'Artículos sobre el desarrollo de mis proyectos.',
     'blog.withoutArticles': 'No hay DevLogs todavía.',
     'blog.readArticle': 'Leer DevLog',
+    'blog.viewAll': 'Ver todo',
     'blog.readNote': 'Leer nota',
     'blog.til': 'Notas TIL',
     'blog.withoutTILs': 'No hay notas TIL todavía.',
@@ -84,6 +87,7 @@ export const ui = {
   },
   ca: {
     // NAVEGACIÓ
+    'site.title': 'Denis Anfruns',
     'nav.home': 'INICI',
     'nav.blog': 'BLOG',
     'nav.projects': 'PROJECTES',
@@ -115,9 +119,11 @@ export const ui = {
     'blog.title': 'Bitàcora Digital',
     'blog.description': 'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi (TILs).',
     'blog.series': 'DevLogs',
+    'blog.recent': 'Més Recents',
     'blog.devLogDescription': 'Articles sobre el desenvolupament dels meus projectes.',
     'blog.withoutArticles': 'Encara no hi ha DevLogs.',
     'blog.readArticle': 'Llegir DevLog',
+    'blog.viewAll': 'Veure tot',
     'blog.readNote': 'Llegir nota',
     'blog.til': 'Notes TIL',
     'blog.withoutTILs': 'Encara no hi ha notes TIL.',
@@ -154,6 +160,8 @@ export const ui = {
     'about.personal.text': 'Quan no estic programant, et costarà trobar-me 🤣 gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. També faig els meus intents en desenvolupament de videojocs (aviat espero obrir una secció dedicada). Com a detall, vaig estudiar Disseny Industrial i tinc bona mà pel dibuix; encara que no em consideri un gran creatiu, **gaudeixo enormement apreciant l\'art i el disseny**.',
   },
   en: {
+    // NAVEGACIÓ
+    'site.title': 'Denis Anfruns',
     'nav.home': 'HOME',
     'nav.blog': 'BLOG',
     'nav.projects': 'PROJECTS',
@@ -185,9 +193,11 @@ export const ui = {
     'blog.title': 'Digital Log',
     'blog.description': 'A space where I document my learning. From deep articles to small code snippets (TILs).',
     'blog.series': 'DevLogs',
+    'blog.recent': 'Most Recent',
     'blog.devLogDescription': 'Articles about the development of my projects.',
     'blog.withoutArticles': 'No DevLogs yet.',
     'blog.readArticle': 'Read DevLog',
+    'blog.viewAll': 'View all',
     'blog.readNote': 'Read note',
     'blog.til': 'TIL Notes',
     'blog.withoutTILs': 'No TIL notes yet.',

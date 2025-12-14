@@ -122,6 +122,10 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || devlogItems
 	<div id={`${resultsContainerId}-content`}>
 		{hasContent ? (
 			<>
+				<h3 class="mb-4 hidden text-center text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 md:block">
+					{t('blog.recent')}
+				</h3>
+
 				{/* Order: TIL → Projects → Devlogs */}
 				<SearchSection
 					title={t('blog.til')}

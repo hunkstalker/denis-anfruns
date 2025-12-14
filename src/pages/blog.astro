@@ -65,15 +65,22 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
 <BaseLayout siteTitle='Jardín Digital' lang={lang}>
 	<Nav lang={lang} />
 	<div class='container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28'>
+		<h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 lg:pl-6">{t('blog.recent')}</h3>
 		<div class='grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-12'>
 			<!-- Columna principal: DevLogs -->
 			<div class='space-y-12 lg:col-span-8'>
 				<!-- Contenedor "invisible" para alinear con TilAside (p-0 sm:p-0 mobile / lg:p-6 desktop) -->
 				<div class='rounded-xl p-0 lg:border lg:border-transparent lg:p-6'>
-					<h2
-						class='flex items-center gap-2 border-b border-zinc-200 pb-2 text-xl font-bold dark:border-zinc-700 dark:text-zinc-200'>
-						DevLogs
-					</h2>
+
+					<div class="flex items-center justify-between border-b border-zinc-200 pb-2 dark:border-zinc-700">
+						<h2 class='text-xl font-bold dark:text-zinc-200'>
+							DevLogs
+						</h2>
+						<a href="/devlog/" class="group flex items-center gap-1 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]">
+							{t('blog.viewAll')}
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-1"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+						</a>
+					</div>
 
 					<p class="mb-6 mt-2 text-base text-zinc-500">{t('blog.devLogDescription')}</p>
 
@@ -83,7 +90,8 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
 						client:load 
 						posts={articles} 
 						lang={lang} 
-						labels={{ readArticle: t('blog.readArticle') }} 
+						labels={{ readArticle: t('blog.readArticle') }}
+                        layout='list'
 					/>
 				</div>
 			</div>
