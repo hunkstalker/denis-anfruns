@@ -70,12 +70,37 @@ function getPathForLang(lang: string) {
 
 <script>
 	const links = document.querySelectorAll('.language-link')
+	
+	// Sync visual state with localStorage on 404 page (URL doesn't contain lang)
+	const is404Page = document.getElementById('error-title') !== null
+	if (is404Page) {
+		const savedLang = localStorage.getItem('selectedLang') || 'es'
+		links.forEach((link) => {
+			const linkEl = link as HTMLAnchorElement
+			const lang = linkEl.dataset.lang
+			if (lang === savedLang) {
+				linkEl.classList.remove('text-zinc-500', 'hover:text-zinc-800', 'dark:text-zinc-400', 'dark:hover:text-zinc-200')
+				linkEl.classList.add('pointer-events-none', 'scale-110', 'cursor-default', 'text-[var(--tangerine-hover)]', 'dark:text-[var(--tangerine)]')
+			} else {
+				linkEl.classList.remove('pointer-events-none', 'scale-110', 'cursor-default', 'text-[var(--tangerine-hover)]', 'dark:text-[var(--tangerine)]')
+				linkEl.classList.add('text-zinc-500', 'hover:text-zinc-800', 'dark:text-zinc-400', 'dark:hover:text-zinc-200')
+			}
+		})
+	}
+
 	links.forEach((link) => {
 		link.addEventListener('click', (e) => {
 			const target = e.currentTarget as HTMLAnchorElement
 			const lang = target.dataset.lang
 			if (lang) {
 				localStorage.setItem('selectedLang', lang)
+			}
+
+			// On 404 page, just reload to apply new language
+			if (is404Page) {
+				e.preventDefault()
+				window.location.reload()
+				return
 			}
 
 			// Persist query params (e.g. ?tag=react)
