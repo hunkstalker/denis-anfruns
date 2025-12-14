@@ -5,8 +5,9 @@ interface Props {
 	enabled?: boolean
 	active?: boolean
 	class?: string
+	id?: string
 }
-const { text, link, enabled = true, active = false, class: className = '' } = Astro.props
+const { text, link, enabled = true, active = false, class: className = '', id } = Astro.props
 
 const baseClasses =
 	'relative m-2 py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal inline-block text-center'
@@ -25,6 +26,7 @@ const disabledClasses =
 	active ? (
 		// Enlace activo, en el que se está
 		<a
+			id={id}
 			href={link}
 			class={`${baseClasses} ${activeClasses} ${className}`}
 			aria-current="page"
@@ -34,6 +36,7 @@ const disabledClasses =
 	) : enabled ? (
 		// Enlace disponible, opciones a las que se puede navegar
 		<a
+			id={id}
 			href={link}
 			data-astro-prefetch="hover"
 			class={`${baseClasses} ${enabledClasses} ${className}`}

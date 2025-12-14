@@ -6,66 +6,283 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 <BaseLayout siteTitle={siteTitle}>
 	<Nav />
-	<header class="mt-28 text-center md:mt-48">
-		<h1
-			class="text-gradient px-18 my-4 text-3xl font-bold leading-none drop-shadow-md sm:text-4xl lg:text-5xl"
-		>
-			ERROR 404
-		</h1>
-		<h2 id="error-msg" class='2xl:text-2xl" mx-12 my-4 sm:mb-6 sm:mt-4 lg:text-xl'>
-			Oops! The page you're looking for can't be found.
-		</h2>
-		<a
-			id="home-link"
-			href="/"
-			data-astro-prefetch
-			class="mt-8 inline-block transform rounded-lg bg-zinc-900 px-6 py-3 text-sm font-bold uppercase text-white transition-colors duration-200 hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-			>Go Home</a
-		>
-	</header>
-	<main class="flex-grow"></main>
+	
+	<main id="main-content" class="relative flex flex-grow flex-col items-center justify-center overflow-hidden min-h-[60vh] transition-opacity duration-500">
+		<!-- Giant 404 Background -->
+		<div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" aria-hidden="true">
+			<span class="text-[20rem] sm:text-[28rem] md:text-[36rem] font-black text-zinc-200/50 dark:text-zinc-800/50 leading-none">
+				404
+			</span>
+		</div>
+		
+		<!-- Foreground Content -->
+		<div class="relative z-10 text-center px-4">
+			<h1
+				id="error-title"
+				class="animate-fade-in-up text-balance text-4xl font-black leading-tight tracking-tight sm:text-5xl md:text-6xl max-w-2xl mx-auto"
+			></h1>
+			<p
+				id="error-msg"
+				class="animate-fade-in-up delay-100 mt-6 text-lg text-zinc-500 text-balance max-w-lg mx-auto dark:text-zinc-400"
+			></p>
+		</div>
+	</main>
+
+	<!-- Terminal Overlay - Always Visible -->
+	<div id="terminal-overlay" class="fixed inset-0 z-50 font-mono text-white overflow-hidden pointer-events-none">
+		<!-- Left-aligned terminal window -->
+		<div class="absolute left-0 top-0 h-full w-full md:w-1/2 lg:w-1/3 p-4 md:p-8 flex flex-col justify-end pb-20">
+			<div id="terminal-logs" class="flex flex-col gap-1 text-xs md:text-sm font-bold tracking-wider max-h-full overflow-hidden">
+				<div id="command-line" class="flex items-center">
+					<span class="mr-2">&gt;</span>
+					<span id="type-target"></span>
+					<span class="animate-blink-retro">_</span>
+				</div>
+			</div>
+		</div>
+	</div>
 </BaseLayout>
 
+<style>
+	.animate-fade-in-up {
+		opacity: 0;
+		animation: fadeInUp 0.8s ease-out forwards;
+	}
+	
+	.delay-100 { animation-delay: 0.1s; }
+
+	@keyframes fadeInUp {
+		from { opacity: 0; transform: translateY(20px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.animate-blink-retro {
+		animation: blinkRetro 1s step-end infinite;
+	}
+
+	@keyframes blinkRetro {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0; }
+	}
+</style>
+
 <script>
-	// Simple translation map for 404 specifically
 	const translations = {
 		es: {
-			msg: '¡Vaya! La página que buscas no se encuentra.',
-			btn: 'Ir al Inicio',
+			title: 'Página no encontrada',
+			msg: 'Parece que te has perdido por internet. Si quieres visitar mi sitio web, vuelve a la página de inicio.',
 		},
 		ca: {
-			msg: 'Vaja! La pàgina que busques no es troba.',
-			btn: "Anar a l'Inici",
+			title: 'Pàgina no trobada',
+			msg: "Sembla que t'has perdut en el buit. Ho sentim, no hem pogut trobar el que busques.",
 		},
 		en: {
-			msg: "Oops! The page you're looking for can't be found.",
-			btn: 'Go Home',
+			title: 'Page not found',
+			msg: "It seems you've got lost in the void. Sorry, we couldn't find what you're looking for.",
 		},
 	}
+
+	// ============================================================
+	// COMMANDS REGISTRY - Add new commands here!
+	// Each command needs: { execute: async (ctx) => void }
+	// ctx contains: { terminalLogs, lang, redirect }
+	// ============================================================
+	
+	type CommandContext = {
+		terminalLogs: HTMLElement
+		lang: string
+		redirect: (path: string) => void
+		typeLog: (text: string) => Promise<void>
+		showProgressBar: () => Promise<void>
+	}
+
+	type Command = {
+		execute: (ctx: CommandContext) => Promise<void>
+	}
+
+	const commands: Record<string, Command> = {
+		// Another World / Out of This World Easter Egg
+		'RUN PROJECT 23': {
+			execute: async (ctx) => {
+				const logs = [
+					'> SYSTEM_ERROR_404',
+					'> INITIALIZING_FERRARI_PROJECT...',
+					'> USER: LESTER_CHAYKIN',
+					'> ENTER_CODE: L5',
+					'> ENTER_ID: K8',
+					'> ENTER_PASSWORD: 4511932',
+					'> ACCESS_GRANTED',
+					'> CHECKING_SYSTEMS...',
+					'> MEM............[OK]',
+					'> DATA...........[OK]',
+					'> BLOCK..........[OK]',
+					'> POSIT..........[OK]',
+					'> ENERGY_LEVEL: 100%',
+					'> SYNCHRO........[ACTIVE]',
+					'> PARTICLE_ACCELERATION_STARTED',
+					'> ANOMALY_DETECTED_SECTOR_404',
+					'> DIMENSIONAL_TEAR_IMMINENT',
+					'> INITIATING_TELEPORT_SEQUENCE...',
+					'> INITIATING_PROJECT_23...',
+					'> CONNECTING_TO_GLOBAL_SKYNET...',
+					'> TARGET: HUMANITY... [SKIP]',
+					'> SYSTEM_ERROR: YOU_DIDNT_SAY_THE_MAGIC_WORD',
+					'> ACCESS_DENIED',
+					'> SECTOR: THE_SWAN',
+					'> ENTERING_SEQUENCE:',
+					'> 4 8 15 16 23 42',
+					'> EXECUTE_STATION_PEARL',
+					'> ANOMALY_DETECTED: ELECTROMAGNETIC_DISCHARGE',
+					'> DIMENSIONAL_COLLAPSE_IMMINENT',
+					'> WAKE_UP_NEO...',
+					'> THE_MATRIX_HAS_YOU...',
+					'> FOLLOWING_THE_WHITE_RABBIT...',
+					'> REBOOTING_REALITY...'
+				]
+				
+				for (const log of logs) {
+					await ctx.typeLog(log)
+				}
+				
+				await ctx.showProgressBar()
+				ctx.redirect(ctx.lang === 'es' ? '/' : `/${ctx.lang}`)
+			}
+		},
+
+		// ============================================================
+		// ADD MORE COMMANDS HERE! Example:
+		// 'MATRIX': {
+		//   execute: async (ctx) => {
+		//     await ctx.typeLog('> ENTERING THE MATRIX...')
+		//     // Your custom effect here
+		//     ctx.redirect('/')
+		//   }
+		// },
+		// ============================================================
+	}
+
+	// ============================================================
+	// CORE SYSTEM - No need to modify below this line
+	// ============================================================
 
 	function getLang() {
 		const pathLang = window.location.pathname.split('/')[1]
 		if (pathLang in translations) return pathLang
-
 		const savedLang = localStorage.getItem('selectedLang')
 		if (savedLang && savedLang in translations) return savedLang
-
 		const userLang = navigator.language.split('-')[0]
 		if (userLang in translations) return userLang
-
-		return 'es' // Default fallback
+		return 'es'
 	}
 
 	const lang = getLang() as keyof typeof translations
-	const t = translations[lang]
+	const t = translations[lang] || translations['es']
 
+	// Text Update
+	const titleElement = document.getElementById('error-title')
 	const msgElement = document.getElementById('error-msg')
-	const linkElement = document.getElementById('home-link')
-
+	
+	if (titleElement) titleElement.textContent = t.title
 	if (msgElement) msgElement.textContent = t.msg
-	if (linkElement) {
-		linkElement.textContent = t.btn
-		// Adjust home link based on language
-		linkElement.setAttribute('href', lang === 'es' ? '/' : `/${lang}`)
+
+	const terminalLogs = document.getElementById('terminal-logs')
+	const commandLine = document.getElementById('command-line')
+	const typeTarget = document.getElementById('type-target')
+
+	// Hidden Form & Input for robust Enter key handling
+	const hiddenForm = document.createElement('form')
+	hiddenForm.style.cssText = 'position:absolute;opacity:0;top:0;left:0;height:0;overflow:hidden'
+
+	const hiddenInput = document.createElement('input')
+	hiddenInput.type = 'text'
+	hiddenInput.autocomplete = 'off'
+	hiddenInput.style.fontSize = '16px'
+	
+	hiddenForm.appendChild(hiddenInput)
+	document.body.appendChild(hiddenForm)
+
+	// Focus handling
+	document.addEventListener('click', () => hiddenInput.focus())
+	hiddenInput.focus()
+
+	if (typeTarget) typeTarget.style.whiteSpace = 'pre'
+
+	let isExecuting = false
+
+	// Helper: Type a log line with cursor effect
+	async function typeLog(text: string) {
+		if (!terminalLogs) return
+		
+		const p = document.createElement('div')
+		p.textContent = text
+		p.className = 'opacity-0'
+		p.style.borderRight = '2px solid transparent'
+		
+		terminalLogs.appendChild(p)
+		terminalLogs.scrollTop = terminalLogs.scrollHeight
+
+		requestAnimationFrame(() => {
+			p.classList.remove('opacity-0')
+			p.style.borderRightColor = '#ffffff'
+		})
+		
+		await new Promise(r => setTimeout(r, Math.random() * 50 + 20))
+		p.style.borderRightColor = 'transparent'
 	}
+
+	// Helper: Show ASCII progress bar
+	async function showProgressBar() {
+		if (!terminalLogs) return
+		
+		const pBar = document.createElement('div')
+		pBar.className = 'mt-4 text-white font-bold whitespace-pre mb-20'
+		terminalLogs.appendChild(pBar)
+		
+		const totalChars = 30
+		for (let i = 0; i <= 100; i += 2) {
+			const filled = Math.round((i / 100) * totalChars)
+			const empty = totalChars - filled
+			pBar.textContent = `> LOADING... [${'#'.repeat(filled)}${'.'.repeat(empty)}] ${i}%`
+			terminalLogs.scrollTop = terminalLogs.scrollHeight
+			await new Promise(r => setTimeout(r, 20))
+		}
+		
+		await new Promise(r => setTimeout(r, 200))
+	}
+
+	// Input handling
+	hiddenInput.addEventListener('input', (e) => {
+		if (isExecuting) return
+
+		const val = (e.target as HTMLInputElement).value.toUpperCase()
+		const cleanVal = val.replace(/[^A-Z0-9 ]/g, '')
+		
+		if (val !== cleanVal) hiddenInput.value = cleanVal
+		if (typeTarget) typeTarget.textContent = cleanVal
+	})
+
+	// Command execution
+	hiddenForm.addEventListener('submit', async (e) => {
+		e.preventDefault()
+		if (isExecuting) return
+
+		const input = hiddenInput.value.toUpperCase().trim()
+		const command = commands[input]
+
+		if (command && terminalLogs) {
+			isExecuting = true
+			hiddenInput.blur()
+			if (commandLine) commandLine.style.display = 'none'
+
+			const ctx: CommandContext = {
+				terminalLogs,
+				lang,
+				redirect: (path) => { window.location.href = path },
+				typeLog,
+				showProgressBar
+			}
+
+			await command.execute(ctx)
+		}
+	})
 </script>
