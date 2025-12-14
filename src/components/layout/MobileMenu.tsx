@@ -49,6 +49,7 @@ const MobileMenuItem = ({ item, closeMenu }: { item: MenuItem; closeMenu: () => 
 										key={child.link}
 										href={child.link}
 										onClick={closeMenu}
+										data-astro-prefetch
 										className={`block rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
 											child.active
 												? 'text-[--tangerine] dark:text-[--tangerine]'
@@ -69,6 +70,7 @@ const MobileMenuItem = ({ item, closeMenu }: { item: MenuItem; closeMenu: () => 
 		<a
 			href={item.link}
 			onClick={closeMenu}
+			data-astro-prefetch
 			className={`block rounded-lg px-4 py-3 text-base font-medium transition-colors ${
 				item.active
 					? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white'

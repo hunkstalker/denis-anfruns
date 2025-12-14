@@ -60,6 +60,7 @@ const getPath = (slug: string) =>
 
 						<a
 							href={getPath(post.slug)}
+							data-astro-prefetch
 							class={`flex items-start py-1 text-sm leading-tight transition-colors ${
 								isCurrent
 									? 'font-bold text-zinc-900 dark:text-white'

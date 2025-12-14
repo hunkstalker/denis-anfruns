@@ -43,7 +43,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 				</div>
 
 				<h3 className="text-lg font-bold transition-colors dark:text-white">
-					<a href={href}>
+					<a href={href} data-astro-prefetch>
 						<span className="absolute inset-0"></span>
 						{post.data.title}
 					</a>
@@ -95,7 +95,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 				</div>
 
 				<h3 className="mb-2 text-xl font-bold transition-colors dark:text-white">
-					<a href={href}>
+					<a href={href} data-astro-prefetch>
 						<span className="absolute inset-0"></span>
 						{post.data.title}
 					</a>

@@ -34,7 +34,7 @@ export default function TilCard({ post, lang, labels }: Props) {
 			</div>
 
 			<h3 className="mb-4 line-clamp-3 font-semibold text-zinc-800 dark:text-zinc-100 leading-snug">
-				<a href={href} className="before:absolute before:inset-0">
+				<a href={href} className="before:absolute before:inset-0" data-astro-prefetch>
 					{post.data.title}
 				</a>
 			</h3>

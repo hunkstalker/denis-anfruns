@@ -72,6 +72,7 @@ const NavDropdown = ({ label, link, active, enabled, items, className }: NavDrop
 								<a
 									key={index}
 									href={item.link}
+									data-astro-prefetch
 									className={`block rounded-lg px-4 py-2 text-sm transition-all duration-200 ${
 										item.active
 											? 'bg-zinc-100 font-medium text-zinc-900 dark:bg-white/10 dark:text-white'
