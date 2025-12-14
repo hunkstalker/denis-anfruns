@@ -74,7 +74,7 @@ const menuItems = navItems.map(item => {
 		const isChildActive =
 			currentPath === childPath || (child.path !== '/' && currentPath.startsWith(childPath))
 		return {
-			label: t(child.key),
+			label: t(child.key as keyof typeof ui[typeof lang]),
 			link: childPath,
 			active: isChildActive,
 			enabled: child.enabled,
@@ -82,11 +82,12 @@ const menuItems = navItems.map(item => {
 	})
 
 	return {
-		label: t(item.key),
+		label: t(item.key as keyof typeof ui[typeof lang]),
 		link: finalPath,
 		active: isActive,
 		enabled: item.enabled,
 		children,
+		i18nKey: item.key, // For dynamic translation on 404
 	}
 })
 ---
@@ -125,6 +126,7 @@ const menuItems = navItems.map(item => {
 										enabled={item.enabled}
 										active={item.enabled && item.active}
 										class='w-32'
+										i18nKey={item.i18nKey}
 									/>
 								),
 							)
@@ -311,6 +313,22 @@ const menuItems = navItems.map(item => {
 			// showResults se activa por el evento 'focus' del input
 		}
 	})
+
+	// === 404 Page Language Sync ===
+	// On 404 page, sync Nav texts with localStorage lang
+	const is404Page = document.getElementById('error-title') !== null
+	if (is404Page) {
+		const savedLang = (localStorage.getItem('selectedLang') || 'es') as keyof typeof ui
+		const translations = ui[savedLang] || ui[defaultLang]
+		
+		// Update all elements with data-i18n attribute
+		document.querySelectorAll('[data-i18n]').forEach((el) => {
+			const key = el.getAttribute('data-i18n') as keyof typeof translations
+			if (key && translations[key]) {
+				el.textContent = translations[key]
+			}
+		})
+	}
 </script>
 
 <style>
