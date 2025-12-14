@@ -23,38 +23,67 @@ const { icon, targetId, highlightColor, gradient, class: className } = Astro.pro
 
 <script>
     const triggers = document.querySelectorAll('.icon-trigger');
+    
+    // Check if coming from 404 ABOUT command
+    const activateAll = localStorage.getItem('about-activate-all') === 'true'
+    if (activateAll) {
+        localStorage.removeItem('about-activate-all') // Clear the flag
+    }
+
     triggers.forEach((trigger) => {
         const targetId = (trigger as HTMLElement).dataset.target;
         const color = (trigger as HTMLElement).dataset.color;
         const animatedGradient = (trigger as HTMLElement).dataset.animatedGradient;
         const target = document.getElementById(targetId || '');
 
+        // Helper to apply highlight
+        const applyHighlight = () => {
+            if (!target) return
+            if (animatedGradient) {
+                const baseColors = animatedGradient.split(',').map(c => c.trim());
+                const colors = [...baseColors, ...baseColors, baseColors[0]];
+                target.style.backgroundImage = `linear-gradient(to right, ${colors.join(', ')})`;
+                target.style.backgroundSize = '400% 100%';
+                target.style.backgroundClip = 'text';
+                target.style.setProperty('-webkit-background-clip', 'text');
+                target.style.color = 'transparent';
+                target.style.animation = 'gradient-move 8s linear infinite';
+            } else if (color) {
+                target.style.color = color;
+                target.style.textShadow = `0 0 0.65px ${color}`;
+            }
+            // Also remove grayscale from icon
+            (trigger as HTMLElement).classList.remove('dark:grayscale');
+            (trigger as HTMLElement).classList.add('scale-110');
+        }
+
+        // Helper to remove highlight
+        const removeHighlight = () => {
+            if (!target) return
+            target.style.color = '';
+            target.style.textShadow = '';
+            target.style.backgroundImage = '';
+            target.style.backgroundSize = '';
+            target.style.backgroundClip = '';
+            target.style.removeProperty('-webkit-background-clip');
+            target.style.animation = '';
+            // Restore grayscale on icon
+            (trigger as HTMLElement).classList.add('dark:grayscale');
+            (trigger as HTMLElement).classList.remove('scale-110');
+        }
+
+        // If coming from 404 ABOUT command, activate all immediately
+        if (activateAll) {
+            applyHighlight()
+        }
+
         if (target) {
-            trigger.addEventListener('mouseenter', () => {
-                if (animatedGradient) {
-                    const baseColors = animatedGradient.split(',').map(c => c.trim());
-                    // Duplica los colores + color inicial para crear un bucle continuo (11 elementos, el medio es el 50 %).
-                    const colors = [...baseColors, ...baseColors, baseColors[0]];
-                    target.style.backgroundImage = `linear-gradient(to right, ${colors.join(', ')})`;
-                    target.style.backgroundSize = '400% 100%';
-                    target.style.backgroundClip = 'text';
-                    target.style.setProperty('-webkit-background-clip', 'text'); // Fallback for Safari
-                    target.style.color = 'transparent';
-                    target.style.animation = 'gradient-move 8s linear infinite';
-                } else if (color) {
-                    target.style.color = color;
-                    target.style.textShadow = `0 0 0.65px ${color}`;
-                }
-            });
+            trigger.addEventListener('mouseenter', applyHighlight);
             trigger.addEventListener('mouseleave', () => {
-                    // Reset all styles
-                target.style.color = '';
-                target.style.textShadow = '';
-                target.style.backgroundImage = '';
-                target.style.backgroundSize = '';
-                target.style.backgroundClip = '';
-                target.style.removeProperty('-webkit-background-clip');
-                target.style.animation = '';
+                // Don't remove if activateAll mode is still active (first load)
+                if (!activateAll) {
+                    removeHighlight()
+                }
             });
         }
     });

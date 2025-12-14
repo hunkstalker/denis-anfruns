@@ -84,81 +84,120 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 	// ============================================================
 	// COMMANDS REGISTRY - Add new commands here!
-	// Each command needs: { execute: async (ctx) => void }
-	// ctx contains: { terminalLogs, lang, redirect }
+	// Each command defines: logs, barSize, duration, redirect, and optional hooks
 	// ============================================================
 	
-	type CommandContext = {
-		terminalLogs: HTMLElement
-		lang: string
-		redirect: (path: string) => void
-		typeLog: (text: string) => Promise<void>
-		showProgressBar: () => Promise<void>
-	}
-
 	type Command = {
-		execute: (ctx: CommandContext) => Promise<void>
+		logs: string[]
+		barSize?: number       // Default: 30
+		duration?: number      // Duration in ms (default: 1000)
+		logDelay?: number      // Delay between logs in ms (default: 0)
+		redirect: 'home' | 'about' | string  // 'home', 'about', or custom path
+		onBeforeRedirect?: () => void  // Optional hook before redirect
 	}
 
 	const commands: Record<string, Command> = {
 		// Another World / Out of This World Easter Egg
 		'RUN PROJECT 23': {
-			execute: async (ctx) => {
-				const logs = [
-					'> SYSTEM_ERROR_404',
-					'> INITIALIZING_FERRARI_PROJECT...',
-					'> USER: LESTER_CHAYKIN',
-					'> ENTER_CODE: L5',
-					'> ENTER_ID: K8',
-					'> ENTER_PASSWORD: 4511932',
-					'> ACCESS_GRANTED',
-					'> CHECKING_SYSTEMS...',
-					'> MEM............[OK]',
-					'> DATA...........[OK]',
-					'> BLOCK..........[OK]',
-					'> POSIT..........[OK]',
-					'> ENERGY_LEVEL: 100%',
-					'> SYNCHRO........[ACTIVE]',
-					'> PARTICLE_ACCELERATION_STARTED',
-					'> ANOMALY_DETECTED_SECTOR_404',
-					'> DIMENSIONAL_TEAR_IMMINENT',
-					'> INITIATING_TELEPORT_SEQUENCE...',
-					'> INITIATING_PROJECT_23...',
-					'> CONNECTING_TO_GLOBAL_SKYNET...',
-					'> TARGET: HUMANITY... [SKIP]',
-					'> SYSTEM_ERROR: YOU_DIDNT_SAY_THE_MAGIC_WORD',
-					'> ACCESS_DENIED',
-					'> SECTOR: THE_SWAN',
-					'> ENTERING_SEQUENCE:',
-					'> 4 8 15 16 23 42',
-					'> EXECUTE_STATION_PEARL',
-					'> ANOMALY_DETECTED: ELECTROMAGNETIC_DISCHARGE',
-					'> DIMENSIONAL_COLLAPSE_IMMINENT',
-					'> WAKE_UP_NEO...',
-					'> THE_MATRIX_HAS_YOU...',
-					'> FOLLOWING_THE_WHITE_RABBIT...',
-					'> REBOOTING_REALITY...'
-				]
-				
-				for (const log of logs) {
-					await ctx.typeLog(log)
-				}
-				
-				await ctx.showProgressBar()
-				ctx.redirect(ctx.lang === 'es' ? '/' : `/${ctx.lang}`)
+			logs: [
+				'> SYSTEM_ERROR_404',
+				'> INITIALIZING_FERRARI_PROJECT...',
+				'> USER: LESTER_CHAYKIN',
+				'> ENTER_CODE: L5',
+				'> ENTER_ID: K8',
+				'> ENTER_PASSWORD: 4511932',
+				'> ACCESS_GRANTED',
+				'> CHECKING_SYSTEMS...',
+				'> MEM............[OK]',
+				'> DATA...........[OK]',
+				'> BLOCK..........[OK]',
+				'> POSIT..........[OK]',
+				'> ENERGY_LEVEL: 100%',
+				'> SYNCHRO........[ACTIVE]',
+				'> PARTICLE_ACCELERATION_STARTED',
+				'> ANOMALY_DETECTED_SECTOR_404',
+				'> DIMENSIONAL_TEAR_IMMINENT',
+				'> INITIATING_TELEPORT_SEQUENCE...',
+				'> INITIATING_PROJECT_23...',
+				'> CONNECTING_TO_GLOBAL_SKYNET...',
+				'> TARGET: HUMANITY... [SKIP]',
+				'> SYSTEM_ERROR: YOU_DIDNT_SAY_THE_MAGIC_WORD',
+				'> ACCESS_DENIED',
+				'> SECTOR: THE_SWAN',
+				'> ENTERING_SEQUENCE:',
+				'> 4 8 15 16 23 42',
+				'> EXECUTE_STATION_PEARL',
+				'> ANOMALY_DETECTED: ELECTROMAGNETIC_DISCHARGE',
+				'> DIMENSIONAL_COLLAPSE_IMMINENT',
+				'> WAKE_UP_NEO...',
+				'> THE_MATRIX_HAS_YOU...',
+				'> FOLLOWING_THE_WHITE_RABBIT...',
+				'> REBOOTING_REALITY...'
+			],
+			redirect: 'home'
+		},
+
+		// ABOUT Easter Egg - Activates all hover effects on About page
+		'ABOUT': {
+			logs: [
+				'> ACCESSING_PERSONNEL_DATABASE...',
+				'> USER_PROFILE: DENIS_ANFRUNS MILLÁN',
+				'> LOADING_FULL_SPECTRUM_VIEW...',
+				'> ACTIVATING_ALL_TECH_SIGNATURES...',
+				'> DISPLAY_MODE: RAINBOW',
+				'> REDIRECTING_TO_ABOUT...'
+			],
+			barSize: 50,
+			duration: 2500,
+			logDelay: 150,
+			redirect: 'about',
+			onBeforeRedirect: () => {
+				localStorage.setItem('about-activate-all', 'true')
 			}
 		},
 
 		// ============================================================
 		// ADD MORE COMMANDS HERE! Example:
 		// 'MATRIX': {
-		//   execute: async (ctx) => {
-		//     await ctx.typeLog('> ENTERING THE MATRIX...')
-		//     // Your custom effect here
-		//     ctx.redirect('/')
-		//   }
+		//   logs: ['> ENTERING_THE_MATRIX...', '> FOLLOW_THE_WHITE_RABBIT...'],
+		//   barSize: 40,
+		//   duration: 2000,
+		//   redirect: 'home'
 		// },
 		// ============================================================
+	}
+
+	// Generic command executor
+	async function executeCommand(cmd: Command, lang: string) {
+		if (!terminalLogs) return
+
+		// Type all logs
+		for (const log of cmd.logs) {
+			await typeLog(log)
+			if (cmd.logDelay) {
+				await new Promise(r => setTimeout(r, cmd.logDelay))
+			}
+		}
+
+		// Show progress bar
+		await showProgressBar(cmd.barSize ?? 30, cmd.duration ?? 1000)
+
+		// Run hook before redirect
+		if (cmd.onBeforeRedirect) {
+			cmd.onBeforeRedirect()
+		}
+
+		// Calculate redirect path
+		let path: string
+		if (cmd.redirect === 'home') {
+			path = lang === 'es' ? '/' : `/${lang}`
+		} else if (cmd.redirect === 'about') {
+			path = lang === 'es' ? '/about/' : `/${lang}/about/`
+		} else {
+			path = cmd.redirect
+		}
+
+		window.location.href = path
 	}
 
 	// ============================================================
@@ -242,20 +281,26 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	}
 
 	// Helper: Show ASCII progress bar
-	async function showProgressBar() {
+	// barSize: width in chars (default 30)
+	// durationMs: total duration in ms (default ~1000ms)
+	async function showProgressBar(barSize: number = 30, durationMs: number = 1000) {
 		if (!terminalLogs) return
 		
 		const pBar = document.createElement('div')
 		pBar.className = 'mt-4 text-white font-bold whitespace-pre mb-20'
 		terminalLogs.appendChild(pBar)
 		
-		const totalChars = 30
-		for (let i = 0; i <= 100; i += 2) {
-			const filled = Math.round((i / 100) * totalChars)
+		const totalChars = barSize
+		const steps = 50 // Number of updates
+		const stepDelay = durationMs / steps
+		
+		for (let i = 0; i <= 100; i += (100 / steps)) {
+			const percent = Math.round(i)
+			const filled = Math.round((percent / 100) * totalChars)
 			const empty = totalChars - filled
-			pBar.textContent = `> LOADING... [${'#'.repeat(filled)}${'.'.repeat(empty)}] ${i}%`
+			pBar.textContent = `> LOADING... [${'#'.repeat(filled)}${'.'.repeat(empty)}] ${percent}%`
 			terminalLogs.scrollTop = terminalLogs.scrollHeight
-			await new Promise(r => setTimeout(r, 20))
+			await new Promise(r => setTimeout(r, stepDelay))
 		}
 		
 		await new Promise(r => setTimeout(r, 200))
@@ -285,15 +330,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			hiddenInput.blur()
 			if (commandLine) commandLine.style.display = 'none'
 
-			const ctx: CommandContext = {
-				terminalLogs,
-				lang,
-				redirect: (path) => { window.location.href = path },
-				typeLog,
-				showProgressBar
-			}
-
-			await command.execute(ctx)
+			await executeCommand(command, lang)
 		}
 	})
 </script>
