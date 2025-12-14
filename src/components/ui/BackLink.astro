@@ -12,6 +12,7 @@ const { href, label, class: className } = Astro.props;
 
 <a
   href={href}
+  id={className?.includes('go-back') ? 'go-back-link' : undefined}
   data-astro-prefetch
   class:list={[
     "animate-fade-in-up mb-6 mt-2.5 flex w-fit items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]",
@@ -20,3 +21,17 @@ const { href, label, class: className } = Astro.props;
 >
   <ChevronLeft /> {label}
 </a>
+
+<script>
+  const goBackLink = document.getElementById('go-back-link')
+  if (goBackLink) {
+    goBackLink.addEventListener('click', (e) => {
+      e.preventDefault()
+      if (document.referrer && document.referrer.startsWith(window.location.origin)) {
+        window.location.href = document.referrer
+      } else {
+        history.back()
+      }
+    })
+  }
+</script>

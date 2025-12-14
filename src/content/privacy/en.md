@@ -1,9 +1,9 @@
 ---
-title: 'Privacy Policy - Denis Anfruns Millán'
+title: 'Privacy Policy'
 lastUpdated: '17/11/2025'
 ---
 
-# Privacy Policy
+
 
 Last updated: 17/11/2025
 
@@ -20,7 +20,6 @@ This personal website does not collect personal data from visitors. There are no
 
 This site only uses **technical cookies from Cloudflare** in order to protect the website against bots and attacks. These cookies are:
 
-*   `__cf_bm`: distinguishes legitimate traffic from bots.
 *   `cf_clearance`: allows Cloudflare to keep access validated.
 
 These cookies:

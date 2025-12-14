@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import BackLink from '../../components/ui/BackLink.astro'
+import Nav from '../../components/layout/Nav.astro'
 
 export async function getStaticPaths() {
 	const pages = await getCollection('privacy')
@@ -33,55 +35,19 @@ const btnText = buttonText[lang] || buttonText.es
 ---
 
 <BaseLayout siteTitle={page.data.title} lang={lang}>
-	<main class="privacy">
-		<Content />
-		<button
-			id="back-btn"
-			class="mt-8 hidden transform rounded-lg bg-zinc-800 px-6 py-3 text-sm font-bold uppercase text-zinc-200 transition-colors duration-200 hover:bg-zinc-500"
-			>{btnText}</button
-		>
-
-		<script>
-			const backBtn = document.getElementById('back-btn')
-			if (backBtn && document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
-				backBtn.classList.remove('hidden')
-				backBtn.addEventListener('click', () => {
-					history.back()
-				})
-			}
-		</script>
+	<Nav lang={lang} />
+	<main class="container mx-auto px-4 pb-12 pt-20 md:pt-28">
+		<div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+			<div class="lg:col-span-8 lg:col-start-3">
+				<BackLink href="#" class="go-back" label={btnText} />
+				<h1 class="animate-fade-in-up delay-100 mb-6 text-3xl font-bold leading-tight dark:text-zinc-200 md:text-4xl">
+					{page.data.title}
+				</h1>
+				<hr class="animate-fade-in-up delay-300 mb-8 mt-8 border-zinc-200 dark:border-zinc-800" />
+				<article class="prose prose-lg max-w-none dark:prose-invert prose-a:text-[--tangerine] hover:prose-a:text-[--tangerine-hover]">
+					<Content />
+				</article>
+			</div>
+		</div>
 	</main>
-
-	<style>
-		.privacy {
-			max-width: 800px;
-			margin: 2rem auto;
-			padding: 1rem;
-			line-height: 1.7;
-			font-size: 1.05rem;
-		}
-		.privacy :global(h1) {
-			font-weight: 700;
-			margin-top: 1.6rem;
-			font-size: 2rem;
-		}
-		.privacy :global(h2) {
-			font-weight: 700;
-			margin-top: 1.6rem;
-			font-size: 1.5rem;
-		}
-		.privacy :global(p) {
-			margin-bottom: 1rem;
-		}
-		.privacy :global(ul) {
-			list-style-type: disc;
-			margin-left: 1.5rem;
-			margin-bottom: 1rem;
-		}
-		.privacy :global(a) {
-			color: oklch(75% 0.183 55.934);
-			text-decoration: none;
-			font-weight: bold;
-		}
-	</style>
 </BaseLayout>

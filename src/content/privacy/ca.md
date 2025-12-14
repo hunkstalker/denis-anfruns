@@ -1,9 +1,9 @@
 ---
-title: 'Política de Privacitat - Denis Anfruns Millán'
+title: 'Política de Privacitat'
 lastUpdated: '17/11/2025'
 ---
 
-# Política de Privacitat
+
 
 Darrera actualització: 17/11/2025
 
@@ -20,7 +20,6 @@ Aquesta web personal no recull dades personals dels visitants. No existeixen for
 
 Aquest lloc utilitza únicament **cookies tècniques de Cloudflare** amb la finalitat de protegir la web davant de bots i atacs. Aquestes cookies són:
 
-*   `__cf_bm`: distingeix trànsit legítim de bots.
 *   `cf_clearance`: permet que Cloudflare mantingui validat l'accés.
 
 Aquestes cookies:

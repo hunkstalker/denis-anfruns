@@ -1,9 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import Nav from '../components/layout/Nav.astro'
 const siteTitle = 'Denis Anfruns - Error 404'
 ---
 
 <BaseLayout siteTitle={siteTitle}>
+	<Nav />
 	<header class="mt-28 text-center md:mt-48">
 		<h1
 			class="text-gradient px-18 my-4 text-3xl font-bold leading-none drop-shadow-md sm:text-4xl lg:text-5xl"
@@ -16,7 +18,8 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		<a
 			id="home-link"
 			href="/"
-			class="mt-8 inline-block transform rounded-lg bg-emerald-600 px-6 py-3 text-sm font-bold uppercase text-white transition-colors duration-200 hover:bg-emerald-500"
+			data-astro-prefetch
+			class="mt-8 inline-block transform rounded-lg bg-zinc-900 px-6 py-3 text-sm font-bold uppercase text-white transition-colors duration-200 hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
 			>Go Home</a
 		>
 	</header>
