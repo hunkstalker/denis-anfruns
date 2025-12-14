@@ -81,7 +81,7 @@ export default function BlogDevLogList({ posts, lang, labels, layout = 'grid' }:
                     onClick={() => setSelectedTag(null)}
                     className={`w-24 shrink-0 rounded-full border py-1.5 text-center text-sm font-medium transition-colors ${
                         mounted && selectedTag === null
-                            ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900 dark:border-white'
+                            ? 'bg-[--tangerine-hover] text-zinc-900 border-[--tangerine-hover] dark:bg-[--tangerine] dark:text-zinc-900 dark:border-[--tangerine]'
                             : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:border-zinc-600'
                     }`}
                 >
@@ -93,7 +93,7 @@ export default function BlogDevLogList({ posts, lang, labels, layout = 'grid' }:
                         onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
                         className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
                             mounted && selectedTag === tag
-                                ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-900 dark:border-white'
+                                ? 'bg-[--tangerine-hover] text-zinc-900 border-[--tangerine-hover] dark:bg-[--tangerine] dark:text-zinc-900 dark:border-[--tangerine]'
                                 : 'bg-white text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-700 dark:hover:bg-zinc-800 dark:hover:border-zinc-600'
                         }`}
                     >
