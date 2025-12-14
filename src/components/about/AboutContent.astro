@@ -107,7 +107,7 @@ const processText = (text: string) => {
 				}
 			</div>
 
-			<p class='mt-6' set:html={t('about.intro.deal')} />
+			<p class='mt-6' set:html={processText(t('about.intro.deal'))} />
 		</section>
 
 		<section class='animate-fade-in-up delay-100'>

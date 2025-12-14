@@ -79,11 +79,11 @@ export const ui = {
       soluciones que deben ser adaptables a los rápidos cambios. Me muevo entre la **estabilidad e innovación** con React + Astro y 
       la eficacia de Power Platform (Power Apps - Power Automate - Power BI) y SharePoint, la suite Microsoft 365 presente en la mayoría de empresas.`,
 
-    'about.intro.deal': 'Soluciones de alto rendimiento client-side, sitios dinámicos de gran experiencia para el usuario o soportes con Web API Nativas que garantizan una base sólida para el crecimiento son la base de mis proyectos.',
+    'about.intro.deal': '**Soluciones de alto rendimiento** client-side, sitios dinámicos de **gran experiencia para el usuario** o soportes con Web API Nativas que garantizan una **base sólida**.',
     'about.garden.title': 'El Jardín Digital',
     'about.garden.text': 'Este lugar es un **"Jardín Digital"**. Aquí no solo publicaré proyectos terminados, sino que documento mis desarrollos o experimentos así como pequeñas notas que me sirvan día a día (TILs). Me encanta enseñar y compartir así que espero que este repositorio nos sea de ayuda a ambos. Creo firmemente en el **Código Libre** ❤️',
     'about.personal.title': 'Más allá del código',
-    'about.personal.text': 'Cuando no estoy programando, te costará encontrarme 🤣 disfruto desconectando con una buena serie, película o perdiéndome en algún videojuego. También hago mis pinitos en desarrollo de videojuegos (pronto espero abrir una sección dedicada). Como detalle, estudié Diseño Industrial y tengo buena mano para el dibujo; aunque no me considere un gran creativo, **disfruto enormemente apreciando el arte y el diseño**.',
+    'about.personal.text': 'Cuando no estoy programando, te costará encontrarme 🤣 disfruto desconectando con una buena serie, película o perdiéndome en algún videojuego. Como detalle, estudié Diseño Industrial y tengo buena mano para el dibujo; no me considero un gran creativo, pero paso tiempo ojeando obras de artistas independientes. Aprecio mucho el arte y el diseño, por lo que le doy gran importancia a la **comunicación visual** y a **lo que transmite**.' ,
   },
   ca: {
     // NAVEGACIÓ
@@ -153,11 +153,11 @@ export const ui = {
     'about.title': 'Sobre mi',
     'about.intro.title': 'Hola, sóc el Denis Anfruns Millán',
     'about.intro.text': 'Sóc un desenvolupador Full Stack al qual li apassiona el rendiment del software i les bones pràctiques, **però el meu perfil abans de tot és pragmàtic**. Entenc el desenvolupament com una solució als problemes que sorgeixen, solucions que han de ser adaptables als ràpids canvis. Em moc entre l\'**estabilitat i innovació** amb React + Astro i l\'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint, la suite Microsoft 365 present a la majoria d\'empreses.',
-    'about.intro.deal': 'Solucions d\'alt rendiment client-side, llocs dinàmics de gran experiència per a l\'usuari o suports amb Web API Natives que garanteixen una base sòlida per al creixement són la base dels meus projectes.',
+    'about.intro.deal': "**Solucions d'alt rendiment** client-side, llocs dinàmics de **gran experiència per a l'usuari** o suports amb Web API Natives que garanteixen una **base sòlida**.",
     'about.garden.title': 'El Jardí Digital',
     'about.garden.text': 'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia (TILs). M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
     'about.personal.title': 'Més enllà del codi',
-    'about.personal.text': 'Quan no estic programant, et costarà trobar-me 🤣 gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. També faig els meus intents en desenvolupament de videojocs (aviat espero obrir una secció dedicada). Com a detall, vaig estudiar Disseny Industrial i tinc bona mà pel dibuix; encara que no em consideri un gran creatiu, **gaudeixo enormement apreciant l\'art i el disseny**.',
+    'about.personal.text': "Quan no estic programant, et costarà trobar-me 🤣 gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. Com a detall, vaig estudiar Disseny Industrial i tinc bona mà per al dibuix; no em considero un gran creatiu, però passo temps mirant obres d'artistes independents. Aprecio molt l'art i el disseny, per la qual cosa li dono gran importància a la **comunicació visual** i al **que transmet**.",
   },
   en: {
     // NAVEGACIÓ
@@ -229,10 +229,10 @@ export const ui = {
     'about.title': 'About Me',
     'about.intro.title': 'Hi, I\'m Denis Anfruns Millán',
     'about.intro.text': 'I am a Full Stack developer passionate about software performance and best practices, **but my profile is above all pragmatic**. I understand development as a solution to problems that arise, solutions that must be adaptable to rapid changes. I move between **stability and innovation** with React + Astro and the effectiveness of Power Platform (Power Apps - Power Automate - Power BI) and SharePoint, the Microsoft 365 suite present in most companies.',
-    'about.intro.deal': 'High-performance client-side solutions, dynamic sites with great user experience, or supports with Native Web APIs that guarantee a solid foundation for growth are the basis of my projects.',
+    'about.intro.deal': '**High-performance** client-side solutions, dynamic sites with **great user experience**, or supports with Native Web APIs that guarantee a **solid foundation**.',
     'about.garden.title': 'The Digital Garden',
     'about.garden.text': 'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I verify my developments or experiments as well as small notes that serve me day to day (TILs). I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
     'about.personal.title': 'Beyond the Code',
-    'about.personal.text': 'When I\'m not coding, you probably won\'t find me 🤣 I enjoy disconnecting with a good TV series, movie, or getting lost in a video game. I also dabble in game development (I hope to open a dedicated section soon). As a detail, I studied Industrial Design and I have a good hand for drawing; although I don\'t consider myself a great creative, **I greatly enjoy appreciating art and design**.',
+    'about.personal.text': "When I'm not coding, you'll have a hard time finding me 🤣 I enjoy disconnecting with a good series, movie, or getting lost in a video game. As a detail, I studied Industrial Design and I'm pretty good at drawing; I don't consider myself a great creative, but I spend time browsing works by independent artists. I greatly appreciate art and design, which is why I place great importance on **visual communication** and **what it conveys**.",
   },  
 } as const;
