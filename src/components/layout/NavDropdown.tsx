@@ -19,6 +19,22 @@ interface NavDropdownProps {
 
 const NavDropdown = ({ label, link, active, enabled, items, className }: NavDropdownProps) => {
 	const [isOpen, setIsOpen] = useState(false)
+	const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
+
+	const handleMouseEnter = () => {
+		if (timeoutId) {
+			clearTimeout(timeoutId)
+			setTimeoutId(null)
+		}
+		setIsOpen(true)
+	}
+
+	const handleMouseLeave = () => {
+		const id = setTimeout(() => {
+			setIsOpen(false)
+		}, 300) // 300ms gracetime
+		setTimeoutId(id)
+	}
 
     // Base classes matching Button.astro structure but WITHOUT margins (margins moved to wrapper)
     const baseClasses = 'relative py-3 px-4 text-sm md:text-lg font-medium rounded-lg transition-[background-color] duration-200 no-underline leading-normal inline-block text-center'
@@ -31,8 +47,8 @@ const NavDropdown = ({ label, link, active, enabled, items, className }: NavDrop
 	return (
 		<div
 			className='relative inline-block text-left m-2'
-			onMouseEnter={() => setIsOpen(true)}
-			onMouseLeave={() => setIsOpen(false)}>
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}>
 			{/* Main Button / Link - Matching Button.astro structure */}
 			<a
 				href={link}
