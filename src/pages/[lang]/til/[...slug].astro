@@ -3,6 +3,7 @@ import { getTils, type TilPost } from '../../../utils/til-content'
 import ContentLayout from '../../../layouts/ContentLayout.astro'
 import BackLink from '../../../components/ui/BackLink.astro'
 import ChevronUp from '../../../icons/chevron-up.svg'
+import ChevronRight from '../../../icons/chevron-right.svg'
 import { languages } from '../../../i18n/ui'
 import { useTranslations } from '../../../i18n/utils'
 import SeriesWidget from '../../../components/til/SeriesWidget.astro'
@@ -38,6 +39,20 @@ const { Content, headings } = await post.render()
 const { lang } = Astro.params
 const t = useTranslations(lang)
 const siteTitle = `TIL: ${post.data.title}`
+
+// Calculate next post in series
+let nextPost: TilPost | null = null
+if (post.data.series) {
+	const allPosts = await getTils()
+	const seriesPosts = allPosts
+		.filter((p) => p.data.series === post.data.series && p.data.lang === lang)
+		.sort((a, b) => {
+			if (!a.data.pubDate || !b.data.pubDate) return 0
+			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+		})
+	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
+	nextPost = seriesPosts[currentIndex + 1] || null
+}
 ---
 
 <style>
@@ -124,15 +139,27 @@ const siteTitle = `TIL: ${post.data.title}`
 			<Content />
 		</article>
 
-		<div class="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
-			<button
-				id="scroll-to-top"
-				class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
-			>
-				<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
-				{t('blog.backToTop')}
-			</button>
-		</div>
+		<footer class="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
+			<div class="flex items-center justify-between">
+				<button
+					id="scroll-to-top"
+					class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
+				>
+					<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
+					{t('blog.backToTop')}
+				</button>
+
+				{nextPost && (
+					<a
+						href={`/${lang}/til/${nextPost.slug.replace(new RegExp(`/${lang}$`), '')}/`}
+						class="group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine]"
+					>
+						{t('blog.nextPost')}
+						<ChevronRight class="transition-transform group-hover:translate-x-1" />
+					</a>
+				)}
+			</div>
+		</footer>
 
 		<div class="h-24"></div>
 	</div>

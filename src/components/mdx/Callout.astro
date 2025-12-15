@@ -5,7 +5,7 @@ import errorIcon from '../../icons/error-circle.svg?raw'
 import successIcon from '../../icons/check-circle.svg?raw'
 
 interface Props {
-	type?: 'info' | 'warning' | 'error' | 'success'
+	type?: 'info' | 'warning' | 'error' | 'success' | 'tip'
 	title?: string
 	filled?: boolean | string
 	icon?: boolean
@@ -19,6 +19,7 @@ const icons = {
 	warning: warningIcon,
 	error: errorIcon,
 	success: successIcon,
+	tip: infoIcon, // Reusing info icon for tip
 }
 
 const styles = {
@@ -50,6 +51,14 @@ const styles = {
 			? 'text-green-700 dark:text-green-300'
 			: 'text-green-600 dark:text-green-400',
 	},
+	tip: {
+		container: isFilled
+			? 'bg-teal-100 dark:bg-teal-500/30 border-2 border-teal-500 text-teal-900 dark:text-teal-100'
+			: 'bg-teal-50 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 text-teal-900 dark:text-teal-200',
+		iconColor: isFilled
+			? 'text-teal-700 dark:text-teal-300'
+			: 'text-teal-600 dark:text-teal-400',
+	},
 }
 
 const colors = {
@@ -57,6 +66,7 @@ const colors = {
 	warning: '#f59e0b',
 	error: '#ef4444',
 	success: '#22c55e',
+	tip: '#14b8a6',
 }
 const baseColor = colors[type]
 const inlineStyle = isFilled

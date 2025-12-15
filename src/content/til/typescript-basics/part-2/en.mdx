@@ -12,9 +12,9 @@ import Callout from '../../../../components/mdx/Callout.astro';
 import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 In Part 1 we saw that `const` creates **literal** types.
-If you write `const role = "admin"`, for TypeScript `role` is not just a simple `string`, but it is specifically `"admin"`.
+If you write `const role = "admin"`, for TypeScript `role` is not just a simple `string`, but specifically `"admin"`.
 
-Today we are going to see how to use that to create bulletproof code.
+Today we're going to see how to use that to create bulletproof code.
 
 ## String vs. String Literal
 
@@ -26,21 +26,21 @@ Imagine you have a function to paint a button.
     {
 		label: 'TypeScript',
 		code: `function paintButton(color: string) {
-    if (color === 'red') { // ❌ Oops, typo ("red" spelled correctly here, but logic error simulation)
+    if (color === 'rde') { // ❌ Oops, typo ("rde" instead of "red")
         return '🔴';
     }
     return '🔵';
 }
 
 paintButton("blue"); // ✅ Good
-paintButton("potato"); // ✅ Good (but it shouldn't be, potato is not a color!)`,
+paintButton("potato 🥔"); // ✅ Good (but it shouldn't be, potato is not a color!)`,
 		lang: 'typescript'
     }
 ]} />
 
-The problem here is that `string` is **too broad**. It accepts "blue", "red", but also "potato" or "asdfg".
+The problem here is that `string` is **too broad**. It accepts "blue", "red", and also "potato 🥔" or "asdfg".
 
-## Type Unions (`|`)
+## Type Unions
 
 This is where the `|` (pipe) operator comes in. It reads as **"OR"**.
 We can tell TypeScript: *"The color can only be 'red' OR 'blue' OR 'green'"*.
@@ -58,7 +58,8 @@ function paintButton(color: ButtonColor) {
 
 paintButton("red");   // ✅ Perfect
 paintButton("green");  // ✅ Perfect
-paintButton("potato"); // ❌ Error: Argument of type '"potato"' is not assignable to parameter of type 'ButtonColor'.`,
+paintButton("potato 🥔");
+// ❌ Error: Argument of type '"potato 🥔"' is not assignable to parameter of type 'ButtonColor'.`,
     lang: 'typescript'
     }
   ]} />
@@ -67,13 +68,39 @@ Boom! 💥 You just eliminated an entire category of bugs. No one can pass an in
 
 ## Autocomplete (IntelliSense)
 
-The best part of this is not just the safety, it's the **developer experience**.
-When you write `paintButton("...` your editor will automatically suggest:
-*   "blue"
-*   "red"
-*   "green"
+The best part is not just the safety, it's the **developer experience**.
 
-You don't have to go to the documentation to know what values it accepted. The type itself TELLS YOU what values it accepts.
+**Try it yourself:** Place your cursor between the quotes and press Ctrl + Space in each one. In the first one there are no suggestions (it's a generic `string`). In the second one the editor suggests the valid options.
+
+<div className="mb-8">
+  <TSEditor
+    client:only="react"
+    height="280px"
+    files={{
+      'no-types.ts': `// No autocomplete - accepts any string
+  function sendString(message: string) {
+      console.log("Message:", message);
+  }
+
+  // Place cursor between quotes and press Ctrl + Space, you'll see NO suggestions
+  sendString("");
+  `,
+      'with-types.ts': `// With autocomplete - only specific values
+  type Answer = "yes" | "no" | "maybe";
+
+  function sendAnswer(answer: Answer) {
+      console.log("Your answer:", answer);
+  }
+
+  // Here you WILL get suggestions, plus TS already warns about an error,
+  // since an empty string is not a value we configured as valid
+  sendAnswer("");
+  `
+    }}
+/>
+</div>
+
+You don't have to go to the documentation to know what values it accepted. The type itself tells you what values it accepts.
 
 ## Mixed Unions
 
@@ -82,7 +109,7 @@ You can mix types if you want (although use it wisely):
 <CodeTabs items={[
   {
   label: 'TypeScript',
-  code: `// An ID can be a number (Database ID) or a string (UUID)
+  code: `// An ID can be a number (database ID) or a string (UUID)
 type ID = number | string;
 
 function findUser(id: ID) {
@@ -98,25 +125,7 @@ findUser("abc-123"); // ✅`,
 ## Summary
 
 *   **Literal Types**: Exact values (`"red"`, `1`).
-*   **Unions (`|`)**: Combining types (`A | B` means A or B).
-*   Use it to avoid "Magic Strings" and gain free autocomplete.
+*   **Unions (`|`)**: Combine types (`A | B` means A or B).
+*   Use it to avoid "Magic Strings" and get free autocomplete.
 
-In the next part, we will see how to **Type Objects** and Interfaces to stop passing anonymous objects without control through our application.
-
-<TSEditor
-  client:only="react"
-  showConsole={true}
-  files={{
-    'main.ts': `type Status = "loading" | "success" | "error";
-
-function showMessage(status: Status) {
-    if (status === "loading") return "⏳ Loading...";
-    if (status === "success") return "✅ Done!";
-    return "❌ Error";
-}
-
-console.log(showMessage("success"));
-// Try changing "success" to "potato" and see what happens
-`
-  }}
-/>
+In the next part we'll see how to **Type Objects** and Interfaces to stop passing anonymous objects without control through our application.

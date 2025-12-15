@@ -1,8 +1,8 @@
 ---
-title: 'TypeScript #2: Tipus Literals i Uniones'
+title: 'TypeScript #2: Tipus Literals i Unions'
 description: 'Com dir-li a TypeScript que alguna cosa només pot ser "A" o "B" i res més. Adéu als strings màgics.'
 series: 'typescript-basics'
-seriesTitle: 'TypeScript Basics'
+seriesTitle: 'TypeScript Bàsic'
 seriesDescription: 'Mini-curs sobre fonaments de TypeScript.'
 lang: 'ca'
 new: true
@@ -14,7 +14,7 @@ import TSEditor from '../../../../components/learn/TSEditor.tsx';
 A la Part 1 vam veure que `const` crea tipus **literals**.
 Si escrius `const rol = "admin"`, per a TypeScript `rol` no és un simple `string`, sinó que és específicament `"admin"`.
 
-Avui veurem com utilitzar això per crear codi "bulletproof".
+Avui veurem com utilitzar això per crear codi a prova de bales.
 
 ## String vs. String Literal
 
@@ -26,21 +26,21 @@ Imagina que tens una funció per pintar un botó.
     {
 		label: 'TypeScript',
 		code: `function pintarBoto(color: string) {
-    if (color === 'vermell') { // ❌ Ups, error de dit ("vermell" però algú escriu malament)
+    if (color === 'vermll') { // ❌ Ups, error de dit ("vermll" en lloc de "vermell")
         return '🔴';
     }
     return '🔵';
 }
 
 pintarBoto("blau"); // ✅ Bé
-pintarBoto("patata"); // ✅ Bé (però no hauria, patata no és un color!)`,
+pintarBoto("patata 🥔"); // ✅ Bé (però no hauria, patata no és un color!)`,
 		lang: 'typescript'
     }
 ]} />
 
-El problema aquí és que `string` és **massa ampli**. Admet "blau", "vermell", però també "patata" o "asdfg".
+El problema aquí és que `string` és **massa ampli**. Admet "blau", "vermell", i també "patata 🥔" o "asdfg".
 
-## La Unió de Tipus (`|`)
+## La Unió de Tipus
 
 Aquí és on entra l'operador `|` (pipe). Es llegeix com **"O"**.
 Podem dir-li a TypeScript: *"El color només pot ser 'vermell' O 'blau' O 'verd'"*.
@@ -58,7 +58,8 @@ function pintarBoto(color: ColorBoto) {
 
 pintarBoto("vermell");   // ✅ Perfecte
 pintarBoto("verd");  // ✅ Perfecte
-pintarBoto("patata"); // ❌ Error: Argument of type '"patata"' is not assignable to parameter of type 'ColorBoto'.`,
+pintarBoto("patata 🥔");
+// ❌ Error: Argument of type '"patata 🥔"' is not assignable to parameter of type 'ColorBoto'.`,
     lang: 'typescript'
     }
   ]} />
@@ -68,16 +69,42 @@ Bum! 💥 Acabes d'eliminar una categoria sencera de bugs. Ja ningú pot passar 
 ## L'Autocompletat (IntelliSense)
 
 El millor d'això no és només la seguretat, és l'**experiència de desenvolupament**.
-Quan escriguis `pintarBoto("...` el teu editor et suggerirà automàticament:
-*   "blau"
-*   "vermell"
-*   "verd"
 
-No has d'anar a la documentació per saber quins valors acceptava. El mateix tipus ET DIU quins valors accepta.
+**Prova-ho tu mateix:** Posa't entre les cometes i prem Ctrl + Espai a cadascuna. A la primera no hi ha suggeriments (és un `string` genèric). A la segona l'editor et suggereix les opcions vàlides.
 
-## Uniones Mixtes
+<div className="mb-8">
+  <TSEditor
+    client:only="react"
+    height="280px"
+    files={{
+      'sense-tipus.ts': `// Sense autocompletat - accepta qualsevol string
+  function enviarString(missatge: string) {
+      console.log("Missatge:", missatge);
+  }
 
-Pots barrejar tipus si vols (encara que fes-ho amb cap):
+  // Posa't entre les cometes i prem Ctrl + Espai, veuràs que NO et surten suggeriments
+  enviarString("");
+  `,
+      'amb-tipus.ts': `// Amb autocompletat - només valors específics
+  type Resposta = "yes" | "no" | "maybe";
+
+  function enviarResposta(resposta: Resposta) {
+      console.log("La teva resposta:", resposta);
+  }
+
+  // Aquí SÍ et sortiran suggeriments, a més TS ja t'avisa d'un error,
+  // ja que un string buit no és un valor que haguem configurat com a vàlid
+  enviarResposta("");
+  `
+    }}
+/>
+</div>
+
+No has d'anar a la documentació per saber quins valors acceptava. El propi tipus et diu quins valors accepta.
+
+## Unions Mixtes
+
+Pots barrejar tipus si vols (encara que utilitza-ho amb cap):
 
 <CodeTabs items={[
   {
@@ -102,21 +129,3 @@ buscarUsuari("abc-123"); // ✅`,
 *   Utilitza-ho per evitar "Magic Strings" i guanyar autocompletat gratis.
 
 A la propera part veurem com **Tipar Objectes** i Interfícies per deixar de passar objectes anònims sense control per la nostra aplicació.
-
-<TSEditor
-  client:only="react"
-  showConsole={true}
-  files={{
-    'main.ts': `type Estat = "carregant" | "exit" | "error";
-
-function mostrarMissatge(estat: Estat) {
-    if (estat === "carregant") return "⏳ Carregant...";
-    if (estat === "exit") return "✅ Fet!";
-    return "❌ Error";
-}
-
-console.log(mostrarMissatge("exit"));
-// Intenta canviar "exit" per "patata" i mira què passa
-`
-  }}
-/>
