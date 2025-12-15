@@ -6,6 +6,7 @@ import ChevronUp from '../../../icons/chevron-up.svg'
 import { languages } from '../../../i18n/ui'
 import { useTranslations } from '../../../i18n/utils'
 import SeriesWidget from '../../../components/til/SeriesWidget.astro'
+import TableOfContents from '../../../components/devlog/TableOfContents.astro'
 
 export async function getStaticPaths() {
 	const allPosts = await getTils()
@@ -32,7 +33,7 @@ export async function getStaticPaths() {
 type Props = TilPost
 
 const post = Astro.props
-const { Content } = await post.render()
+const { Content, headings } = await post.render()
 const { lang } = Astro.params
 const t = useTranslations(lang)
 const siteTitle = `TIL: ${post.data.title}`
@@ -73,7 +74,7 @@ const siteTitle = `TIL: ${post.data.title}`
 	description={post.data.title}
 >
     {/* Conditional Layout */}
-	<div class={post.data.series ? 'col-span-1 lg:col-span-8 xl:col-span-9' : 'lg:col-span-8 lg:col-start-3'}>
+	<div class={post.data.series || headings.length > 0 ? 'col-span-1 lg:col-span-8 xl:col-span-9' : 'lg:col-span-8 lg:col-start-3'}>
 		<div class="mb-8">
 			<BackLink href={`/${lang}/blog`} label={t('blog.backToBlog')} />
 
@@ -129,10 +130,13 @@ const siteTitle = `TIL: ${post.data.title}`
 
     {/* Desktop Sidebar Widget */}
     {
-        post.data.series && (
+        (post.data.series || headings.length > 0) && (
             <aside class="hidden lg:col-span-4 lg:block xl:col-span-3">
                 <div class="sticky top-32 space-y-8">
-                    <SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+                    {post.data.series && (
+                        <SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+                    )}
+                    {headings.length > 0 && <TableOfContents headings={headings} lang={lang} />}
                 </div>
             </aside>
         )
