@@ -118,7 +118,7 @@ const siteTitle = `TIL: ${post.data.title}`
 			{/* Hidden content for Pagefind indexing - allows search with highlighting */}
 			{(post.data.seriesTitle || post.data.seriesDescription) && (
 				<span class="sr-only" data-pagefind-weight="2">
-					{post.data.seriesTitle} {post.data.seriesDescription}
+					{post.data.seriesTitle}{post.data.seriesTitle && post.data.seriesDescription ? ' · ' : ''}{post.data.seriesDescription}
 				</span>
 			)}
 			<Content />
