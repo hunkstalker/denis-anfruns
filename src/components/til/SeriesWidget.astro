@@ -31,7 +31,9 @@ if (seriesPosts.length < 2) return null
 
 // Helper to construct TIL path consistent with pages/[...slug].astro
 const getPath = (slug: string) => {
-    return lang === 'es' ? `/til/${slug}/` : `/${lang}/til/${slug}/`
+    // Strip language suffix from slug (e.g., "typescript-basics/part-2/es" -> "typescript-basics/part-2")
+    const cleanSlug = slug.replace(/\/(es|en|ca)$/, '')
+    return lang === 'es' ? `/til/${cleanSlug}/` : `/${lang}/til/${cleanSlug}/`
 }
 
 // Get the series title from the first post (they all share it) or fallback to ID

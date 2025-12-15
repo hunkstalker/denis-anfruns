@@ -188,3 +188,8 @@ mark {
 		scroll-behavior: auto !important;
 	}
 }
+
+/* TIL Card icon rotation on hover */
+.til-card:hover .icon-fan {
+	transform: rotate(var(--hover-rotation)) !important;
+}

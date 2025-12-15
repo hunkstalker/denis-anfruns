@@ -2,6 +2,10 @@ import type { TilPost } from '../../utils/til-content'
 import { ArrowUpRight } from 'lucide-react'
 import typescriptSvg from '../../icons/typescript.svg?raw'
 import gitSvg from '../../icons/git.svg?raw'
+import powerappsSvg from '../../icons/power-apps.svg?raw'
+import astroSvg from '../../icons/astro-logo.svg?raw'
+import javascriptSvg from '../../icons/javascript.svg?raw'
+import viteSvg from '../../icons/vite.svg?raw'
 
 interface Props {
 	post: TilPost
@@ -12,26 +16,44 @@ interface Props {
 	}
 }
 
-// Map icon IDs to their SVG content
+// Map icon IDs to their SVG content (key matches tag name or icon field)
 const iconSvgs: Record<string, string> = {
 	'typescript': typescriptSvg,
 	'git': gitSvg,
+	'powerapps': powerappsSvg,
+	'astro': astroSvg,
+	'javascript': javascriptSvg,
+	'vite': viteSvg,
 }
 
-// Get the decorative SVG for a TIL
-function getDecorativeSvg(post: TilPost): string | null {
-	// 1. Check explicit icon in frontmatter
+// Get decorative icons for a TIL (can return multiple for fan effect)
+function getDecorativeIcons(post: TilPost): string[] {
+	const icons: string[] = []
+	
+	// 1. Check explicit icon in frontmatter (single)
 	if (post.data.icon && iconSvgs[post.data.icon]) {
-		return iconSvgs[post.data.icon]
+		return [iconSvgs[post.data.icon]]
 	}
 	
 	// 2. Check series (maps to icon automatically)
 	if (post.data.series && iconSvgs[post.data.series.split('-')[0]]) {
-		return iconSvgs[post.data.series.split('-')[0]]
+		return [iconSvgs[post.data.series.split('-')[0]]]
 	}
 	
-	return null
+	// 3. Check first matching tag for icon
+	if (post.data.tags) {
+		for (const tag of post.data.tags) {
+			if (iconSvgs[tag]) {
+				return [iconSvgs[tag]]
+			}
+		}
+	}
+	
+	return icons
 }
+
+// Fan rotation angles for multiple icons
+const fanRotations = [-25, -5, 15]
 
 export default function TilCard({ post, lang, labels }: Props) {
 	const cleanSlug = post.slug.replace(/(?:\/es|\/en|\/ca)$/, '')
@@ -41,20 +63,45 @@ export default function TilCard({ post, lang, labels }: Props) {
 	const badgeText = lang === 'en' ? 'UPDATED' : lang === 'ca' ? 'ACTUALITZAT' : 'ACTUALIZADO'
 	const seriesBadgeText = lang === 'en' ? 'Series' : lang === 'ca' ? 'Sèrie' : 'Serie'
 
-	const decorativeSvg = getDecorativeSvg(post)
+	const decorativeIcons = getDecorativeIcons(post)
 
 	return (
 		<article className="til-card group relative flex h-full flex-col gap-3 overflow-hidden rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-black/15 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-white/15 sm:p-6">
-			{/* Decorative technology logo */}
-			{decorativeSvg && (
-				<div 
-					className="pointer-events-none absolute -bottom-8 -right-12 z-0 size-44 rotate-[-15deg] opacity-[0.12] transition-all duration-500 ease-out group-hover:opacity-[0.4] group-hover:scale-110 group-hover:rotate-[-8deg] dark:opacity-[0.25] dark:group-hover:opacity-[0.5] [&_svg]:size-full [&_svg]:text-[--tangerine]"
-					aria-hidden="true"
-					dangerouslySetInnerHTML={{ __html: decorativeSvg }}
-				/>
+			{/* Full-card clickable link overlay */}
+			<a 
+				href={href} 
+				className="absolute inset-0 z-10" 
+				aria-label={post.data.title}
+				data-astro-prefetch
+			/>
+
+			{/* Decorative technology logos (fanned if multiple) */}
+			{decorativeIcons.length > 0 && (
+				<div className="pointer-events-none absolute -bottom-8 -right-12 z-0">
+					{decorativeIcons.map((svg, index) => {
+						const baseRotation = fanRotations[index] ?? (-15 + (index * 15))
+						return (
+							<div 
+								key={index}
+								className="icon-fan absolute size-44 opacity-[0.12] transition-all duration-500 ease-out group-hover:opacity-[0.35] group-hover:scale-110 dark:opacity-[0.20] dark:group-hover:opacity-[0.45] [&_svg]:size-full"
+								style={{
+									'--base-rotation': `${baseRotation}deg`,
+									'--hover-rotation': `${baseRotation + 10}deg`,
+									transform: `rotate(var(--base-rotation))`,
+									right: `${index * 20}px`,
+									bottom: `${index * 5}px`,
+									zIndex: decorativeIcons.length - index,
+								} as React.CSSProperties}
+								aria-hidden="true"
+								dangerouslySetInnerHTML={{ __html: svg }}
+							/>
+						)
+					})}
+				</div>
 			)}
 
-			<div className="relative z-10 mb-1 flex items-center justify-between gap-2">
+			{/* Content (below link overlay) */}
+			<div className="pointer-events-none relative z-0 mb-1 flex items-center justify-between gap-2">
 				<div className="flex items-center gap-3">
 					<time
 						className="text-xs text-zinc-500"
@@ -80,19 +127,17 @@ export default function TilCard({ post, lang, labels }: Props) {
 				)}
 			</div>
 
-			<h3 className="relative z-10 line-clamp-3 font-semibold leading-snug text-zinc-800 dark:text-zinc-100">
-				<a href={href} className="before:absolute before:inset-0" data-astro-prefetch>
-					{post.data.title}
-				</a>
+			<h3 className="pointer-events-none line-clamp-3 font-semibold leading-snug text-zinc-800 dark:text-zinc-100">
+				{post.data.title}
 			</h3>
 
 			{post.data.description && (
-				<p className="relative z-10 mb-4 line-clamp-3 text-sm text-zinc-600 dark:text-zinc-400">
+				<p className="pointer-events-none mb-4 line-clamp-3 text-sm text-zinc-600 dark:text-zinc-400">
 					{post.data.description}
 				</p>
 			)}
 
-			<div className="relative z-10 mt-auto flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
+			<div className="pointer-events-none mt-auto flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
 				{readText}
 				<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
 			</div>
