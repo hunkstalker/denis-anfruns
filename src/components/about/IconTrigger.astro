@@ -12,7 +12,7 @@ const { icon, targetId, highlightColor, gradient, class: className } = Astro.pro
 
 <div
 	class:list={[
-		'icon-trigger h-10 w-10 transition-all duration-300 hover:scale-110 hover:grayscale-0 dark:grayscale dark:hover:grayscale-0',
+		'icon-trigger h-10 w-10 grayscale transition-all duration-300 hover:scale-110 hover:grayscale-0',
 		className,
 	]}
 	set:html={icon}
@@ -53,7 +53,7 @@ const { icon, targetId, highlightColor, gradient, class: className } = Astro.pro
 				target.style.textShadow = `0 0 0.65px ${color}`
 			}
 			// Also remove grayscale from icon
-			;(trigger as HTMLElement).classList.remove('dark:grayscale')
+			;(trigger as HTMLElement).classList.remove('grayscale')
 			;(trigger as HTMLElement).classList.add('scale-110')
 		}
 
@@ -68,7 +68,7 @@ const { icon, targetId, highlightColor, gradient, class: className } = Astro.pro
 			target.style.removeProperty('-webkit-background-clip')
 			target.style.animation = ''
 			// Restore grayscale on icon
-			;(trigger as HTMLElement).classList.add('dark:grayscale')
+			;(trigger as HTMLElement).classList.add('grayscale')
 			;(trigger as HTMLElement).classList.remove('scale-110')
 		}
 

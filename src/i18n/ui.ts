@@ -98,6 +98,9 @@ export const ui = {
       doy gran importancia a la **comunicación visual** y a **lo que transmite**.
       <br><br>
       Por último espero que disfrutes y aprendas del contenido de mi sitio y te hago saber que tienes algunos easter eggs repartidos, así que diviértete encontrándolos.`,
+		'about.contact.title': '¿Hablamos?',
+		'about.contact.text': `Si quieres contactar conmigo para cualquier consulta, propuesta o 
+			simplemente saludar, puedes encontrarme en mis redes sociales o escribirme vía email en:`,
 	},
 	ca: {
 		// NAVEGACIÓ
@@ -185,6 +188,9 @@ export const ui = {
       dono gran importància a la **comunicació visual** i al **que transmet**.
       <br><br>
       Per últim espero que gaudeixis i aprenguis del contingut del meu lloc i et faig saber que tens alguns easter eggs repartits, així que diverteix-te trobant-los.`,
+		'about.contact.title': 'Parlem?',
+		'about.contact.text': `Si vols contactar amb mi per qualsevol consulta, proposta o 
+			simplement saludar, pots trobar-me a les meves xarxes socials o escriure'm via email a:`,
 	},
 	en: {
 		// NAVEGACIÓ
@@ -275,5 +281,8 @@ export const ui = {
       great importance on **visual communication** and **what it conveys**.
       <br><br>
       Finally, I hope you enjoy and learn from my site's content and I let you know that there are some easter eggs scattered around, so have fun finding them!`,
+		'about.contact.title': "Let's Talk",
+		'about.contact.text': `Want to get in touch? Whether it's a question, a proposal, or just to say hello, 
+			you can find me on my social networks or reach out via email at:`,
 	},
 } as const

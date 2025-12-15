@@ -1,21 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 8" fill="currentColor">
-  <path d="M2 0h1v1H2zm7 0h1v1H9zM3 1h1v1H3zm5 1h1v1H8zM2 2h7v1H2zM1 3h2v1H1zm3 0h3v1H4zm4 0h2v1H8zM0 4h11v1H0zM0 5h1v1H0zm2 5h7v1H2zm9 0h1v1H9zM1 6h1v1H1zm3 6h3v1H4zm6 6h1v1h-1zM2 7H1v1h1zm8 0H9v1h1z" />
-  <rect x="2" y="0" width="1" height="1" />
-  <rect x="8" y="0" width="1" height="1" />
-  <rect x="3" y="1" width="1" height="1" />
-  <rect x="7" y="1" width="1" height="1" />
-  <rect x="2" y="2" width="7" height="1" />
-  <rect x="1" y="3" width="2" height="1" />
-  <rect x="4" y="3" width="3" height="1" />
-  <rect x="8" y="3" width="2" height="1" />
-  <rect x="0" y="4" width="11" height="1" />
-  <rect x="0" y="5" width="1" height="1" />
-  <rect x="2" y="5" width="7" height="1" />
-  <rect x="10" y="5" width="1" height="1" />
-  <rect x="0" y="6" width="1" height="1" /> <!-- Leg 1 -->
-  <rect x="2" y="6" width="1" height="1" /> <!-- Leg 2 -->
-  <rect x="8" y="6" width="1" height="1" /> <!-- Leg 3 -->
-  <rect x="10" y="6" width="1" height="1" /> <!-- Leg 4 -->
-  <!-- Simplified Path for cleaner shape -->
-  <path d="M2.5 0h1v1h-1zm5 0h1v1h-1zM3 1h1v1h-1zm4 0h1v1h-1zM2 2h6v1h-6zM1 3h2v1h-2zm3 0h2v1h-2zm3 0h2v1h-2zM0 4h11v1h-11zM0 5h1v1h-1zm2 5h6v1h-6zm8 0h1v1h-1zM0 6h1v2h-1v-1h2v-1zm9 6h2v1h-1v1h-1z" fill="currentColor"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="currentColor">
+  <path d="m 79.00009,54.00429 0,10 10,0 0,-10 -10,0 z m -40,0 0,10 10,0 0,-10 -10,0 z m 0,40 20,0 0,10 -20,0 0,-10 z m 50,0 0,10 -20,0 0,-10 20,0 z m 0,-60 0,-10 10,0 0,10 -10,0 z m -50,0 10,0 0,10 30,0 0,-10 10,0 0,10 10,0 0,10 10,0 0,10 10,0 0,30 -10,0 0,-20 -10,0 0,20 -10,0 0,-10 -50,0 0,10 -10,0 0,-20 -10,0 0,20 -10,0 0,-30 10,0 0,-10 10,0 0,-10 10,0 0,-10 z m -10,-10 10,0 0,10 -10,0 0,-10 z"/>
 </svg>

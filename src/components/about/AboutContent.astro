@@ -8,6 +8,8 @@ import PowerAutomateIcon from '../../icons/power-automate.svg?raw'
 import PowerBiIcon from '../../icons/power-bi.svg?raw'
 import SharePointIcon from '../../icons/sharepoint.svg?raw'
 import M365Icon from '../../icons/m-365.svg?raw'
+import MailIcon from '../../icons/mail.svg'
+import InvaderIcon from '../../icons/invader.svg'
 
 import IconTrigger from './IconTrigger.astro'
 
@@ -127,14 +129,43 @@ const processText = (text: string) => {
 		<section class="animate-fade-in-up delay-200">
 			<h2>
 				{t('about.personal.title')}
-				<span class="animate-bounce-slow ml-2 inline-block cursor-default select-none text-2xl"
-					>👾</span
-				>
+				<InvaderIcon class="animate-bounce-slow ml-2 inline-block size-6 text-zinc-800 dark:text-white" />
 			</h2>
 			<p set:html={processText(t('about.personal.text'))} />
 		</section>
+
+		<section class="animate-fade-in-up delay-300">
+			<h2>
+				{t('about.contact.title')}
+				
+			</h2>
+			<p set:html={t('about.contact.text')} />
+
+			<p class="mt-4">
+				<a 
+					id="email-link" 
+					href="#" 
+					class="font-medium text-[--tangerine-hover] no-underline transition-colors hover:text-[--tangerine] dark:text-[--tangerine] dark:hover:text-[--tangerine-hover]"
+				>
+					<!-- Email loaded via JS to prevent scraping -->
+				</a>
+				<MailIcon class="ml-2 inline-block size-6" />
+			</p>
+		</section>
 	</div>
 </div>
+
+<script>
+	// Obfuscated email to prevent scraping
+	const emailLink = document.getElementById('email-link')
+	if (emailLink) {
+		const user = 'anfruns.denis'
+		const domain = 'gmail.com'
+		const email = `${user}@${domain}`
+		emailLink.textContent = email
+		emailLink.setAttribute('href', `mailto:${email}`)
+	}
+</script>
 
 <style>
 	.animate-fade-in-up {
