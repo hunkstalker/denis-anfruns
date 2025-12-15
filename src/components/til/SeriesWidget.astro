@@ -27,7 +27,9 @@ const seriesPosts = allTils
 		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 	})
 
-if (seriesPosts.length < 2) return null
+if (seriesPosts.length === 0) return null
+const isSinglePostFinished = seriesPosts.length === 1 && seriesPosts[0].data.end
+if (isSinglePostFinished) return null
 
 // Helper to construct TIL path consistent with pages/[...slug].astro
 const getPath = (slug: string) => {
