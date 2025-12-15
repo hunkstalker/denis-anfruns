@@ -55,16 +55,16 @@ if (collection === 'til') {
 			if (!a.data.pubDate || !b.data.pubDate) return 0
 			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 		})
-	
+
 	titleInfo = rawPosts[0]?.data.seriesTitle || seriesId
-	
+
 	seriesItems = rawPosts.map(post => ({
 		title: post.data.title,
 		slug: post.slug,
 		date: post.data.pubDate,
 		href: getPath(post.slug),
 		isNew: post.data.new || false,
-		isEnd: post.data.end || false
+		isEnd: post.data.end || false,
 	}))
 } else {
 	const allDevlogs = await getDevlogs()
@@ -83,13 +83,13 @@ if (collection === 'til') {
 		date: post.data.pubDate,
 		href: getPath(post.slug),
 		isNew: post.data.new || false,
-		isEnd: post.data.end || false
+		isEnd: post.data.end || false,
 	}))
 }
 
 if (seriesItems.length === 0) return null
 const isSinglePostFinished = seriesItems.length === 1 && seriesItems[0].isEnd
-if (isSinglePostFinished) return null
+
 
 const currentIndex = seriesItems.findIndex(p => p.slug === currentSlug)
 const totalPosts = seriesItems.length
@@ -98,68 +98,99 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 ---
 
 <div id={widgetId} class='series-widget'>
-	<h3 class='text-xs mb-4 flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
-		Serie: 
-		<span class="text-[--tangerine-hover] normal-case tracking-normal font-medium">
+	<h3
+		class='text-xs mb-4 flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
+		Serie:
+		<span class='font-medium normal-case tracking-normal text-[--tangerine-hover]'>
 			{titleInfo}
 		</span>
 	</h3>
 
-	<div class="relative">
-		<ul class={`relative space-y-0 scrollbar-none snap-y ${enableScroll ? 'max-h-[22rem] overflow-y-auto overscroll-contain' : ''}`}>
+	<div class='relative'>
+		<ul
+			class={`relative space-y-0 scrollbar-none snap-y ${enableScroll ? 'max-h-[22rem] overflow-y-auto overscroll-contain' : ''}`}>
 			{
 				seriesItems.map((post, index) => {
 					const isCurrent = index === currentIndex
 					const isFirst = index === 0
 					const isLast = index === totalPosts - 1
-					
-					const stickyClass = enableScroll 
-						? (isFirst 
-							? 'sticky top-0 z-20 pb-2' 
-							: isLast 
-								? 'sticky bottom-0 z-20 pt-2' 
-								: 'relative z-0')
+
+					const stickyClass = enableScroll
+						? isFirst
+							? 'sticky top-0 z-20 pb-2'
+							: isLast
+								? 'sticky bottom-0 z-20 pt-2'
+								: 'relative z-0'
 						: 'relative z-0'
 
-					const bgClass = (enableScroll && (isFirst || isLast)) ? 'bg-white dark:bg-zinc-950' : ''
-					
+					const bgClass = enableScroll && (isFirst || isLast) ? 'bg-white dark:bg-zinc-950' : ''
+
 					return (
-							<li 
-								class={`group pl-12 pr-4 ${stickyClass} ${bgClass} border-transparent transition-colors duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-900`}
-								id={isFirst ? `series-start-${seriesId}-${widgetId}` : isLast ? `series-end-${seriesId}-${widgetId}` : undefined}
-							>
-								{/* Connecting Lines */}
-								{isFirst && <div class='absolute left-[23px] top-7 bottom-0 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />}
-								{!isFirst && !isLast && <div class='absolute left-[23px] top-0 bottom-0 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />}
-								{isLast && <div class='absolute left-[23px] top-0 h-7 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />}
-								{isLast && !post.isEnd && <div class={`absolute left-[23px] h-8 -z-10 w-0.5 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800 ${enableScroll ? 'top-9' : 'top-7'}`} />}
-
-								<div
-									class={`series-status absolute left-3 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950 ${isLast && enableScroll ? 'top-6' : 'top-4'}`}
-									data-slug={post.slug}
-									id={isCurrent ? `current-series-item-${widgetId}` : undefined}>
-									<CheckIcon class='check-icon size-3.5 text-white opacity-0 transition-opacity' />
-									{isCurrent && (
-										<div class='current-dot absolute size-2 rounded-full bg-[--tangerine]' />
+						<li
+							class={`group pl-12 pr-4 ${stickyClass} ${bgClass} border-transparent transition-colors duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-900`}
+							id={
+								isFirst
+									? `series-start-${seriesId}-${widgetId}`
+									: isLast
+										? `series-end-${seriesId}-${widgetId}`
+										: undefined
+							}>
+							{/* Conector de líneas */}
+							{!isSinglePostFinished && (
+								<>
+							{!isSinglePostFinished && (
+								<>
+									{/* Línea de ENTRADA (Arriba -> Centro): Para todos menos el primero */}
+									{!isFirst && (
+										<div class='absolute left-[23px] top-0 -z-10 h-7 w-0.5 bg-zinc-200 dark:bg-zinc-800' />
 									)}
-								</div>
 
-								<a
-									href={post.href}
-									data-astro-prefetch
-									class={`relative flex w-full items-center justify-between gap-4 h-14 text-sm leading-snug transition-colors ${
-										isCurrent
-											? 'font-bold text-zinc-900 dark:text-white'
-											: 'text-zinc-600 hover:text-[--tangerine-hover] dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100'
-									}`}>
-									<span class="line-clamp-2" title={post.title}>{post.title}</span>
-									{post.isNew && (
-										<Badge variant='subtle' className='new-badge flex-shrink-0 uppercase tracking-wider text-[10px]'>
-											{badgetText[lang]['b.new']}
-										</Badge>
+									{/* Línea de SALIDA (Centro -> Abajo): Para todos menos el último */}
+									{!isLast && (
+										<div class='absolute bottom-0 left-[23px] top-7 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />
 									)}
-								</a>
-							</li>
+									
+									{/* Línea DASHED (Centro -> Abajo): Solo si es el último y NO ha terminado */}
+									{isLast && !post.isEnd && (
+										<div
+											class={`absolute left-[23px] -z-10 h-8 w-0.5 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800 ${enableScroll ? 'top-9' : 'top-7'}`}
+										/>
+									)}
+								</>
+							)}
+								</>
+							)}
+
+							<div
+								class={`series-status absolute left-3 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950 ${isLast && enableScroll ? 'top-6' : 'top-4'}`}
+								data-slug={post.slug}
+								id={isCurrent ? `current-series-item-${widgetId}` : undefined}>
+								<CheckIcon class='check-icon size-3.5 text-white opacity-0 transition-opacity' />
+								{isCurrent && (
+									<div class='current-dot absolute size-2 rounded-full bg-[--tangerine]' />
+								)}
+							</div>
+
+							<a
+								href={post.href}
+								data-astro-prefetch
+								class={`relative flex h-14 w-full items-center justify-between gap-4 text-sm leading-snug transition-colors ${
+									isCurrent
+										? 'font-bold text-zinc-900 dark:text-white'
+										: 'text-zinc-600 hover:text-[--tangerine-hover] group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100'
+								}`}>
+								<span class='line-clamp-2' title={post.title}>
+									{post.title}
+								</span>
+								{post.isNew && (
+									<Badge
+										variant='subtle'
+										className='new-badge flex-shrink-0 uppercase tracking-wider text-[10px]'>
+										{badgetText[lang]['b.new']}
+									</Badge>
+								)}
+							</a>
+						</li>
 					)
 				})
 			}
@@ -210,7 +241,12 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 					firstItem.classList.add('border-b-2', 'border-zinc-200', 'dark:border-slate-700', 'z-30')
 					firstItem.classList.remove('z-20')
 				} else {
-					firstItem.classList.remove('border-b-2', 'border-zinc-200', 'dark:border-slate-700', 'z-30')
+					firstItem.classList.remove(
+						'border-b-2',
+						'border-zinc-200',
+						'dark:border-slate-700',
+						'z-30',
+					)
 					firstItem.classList.add('z-20')
 				}
 
