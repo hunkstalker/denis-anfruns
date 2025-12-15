@@ -306,7 +306,7 @@ export default function SearchResultsClient({
 			</div>
 
 			{/* Bottom Fade Gradient */}
-			<div className="pointer-events-none absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-white to-transparent dark:from-zinc-900" />
+			<div className="pointer-events-none absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-stone-400 to-transparent dark:from-zinc-900" />
 		</div>
 	)
 }

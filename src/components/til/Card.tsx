@@ -66,7 +66,7 @@ export default function TilCard({ post, lang, labels }: Props) {
 	const decorativeIcons = getDecorativeIcons(post)
 
 	return (
-		<article className="til-card group relative flex h-full flex-col gap-3 overflow-hidden rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-black/15 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-white/15 sm:p-6">
+		<article className="til-card group relative flex h-full flex-col gap-3 overflow-hidden rounded-lg border border-zinc-200 bg-stone-100 p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-black/15 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-white/15 sm:p-6">
 			{/* Full-card clickable link overlay */}
 			<a 
 				href={href} 
