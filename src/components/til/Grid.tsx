@@ -1,7 +1,9 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TilCard from './Card'
 import type { TilPost } from '../../utils/til-content'
+import type { Tag } from '../../data/tags'
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 
 interface Props {
 	posts: TilPost[]
@@ -14,10 +16,10 @@ interface Props {
 }
 
 export default function TilGrid({ posts, lang, labels }: Props) {
-	const [filter, setFilter] = useState(() => {
+	const [filter, setFilter] = useState<Tag | 'all'>(() => {
 		if (typeof window !== 'undefined') {
 			const params = new URLSearchParams(window.location.search)
-			return params.get('tag') || 'all'
+			return (params.get('tag') as Tag) || 'all'
 		}
 		return 'all'
 	})
@@ -54,9 +56,33 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 		return posts.filter((post) => post.data.tags?.includes(filter))
 	}, [posts, filter])
 
+	// Infinite Scroll state
+	const INITIAL_COUNT = 24
+	const LOAD_MORE_COUNT = 12
+	const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
+	const loadMoreRef = useRef<HTMLDivElement>(null)
+
+	// Reset visible count when filter changes
+	useEffect(() => {
+		setVisibleCount(INITIAL_COUNT)
+	}, [filter])
+
+	const visiblePosts = filteredPosts.slice(0, visibleCount)
+	const hasMore = visibleCount < filteredPosts.length
+
+	const handleLoadMore = () => {
+		setVisibleCount((prev) => prev + LOAD_MORE_COUNT)
+	}
+
+	useIntersectionObserver({
+		target: loadMoreRef,
+		onIntersect: handleLoadMore,
+		enabled: hasMore,
+		rootMargin: '200px', // Load before reaching the very bottom
+	})
+
 	return (
 		<div className="w-full">
-			{/* Filters */}
 			{/* Filters */}
 			<div className="no-scrollbar mb-10 flex w-full items-center gap-2 overflow-x-auto pb-4 md:flex-wrap md:pb-0">
 				<button
@@ -87,7 +113,7 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 			{/* Grid */}
 			<motion.div layout className="relative grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				<AnimatePresence mode="popLayout">
-					{filteredPosts.length === 0 && (
+					{visiblePosts.length === 0 && (
 						<motion.p
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
@@ -97,7 +123,7 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 							{labels.noResults}
 						</motion.p>
 					)}
-					{filteredPosts.map((post, index) => (
+					{visiblePosts.map((post, index) => (
 						<motion.div
 							key={post.slug}
 							layout
@@ -117,6 +143,18 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 					))}
 				</AnimatePresence>
 			</motion.div>
+
+			{/* Infinite Scroll Trigger */}
+			{hasMore && (
+				<div
+					ref={loadMoreRef}
+					className="mt-8 flex justify-center py-8 opacity-0"
+					aria-hidden="true"
+				>
+					{/* Optional: Add a loading spinner here if desired */}
+					<span className="sr-only">Loading more...</span>
+				</div>
+			)}
 		</div>
 	)
 }

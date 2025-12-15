@@ -1,8 +1,10 @@
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import DevLogCard from './Card'
 import type { DevlogPost } from '../../utils/devlog-content'
 import { useDevLogFilter } from '../../hooks/useDevLogFilter'
 import DevLogFilterBar from './FilterBar'
+import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 
 interface Props {
 	posts: DevlogPost[]
@@ -17,8 +19,35 @@ export default function DevLogGrid({ posts, lang, labels, layout = 'grid' }: Pro
 	// 1. Logic extracted to custom hook
 	const { selectedTag, setSelectedTag, allTags, filteredPosts, mounted } = useDevLogFilter(posts)
 
+	// Infinite Scroll state
+	const INITIAL_COUNT = 24
+	const LOAD_MORE_COUNT = 12
+	const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT)
+	const loadMoreRef = useRef<HTMLDivElement>(null)
+
+	// Reset visible count when filter changes
+	useEffect(() => {
+		setVisibleCount(INITIAL_COUNT)
+	}, [selectedTag])
+
+	const visiblePosts = filteredPosts.slice(0, visibleCount)
+	const hasMore = visibleCount < filteredPosts.length
+
+	const handleLoadMore = () => {
+		setVisibleCount((prev) => prev + LOAD_MORE_COUNT)
+	}
+
+	useIntersectionObserver({
+		target: loadMoreRef,
+		onIntersect: handleLoadMore,
+		enabled: hasMore,
+		rootMargin: '200px',
+	})
+
 	if (layout === 'blogList') {
-		// Simple list view for main blog page
+		// Simple list view for main blog page - SHOW ALL (or apply pagination if needed later)
+		// For now, blogList is usually distinct, but if it needs scroll we can add it.
+		// Assuming blogList is small enough or handled by parent otherwise.
 		return (
 			<div className="grid gap-4 sm:gap-6 lg:gap-8">
 				{posts.map((post, index) => (
@@ -49,7 +78,7 @@ export default function DevLogGrid({ posts, lang, labels, layout = 'grid' }: Pro
 			{/* Grid Layout */}
 			<div className="grid grid-cols-1 gap-6 md:grid-cols-3">
 				<AnimatePresence mode="popLayout">
-					{filteredPosts.map((post, _index) => (
+					{visiblePosts.map((post, _index) => (
 						<motion.div
 							key={post.slug}
 							layout
@@ -65,9 +94,20 @@ export default function DevLogGrid({ posts, lang, labels, layout = 'grid' }: Pro
 				</AnimatePresence>
 			</div>
 
-			{filteredPosts.length === 0 && (
+			{visiblePosts.length === 0 && (
 				<div className="py-12 text-center text-zinc-500">
 					<p>No matches found for this filter.</p>
+				</div>
+			)}
+
+			{/* Infinite Scroll Trigger */}
+			{hasMore && (
+				<div
+					ref={loadMoreRef}
+					className="flex justify-center py-8 opacity-0"
+					aria-hidden="true"
+				>
+					<span className="sr-only">Loading more...</span>
 				</div>
 			)}
 		</div>
