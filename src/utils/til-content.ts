@@ -8,6 +8,7 @@ export type TilPost = Omit<CollectionEntry<'til'>, 'data'> & {
         series?: string
         new?: boolean
         icon?: string
+        end?: boolean
     }
 }
 
@@ -31,7 +32,17 @@ export async function getTils(): Promise<TilPost[]> {
 
         const metaKey = `../content/til/${folder}/meta.json`
         const meta = metaFiles[metaKey] as
-            | { pubDate?: string; tags?: string[]; draft?: boolean; new?: boolean; icon?: string }
+            | {
+                  pubDate?: string
+                  tags?: string[]
+                  draft?: boolean
+                  new?: boolean
+                  icon?: string
+                  end?: boolean
+                  seriesTitle?: string
+                  seriesDescription?: string
+                  series?: string
+              }
             | undefined
 
         // Validar y parsear fecha
@@ -45,12 +56,11 @@ export async function getTils(): Promise<TilPost[]> {
             pubDate = new Date(0)
         }
 
-        // Validar tags
-        let tags: Tag[] = post.data.tags || []
-        if (meta?.tags && meta.tags.length > 0) {
-            // We assume meta tags are valid for now, or we could filter them
-            tags = meta.tags as Tag[]
-        }
+        // Validar y combinar tags
+        const frontmatterTags = post.data.tags || []
+        const metaTags = meta?.tags || []
+        // Merge uniquing tags
+        let tags: Tag[] = Array.from(new Set([...metaTags, ...frontmatterTags])) as Tag[]
 
         // Merge draft
         const draft = meta?.draft !== undefined ? meta.draft : post.data.draft
@@ -61,19 +71,21 @@ export async function getTils(): Promise<TilPost[]> {
         // Merge icon (meta.json takes priority, then frontmatter)
         const icon = meta?.icon || post.data.icon
 
+        // Merge end
+        const end = meta?.end !== undefined ? meta.end : post.data.end
+
         // Infer series from folder structure if not present in frontmatter
         // folder is "typescript-basics/part-1". We want "typescript-basics"
         // If it's just "my-til", series might be undefined or "my-til" if we wanted grouping
-        let series = post.data.series
+        let series = meta?.series || post.data.series
         if (!series) {
             const parts = folder.split('/')
             if (parts.length > 0 && parts[0] !== folder) {
                 // logic: if folder has depth, parent is series? 
-                // devlog logic: parts[0]. 
-                // For "typescript-basics/part-1", parts[0] is "typescript-basics"
                 series = parts[0]
             }
         }
+
 
         return {
             ...post,
@@ -84,7 +96,10 @@ export async function getTils(): Promise<TilPost[]> {
                 draft,
                 series,
                 new: isNew,
-                icon
+                icon,
+                end,
+                seriesTitle: meta?.seriesTitle || post.data.seriesTitle,
+                seriesDescription: meta?.seriesDescription || post.data.seriesDescription,
             },
         }
     })
@@ -92,6 +107,7 @@ export async function getTils(): Promise<TilPost[]> {
     // Filter out posts that still don't have a date (legacy or missing meta)
     // Then filter out drafts in production
     return mapped
+        .filter((post) => !post.id.endsWith('.json'))
         .filter(
             (post) => post.data.pubDate !== undefined && Array.isArray(post.data.tags),
         )

@@ -39,13 +39,24 @@ const getPath = (slug: string) =>
 	</h3>
 
 	<ul class="relative space-y-2">
-		<div class="absolute inset-y-2 left-[11px] -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800"></div>
-
 		{
-			seriesPosts.map((post: DevlogPost) => {
+			seriesPosts.map((post: DevlogPost, index: number) => {
 				const isCurrent = post.slug === currentSlug
+                const isLast = index === seriesPosts.length - 1
+                const showDashedTail = isLast && !post.data.end
+
 				return (
 					<li class="group relative pl-8">
+                        {/* Connecting Line */}
+                        {!isLast && (
+                            <div class="absolute left-[11px] top-[14px] -z-10 w-0.5 h-full bg-zinc-200 dark:bg-zinc-800" />
+                        )}
+                        
+                        {/* Dashed Tail for incomplete series */}
+                        {showDashedTail && (
+                            <div class="absolute left-[11px] top-[14px] -z-10 w-0.5 h-8 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800" />
+                        )}
+
 						<div
 							class="series-status absolute left-0 top-0.5 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950"
 							data-slug={post.slug}

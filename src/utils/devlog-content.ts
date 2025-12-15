@@ -4,6 +4,7 @@ export type DevlogPost = CollectionEntry<'devlog'> & {
 	data: CollectionEntry<'devlog'>['data'] & {
 		pubDate: Date
 		tags: string[]
+		end?: boolean
 	}
 }
 
@@ -30,17 +31,20 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
 				const metaKey = Object.keys(metaFiles).find((key) => key.endsWith(`/${folder}/meta.json`))
 				const meta = metaKey
 					? (metaFiles[metaKey] as
-							| {
-									pubDate?: string
-									updatedDate?: string
-									tags?: string[]
-									draft?: boolean
-									heroImage?: string
-									descriptionHeroImage?: string
-									ogImage?: string
-									new?: boolean
-							  }
-							| undefined)
+						| {
+							pubDate?: string
+							updatedDate?: string
+							tags?: string[]
+							draft?: boolean
+							heroImage?: string
+							descriptionHeroImage?: string
+							ogImage?: string
+							new?: boolean
+							end?: boolean
+                            seriesTitle?: string
+                            series?: string
+						}
+						| undefined)
 					: undefined
 
 				// Validate and parse dates
@@ -54,11 +58,11 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
 					updatedDate = new Date(meta.updatedDate)
 				}
 
-				// Validate tags
-				let tags: string[] = post.data.tags || []
-				if (meta?.tags && meta.tags.length > 0) {
-					tags = meta.tags
-				}
+				// Validate and merge tags
+				const frontmatterTags = post.data.tags || []
+				const metaTags = meta?.tags || []
+				// Merge uniquing tags
+				let tags: string[] = Array.from(new Set([...metaTags, ...frontmatterTags]))
 
 				// Merge other fields (meta.json takes precedence)
 				const draft = meta?.draft !== undefined ? meta.draft : post.data.draft
@@ -80,8 +84,10 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
 					heroImage,
 					descriptionHeroImage,
 					ogImage,
-					series: post.data.series || (parts.length > 0 ? parts[0] : undefined),
+					series: meta?.series || post.data.series || (parts.length > 0 ? parts[0] : undefined),
+                    seriesTitle: meta?.seriesTitle || post.data.seriesTitle,
 					new: meta?.new ?? post.data.new,
+					end: meta?.end !== undefined ? meta.end : post.data.end
 				}
 
 				// updatedDate is optional in schema, add only if exists
@@ -96,6 +102,7 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
 			})
 			// Filter out posts that still don't have a date (legacy or missing meta)
 			// If frontmatter had it, it's kept. If meta had it, it's used.
+			.filter((post) => !post.id.endsWith('.json'))
 			.filter(
 				(post): post is DevlogPost => post.data.pubDate !== undefined && post.data.pubDate !== null,
 			)
