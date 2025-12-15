@@ -70,9 +70,9 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 					{post.data.description}
 				</p>
 
-				<div className="mt-2 flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
+				<div className="pointer-events-none mt-2 flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
 					{labels.readArticle}
-					<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
+					<ArrowUpRight className="size-4" />
 				</div>
 			</article>
 		)
@@ -81,12 +81,15 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 	// Esta es el grid de las cards DevLog en /devlog
 	return (
 		<article className="devlog-card group relative flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-stone-100 shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-700/50 dark:bg-zinc-900 dark:hover:border-zinc-600">
+			{/* Stretched link for full-card click */}
+			<a href={href} data-astro-prefetch className="absolute inset-0 z-10" aria-label={post.data.title} />
+			
 			<div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
 				{image && (
 					<img
 						src={image}
 						alt={post.data.title}
-						className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+						className="size-full object-cover transition-transform duration-500 group-hover:scale-125"
 						loading="lazy"
 					/>
 				)}
@@ -116,9 +119,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 					</div>
 
 					<h3 className="text-xl font-bold leading-tight text-white">
-						<a href={href} data-astro-prefetch className="before:absolute before:inset-0">
-							{post.data.title}
-						</a>
+						{post.data.title}
 					</h3>
 
 					{/* Date in overlay */}
@@ -139,7 +140,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 
 				<div className="mt-3 flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors group-hover:text-[--tangerine-hover] dark:group-hover:text-[--tangerine]">
 					{labels.readArticle}
-					<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
+					<ArrowUpRight className="size-4" />
 				</div>
 			</div>
 		</article>
