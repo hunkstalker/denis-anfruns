@@ -8,72 +8,53 @@ import { useTranslations } from '../i18n/utils'
 import TilAside from '../components/til/Aside.astro'
 import Grid from '../components/devlog/Grid'
 
+import ArrowRightIcon from '../icons/arrow-right.svg'
+
 const lang = 'es'
 const t = useTranslations(lang)
 const rawPosts = await getDevlogs()
 // Use shared logic for filtering and grouping
 const posts = rawPosts
-    .filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
-    .filter((post) => import.meta.env.PROD ? post.data.draft !== true : true)
+	.filter(p => getLangFromSlug(p.slug) === lang && p.data.pubDate)
+	.filter(post => (import.meta.env.PROD ? post.data.draft !== true : true))
 
 const devlogs = groupDevlogsBySeries(posts)
 
 const articles = devlogs
+
+const LABEL_DEVLOGS = 'DevLogs'
 ---
 
-<BaseLayout siteTitle="Jardín Digital" lang={lang}>
+<BaseLayout siteTitle='Jardín Digital' lang={lang}>
 	<Nav lang={lang} />
-	<div class="container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28">
-		<h3
-			class="text-xs mb-4 font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 lg:pl-6"
-		>
+	<div class='container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28'>
+		<h3 class='text-xs mb-4 font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 lg:pl-6'>
 			{t('blog.recent')}
 		</h3>
-		<div class="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-12">
+		<div class='grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-12 lg:gap-12'>
 			<!-- Columna principal: DevLogs -->
-			<div class="space-y-12 lg:col-span-8">
+			<div class='space-y-12 lg:col-span-8'>
 				<!-- Contenedor "invisible" para alinear con TilAside (p-0 sm:p-0 mobile / lg:p-6 desktop) -->
-				<div class="rounded-xl p-0 lg:border lg:border-transparent lg:p-6">
-					<div
-						class="flex items-center justify-between border-b border-stone-400 pb-2 dark:border-zinc-700"
-					>
-						<h2 class="text-xl font-bold dark:text-zinc-200">DevLogs</h2>
-						<a
-							href="/devlog/"
-							class="group flex items-center gap-1 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
-						>
+				<div class='rounded-xl p-0 lg:border lg:border-transparent lg:p-6'>
+					
+					<div class='flex items-center justify-between border-b border-stone-400 pb-2 dark:border-zinc-700'>
+						<h2 class='text-xl font-bold dark:text-zinc-200'>{LABEL_DEVLOGS}</h2>
+						<a href='/devlog/' class='group flex items-center gap-1 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]'>
 							{t('blog.viewAll')}
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="16"
-								height="16"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="transition-transform group-hover:translate-x-1"
-								><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
-							>
+							<ArrowRightIcon />
 						</a>
 					</div>
 
-					<p class="mb-6 mt-2 text-base text-zinc-500">{t('blog.devLogDescription')}</p>
+					<p class='mb-6 mt-2 text-base text-zinc-500'>{t('blog.devLogDescription')}</p>
 
-					{articles.length === 0 && <p class="italic text-zinc-500">No hay DevLogs todavía.</p>}
+					{articles.length === 0 && <p class='italic text-zinc-500'>No hay DevLogs todavía.</p>}
 
-					<Grid
-						client:load
-						posts={articles}
-						lang={lang}
-						labels={{ readArticle: t('blog.readArticle') }}
-						layout="blogList"
-					/>
+					<!-- Lista de DevLogs en /blog -->
+					<Grid client:load posts={articles} lang={lang} labels={{ readArticle: t('blog.readArticle') }} layout='blogList' />
 				</div>
 			</div>
 
-			<!-- Columna lateral: TILs -->
+			<!-- Columna lateral de TILs en /blog -->
 			<TilAside lang={lang} limit={6} />
 		</div>
 	</div>

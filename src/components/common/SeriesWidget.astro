@@ -1,0 +1,239 @@
+---
+import { getTils, type TilPost } from '../../utils/til-content'
+import { getDevlogs, type DevlogPost } from '../../utils/devlog-content'
+import { getBaseSlug, getLangFromSlug, type SupportedLang } from '../../utils/blogi18n'
+import CheckIcon from '../../icons/check.svg'
+import { Badge } from '../ui/Badge'
+
+interface Props {
+	seriesId: string
+	currentSlug: string
+	lang?: SupportedLang
+	collection: 'til' | 'devlog'
+	id?: string // Explicit ID to handle multiple instances (mobile/desktop)
+}
+
+const badgetText = {
+	es: { 'b.new': 'NUEVO' },
+	ca: { 'b.new': 'NOU' },
+	en: { 'b.new': 'NEW' },
+}
+
+const { seriesId, currentSlug, lang = 'es', collection, id } = Astro.props
+
+// Generate distinct ID for this widget instance if not provided
+const widgetId = id || 'sw-' + Math.random().toString(36).substr(2, 9)
+
+interface SeriesItem {
+	title: string
+	slug: string
+	date: Date
+	href: string
+	isNew: boolean
+	isEnd: boolean
+}
+
+let seriesItems: SeriesItem[] = []
+let titleInfo = seriesId
+
+// Helper to construct path (moved here to normalize data immediately)
+const getPath = (slug: string) => {
+	if (collection === 'til') {
+		const cleanSlug = slug.replace(/\/(es|en|ca)$/, '')
+		return lang === 'es' ? `/til/${cleanSlug}/` : `/${lang}/til/${cleanSlug}/`
+	} else {
+		return lang === 'es' ? `/devlog/${getBaseSlug(slug)}/` : `/${lang}/devlog/${getBaseSlug(slug)}/`
+	}
+}
+
+// Data Fetching & Normalization Logic
+if (collection === 'til') {
+	const allTils = await getTils()
+	const rawPosts = allTils
+		.filter(post => post.data.series === seriesId && post.data.lang === lang)
+		.sort((a, b) => {
+			if (!a.data.pubDate || !b.data.pubDate) return 0
+			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+		})
+	
+	titleInfo = rawPosts[0]?.data.seriesTitle || seriesId
+	
+	seriesItems = rawPosts.map(post => ({
+		title: post.data.title,
+		slug: post.slug,
+		date: post.data.pubDate,
+		href: getPath(post.slug),
+		isNew: post.data.new || false,
+		isEnd: post.data.end || false
+	}))
+} else {
+	const allDevlogs = await getDevlogs()
+	const rawPosts = allDevlogs
+		.filter(post => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
+		.sort((a, b) => {
+			if (!a.data.pubDate || !b.data.pubDate) return 0
+			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+		})
+
+	titleInfo = rawPosts[0]?.data.seriesTitle || seriesId
+
+	seriesItems = rawPosts.map(post => ({
+		title: post.data.title,
+		slug: post.slug,
+		date: post.data.pubDate,
+		href: getPath(post.slug),
+		isNew: post.data.new || false,
+		isEnd: post.data.end || false
+	}))
+}
+
+if (seriesItems.length === 0) return null
+const isSinglePostFinished = seriesItems.length === 1 && seriesItems[0].isEnd
+if (isSinglePostFinished) return null
+
+const currentIndex = seriesItems.findIndex(p => p.slug === currentSlug)
+const totalPosts = seriesItems.length
+const enableScroll = totalPosts > 6
+const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
+---
+
+<div id={widgetId} class='series-widget'>
+	<h3 class='text-xs mb-4 flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
+		Serie: 
+		<span class="text-[--tangerine-hover] normal-case tracking-normal font-medium">
+			{titleInfo}
+		</span>
+	</h3>
+
+	<div class="relative">
+		<ul class={`relative space-y-0 scrollbar-none snap-y ${enableScroll ? 'max-h-[22rem] overflow-y-auto overscroll-contain' : ''}`}>
+			{
+				seriesItems.map((post, index) => {
+					const isCurrent = index === currentIndex
+					const isFirst = index === 0
+					const isLast = index === totalPosts - 1
+					
+					const stickyClass = enableScroll 
+						? (isFirst 
+							? 'sticky top-0 z-20 pb-2' 
+							: isLast 
+								? 'sticky bottom-0 z-20 pt-2' 
+								: 'relative z-0')
+						: 'relative z-0'
+
+					const bgClass = (enableScroll && (isFirst || isLast)) ? 'bg-white dark:bg-zinc-950' : ''
+					
+					return (
+							<li 
+								class={`group pl-12 pr-4 ${stickyClass} ${bgClass} border-transparent transition-colors duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-900`}
+								id={isFirst ? `series-start-${seriesId}-${widgetId}` : isLast ? `series-end-${seriesId}-${widgetId}` : undefined}
+							>
+								{/* Connecting Lines */}
+								{isFirst && <div class='absolute left-[23px] top-7 bottom-0 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />}
+								{!isFirst && !isLast && <div class='absolute left-[23px] top-0 bottom-0 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />}
+								{isLast && <div class='absolute left-[23px] top-0 h-7 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />}
+								{isLast && !post.isEnd && <div class={`absolute left-[23px] h-8 -z-10 w-0.5 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800 ${enableScroll ? 'top-9' : 'top-7'}`} />}
+
+								<div
+									class={`series-status absolute left-3 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950 ${isLast && enableScroll ? 'top-6' : 'top-4'}`}
+									data-slug={post.slug}
+									id={isCurrent ? `current-series-item-${widgetId}` : undefined}>
+									<CheckIcon class='check-icon size-3.5 text-white opacity-0 transition-opacity' />
+									{isCurrent && (
+										<div class='current-dot absolute size-2 rounded-full bg-[--tangerine]' />
+									)}
+								</div>
+
+								<a
+									href={post.href}
+									data-astro-prefetch
+									class={`relative flex w-full items-center justify-between gap-4 h-14 text-sm leading-snug transition-colors ${
+										isCurrent
+											? 'font-bold text-zinc-900 dark:text-white'
+											: 'text-zinc-600 hover:text-[--tangerine-hover] dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100'
+									}`}>
+									<span class="line-clamp-2" title={post.title}>{post.title}</span>
+									{post.isNew && (
+										<Badge variant='subtle' className='new-badge flex-shrink-0 uppercase tracking-wider text-[10px]'>
+											{badgetText[lang]['b.new']}
+										</Badge>
+									)}
+								</a>
+							</li>
+					)
+				})
+			}
+		</ul>
+	</div>
+</div>
+
+<script is:inline define:vars={{ currentSlug, seriesId, widgetId, storageKey, enableScroll }}>
+	function initSeriesWidget() {
+		let readPosts = []
+		try {
+			readPosts = JSON.parse(localStorage.getItem(storageKey) || '[]')
+		} catch (e) {
+			console.error('Error reading localStorage', e)
+		}
+
+		const widgetRoot = document.getElementById(widgetId)
+		if (!widgetRoot) return
+
+		const indicators = widgetRoot.querySelectorAll('.series-status')
+		indicators.forEach(el => {
+			const slug = el.getAttribute('data-slug')
+			const isCurrent = el.querySelector('.current-dot') !== null
+
+			if (readPosts.includes(slug)) {
+				const badge = el.parentElement?.querySelector('.new-badge')
+				if (badge) badge.classList.add('hidden')
+
+				if (!isCurrent) {
+					el.classList.add('bg-emerald-500', 'border-emerald-500', 'dark:border-emerald-500')
+					el.querySelector('.check-icon')?.classList.remove('opacity-0')
+				}
+			}
+		})
+
+		const container = widgetRoot.querySelector('ul')
+		const firstItem = document.getElementById(`series-start-${seriesId}-${widgetId}`)
+		const lastItem = document.getElementById(`series-end-${seriesId}-${widgetId}`)
+
+		if (enableScroll && container && firstItem && lastItem) {
+			const handleScroll = () => {
+				const { scrollTop, scrollHeight, clientHeight } = container
+				const isAtTop = scrollTop <= 0
+				const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 2
+
+				// Primero item
+				if (!isAtTop) {
+					firstItem.classList.add('border-b-2', 'border-zinc-200', 'dark:border-slate-700', 'z-30')
+					firstItem.classList.remove('z-20')
+				} else {
+					firstItem.classList.remove('border-b-2', 'border-zinc-200', 'dark:border-slate-700', 'z-30')
+					firstItem.classList.add('z-20')
+				}
+
+				// Último item
+				if (!isAtBottom) {
+					lastItem.classList.add('border-t', 'border-zinc-200', 'dark:border-slate-700')
+				} else {
+					lastItem.classList.remove('border-t', 'border-zinc-200', 'dark:border-slate-700')
+				}
+			}
+			container.addEventListener('scroll', handleScroll)
+			handleScroll()
+		}
+
+		const currentItem = document.getElementById(`current-series-item-${widgetId}`)
+		if (currentItem && container) {
+			setTimeout(() => {
+				currentItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+			}, 100)
+		}
+	}
+
+	window.addEventListener('read-status-changed', initSeriesWidget)
+	initSeriesWidget()
+	document.addEventListener('astro:page-load', initSeriesWidget)
+</script>

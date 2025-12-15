@@ -34,11 +34,12 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 	const showBadge = badgeStatus !== null
 	const badgeLabel = badgeStatus ? BADGE_LABELS[badgeStatus][lang] : ''
 
-	// 'blogList'. Esta es la lista de las cards de DevLog en /blog
+	// Esta es la lista de las cards en /blog/devlog
 	if (layout === 'blogList') {
 		return (
 			<article className="group relative flex flex-col gap-3 rounded-lg border border-zinc-200 bg-stone-100 p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-900 dark:hover:border-zinc-600 sm:p-6">
 				<div className="text-xs mb-2 flex items-center gap-3 text-zinc-500">
+
 					<time dateTime={post.data.pubDate.toISOString()}>
 						{post.data.pubDate.toLocaleDateString(undefined, {
 							year: 'numeric',
@@ -47,22 +48,24 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 						})}
 					</time>
 					{/* Tags hidden in list mode to keep it compact, or show only 1 */}
-					{post.data.tags.slice(0, 1).map((tag) => (
-						<Badge key={tag} variant="subtle" intent="blue" size="md" shape="square">
+					{post.data.tags.slice(0,3).map((tag, index) => (
+						<Badge key={tag} variant="subtle" intent="blue" size="md" shape="square" className={`${index > 0 ? 'hidden sm:block' : ''}`}>
 							{tag}
 						</Badge>
 					))}
-					{showBadge && (
-						<Badge variant="subtle" className="uppercase tracking-wider">
-							{badgeLabel}
-						</Badge>
-					)}
+					<div className="ml-auto">
+						{showBadge && (
+							<Badge variant="subtle" className="uppercase tracking-wider">
+								{badgeLabel}
+							</Badge>
+						)}
+					</div>
 				</div>
 
 				<h3 className="text-lg font-bold transition-colors dark:text-white">
 					<a href={href} data-astro-prefetch>
 						<span className="absolute inset-0"></span>
-						{post.data.title}
+						{post.data.seriesTitle}
 					</a>
 				</h3>
 
@@ -78,7 +81,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 		)
 	}
 
-	// Esta es el grid de las cards DevLog en /devlog
+	// Esta es el grid de las cards en /devlog
 	return (
 		<article className="devlog-card group relative flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-stone-100 shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-700/50 dark:bg-zinc-900 dark:hover:border-zinc-600">
 			{/* Stretched link for full-card click */}

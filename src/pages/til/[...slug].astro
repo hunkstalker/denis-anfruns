@@ -4,7 +4,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro'
 import BackLink from '../../components/ui/BackLink.astro'
 import ChevronUp from '../../icons/chevron-up.svg'
 import ChevronRight from '../../icons/chevron-right.svg'
-import SeriesWidget from '../../components/til/SeriesWidget.astro'
+import SeriesWidget from '../../components/common/SeriesWidget.astro'
 import TableOfContents from '../../components/devlog/TableOfContents.astro'
 import MarkAsRead from '../../components/common/MarkAsRead.astro'
 
@@ -81,7 +81,7 @@ if (post.data.series) {
 	{/* Conditional Layout: Full width if no series/toc, Sidebar otherwise */}
 	<div
 		class={post.data.series || headings.length > 0
-			? 'col-span-1 lg:col-span-8 xl:col-span-9'
+			? 'col-span-1 lg:col-span-8'
 			: 'lg:col-span-8 lg:col-start-3'}>
 		<div class='mb-8'>
 			<BackLink
@@ -111,7 +111,13 @@ if (post.data.series) {
 		{
 			post.data.series && (
 				<div class='mb-8 lg:hidden'>
-					<SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+					<SeriesWidget
+						seriesId={post.data.series}
+						currentSlug={post.slug}
+						lang={lang}
+						collection='til'
+						id='mobile-series'
+					/>
 				</div>
 			)
 		}
@@ -153,19 +159,20 @@ if (post.data.series) {
 		<div class='h-24'></div>
 	</div>
 
-	{/* Desktop Sidebar Widget */}
-	{
-		(post.data.series || headings.length > 0) && (
-			<aside class='hidden lg:col-span-4 lg:block xl:col-span-3'>
+			<aside class='hidden lg:col-span-4 lg:block'>
 				<div class='sticky top-32 space-y-8'>
 					{post.data.series && (
-						<SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+						<SeriesWidget
+							seriesId={post.data.series}
+							currentSlug={post.slug}
+							lang={lang}
+							collection='til'
+							id='desktop-series'
+						/>
 					)}
 					{headings.length > 0 && <TableOfContents headings={headings} lang={lang} />}
 				</div>
 			</aside>
-		)
-	}
 </ContentLayout>
 
 <script>

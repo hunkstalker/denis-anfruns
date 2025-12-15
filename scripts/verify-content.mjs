@@ -28,6 +28,43 @@ function findMetaFiles(dir, fileList = []) {
 	return fileList
 }
 
+// Helper to find MDX files
+function findMdxFiles(dir, fileList = []) {
+	if (!fs.existsSync(dir)) return fileList
+
+	const files = fs.readdirSync(dir)
+	files.forEach((file) => {
+		const filePath = path.join(dir, file)
+		const stat = fs.statSync(filePath)
+		if (stat.isDirectory()) {
+			findMdxFiles(filePath, fileList)
+		} else {
+			if (file.endsWith('.mdx')) {
+				fileList.push(filePath)
+			}
+		}
+	})
+	return fileList
+}
+
+const FRONTMATTER_REGEX = /^---\s*[\r\n]+([\s\S]*?)[\r\n]+---/
+
+function parseFrontmatterKeys(content) {
+	const match = content.match(FRONTMATTER_REGEX)
+	if (!match) return []
+	
+	const frontmatter = match[1]
+	const keys = []
+	
+	frontmatter.split('\n').forEach(line => {
+		const parts = line.split(':')
+		if (parts.length >= 2) {
+			keys.push(parts[0].trim())
+		}
+	})
+	return keys
+}
+
 // Helper to validate date string
 function isValidDate(dateStr) {
 	const d = new Date(dateStr)
@@ -162,6 +199,31 @@ async function verify() {
 				}
 			}
 		}
+	}
+
+	// 3. MDX PURITY CHECKS (Ensure no duplicate fields)
+	// Keys that MUST reside in meta.json if they exist for consistency
+	const FORBIDDEN_IN_MDX = ['series', 'seriesTitle', 'seriesDescription', 'draft', 'new', 'icon', 'end']
+	
+	// Only checking TIL for now as it's the strict one
+	const tilDir = path.join(CONTENT_ROOT, 'til')
+	if (fs.existsSync(tilDir)) {
+		console.log('🧹 Revisando pureza de archivos MDX en TIL...')
+		const mdxFiles = findMdxFiles(tilDir)
+		
+		mdxFiles.forEach(filePath => {
+			const relativePath = path.relative(CONTENT_ROOT, filePath)
+			const content = fs.readFileSync(filePath, 'utf-8')
+			const keys = parseFrontmatterKeys(content)
+			
+			const foundForbidden = keys.filter(k => FORBIDDEN_IN_MDX.includes(k))
+			
+			if (foundForbidden.length > 0) {
+				console.error(`❌ ERROR en ${relativePath}: Frontmatter sucio.`)
+				console.error(`   No debería contener: ${foundForbidden.join(', ')}. (Mover a meta.json)`)
+				hasError = true
+			}
+		})
 	}
 
 	if (hasError) {
