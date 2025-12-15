@@ -90,7 +90,6 @@ if (collection === 'til') {
 if (seriesItems.length === 0) return null
 const isSinglePostFinished = seriesItems.length === 1 && seriesItems[0].isEnd
 
-
 const currentIndex = seriesItems.findIndex(p => p.slug === currentSlug)
 const totalPosts = seriesItems.length
 const enableScroll = totalPosts > 6
@@ -117,9 +116,9 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 
 					const stickyClass = enableScroll
 						? isFirst
-							? 'sticky top-0 z-20 pb-2'
+							? 'sticky top-0 z-20'
 							: isLast
-								? 'sticky bottom-0 z-20 pt-2'
+								? 'sticky bottom-0 z-20'
 								: 'relative z-0'
 						: 'relative z-0'
 
@@ -138,8 +137,6 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 							{/* Conector de líneas */}
 							{!isSinglePostFinished && (
 								<>
-							{!isSinglePostFinished && (
-								<>
 									{/* Línea de ENTRADA (Arriba -> Centro): Para todos menos el primero */}
 									{!isFirst && (
 										<div class='absolute left-[23px] top-0 -z-10 h-7 w-0.5 bg-zinc-200 dark:bg-zinc-800' />
@@ -149,15 +146,13 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 									{!isLast && (
 										<div class='absolute bottom-0 left-[23px] top-7 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />
 									)}
-									
+
 									{/* Línea DASHED (Centro -> Abajo): Solo si es el último y NO ha terminado */}
 									{isLast && !post.isEnd && (
 										<div
 											class={`absolute left-[23px] -z-10 h-8 w-0.5 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800 ${enableScroll ? 'top-9' : 'top-7'}`}
 										/>
 									)}
-								</>
-							)}
 								</>
 							)}
 
