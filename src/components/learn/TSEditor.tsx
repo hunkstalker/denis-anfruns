@@ -16,6 +16,7 @@ interface TSEditorProps {
 	files?: Record<string, string>
 	height?: string
 	showConsole?: boolean
+	className?: string
 }
 
 const TSEditor = ({
@@ -23,6 +24,7 @@ const TSEditor = ({
 	files = { 'main.ts': initialCode || '// Start coding...' },
 	height = '600px',
 	showConsole = false,
+	className = '',
 }: TSEditorProps) => {
 	
 	// --- Custom Hook: Gestión de Archivos ---
@@ -248,7 +250,7 @@ const TSEditor = ({
 	return (
 		<div 
 			style={{ height }}
-			className="prose max-w-full flex flex-col gap-0 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 shadow-xl shadow-zinc-800/45"
+			className={`prose max-w-full flex flex-col gap-0 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 shadow-xl shadow-zinc-800/45 ${className}`}
 		>
 			{/* Toolbar (Dark Mode Only) */}
 			<div className="flex shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900/50 px-2 pt-2">
@@ -371,6 +373,7 @@ const TSEditor = ({
 						scrollBeyondLastLine: false,
 						automaticLayout: true,
 						padding: { top: 16, bottom: 16 },
+						fixedOverflowWidgets: true,
 					}}
 				/>
 			</div>
