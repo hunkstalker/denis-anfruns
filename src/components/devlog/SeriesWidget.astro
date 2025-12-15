@@ -39,9 +39,9 @@ const getPath = (slug: string) =>
 <div class='series-widget'>
 	<h3 class='text-xs mb-4 flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
 		Serie: 
-		<Badge variant="subtle" intent="tangerine" size="xs" className="text-xs">
+		<span class="text-[--tangerine-hover] normal-case tracking-normal font-medium">
 			{seriesId}
-		</Badge>
+		</span>
 	</h3>
 
 	<ul class='relative space-y-2'>
@@ -124,5 +124,6 @@ const getPath = (slug: string) =>
 
 	updateReadStatus()
 
+	window.addEventListener('read-status-changed', updateReadStatus)
 	document.addEventListener('astro:page-load', updateReadStatus)
 </script>
