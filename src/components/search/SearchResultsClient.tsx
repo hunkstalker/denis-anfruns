@@ -261,7 +261,7 @@ export default function SearchResultsClient({
 
 	// Container classes matching the original Astro component
 	const rootClass = isDesktop
-		? 'relative flex flex-col overflow-hidden h-auto max-h-[75vh]'
+		? 'relative flex flex-col overflow-hidden h-auto max-h-[85vh]'
 		: 'relative flex flex-col overflow-hidden h-full'
 
 	const scrollContainerClass = 'relative min-h-0 flex-1 scroll-py-3 overflow-y-auto px-6 py-6'
@@ -306,7 +306,7 @@ export default function SearchResultsClient({
 			</div>
 
 			{/* Bottom Fade Gradient */}
-			<div className="pointer-events-none absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-stone-400 to-transparent dark:from-zinc-900" />
+
 		</div>
 	)
 }
