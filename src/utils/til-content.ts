@@ -39,8 +39,8 @@ export async function getTils(): Promise<TilPost[]> {
                   new?: boolean
                   icon?: string
                   end?: boolean
-                  seriesTitle?: string
-                  seriesDescription?: string
+                  seriesTitle?: string | Record<string, string>
+                  seriesDescription?: string | Record<string, string>
                   series?: string
               }
             | undefined
@@ -75,17 +75,25 @@ export async function getTils(): Promise<TilPost[]> {
         const end = meta?.end !== undefined ? meta.end : post.data.end
 
         // Infer series from folder structure if not present in frontmatter
-        // folder is "typescript-basics/part-1". We want "typescript-basics"
-        // If it's just "my-til", series might be undefined or "my-til" if we wanted grouping
         let series = meta?.series || post.data.series
         if (!series) {
             const parts = folder.split('/')
             if (parts.length > 0 && parts[0] !== folder) {
-                // logic: if folder has depth, parent is series? 
                 series = parts[0]
             }
         }
 
+        // Helper for localized meta strings
+        const getLocalizedMeta = (
+            val: string | Record<string, string> | undefined, 
+            fallback: string | undefined
+        ): string | undefined => {
+            if (!val) return fallback
+            if (typeof val === 'string') return val
+            // It's an object, try to find for current lang
+            const lang = post.data.lang || 'es'
+            return val[lang] || val['es'] || val['en'] || Object.values(val)[0]
+        }
 
         return {
             ...post,
@@ -98,8 +106,8 @@ export async function getTils(): Promise<TilPost[]> {
                 new: isNew,
                 icon,
                 end,
-                seriesTitle: meta?.seriesTitle || post.data.seriesTitle,
-                seriesDescription: meta?.seriesDescription || post.data.seriesDescription,
+                seriesTitle: getLocalizedMeta(meta?.seriesTitle, post.data.seriesTitle),
+                seriesDescription: getLocalizedMeta(meta?.seriesDescription, post.data.seriesDescription),
             },
         }
     })

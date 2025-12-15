@@ -1,5 +1,9 @@
 {
-	"title": "TypeScript Basics",
+	"seriesTitle": {
+		"es": "TypeScript Básico",
+		"en": "TypeScript Basics",
+		"ca": "TypeScript Bàsic"
+	},
 	"tags": ["typescript", "learning", "series"],
 	"pubDate": "2025-12-15T10:00:00Z",
 	"draft": true,
