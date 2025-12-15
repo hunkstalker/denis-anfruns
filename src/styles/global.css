@@ -33,18 +33,23 @@ li {
 	0% {
 		transform: translateY(0);
 	}
+
 	5% {
 		transform: translateY(-4px) rotate(-5deg);
 	}
+
 	10% {
 		transform: translateY(-10px) rotate(0deg);
 	}
+
 	15% {
 		transform: translateY(-4px) rotate(5deg);
 	}
+
 	20% {
 		transform: translateY(0);
 	}
+
 	100% {
 		transform: translateY(0);
 	}
@@ -79,12 +84,10 @@ li {
 	--accent: 136, 58, 234;
 	--accent-light: 224, 204, 250;
 	--accent-dark: 179, 130, 194;
-	--accent-gradient: linear-gradient(
-		45deg,
-		rgb(var(--accent)),
-		rgb(var(--accent-dark)) 30%,
-		white 60%
-	);
+	--accent-gradient: linear-gradient(45deg,
+			rgb(var(--accent)),
+			rgb(var(--accent-dark)) 30%,
+			white 60%);
 
 	--color-highlight: rgba(52 211 153);
 	--primary-bg-color: #16161a;
@@ -140,8 +143,8 @@ h6 {
 .bg-grid {
 	background-size: 40px 40px;
 	/* Puntos tema claro */
-	background-image: radial-gradient(circle, rgba(0, 0, 0, 0.25) 1.5px, transparent 1.5px);
-	background-position: center top;
+	background-image: radial-gradient(circle, rgba(0, 0, 0, 1) 1.5px, transparent 1.5px);
+	background-position: center 10px;
 	/* Efecto viñeta */
 	-webkit-mask-image: radial-gradient(circle at center 20%, black 15%, transparent 100%);
 	mask-image: radial-gradient(circle at center 20%, black 15%, transparent 100%);
@@ -149,7 +152,7 @@ h6 {
 
 .dark .bg-grid {
 	/* Puntos tema oscuro */
-	background-image: radial-gradient(circle, rgba(255, 255, 255, 0.25) 1.5px, transparent 1.5px);
+	background-image: radial-gradient(circle, rgba(255, 255, 255, 0.40) 1.5px, transparent 1.5px);
 }
 
 .disable-transitions * {
@@ -162,7 +165,8 @@ h6 {
 
 mark {
 	background-color: var(--tangerine);
-	color: rgb(22, 22, 26); /* --primary-bg-color */
+	color: rgb(22, 22, 26);
+	/* --primary-bg-color */
 	border-radius: 0.125rem;
 	padding-inline: 0.125rem;
 }

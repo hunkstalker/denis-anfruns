@@ -47,9 +47,11 @@ const formattedTitle = siteTitle.includes(`Denis`)
 		/>
 	</head>
 	<body class="flex min-h-screen flex-col bg-stone-200 dark:bg-zinc-950">
+		<!-- GBackground de puntos -->
+		<div class="bg-grid fixed inset-0 -z-10 size-full"></div>
 		<main>
 			<slot />
 		</main>
 		<Footer lang={lang as Lang} />
-	</body><div class="bg-grid fixed inset-0 -z-10 size-full"></div>
+	</body>
 </html>
