@@ -17,7 +17,7 @@ const { href, label, class: className, hideIcon = false, id } = Astro.props
 	id={id || (className?.includes('go-back') ? 'go-back-link' : undefined)}
 	data-astro-prefetch
 	class:list={[
-		'animate-fade-in-up mb-6 mt-2.5 flex w-fit items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]',
+		'animate-fade-in-up mb-6 mt-2.5 flex w-fit items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]',
 		className,
 	]}
 >

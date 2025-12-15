@@ -30,11 +30,9 @@ const formattedTitle = siteTitle.includes(`Denis`)
 
 				if (theme === 'dark' || (!theme && systemDark)) {
 					document.documentElement.classList.add('dark')
-					// document.documentElement.style.backgroundColor = '#131313' // rgb(19, 19, 19)
 					document.documentElement.style.colorScheme = 'dark'
 				} else {
 					document.documentElement.classList.remove('dark')
-					// document.documentElement.style.backgroundColor = '#ffffff'
 					document.documentElement.style.colorScheme = 'light'
 				}
 			})()

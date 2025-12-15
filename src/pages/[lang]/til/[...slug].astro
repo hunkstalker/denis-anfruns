@@ -112,7 +112,7 @@ if (post.data.series) {
 				</div>
 			</div>
 
-			<hr class="animate-fade-in-up mt-8 border-zinc-200 delay-300 dark:border-zinc-800" />
+			<hr class="animate-fade-in-up mt-8 border-stone-400 delay-300 dark:border-zinc-800" />
 		</div>
 
         {/* Mobile Series Widget */}
@@ -143,7 +143,7 @@ if (post.data.series) {
 			<div class="flex items-center justify-between">
 				<button
 					id="scroll-to-top"
-					class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-[--tangerine]"
+					class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
 				>
 					<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
 					{t('blog.backToTop')}
@@ -152,7 +152,7 @@ if (post.data.series) {
 				{nextPost && (
 					<a
 						href={`/${lang}/til/${nextPost.slug.replace(new RegExp(`/${lang}$`), '')}/`}
-						class="group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine]"
+						class="group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
 					>
 						{t('blog.nextPost')}
 						<ChevronRight class="transition-transform group-hover:translate-x-1" />
