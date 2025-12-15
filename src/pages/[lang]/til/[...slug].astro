@@ -7,6 +7,7 @@ import { languages } from '../../../i18n/ui'
 import { useTranslations } from '../../../i18n/utils'
 import SeriesWidget from '../../../components/til/SeriesWidget.astro'
 import TableOfContents from '../../../components/devlog/TableOfContents.astro'
+import MarkAsRead from '../../../components/common/MarkAsRead.astro'
 
 export async function getStaticPaths() {
 	const allPosts = await getTils()
@@ -73,6 +74,7 @@ const siteTitle = `TIL: ${post.data.title}`
 	lang={lang}
 	description={post.data.title}
 >
+    <MarkAsRead slug={post.slug} collection="til" />
     {/* Conditional Layout */}
 	<div class={post.data.series || headings.length > 0 ? 'col-span-1 lg:col-span-8 xl:col-span-9' : 'lg:col-span-8 lg:col-start-3'}>
 		<div class="mb-8">

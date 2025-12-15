@@ -1,6 +1,9 @@
+import { useReadStatus } from '../../hooks/useReadStatus'
+import { BADGE_LABELS } from '../../utils/read-status'
 import type { DevlogPost } from '../../utils/devlog-content'
 import { getBaseSlug } from '../../utils/blogi18n'
 import { ArrowUpRight } from 'lucide-react'
+import { Badge } from '../ui/Badge'
 
 interface Props {
 	post: DevlogPost
@@ -20,10 +23,21 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 
 	const image = post.data.heroImage || post.data.ogImage
 
+	const badgeStatus = useReadStatus(
+		post.slug,
+		'blog',
+		!!post.data.new,
+		post.data.allSlugs,
+		post.data.newSlugs
+	)
+
+	const showBadge = badgeStatus !== null
+	const badgeLabel = badgeStatus ? BADGE_LABELS[badgeStatus][lang] : ''
+
 	// 'blogList'. Esta es la lista de las cards de DevLog en /blog
 	if (layout === 'blogList') {
 		return (
-			<article className="group relative flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-zinc-600 sm:p-6">
+			<article className="group relative flex flex-col gap-3 rounded-lg border border-zinc-200 bg-stone-100 p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-900 dark:hover:border-zinc-600 sm:p-6">
 				<div className="text-xs mb-2 flex items-center gap-3 text-zinc-500">
 					<time dateTime={post.data.pubDate.toISOString()}>
 						{post.data.pubDate.toLocaleDateString(undefined, {
@@ -34,13 +48,15 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 					</time>
 					{/* Tags hidden in list mode to keep it compact, or show only 1 */}
 					{post.data.tags.slice(0, 1).map((tag) => (
-						<span
-							key={tag}
-							className="rounded-full bg-blue-100 px-2 py-0.5 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-						>
+						<Badge key={tag} variant="subtle" intent="blue" size="md" shape="square">
 							{tag}
-						</span>
+						</Badge>
 					))}
+					{showBadge && (
+						<Badge variant="subtle" className="uppercase tracking-wider">
+							{badgeLabel}
+						</Badge>
+					)}
 				</div>
 
 				<h3 className="text-lg font-bold transition-colors dark:text-white">
@@ -64,7 +80,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 
 	// Esta es el grid de las cards DevLog en /devlog
 	return (
-		<article className="devlog-card group relative flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-zinc-600">
+		<article className="devlog-card group relative flex flex-col overflow-hidden rounded-lg border border-zinc-200 bg-stone-100 shadow-sm transition-all duration-300 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-700/50 dark:bg-zinc-900 dark:hover:border-zinc-600">
 			<div className="relative aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900">
 				{image && (
 					<img
@@ -80,15 +96,22 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 				{/* Content Overlay */}
 				<div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5">
 					<div className="mb-2 flex items-center gap-2">
+						{showBadge && (
+							<Badge variant="solid" className="uppercase tracking-wider">
+								{badgeLabel}
+							</Badge>
+						)}
 						{post.data.tags.slice(0, 3).map((tag, index) => (
-							<span
+							<Badge
 								key={tag}
-								className={`text-xs rounded-full bg-white/20 px-2 py-0.5 font-medium text-white backdrop-blur-sm ${
-									index > 0 ? 'hidden md:block' : ''
-								}`}
+								variant="solid"
+								intent="glass"
+								size="md"
+								shape="square"
+								className={`backdrop-blur-sm ${index > 0 ? 'hidden md:inline-flex' : ''}`}
 							>
 								{tag}
-							</span>
+							</Badge>
 						))}
 					</div>
 
@@ -101,9 +124,9 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 					{/* Date in overlay */}
 					<time dateTime={post.data.pubDate.toISOString()} className="text-xs mt-2 text-zinc-300">
 						{post.data.pubDate.toLocaleDateString(undefined, {
-							year: 'numeric',
 							month: 'long',
 							day: 'numeric',
+							year: 'numeric',
 						})}
 					</time>
 				</div>

@@ -12,6 +12,7 @@ const allTils = await getTils()
 const tilCollection = allTils
 	.filter((p) => p.data.lang === lang)
 	.filter((p) => p.data.lang === lang && p.data.pubDate)
+    .filter((p) => import.meta.env.PROD ? p.data.draft !== true : true)
 
 // Use shared grouping logic
 const tils = groupTilsBySeries(tilCollection)

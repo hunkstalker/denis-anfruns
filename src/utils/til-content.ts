@@ -9,6 +9,9 @@ export type TilPost = Omit<CollectionEntry<'til'>, 'data'> & {
         new?: boolean
         icon?: string
         end?: boolean
+        seriesCount?: number
+        newSlugs?: string[]
+        allSlugs?: string[]
     }
 }
 
@@ -159,7 +162,10 @@ export function groupTilsBySeries(posts: TilPost[]): TilPost[] {
                 title,
                 description,
                 pubDate: latestPart.data.pubDate,
-                new: hasNewContent
+                new: hasNewContent,
+                seriesCount: list.length,
+                newSlugs: list.filter(p => p.data.new).map(p => p.slug),
+                allSlugs: list.map(p => p.slug)
             },
         }
         return entry

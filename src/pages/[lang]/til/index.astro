@@ -24,7 +24,7 @@ const soloPosts: typeof tilCollection = []
 
 for (const post of tilCollection) {
     // Filtrar solo los del idioma actual y válidos
-    if (post.data.lang !== lang || !post.data.pubDate) continue;
+    if (post.data.lang !== lang || !post.data.pubDate || (import.meta.env.PROD && post.data.draft === true)) continue;
 
 	if (post.data.series) {
 		const list = seriesMap.get(post.data.series) || []

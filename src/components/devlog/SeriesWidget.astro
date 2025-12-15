@@ -2,6 +2,7 @@
 import { getDevlogs, type DevlogPost } from '../../utils/devlog-content'
 import { getLangFromSlug, getBaseSlug, type SupportedLang } from '../../utils/blogi18n'
 import CheckIcon from '../../icons/check.svg'
+import { Badge } from '../ui/Badge'
 
 interface Props {
 	seriesId: string
@@ -19,7 +20,7 @@ const { seriesId, currentSlug, lang = 'es' } = Astro.props
 
 const allDevlogs = await getDevlogs()
 const seriesPosts = allDevlogs
-	.filter((post) => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
+	.filter(post => post.data.series === seriesId && getLangFromSlug(post.slug) === lang)
 	.sort((a: DevlogPost, b: DevlogPost) => {
 		if (!a.data.pubDate || !b.data.pubDate) {
 			return 0
@@ -35,37 +36,39 @@ const getPath = (slug: string) =>
 	lang === 'es' ? `/devlog/${getBaseSlug(slug)}/` : `/${lang}/devlog/${getBaseSlug(slug)}/`
 ---
 
-<div class="series-widget">
-	<h3 class="text-xs mb-4 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
-		Serie: <span class="text-[--tangerine]">{seriesId}</span>
+<div class='series-widget'>
+	<h3 class='text-xs mb-4 flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
+		Serie: 
+		<Badge variant="subtle" intent="tangerine" size="xs" className="text-xs">
+			{seriesId}
+		</Badge>
 	</h3>
 
-	<ul class="relative space-y-2">
+	<ul class='relative space-y-2'>
 		{
 			seriesPosts.map((post: DevlogPost, index: number) => {
 				const isCurrent = post.slug === currentSlug
-                const isLast = index === seriesPosts.length - 1
-                const showDashedTail = isLast && !post.data.end
+				const isLast = index === seriesPosts.length - 1
+				const showDashedTail = isLast && !post.data.end
 
 				return (
-					<li class="group relative pl-8">
-                        {/* Connecting Line */}
-                        {!isLast && (
-                            <div class="absolute left-[11px] top-[14px] -z-10 w-0.5 h-full bg-zinc-200 dark:bg-zinc-800" />
-                        )}
-                        
-                        {/* Dashed Tail for incomplete series */}
-                        {showDashedTail && (
-                            <div class="absolute left-[11px] top-[14px] -z-10 w-0.5 h-8 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800" />
-                        )}
+					<li class='group relative pl-8'>
+						{/* Connecting Line */}
+						{!isLast && (
+							<div class='absolute left-[11px] top-[14px] -z-10 h-full w-0.5 bg-zinc-200 dark:bg-zinc-800' />
+						)}
+
+						{/* Dashed Tail for incomplete series */}
+						{showDashedTail && (
+							<div class='absolute left-[11px] top-[14px] -z-10 h-8 w-0.5 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800' />
+						)}
 
 						<div
-							class="series-status absolute left-0 top-0.5 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950"
-							data-slug={post.slug}
-						>
-							<CheckIcon class="check-icon size-3.5 text-white opacity-0 transition-opacity" />
+							class='series-status absolute left-0 top-0.5 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950'
+							data-slug={post.slug}>
+							<CheckIcon class='check-icon size-3.5 text-white opacity-0 transition-opacity' />
 							{isCurrent && (
-								<div class="current-dot absolute size-2 rounded-full bg-[--tangerine]" />
+								<div class='current-dot absolute size-2 rounded-full bg-[--tangerine]' />
 							)}
 						</div>
 
@@ -75,14 +78,13 @@ const getPath = (slug: string) =>
 							class={`flex items-start py-1 text-sm leading-tight transition-colors ${
 								isCurrent
 									? 'font-bold text-zinc-900 dark:text-white'
-									: 'text-zinc-600 hover:text-[--tangerine] dark:text-zinc-400'
-							}`}
-						>
+									: 'text-zinc-600 hover:text-[--tangerine-hover] dark:text-zinc-400'
+							}`}>
 							{post.data.seriesTitle || post.data.title}
 							{post.data.new && (
-								<span class="new-badge text-xs ml-2 inline-flex items-center whitespace-nowrap rounded-md bg-blue-50 px-2 py-0.5 align-middle font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/20">
+								<Badge variant='subtle' className='new-badge ml-2 uppercase tracking-wider'>
 									{badgetText[lang]['b.new']}
-								</span>
+								</Badge>
 							)}
 						</a>
 					</li>
@@ -103,13 +105,8 @@ const getPath = (slug: string) =>
 			console.error('Error reading localStorage', e)
 		}
 
-		if (!readPosts.includes(currentSlug)) {
-			readPosts.push(currentSlug)
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(readPosts))
-		}
-
 		const indicators = document.querySelectorAll('.series-status')
-		indicators.forEach((el) => {
+		indicators.forEach(el => {
 			const slug = el.getAttribute('data-slug')
 			const isCurrent = el.querySelector('.current-dot') !== null
 

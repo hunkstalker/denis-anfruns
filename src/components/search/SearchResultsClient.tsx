@@ -222,7 +222,7 @@ export default function SearchResultsClient({
 			}
 		>
 			<div
-				className={`font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine] ${isDesktop ? 'text-sm' : 'text-sm'}`}
+				className={`font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine-hover] dark:text-zinc-200 dark:group-hover:text-[--tangerine] ${isDesktop ? 'text-sm' : 'text-sm'}`}
 			>
 				{item.meta.title}
 			</div>

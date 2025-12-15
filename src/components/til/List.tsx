@@ -20,7 +20,7 @@ export default function BlogTilList({ posts, lang, labels }: Props) {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.4, delay: index * 0.1 }}
 				>
-					<TilCard post={post} lang={lang} index={index} labels={labels} />
+					<TilCard post={post} lang={lang} index={index} labels={labels} badgeVariant="subtle" />
 				</motion.div>
 			))}
 		</div>

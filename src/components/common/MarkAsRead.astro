@@ -1,0 +1,24 @@
+---
+interface Props {
+	slug: string
+	collection: 'blog' | 'til'
+}
+
+const { slug, collection } = Astro.props
+const key = collection === 'blog' ? 'blog:read-posts' : 'til:read-posts'
+---
+
+<script>
+	import { markPostAsRead } from '../../utils/read-status'
+
+	const element = document.getElementById('mark-as-read-data')
+	if (element) {
+		const { slug, collection } = JSON.parse(element.dataset.info || '{}')
+		if (slug && collection) {
+			markPostAsRead(slug, collection)
+		}
+	}
+</script>
+
+<div id='mark-as-read-data' data-info={JSON.stringify({ slug, collection })} style='display:none;'>
+</div>

@@ -5,6 +5,9 @@ export type DevlogPost = CollectionEntry<'devlog'> & {
 		pubDate: Date
 		tags: string[]
 		end?: boolean
+        seriesCount?: number
+        newSlugs?: string[]
+        allSlugs?: string[]
 	}
 }
 
@@ -108,4 +111,59 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
 			)
 			.filter((post) => (import.meta.env.PROD ? post.data.draft !== true : true))
 	)
+}
+
+export function groupDevlogsBySeries(posts: DevlogPost[]): DevlogPost[] {
+	const seriesMap = new Map<string, DevlogPost[]>()
+	const soloPosts: DevlogPost[] = []
+
+	for (const post of posts) {
+		if (post.data.series) {
+			const list = seriesMap.get(post.data.series) || []
+			list.push(post)
+			seriesMap.set(post.data.series, list)
+		} else {
+            // Solo posts count as series of 1 for badge logic
+            const entry: DevlogPost = {
+                ...post,
+                data: {
+                    ...post.data,
+                    seriesCount: 1,
+                    newSlugs: post.data.new ? [post.slug] : []
+                }
+            }
+			soloPosts.push(entry)
+		}
+	}
+
+	const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
+		list.sort((a: DevlogPost, b: DevlogPost) => {
+			if (!a.data.pubDate || !b.data.pubDate) return 0
+			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+		})
+
+		const part1 = list[0]
+		const latestPart = list[list.length - 1]
+        
+        // Check if ANY part in the series is marked as new
+        const hasNewContent = list.some(p => p.data.new)
+
+		const entry: DevlogPost = {
+			...part1,
+			data: {
+				...part1.data,
+				pubDate: latestPart.data.pubDate,
+                new: hasNewContent,
+				seriesCount: list.length,
+				newSlugs: list.filter((p) => p.data.new).map((p) => p.slug),
+                allSlugs: list.map((p) => p.slug)
+			},
+		}
+		return entry
+	})
+
+	return [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
+		if (!a.data.pubDate || !b.data.pubDate) return 0
+		return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+	})
 }

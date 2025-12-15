@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav from '../components/layout/Nav.astro'
 
-import { getDevlogs, type DevlogPost } from '../utils/devlog-content'
+import { getDevlogs, groupDevlogsBySeries, type DevlogPost } from '../utils/devlog-content'
 import { getLangFromSlug } from '../utils/blogi18n'
 import { useTranslations } from '../i18n/utils'
 import TilAside from '../components/til/Aside.astro'
@@ -10,56 +10,15 @@ import Grid from '../components/devlog/Grid'
 
 const lang = 'es'
 const t = useTranslations(lang)
-const rawPosts = (await getDevlogs()).filter(
-	(p) => getLangFromSlug(p.slug) === lang && p.data.pubDate,
-)
+const rawPosts = await getDevlogs()
+// Use shared logic for filtering and grouping
+const posts = rawPosts
+    .filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
+    .filter((post) => import.meta.env.PROD ? post.data.draft !== true : true)
 
-const seriesMap = new Map<string, DevlogPost[]>()
-const soloPosts: DevlogPost[] = []
+const devlogs = groupDevlogsBySeries(posts)
 
-for (const post of rawPosts) {
-	if (post.data.series) {
-		const list = seriesMap.get(post.data.series) || []
-		list.push(post)
-		seriesMap.set(post.data.series, list)
-	} else {
-		soloPosts.push(post)
-	}
-}
-
-// Proceso de seriesMap
-// La intención es obtener todos los post cabeza de serie para mostrarlos en la página de blog
-// 1. Ordenar por fecha de publicación
-// 2. Obtener el primer post de cada serie
-// 3. Utiliza la fecha de la última publicación (más reciente) para ordenar el feed.
-const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
-	list.sort((a: DevlogPost, b: DevlogPost) => {
-		if (!a.data.pubDate || !b.data.pubDate) {
-			return 0
-		}
-		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-	})
-
-	const part1 = list[0]
-	const latestPart = list[list.length - 1]
-
-	// Actualizamos la fecha del artículo cabeza de serie para que se muestre por orden en el feed
-	const entry = {
-		...part1,
-		data: {
-			...part1.data,
-			pubDate: latestPart.data.pubDate,
-		},
-	}
-	return entry
-})
-
-const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
-	if (!a.data.pubDate || !b.data.pubDate) {
-		return 0
-	}
-	return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-})
+const articles = devlogs
 ---
 
 <BaseLayout siteTitle="Jardín Digital" lang={lang}>

@@ -33,11 +33,11 @@ const isDesktop = mode === 'desktop'
 						{date.toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' })}
 					</time>
 				)}
-				<span class="opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[--tangerine] group-hover:opacity-100">
+				<span class="opacity-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[--tangerine-hover] group-hover:opacity-100 dark:group-hover:text-[--tangerine]">
 					<Fragment set:html={ArrowUpRightIcon} />
 				</span>
 			</div>
-			<div class="text-base font-semibold leading-tight text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-100 dark:group-hover:text-[--tangerine]">
+			<div class="text-base font-semibold leading-tight text-zinc-800 transition-colors group-hover:text-[--tangerine-hover] dark:text-zinc-100 dark:group-hover:text-[--tangerine]">
 				{title}
 			</div>
 			{description && (
@@ -51,7 +51,7 @@ const isDesktop = mode === 'desktop'
 			href={href}
 			class="group block rounded-xl bg-white/90 p-3 ring-1 ring-zinc-200/50 transition-all duration-200 ease-out hover:bg-white hover:shadow-lg hover:ring-1 hover:ring-[--tangerine] dark:bg-zinc-900/90 dark:ring-zinc-700/50 dark:hover:bg-zinc-800 dark:hover:ring-[--tangerine]"
 		>
-			<h4 class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
+			<h4 class="text-sm font-medium text-zinc-800 transition-colors group-hover:text-[--tangerine-hover] dark:text-zinc-200 dark:group-hover:text-[--tangerine]">
 				{title}
 			</h4>
 			{description ? (

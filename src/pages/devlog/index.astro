@@ -1,7 +1,7 @@
 ---
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import BackLink from '../../components/ui/BackLink.astro'
-import { getDevlogs, type DevlogPost } from '../../utils/devlog-content'
+import { getDevlogs, groupDevlogsBySeries } from '../../utils/devlog-content'
 import { getLangFromSlug } from '../../utils/blogi18n'
 import { useTranslations } from '../../i18n/utils'
 import DevLogGrid from '../../components/devlog/Grid'
@@ -10,49 +10,11 @@ const lang = 'es'
 const t = useTranslations(lang)
 
 // Obtener y filtrar posts
-const rawPosts = (await getDevlogs()).filter(
-	(p) => getLangFromSlug(p.slug) === lang && p.data.pubDate,
-)
-
-// Lógica de Agrupación por Series
-const seriesMap = new Map<string, DevlogPost[]>()
-const soloPosts: DevlogPost[] = []
-
-for (const post of rawPosts) {
-	if (post.data.series) {
-		const list = seriesMap.get(post.data.series) || []
-		list.push(post)
-		seriesMap.set(post.data.series, list)
-	} else {
-		soloPosts.push(post)
-	}
-}
-
-// Procesar series para mostrar solo la cabeza de serie (actualizada a la fecha más reciente)
-const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
-	list.sort((a: DevlogPost, b: DevlogPost) => {
-		if (!a.data.pubDate || !b.data.pubDate) return 0
-		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-	})
-
-	const part1 = list[0]
-	const latestPart = list[list.length - 1]
-
-	const entry = {
-		...part1,
-		data: {
-			...part1.data,
-			pubDate: latestPart.data.pubDate,
-		},
-	}
-	return entry
-})
-
-// Unificar y ordenar todo por fecha descendente
-const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
-	if (!a.data.pubDate || !b.data.pubDate) return 0
-	return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-})
+const rawPosts = await getDevlogs()
+const posts = rawPosts
+    .filter((post) => getLangFromSlug(post.slug) === lang && post.data.pubDate)
+    .filter((post) => import.meta.env.PROD ? post.data.draft !== true : true)
+const devlogs = groupDevlogsBySeries(posts)
 ---
 
 <ContentLayout title={t('blog.series')} siteTitle={`DevLogs - ${t('site.title')}`} lang={lang}>
@@ -67,14 +29,14 @@ const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
 		</div>
 
 		{
-			articles.length === 0 ? (
+			devlogs.length === 0 ? (
 				<p class="italic text-zinc-500">
 					{t('blog.withoutArticles') || 'No hay artículos disponibles.'}
 				</p>
 			) : (
 				<DevLogGrid
 					client:load
-					posts={articles}
+					posts={devlogs}
 					lang={lang}
 					labels={{ readArticle: t('blog.readArticle') }}
 				/>

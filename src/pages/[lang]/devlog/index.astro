@@ -1,7 +1,7 @@
 ---
 import ContentLayout from '../../../layouts/ContentLayout.astro'
 import BackLink from '../../../components/ui/BackLink.astro'
-import { getDevlogs, type DevlogPost } from '../../../utils/devlog-content'
+import { getDevlogs, groupDevlogsBySeries } from '../../../utils/devlog-content'
 import { getLangFromSlug } from '../../../utils/blogi18n'
 import { useTranslations } from '../../../i18n/utils'
 import DevLogGrid from '../../../components/devlog/Grid'
@@ -15,47 +15,13 @@ const t = useTranslations(lang as 'en' | 'ca')
 
 // Obtener y filtrar posts
 const rawPosts = (await getDevlogs()).filter(
-	(p) => getLangFromSlug(p.slug) === lang && p.data.pubDate,
+	(p) =>
+		getLangFromSlug(p.slug) === lang &&
+		p.data.pubDate &&
+		(import.meta.env.PROD ? p.data.draft !== true : true),
 )
 
-// Lógica de Agrupación por Series
-const seriesMap = new Map<string, DevlogPost[]>()
-const soloPosts: DevlogPost[] = []
-
-for (const post of rawPosts) {
-	if (post.data.series) {
-		const list = seriesMap.get(post.data.series) || []
-		list.push(post)
-		seriesMap.set(post.data.series, list)
-	} else {
-		soloPosts.push(post)
-	}
-}
-
-// Procesar series (mismo lógica que index principal)
-const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
-	list.sort((a: DevlogPost, b: DevlogPost) => {
-		if (!a.data.pubDate || !b.data.pubDate) return 0
-		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-	})
-
-	const part1 = list[0]
-	const latestPart = list[list.length - 1]
-
-	const entry = {
-		...part1,
-		data: {
-			...part1.data,
-			pubDate: latestPart.data.pubDate,
-		},
-	}
-	return entry
-})
-
-const articles = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
-	if (!a.data.pubDate || !b.data.pubDate) return 0
-	return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-})
+const articles = groupDevlogsBySeries(rawPosts)
 ---
 
 <ContentLayout

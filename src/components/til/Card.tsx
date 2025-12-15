@@ -1,4 +1,7 @@
+import { useReadStatus } from '../../hooks/useReadStatus'
+import { BADGE_LABELS } from '../../utils/read-status'
 import type { TilPost } from '../../utils/til-content'
+import { Badge } from '../ui/Badge'
 import { ArrowUpRight } from 'lucide-react'
 import typescriptSvg from '../../icons/typescript.svg?raw'
 import gitSvg from '../../icons/git.svg?raw'
@@ -14,6 +17,7 @@ interface Props {
 	labels?: {
 		readNote: string
 	}
+	badgeVariant?: 'solid' | 'subtle'
 }
 
 // Map icon IDs to their SVG content (key matches tag name or icon field)
@@ -29,17 +33,17 @@ const iconSvgs: Record<string, string> = {
 // Get decorative icons for a TIL (can return multiple for fan effect)
 function getDecorativeIcons(post: TilPost): string[] {
 	const icons: string[] = []
-	
+
 	// 1. Check explicit icon in frontmatter (single)
 	if (post.data.icon && iconSvgs[post.data.icon]) {
 		return [iconSvgs[post.data.icon]]
 	}
-	
+
 	// 2. Check series (maps to icon automatically)
 	if (post.data.series && iconSvgs[post.data.series.split('-')[0]]) {
 		return [iconSvgs[post.data.series.split('-')[0]]]
 	}
-	
+
 	// 3. Check first matching tag for icon
 	if (post.data.tags) {
 		for (const tag of post.data.tags) {
@@ -48,29 +52,39 @@ function getDecorativeIcons(post: TilPost): string[] {
 			}
 		}
 	}
-	
+
 	return icons
 }
 
 // Fan rotation angles for multiple icons
 const fanRotations = [-25, -5, 15]
 
-export default function TilCard({ post, lang, labels }: Props) {
+export default function TilCard({ post, lang, labels, badgeVariant = 'solid' }: Props) {
 	const cleanSlug = post.slug.replace(/(?:\/es|\/en|\/ca)$/, '')
 	const href = lang === 'es' ? `/til/${cleanSlug}/` : `/${lang}/til/${cleanSlug}/`
 
 	const readText = labels?.readNote || (lang === 'en' ? 'Read note' : lang === 'ca' ? 'Llegir nota' : 'Leer nota')
-	const badgeText = lang === 'en' ? 'UPDATED' : lang === 'ca' ? 'ACTUALITZAT' : 'ACTUALIZADO'
 	const seriesBadgeText = lang === 'en' ? 'Series' : lang === 'ca' ? 'Sèrie' : 'Serie'
+
+	const badgeStatus = useReadStatus(
+		post.slug,
+		'til',
+		!!post.data.new,
+		post.data.allSlugs,
+		post.data.newSlugs
+	)
+
+	const showBadge = badgeStatus !== null
+	const badgeLabel = badgeStatus ? BADGE_LABELS[badgeStatus][lang] : ''
 
 	const decorativeIcons = getDecorativeIcons(post)
 
 	return (
-		<article className="til-card group relative flex h-full flex-col gap-3 overflow-hidden rounded-lg border border-zinc-200 bg-stone-100 p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-black/15 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-white/15 sm:p-6">
+		<article className="til-card group relative flex h-full flex-col gap-3 overflow-hidden rounded-lg border border-zinc-200 bg-stone-100 p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-black/15 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-900 dark:hover:border-white/15 sm:p-6">
 			{/* Full-card clickable link overlay */}
-			<a 
-				href={href} 
-				className="absolute inset-0 z-10" 
+			<a
+				href={href}
+				className="absolute inset-0 z-10"
 				aria-label={post.data.title}
 				data-astro-prefetch
 			/>
@@ -81,7 +95,7 @@ export default function TilCard({ post, lang, labels }: Props) {
 					{decorativeIcons.map((svg, index) => {
 						const baseRotation = fanRotations[index] ?? (-15 + (index * 15))
 						return (
-							<div 
+							<div
 								key={index}
 								className="icon-fan absolute size-44 opacity-[0.12] transition-all duration-500 ease-out group-hover:opacity-[0.35] group-hover:scale-110 dark:opacity-[0.20] dark:group-hover:opacity-[0.45] [&_svg]:size-full"
 								style={{
@@ -120,10 +134,10 @@ export default function TilCard({ post, lang, labels }: Props) {
 					)}
 				</div>
 
-				{post.data.new && (
-					<span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-						{badgeText}
-					</span>
+				{showBadge && (
+					<Badge variant={badgeVariant} className="uppercase tracking-wider">
+						{badgeLabel}
+					</Badge>
 				)}
 			</div>
 

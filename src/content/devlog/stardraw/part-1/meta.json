@@ -4,5 +4,6 @@
 	"tags": ["react", "fabricjs", "canvas"],
 	"heroImage": "/assets/stardraw/hero-stardraw_v2.webp",
 	"ogImage": "/assets/stardraw/ogImg-stardraw_v2.webp",
-	"series": "StarDraw"
+	"series": "StarDraw",
+	"new": true
 }

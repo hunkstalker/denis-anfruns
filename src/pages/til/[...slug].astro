@@ -5,6 +5,7 @@ import BackLink from '../../components/ui/BackLink.astro'
 import ChevronUp from '../../icons/chevron-up.svg'
 import SeriesWidget from '../../components/til/SeriesWidget.astro'
 import TableOfContents from '../../components/devlog/TableOfContents.astro'
+import MarkAsRead from '../../components/common/MarkAsRead.astro'
 
 export async function getStaticPaths() {
 	const allPosts = await getTils()
@@ -61,6 +62,7 @@ const siteTitle = `TIL: ${post.data.title}`
 	title={post.data.title}
 	lang={lang}
 	description={post.data.title}>
+    <MarkAsRead slug={post.slug} collection="til" />
 	{/* Conditional Layout: Full width if no series/toc, Sidebar otherwise */}
 	<div
 		class={post.data.series || headings.length > 0

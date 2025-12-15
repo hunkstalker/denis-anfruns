@@ -5,6 +5,7 @@ import BackLink from '../../../components/ui/BackLink.astro'
 import TableOfContents from '../../../components/devlog/TableOfContents.astro'
 import SeriesWidget from '../../../components/devlog/SeriesWidget.astro'
 import SeriesGithubCard from '../../../components/devlog/SeriesGithubCard.astro'
+import MarkAsRead from '../../../components/common/MarkAsRead.astro'
 import { getLangFromSlug, getBaseSlug } from '../../../utils/blogi18n'
 import { useTranslations } from '../../../i18n/utils'
 
@@ -82,6 +83,7 @@ if (post.data.series) {
 	description={post.data.description}
 	image={post.data.ogImage ?? post.data.heroImage}
 >
+    <MarkAsRead slug={post.slug} collection="blog" />
 	<div
 		class="col-span-1 lg:col-span-8 xl:col-span-9"
 		data-pagefind-body
