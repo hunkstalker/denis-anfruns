@@ -185,6 +185,12 @@ if (post.data.series) {
 		}
 
 		<article class="prose max-w-none dark:prose-invert lg:prose-xl">
+			{/* Hidden content for Pagefind indexing - allows search with highlighting */}
+			{post.data.description && (
+				<span class="sr-only" data-pagefind-weight="2">
+					{post.data.description}
+				</span>
+			)}
 			<Content />
 		</article>
 

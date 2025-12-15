@@ -115,6 +115,12 @@ const siteTitle = `TIL: ${post.data.title}`
 			data-pagefind-filter="type:til"
 			data-pagefind-meta={`description:${post.data.description || ''}, series:${post.data.series || ''}, seriesTitle:${post.data.seriesTitle || ''}, seriesDescription:${post.data.seriesDescription || ''}`}
 		>
+			{/* Hidden content for Pagefind indexing - allows search with highlighting */}
+			{(post.data.seriesTitle || post.data.seriesDescription) && (
+				<span class="sr-only" data-pagefind-weight="2">
+					{post.data.seriesTitle} {post.data.seriesDescription}
+				</span>
+			)}
 			<Content />
 		</article>
 
