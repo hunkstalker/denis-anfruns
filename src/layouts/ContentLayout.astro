@@ -8,12 +8,13 @@ interface Props {
 	lang: 'es' | 'en' | 'ca'
 	image?: string
 	siteTitle?: string
+	robots?: string
 }
 
-const { title, description, lang, image, siteTitle } = Astro.props
+const { title, description, lang, image, siteTitle, robots } = Astro.props
 ---
 
-<BaseLayout siteTitle={siteTitle || title} description={description} lang={lang} image={image}>
+<BaseLayout siteTitle={siteTitle || title} description={description} lang={lang} image={image} robots={robots}>
 	<Nav lang={lang} />
 
 	<div class="container mx-auto px-4 pb-12 pt-20 md:pt-28">

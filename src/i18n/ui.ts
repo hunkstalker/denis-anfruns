@@ -58,6 +58,7 @@ export const ui = {
 		'blog.nextPost': 'Siguiente',
 		'blog.previousPost': 'Anterior',
 		'blog.updated': 'Actualizado',
+		'blog.seriesBadge': 'Serie',
 		'blog.tableOfContents': 'En esta página',
 		'toc.title': 'Tabla de contenidos',
 		'series.github.title': 'Código fuente',
@@ -131,7 +132,7 @@ export const ui = {
 		// BLOG
 		'blog.title': 'Bitàcora Digital',
 		'blog.description':
-			'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi (TILs).',
+		'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi (TILs).',
 		'blog.series': 'DevLogs',
 		'blog.recent': 'Més Recents',
 		'blog.devLogDescription': 'Articles sobre el desenvolupament dels meus projectes.',
@@ -147,6 +148,7 @@ export const ui = {
 		'blog.nextPost': 'Següent',
 		'blog.previousPost': 'Anterior',
 		'blog.updated': 'Actualitzat',
+		'blog.seriesBadge': 'Sèrie',
 		'blog.tableOfContents': 'En aquesta pàgina',
 		'toc.title': 'Taula de continguts',
 		'series.github.title': 'Codi font',
@@ -233,6 +235,7 @@ export const ui = {
 		'blog.nextPost': 'Next',
 		'blog.previousPost': 'Previous',
 		'blog.updated': 'Updated',
+		'blog.seriesBadge': 'Series',
 		'blog.tableOfContents': 'On this page',
 		'toc.title': 'Table of Contents',
 		'series.github.title': 'Source code',

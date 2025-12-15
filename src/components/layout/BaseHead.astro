@@ -5,16 +5,18 @@ interface Props {
 	title: string
 	description: string
 	image?: string
+	robots?: string
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-const { title, description, image = '/denis-anfruns-millan.png' } = Astro.props
+const { title, description, image = '/denis-anfruns-millan.png', robots } = Astro.props
 const resolvedImage = new URL(image, Astro.site)
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+{robots && <meta name="robots" content={robots} />}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta name="generator" content={Astro.generator} />
 

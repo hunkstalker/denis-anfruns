@@ -9,9 +9,10 @@ interface Props {
 	lang?: string
 	description?: string
 	image?: string
+	robots?: string
 }
 
-const { siteTitle, lang = 'es', description, image } = Astro.props
+const { siteTitle, lang = 'es', description, image, robots } = Astro.props
 const defaultDescription = `Desarrollador multiplataforma Full Stack con +${experiencieYears()} años de experiencia. ¡Mira mis proyectos! 👀✨`
 const formattedTitle = siteTitle.includes(`Denis`)
 	? siteTitle
@@ -42,6 +43,7 @@ const formattedTitle = siteTitle.includes(`Denis`)
 			title={formattedTitle}
 			description={description || defaultDescription}
 			image={image}
+			robots={robots}
 		/>
 	</head>
 	<body class="flex min-h-screen flex-col">

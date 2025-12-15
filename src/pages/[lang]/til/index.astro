@@ -17,10 +17,51 @@ const { lang } = Astro.params
 const t = useTranslations(lang as SupportedLang)
 
 const tilCollection = await getTils()
-const tils = tilCollection
-	.filter((p) => p.data.lang === lang)
-	.filter((p) => p.data.lang === lang && p.data.pubDate)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+
+// Lógica de Agrupación por Series
+const seriesMap = new Map<string, typeof tilCollection>()
+const soloPosts: typeof tilCollection = []
+
+for (const post of tilCollection) {
+    // Filtrar solo los del idioma actual y válidos
+    if (post.data.lang !== lang || !post.data.pubDate) continue;
+
+	if (post.data.series) {
+		const list = seriesMap.get(post.data.series) || []
+		list.push(post)
+		seriesMap.set(post.data.series, list)
+	} else {
+		soloPosts.push(post)
+	}
+}
+
+// Procesar series
+const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
+	list.sort((a, b) => {
+		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+	})
+
+	const part1 = list[0]
+	const latestPart = list[list.length - 1]
+
+    // Check if ANY part in the series is marked as new
+    const hasNewContent = list.some(p => p.data.new)
+
+	const entry = {
+		...part1,
+		data: {
+			...part1.data,
+			pubDate: latestPart.data.pubDate,
+            new: hasNewContent
+		},
+	}
+	return entry
+})
+
+// Unificar y ordenar todo
+const tils = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
+	return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+})
 ---
 
 <ContentLayout

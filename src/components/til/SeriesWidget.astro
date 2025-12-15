@@ -1,0 +1,122 @@
+---
+import { getTils, type TilPost } from '../../utils/til-content'
+import { getBaseSlug, type SupportedLang } from '../../utils/blogi18n'
+import CheckIcon from '../../icons/check.svg'
+
+interface Props {
+	seriesId: string
+	currentSlug: string
+	lang?: SupportedLang
+}
+
+const badgetText = {
+	es: { 'b.new': 'NUEVO', 'b.updated': 'ACTUALIZADO' },
+	ca: { 'b.new': 'NOU', 'b.updated': 'ACTUALITZAT' },
+	en: { 'b.new': 'NEW', 'b.updated': 'UPDATED' },
+}
+
+const { seriesId, currentSlug, lang = 'es' } = Astro.props
+
+const allTils = await getTils()
+const seriesPosts = allTils
+	.filter((post) => post.data.series === seriesId && post.data.lang === lang)
+	.sort((a: TilPost, b: TilPost) => {
+		if (!a.data.pubDate || !b.data.pubDate) {
+			return 0
+		}
+		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+	})
+
+if (seriesPosts.length < 2) return null
+
+// Helper to construct TIL path consistent with pages/[...slug].astro
+const getPath = (slug: string) => {
+    return lang === 'es' ? `/til/${slug}/` : `/${lang}/til/${slug}/`
+}
+
+// Get the series title from the first post (they all share it) or fallback to ID
+const titleInfo = seriesPosts[0]?.data.seriesTitle || seriesId
+---
+
+<div class="series-widget">
+	<h3 class="text-xs mb-4 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+		Serie: <span class="text-[--tangerine]">{titleInfo}</span>
+	</h3>
+
+	<ul class="relative space-y-2">
+		<div class="absolute inset-y-2 left-[11px] -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800"></div>
+
+		{
+			seriesPosts.map((post: TilPost) => {
+				const isCurrent = post.slug === currentSlug
+				return (
+					<li class="group relative pl-8">
+						<div
+							class="series-status absolute left-0 top-0.5 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950"
+							data-slug={post.slug}
+						>
+							<CheckIcon class="check-icon size-3.5 text-white opacity-0 transition-opacity" />
+							{isCurrent && (
+								<div class="current-dot absolute size-2 rounded-full bg-[--tangerine]" />
+							)}
+						</div>
+
+						<a
+							href={getPath(post.slug)}
+							data-astro-prefetch
+							class={`flex items-start py-1 text-sm leading-tight transition-colors ${
+								isCurrent
+									? 'font-bold text-zinc-900 dark:text-white'
+									: 'text-zinc-600 hover:text-[--tangerine] dark:text-zinc-400'
+							}`}
+						>
+							{post.data.title}
+							{post.data.new && (
+								<span class="new-badge text-xs ml-2 inline-flex items-center whitespace-nowrap rounded-md bg-blue-50 px-2 py-0.5 align-middle font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/20">
+									{badgetText[lang]['b.new']}
+								</span>
+							)}
+						</a>
+					</li>
+				)
+			})
+		}
+	</ul>
+</div>
+
+<script is:inline define:vars={{ currentSlug }}>
+	function updateReadStatus() {
+		const STORAGE_KEY = 'til:read-posts' // Changed key for TILs
+
+		let readPosts = []
+		try {
+			readPosts = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+		} catch (e) {
+			console.error('Error reading localStorage', e)
+		}
+
+		if (!readPosts.includes(currentSlug)) {
+			readPosts.push(currentSlug)
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(readPosts))
+		}
+
+		const indicators = document.querySelectorAll('.series-status')
+		indicators.forEach((el) => {
+			const slug = el.getAttribute('data-slug')
+			const isCurrent = el.querySelector('.current-dot') !== null
+
+			if (readPosts.includes(slug)) {
+				const badge = el.parentElement?.querySelector('.new-badge')
+				if (badge) badge.classList.add('hidden')
+
+				if (!isCurrent) {
+					el.classList.add('bg-emerald-500', 'border-emerald-500', 'dark:border-emerald-500')
+					el.querySelector('.check-icon')?.classList.remove('opacity-0')
+				}
+			}
+		})
+	}
+
+	updateReadStatus()
+	document.addEventListener('astro:page-load', updateReadStatus)
+</script>

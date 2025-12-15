@@ -1,7 +1,7 @@
 ---
-import CopyIcon from '../../icons/copy.svg'
-import CheckIcon from '../../icons/check.svg'
 import { getHighlighterInstance } from '../../utils/highlighter'
+import copyIconSvg from '../../icons/copy.svg?raw'
+import checkIconSvg from '../../icons/check.svg?raw'
 
 interface TabItem {
 	label: string
@@ -11,9 +11,10 @@ interface TabItem {
 
 interface Props {
 	items: TabItem[]
+	status?: 'default' | 'success' | 'error'
 }
 
-const { items } = Astro.props
+const { items, status = 'default' } = Astro.props
 
 import { useTranslations } from '../../i18n/utils'
 
@@ -89,11 +90,17 @@ const highlightedItems = await Promise.all(
 		}
 	}),
 )
+
+const statusClasses = {
+	default: 'border-zinc-200 dark:border-zinc-800',
+	success: 'border-green-300 dark:border-green-900',
+	error: 'border-red-300 dark:border-red-900',
+}
 ---
 
 <div
 	id={uniqueId}
-	class="code-tabs-container my-6 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900"
+	class={`code-tabs-container my-6 overflow-hidden rounded-lg border-2 bg-zinc-100 dark:bg-zinc-900 ${statusClasses[status]}`}
 >
 	<!-- Pestañas de código -->
 	<div
@@ -137,8 +144,12 @@ const highlightedItems = await Promise.all(
 				data-label-copy={copyLabel}
 				data-label-copied={copiedLabel}
 			>
-				<CopyIcon class="copy-icon" width="16" height="16" />
-				<CheckIcon class="check-icon hidden" width="16" height="16" />
+				<span class="copy-icon flex items-center justify-center [&>svg]:size-4">
+					<Fragment set:html={copyIconSvg} />
+				</span>
+				<span class="check-icon hidden flex items-center justify-center [&>svg]:size-4">
+					<Fragment set:html={checkIconSvg} />
+				</span>
 			</button>
 		</div>
 

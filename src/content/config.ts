@@ -35,8 +35,13 @@ const til = defineCollection({
 		description: z.string().optional(),
 		pubDate: z.coerce.date().optional(),
 		tags: z.array(z.enum(TAGS)).default([]).optional(),
+		series: z.string().optional(),
+		seriesTitle: z.string().optional(),
+        seriesDescription: z.string().optional(),
 		lang: z.enum(['es', 'en', 'ca']).default('es'),
+		new: z.boolean().default(false),
 		draft: z.boolean().default(false),
+		icon: z.enum(['git', 'typescript', 'react', 'astro', 'javascript', 'css', 'powerapps']).optional(),
 	}),
 })
 

@@ -1,18 +1,20 @@
 ---
 import ContentLayout from '../../layouts/ContentLayout.astro'
 import BackLink from '../../components/ui/BackLink.astro'
-import { getTils } from '../../utils/til-content'
+import { getTils, groupTilsBySeries } from '../../utils/til-content'
 import { useTranslations } from '../../i18n/utils'
 import Grid from '../../components/til/Grid'
 
 const lang = 'es'
 const t = useTranslations(lang)
 
-const tilCollection = await getTils()
-const tils = tilCollection
+const allTils = await getTils()
+const tilCollection = allTils
 	.filter((p) => p.data.lang === lang)
 	.filter((p) => p.data.lang === lang && p.data.pubDate)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+
+// Use shared grouping logic
+const tils = groupTilsBySeries(tilCollection)
 ---
 
 <ContentLayout title={t('blog.til')} siteTitle={`TIL - ${t('blog.til')}`} lang={lang}>

@@ -3,10 +3,10 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import { useStore } from '@nanostores/react'
 import { isMenuOpen } from '../../stores/menuStore'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Shapes } from 'lucide-react'
 
 interface MenuItem {
-	label: string
+	label: string | React.ReactNode
 	link: string
 	active: boolean
 	enabled: boolean
@@ -15,11 +15,18 @@ interface MenuItem {
 
 interface Props {
 	items: MenuItem[]
+	lang?: string
 }
 
-const MobileMenuItem = ({ item, closeMenu }: { item: MenuItem; closeMenu: () => void }) => {
+const MobileMenuItem = ({ item, closeMenu, lang = 'es' }: { item: MenuItem; closeMenu: () => void; lang: string }) => {
 	const [isExpanded, setIsExpanded] = useState(false)
 	const hasChildren = item.children && item.children.length > 0
+
+	const allPrefix = {
+		es: 'Todo',
+		en: 'All',
+		ca: 'Tot',
+	}[lang as 'es' | 'en' | 'ca'] || 'All'
 
 	if (hasChildren) {
 		return (
@@ -46,6 +53,16 @@ const MobileMenuItem = ({ item, closeMenu }: { item: MenuItem; closeMenu: () => 
 							className="overflow-hidden pl-4"
 						>
 							<div className="flex flex-col gap-1 border-l border-zinc-200 pl-2 dark:border-zinc-700">
+								{/* Parent Link (View All) */}
+								<a
+									href={item.link}
+									onClick={closeMenu}
+									data-astro-prefetch
+									className="block rounded-lg px-4 py-2 text-sm font-bold text-zinc-900 transition-colors hover:bg-zinc-100 dark:text-white dark:hover:bg-zinc-800"
+								>
+									{allPrefix} {item.label}
+								</a>
+
 								{item.children?.map((child) => (
 									<a
 										key={child.link}
@@ -54,7 +71,7 @@ const MobileMenuItem = ({ item, closeMenu }: { item: MenuItem; closeMenu: () => 
 										data-astro-prefetch
 										className={`block rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
 											child.active
-												? 'text-[--tangerine] dark:text-[--tangerine]'
+												? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white'
 												: 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white'
 										}`}
 									>
@@ -86,7 +103,7 @@ const MobileMenuItem = ({ item, closeMenu }: { item: MenuItem; closeMenu: () => 
 	)
 }
 
-export default function MobileMenu({ items }: Props) {
+export default function MobileMenu({ items, lang = 'es' }: Props) {
 	const $isMenuOpen = useStore(isMenuOpen)
 	const [mounted, setMounted] = useState(false)
 	const dragControls = useDragControls()
@@ -94,6 +111,28 @@ export default function MobileMenu({ items }: Props) {
 	useEffect(() => {
 		setMounted(true)
 		return () => setMounted(false)
+	}, [])
+
+	// Manage items locally to append Playground if needed
+	const [menuItems, setMenuItems] = useState(items)
+
+	useEffect(() => {
+		const hasAccess = localStorage.getItem('playground_access') === 'granted'
+		if (hasAccess) {
+			setMenuItems((prev) => [
+				...prev,
+				{
+					label: (
+						<span className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+							PLAYGROUND <Shapes className="size-4" />
+						</span>
+					),
+					link: '/playground',
+					active: window.location.pathname === '/playground',
+					enabled: true,
+				},
+			])
+		}
 	}, [])
 
 	// Bloquear scroll cuando el menú está abierto
@@ -145,9 +184,9 @@ export default function MobileMenu({ items }: Props) {
 						<div className="absolute inset-y-0 right-full w-screen bg-white dark:bg-zinc-900" />
 
 						<nav className="flex flex-col gap-1 pt-6">
-							{items.map((item) => {
+							{menuItems.map((item) => {
 								if (!item.enabled) return null
-								return <MobileMenuItem key={item.link} item={item} closeMenu={closeMenu} />
+								return <MobileMenuItem key={item.link} item={item} closeMenu={closeMenu} lang={lang} />
 							})}
 						</nav>
 					</motion.aside>

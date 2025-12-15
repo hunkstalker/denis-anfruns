@@ -23,7 +23,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 	// 'blogList'. Esta es la lista de las cards de DevLog en /blog
 	if (layout === 'blogList') {
 		return (
-			<article className="group relative flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-zinc-600 sm:p-6">
+			<article className="group relative flex flex-col gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-zinc-300 hover:shadow-md dark:border-zinc-700/50 dark:bg-zinc-800 dark:hover:border-zinc-600 sm:p-6">
 				<div className="text-xs mb-2 flex items-center gap-3 text-zinc-500">
 					<time dateTime={post.data.pubDate.toISOString()}>
 						{post.data.pubDate.toLocaleDateString(undefined, {

@@ -1,0 +1,175 @@
+---
+title: 'TypeScript #1: La Inferencia trabaja por ti'
+description: '¿Por qué escribir tipos cuando TypeScript ya los sabe? Entendiendo const vs let y la inferencia automática.'
+series: 'typescript-basics'
+seriesTitle: 'TypeScript Básico'
+seriesDescription: 'Mini-curso sobre fundamentos de TypeScript.'
+lang: 'es'
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+export const age = new Date().getFullYear() - 1985
+
+**¡Bienvenido!** 🚀
+
+Esta es la primera parte de una serie que intentará que entiendas TypeScript _**de verdad**_, no solo para que copies y 
+pegues "any" cuando el compilador se queja.
+
+El objetivo de la serie completa es terminar comprendiendo que TypeScript no 
+es solo JavaScript con tipado, sino que TypeScript es un protolenguaje de tipados para crear toda estructura de 
+tipos que necesites para tus proyectos y hacer que aunque sí, todo sea más lento y pesado con las malditas 👹 advertencias, 
+al final ganes en seguridad y robusted de código.
+
+Yo no soy ningún experto, pero siempre he pensado que para aprender lo mejor es tratar de enseñar a otros. 
+Esto te obliga a abordar cada tema de forma que cualquiera pueda entenderlos y verlo desde muchas perspectivas.
+
+Por eso, en esta serie voy a intentar explicar cada concepto desde cero, sin usar términos técnicos complejos, 
+sin usar lenguaje técnico que solo los que ya saben TypeScript entiendan.
+
+Lo primero por lo que empezaremos es entender que **TypeScript es listo. No hay que explicarle lo obvio.**
+
+<Callout type="info" title="Info" filled>
+    Nota: Esta es la primera entrada de una serie de TIL sobre aprendizaje. Aunque es distnto al resto de TIL que son notas 
+cortas he pensado en reutilizarlo porque al fin y al cabo sigue la misma idea de algo que aprendes día a día.
+Por ahora esto es un experimento.
+</Callout>
+
+## La Inferencia de Tipos
+
+Muchos devs (como yo) que vienen de lenguajes fuertemente tipados (como C, Java o C# antiguos) es normal que estemos 
+acostumbrados a la idea de tiparlo todo.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'example.ts',
+		code: `// ❌ Redundante (Boilerplate innecesario)
+const userName: string = "Denis";
+const userAge: number = ${age};
+const isAdmin: boolean = true;`,
+		lang: 'typescript'
+    }
+]} />
+
+TypeScript ya sabe que "Denis" es un string. No hace falta que se lo jures.
+
+
+
+<CodeTabs
+  status="success"
+  items={[
+  {
+    label: 'example.ts',
+    code: `// ✅ Perfecto (Limpio y legible)
+const userName = "Denis"; // TS infiere: string (o literal "Denis", veremos esto luego)
+const userAge = ${age};       // TS infiere: number
+const isAdmin = true;     // TS infiere: boolean`,
+    lang: 'typescript'
+    }
+  ]} />
+
+Esto se llama **Inferencia de Tipos**. Dejas que TS deduzca el tipo por el valor inicial.
+
+## `const` vs `let`: La diferencia clave
+
+Aquí es donde la cosa se pone interesante y donde TS brilla.
+
+### Con `let` (Variables mutables)
+Cuando usas `let`, TS asume que vas a cambiar el valor, así que infiere el tipo primitivo "general".
+
+<CodeTabs items={[
+  {
+  label: 'TypeScript',
+  code: `// TS con esto entiende: "Ah, 'status' es un STRING y además cambiará a cualquier otro string".
+let status = "pending";
+
+status = "success"; // ✅ Bien
+status = "error";   // ✅ Bien
+
+status = 123;       // ❌ Si lo intentas te devolverá un error.
+// No puedes meter un número en un string.`,
+  lang: 'typescript'
+  }
+]} />
+
+### Con `const` (Constantes)
+Cuando usas `const`, TS sabe que ese valor **nunca va a cambiar**. Así que puede ser mucho más específico.
+
+<CodeTabs items={[
+  {
+    label: 'TypeScript',
+    code: `const method = "GET";
+// TS dice: "Esto no es solo un string. Es EL string 'GET'".
+// El tipo literal es "GET".
+`,
+  lang: 'typescript'
+  }
+]} />
+
+Esto parece una tontería ahora, pero es la base para entender por qué a veces TS se queja de que `"GET"` no es asignable a `string` (o viceversa) en configuraciones complejas.
+
+## Cuándo SÍ anotar tipos
+
+Entonces, si TS lo infiere, ¿nunca es necesario poner tipos? No, hay casos donde es necesario:
+
+1.  **Cuando la inferencia falla o es muy amplia**:
+
+Desde mi punto de vista con poca experiencia, dejaría que TS infiera any (o lo pondría yo mismo) en casos en que no sé 
+lo que va a pasar, sea por errores o que la respuesta pueda ser muy amplia.
+
+<CodeTabs items={[
+  {
+    label: 'TypeScript',
+    code: `// TS infiere 'any' si no está configurado en modo 'strict' (que te obliga a anotar tipos siempre)
+let data; 
+data = fetchSomething(); // Puedes pasarle lo que quieras y TS no se queja.`,
+    lang: 'typescript'
+  }
+]} />
+
+Pero ojo con any, porque le estás quitando a TS todo su propósito. Lo ideal sería no verte obligado a utilizarlo.
+
+2.  **En parámetros de funciones** (¡Aquí es obligatorio!):
+
+<CodeTabs items={[
+  {
+    label: 'TypeScript',
+    code: `// ❌ TS no puede leer tu mente ni saber quién llamará a esto
+function greet(person) {
+    ...
+}
+
+// ✅ Aquí defines el contrato
+function greet(person: string) {
+    ...
+}`, 
+    lang: 'typescript'
+  }
+]} />
+
+3.  **Para definir contratos de retorno explícitos**:
+    A veces quieres asegurarte de que tu función devuelve X, aunque infiera Y.
+
+## Resumen de la Parte 1
+
+*   **Menos es más**: Si TS puede inferirlo, no lo escribas. Tu código será más limpio.
+*   **Variable (`let`)** = Tipo General (`string`, `number`).
+*   **Constante (`const`)** = Tipo Literal (El valor exacto).
+
+En la **Parte 2**, miraremos cómo usar esos tipos literales a nuestro favor con las **Uniones**, y cómo decirle a TS: *"Esta variable solo puede ser 'admin' o 'user', nada más"*.
+
+## ¡Experimenta!
+
+Aquí tienes un editor de TypeScript real corriendo en tu navegador para probar lo aprendido.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `console.log("Hello world!");
+`
+  }}
+/>

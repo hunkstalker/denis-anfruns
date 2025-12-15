@@ -51,8 +51,8 @@ const years = experiencieYears()
 		class="animate-fade-in-up text-lg mx-4 mb-2 mt-4 font-light tracking-wide transition-none delay-100 dark:text-zinc-300 sm:mx-8 sm:mt-6 sm:text-xl md:mx-0 md:text-2xl xl:text-3xl"
 	>
 		{t('header.role')}
-		<span class="mx-1 font-normal text-zinc-500 sm:mx-2">|</span>
-		<span id="experience" class="font-black text-[var(--jade-hover)] dark:text-[var(--jade)]"
+		<span class="hidden mx-1 font-normal text-zinc-500 sm:inline sm:mx-2">|</span>
+		<span id="experience" class="block font-black text-[var(--jade-hover)] dark:text-[var(--jade)] sm:inline"
 			>+{years} {t('header.years')} {t('header.experience')}</span
 		>
 	</h2>

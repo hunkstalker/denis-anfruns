@@ -1,0 +1,122 @@
+---
+title: 'TypeScript #2: Literal Types and Unions'
+description: 'How to tell TypeScript that something can only be "A" or "B" and nothing else. Goodbye magic strings.'
+series: 'typescript-basics'
+seriesTitle: 'TypeScript Basics'
+seriesDescription: 'Mini-course on TypeScript fundamentals.'
+lang: 'en'
+new: true
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+In Part 1 we saw that `const` creates **literal** types.
+If you write `const role = "admin"`, for TypeScript `role` is not just a simple `string`, but it is specifically `"admin"`.
+
+Today we are going to see how to use that to create bulletproof code.
+
+## String vs. String Literal
+
+Imagine you have a function to paint a button.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function paintButton(color: string) {
+    if (color === 'red') { // ❌ Oops, typo ("red" spelled correctly here, but logic error simulation)
+        return '🔴';
+    }
+    return '🔵';
+}
+
+paintButton("blue"); // ✅ Good
+paintButton("potato"); // ✅ Good (but it shouldn't be, potato is not a color!)`,
+		lang: 'typescript'
+    }
+]} />
+
+The problem here is that `string` is **too broad**. It accepts "blue", "red", but also "potato" or "asdfg".
+
+## Type Unions (`|`)
+
+This is where the `|` (pipe) operator comes in. It reads as **"OR"**.
+We can tell TypeScript: *"The color can only be 'red' OR 'blue' OR 'green'"*.
+
+<CodeTabs
+  status="success"
+  items={[
+  {
+    label: 'TypeScript',
+    code: `type ButtonColor = "red" | "blue" | "green";
+
+function paintButton(color: ButtonColor) {
+    // ...
+}
+
+paintButton("red");   // ✅ Perfect
+paintButton("green");  // ✅ Perfect
+paintButton("potato"); // ❌ Error: Argument of type '"potato"' is not assignable to parameter of type 'ButtonColor'.`,
+    lang: 'typescript'
+    }
+  ]} />
+
+Boom! 💥 You just eliminated an entire category of bugs. No one can pass an incorrect string to your function anymore.
+
+## Autocomplete (IntelliSense)
+
+The best part of this is not just the safety, it's the **developer experience**.
+When you write `paintButton("...` your editor will automatically suggest:
+*   "blue"
+*   "red"
+*   "green"
+
+You don't have to go to the documentation to know what values it accepted. The type itself TELLS YOU what values it accepts.
+
+## Mixed Unions
+
+You can mix types if you want (although use it wisely):
+
+<CodeTabs items={[
+  {
+  label: 'TypeScript',
+  code: `// An ID can be a number (Database ID) or a string (UUID)
+type ID = number | string;
+
+function findUser(id: ID) {
+    console.log("Finding user with ID:", id);
+}
+
+findUser(123); // ✅
+findUser("abc-123"); // ✅`,
+  lang: 'typescript'
+  }
+]} />
+
+## Summary
+
+*   **Literal Types**: Exact values (`"red"`, `1`).
+*   **Unions (`|`)**: Combining types (`A | B` means A or B).
+*   Use it to avoid "Magic Strings" and gain free autocomplete.
+
+In the next part, we will see how to **Type Objects** and Interfaces to stop passing anonymous objects without control through our application.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `type Status = "loading" | "success" | "error";
+
+function showMessage(status: Status) {
+    if (status === "loading") return "⏳ Loading...";
+    if (status === "success") return "✅ Done!";
+    return "❌ Error";
+}
+
+console.log(showMessage("success"));
+// Try changing "success" to "potato" and see what happens
+`
+  }}
+/>

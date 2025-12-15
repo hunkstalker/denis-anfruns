@@ -1,6 +1,6 @@
 ---
 import { useTranslations } from '../../i18n/utils'
-import { getTils } from '../../utils/til-content'
+import { getTils, groupTilsBySeries } from '../../utils/til-content'
 import ArrowLink from '../../icons/arrow-link.svg'
 import List from './List'
 
@@ -13,10 +13,9 @@ const { lang, limit } = Astro.props
 const t = useTranslations(lang)
 
 const tilCollection = await getTils()
-const allTils = tilCollection
+const allTils = groupTilsBySeries(tilCollection
 	.filter((p) => p.data.lang === lang)
-	.filter((p) => p.data.lang === lang && p.data.pubDate)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.filter((p) => p.data.lang === lang && p.data.pubDate))
 
 const displayedTils = limit ? allTils.slice(0, limit) : allTils
 const showViewAll = limit && allTils.length > limit

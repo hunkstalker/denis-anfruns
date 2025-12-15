@@ -39,7 +39,7 @@ const disabledClasses = 'cursor-default text-zinc-300 dark:text-zinc-600'
 			aria-current="page"
 			data-i18n={i18nKey}
 		>
-			{text}
+			<slot>{text}</slot>
 		</a>
 	) : enabled ? (
 		// Enlace disponible, opciones a las que se puede navegar
@@ -50,7 +50,7 @@ const disabledClasses = 'cursor-default text-zinc-300 dark:text-zinc-600'
 			class={`${baseClasses} ${enabledClasses} ${className}`}
 			data-i18n={i18nKey}
 		>
-			{text}
+			<slot>{text}</slot>
 		</a>
 	) : (
 		// Enlace visible pero deshabilitado, opciones a las que no se puede navegar

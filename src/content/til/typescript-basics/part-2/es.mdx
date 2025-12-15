@@ -1,0 +1,123 @@
+---
+title: 'TypeScript #2: Tipos Literales y Uniones'
+description: 'Cómo decirle a TypeScript que algo solo puede ser "A" o "B" y nada más. Adiós a los strings mágicos.'
+series: 'typescript-basics'
+seriesTitle: 'TypeScript Básico'
+seriesDescription: 'Mini-curso sobre fundamentos de TypeScript.'
+lang: 'es'
+new: true
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+En la Parte 1 vimos que `const` crea tipos **literales**.
+Si escribes `const rol = "admin"`, para TypeScript `rol` no es un simple `string`, sino que es específicamente `"admin"`.
+
+Hoy vamos a ver cómo usar eso para crear código a prueba de balas.
+
+## String vs. String Literal
+
+Imagina que tienes una función para pintar un botón.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function pintarBoton(color: string) {
+    if (color === 'tojo') { // ❌ Ups, error de dedo ("tojo" en vez de "rojo")
+        return '🔴';
+    }
+    return '🔵';
+}
+
+pintarBoton("azul"); // ✅ Bien
+pintarBoton("patata"); // ✅ Bien (pero no debería, ¡patata no es un color!)`,
+		lang: 'typescript'
+    }
+]} />
+
+El problema aquí es que `string` es **demasiado amplio**. Admite "azul", "rojo", pero también "patata" o "asdfg".
+
+## La Unión de Tipos (`|`)
+
+Aquí es donde entra el operador `|` (pipe). Se lee como **"O"**.
+Podemos decirle a TypeScript: *"El color solo puede ser 'rojo' O 'azul' O 'verde'"*.
+
+<CodeTabs
+  status="success"
+  items={[
+  {
+    label: 'TypeScript',
+    code: `type ColorBoton = "rojo" | "azul" | "verde";
+
+function pintarBoton(color: ColorBoton) {
+    // ...
+}
+
+pintarBoton("rojo");   // ✅ Perfecto
+pintarBoton("verde");  // ✅ Perfecto
+pintarBoton("patata"); // ❌ Error: Argument of type '"patata"' is not assignable to parameter of type 'ColorBoton'.`,
+    lang: 'typescript'
+    }
+  ]} />
+
+¡Bum! 💥 Acabas de eliminar una categoría entera de bugs. Ya nadie puede pasar una cadena incorrecta a tu función.
+
+## El Autocompletado (IntelliSense)
+
+Lo mejor de esto no es solo la seguridad, es la **experiencia de desarrollo**.
+Cuando escribas `pintarBoton("...` tu editor te sugerirá automáticamente:
+*   "azul"
+*   "rojo"
+*   "verde"
+
+No tienes que ir a la documentación para saber qué valores aceptaba. El propio tipo TE DICE qué valores acepta.
+
+## Uniones Mixtas
+
+Puedes mezclar tipos si quieres (aunque úsalo con cabeza):
+
+<CodeTabs items={[
+  {
+  label: 'TypeScript',
+  code: `// Un ID puede ser un número (ID de base de datos) o un string (UUID)
+type ID = number | string;
+
+function buscarUsuario(id: ID) {
+    console.log("Buscando usuario con ID:", id);
+}
+
+buscarUsuario(123); // ✅
+buscarUsuario("abc-123"); // ✅`,
+  lang: 'typescript'
+  }
+]} />
+
+## Resumen
+
+*   **Tipos Literales**: Valores exactos (`"rojo"`, `1`).
+*   **Uniones (`|`)**: Combinar tipos (`A | B` significa A o B).
+*   Úsalo para evitar "Magic Strings" y ganar autocompletado gratis.
+
+En la próxima parte veremos cómo **Tipar Objetos** e Interfaces para dejar de pasar objetos 
+anónimos sin control por nuestra aplicación.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `type Estado = "cargando" | "exito" | "error";
+
+function mostrarMensaje(estado: Estado) {
+    if (estado === "cargando") return "⏳ Cargando...";
+    if (estado === "exito") return "✅ ¡Listo!";
+    return "❌ Error";
+}
+
+console.log(mostrarMensaje("exito"));
+// Intenta cambiar "exito" por "patata" y mira qué pasa
+`
+  }}
+/>

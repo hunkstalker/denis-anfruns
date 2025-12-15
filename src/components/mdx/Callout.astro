@@ -1,17 +1,25 @@
 ---
-import InfoIcon from '../../icons/info-circle.svg'
-import WarningIcon from '../../icons/warning-triangle.svg'
-import ErrorIcon from '../../icons/error-circle.svg'
-import SuccessIcon from '../../icons/check-circle.svg'
+import infoIcon from '../../icons/info-circle.svg?raw'
+import warningIcon from '../../icons/warning-triangle.svg?raw'
+import errorIcon from '../../icons/error-circle.svg?raw'
+import successIcon from '../../icons/check-circle.svg?raw'
 
 interface Props {
 	type?: 'info' | 'warning' | 'error' | 'success'
 	title?: string
 	filled?: boolean | string
+	icon?: boolean
 }
 
-const { type = 'info', title, filled = false } = Astro.props
+const { type = 'info', title, filled = false, icon = true } = Astro.props
 const isFilled = filled === true || filled === '' || filled === 'true'
+
+const icons = {
+	info: infoIcon,
+	warning: warningIcon,
+	error: errorIcon,
+	success: successIcon,
+}
 
 const styles = {
 	info: {
@@ -56,23 +64,36 @@ const inlineStyle = isFilled
 	: ''
 
 const currentStyle = styles[type]
+
+// Title Logic:
+// undefined -> Default Capitalized Type
+// "" -> Hidden
+// "Valid string" -> Use string
+const getTitle = () => {
+	if (title === undefined) return type.charAt(0).toUpperCase() + type.slice(1)
+	return title
+}
+
+const displayTitle = getTitle()
 ---
 
 <div class={`p-4 rounded-xl ${currentStyle.container} relative my-6 shadow-sm`} style={inlineStyle}>
-	<div class="flex gap-3">
-		<div class={`shrink-0 mt-0.5 ${currentStyle.iconColor}`}>
-			{type === 'info' && <InfoIcon />}
-			{type === 'warning' && <WarningIcon />}
-			{type === 'error' && <ErrorIcon />}
-			{type === 'success' && <SuccessIcon />}
+	{(displayTitle || icon) && (
+		<div class="flex items-center gap-2 mb-2">
+			{displayTitle && <h5 class="font-bold m-0">{displayTitle}</h5>}
+			{icon && (
+				<div
+					class={`shrink-0 size-5 ${currentStyle.iconColor} [&>svg]:w-full [&>svg]:h-full`}
+				>
+					<Fragment set:html={icons[type]} />
+				</div>
+			)}
 		</div>
-		<div class="flex-1">
-			{title && <h5 class="mb-1 font-bold">{title}</h5>}
-			<div
-				class="prose prose-sm max-w-none text-sm leading-relaxed dark:prose-invert prose-p:my-0 prose-ol:my-0 prose-ul:my-0"
-			>
-				<slot />
-			</div>
-		</div>
+	)}
+
+	<div
+		class="prose prose-sm max-w-none text-sm leading-relaxed dark:prose-invert prose-p:my-0 prose-ol:my-0 prose-ul:my-0"
+	>
+		<slot />
 	</div>
 </div>

@@ -5,6 +5,7 @@ import BackLink from '../../../components/ui/BackLink.astro'
 import ChevronUp from '../../../icons/chevron-up.svg'
 import { languages } from '../../../i18n/ui'
 import { useTranslations } from '../../../i18n/utils'
+import SeriesWidget from '../../../components/til/SeriesWidget.astro'
 
 export async function getStaticPaths() {
 	const allPosts = await getTils()
@@ -16,23 +17,25 @@ export async function getStaticPaths() {
 	return posts
 		.filter((post) => supportedLangs.includes(post.data.lang))
 		.map((post) => {
-			// slug is "folder/lang" -> we want "folder" as the URL slug
-			const slug = post.slug.split('/')[0]
 			return {
 				params: {
 					lang: post.data.lang,
-					slug: slug,
+					// Strip the language suffix (e.g. /en or /ca) relative to the language
+                    // This assumes the slug ends with the language code
+					slug: post.slug.replace(new RegExp(`/${post.data.lang}$`), ''),
 				},
 				props: post,
 			}
 		})
 }
+
 type Props = TilPost
 
 const post = Astro.props
 const { Content } = await post.render()
 const { lang } = Astro.params
 const t = useTranslations(lang)
+const siteTitle = `TIL: ${post.data.title}`
 ---
 
 <style>
@@ -64,12 +67,13 @@ const t = useTranslations(lang)
 </style>
 
 <ContentLayout
-	siteTitle={`TIL: ${post.data.title}`}
+	siteTitle={siteTitle}
 	title={post.data.title}
 	lang={lang}
 	description={post.data.title}
 >
-	<div class="lg:col-span-8 lg:col-start-3">
+    {/* Conditional Layout */}
+	<div class={post.data.series ? 'col-span-1 lg:col-span-8 xl:col-span-9' : 'lg:col-span-8 lg:col-start-3'}>
 		<div class="mb-8">
 			<BackLink href={`/${lang}/blog`} label={t('blog.backToBlog')} />
 
@@ -93,6 +97,15 @@ const t = useTranslations(lang)
 			<hr class="animate-fade-in-up mt-8 border-zinc-200 delay-300 dark:border-zinc-800" />
 		</div>
 
+        {/* Mobile Series Widget */}
+        {
+            post.data.series && (
+                <div class="mb-8 lg:hidden">
+                    <SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+                </div>
+            )
+        }
+
 		<article
 			class="prose prose-lg max-w-none dark:prose-invert"
 			data-pagefind-body
@@ -113,6 +126,17 @@ const t = useTranslations(lang)
 
 		<div class="h-24"></div>
 	</div>
+
+    {/* Desktop Sidebar Widget */}
+    {
+        post.data.series && (
+            <aside class="hidden lg:col-span-4 lg:block xl:col-span-3">
+                <div class="sticky top-32 space-y-8">
+                    <SeriesWidget seriesId={post.data.series} currentSlug={post.slug} lang={lang} />
+                </div>
+            </aside>
+        )
+    }
 </ContentLayout>
 
 <script>

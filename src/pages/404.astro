@@ -17,7 +17,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			aria-hidden="true"
 		>
 			<span
-				class="text-[20rem] font-black leading-none text-zinc-200/50 dark:text-zinc-800/50 sm:text-[28rem] md:text-[36rem]"
+				class="text-[10rem] font-black leading-none text-zinc-200/50 dark:text-zinc-800/50 sm:text-[20rem] md:text-[28rem] lg:text-[36rem]"
 			>
 				404
 			</span>
@@ -41,15 +41,15 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	<!-- Terminal Overlay - Always Visible -->
 	<div
 		id="terminal-overlay"
-		class="pointer-events-none fixed inset-0 z-50 overflow-hidden font-mono text-zinc-900 dark:text-white"
+		class="pointer-events-none fixed inset-0 z-50 overflow-hidden font-mono text-zinc-900 dark:text-white hidden md:block"
 	>
 		<!-- Left-aligned terminal window -->
 		<div
-			class="absolute left-0 top-0 flex size-full flex-col justify-end p-4 pb-20 md:w-1/2 md:p-8 lg:w-1/3"
+			class="absolute left-0 top-0 flex size-full flex-col justify-end p-4 pb-32 md:w-1/2 md:p-8 md:pb-8 lg:w-1/3"
 		>
 			<div
 				id="terminal-logs"
-				class="text-xs flex max-h-full flex-col gap-1 overflow-hidden font-bold tracking-wider md:text-sm"
+				class="text-xs flex max-h-[50vh] flex-col gap-1 overflow-hidden font-bold tracking-wider mask-image-fade md:max-h-full md:text-sm"
 			>
 				<div id="command-line" class="flex items-center">
 					<span class="mr-2">&gt;</span>
@@ -94,6 +94,11 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		50% {
 			opacity: 0;
 		}
+	}
+
+	.mask-image-fade {
+		mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%);
+		-webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 100%);
 	}
 </style>
 
@@ -187,6 +192,25 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			},
 		},
 
+		// Secret Playground Access
+		// "RUN PLAYGROUND.EXE" hashed (SHA-256)
+		'dcc5b20bef132083b0f1f6baaa2f5738dcad807e6669ae43d67c9a75e1667a57': {
+			logs: [
+				'> SYSTEM_OVERRIDE_DETECTED',
+				'> DECRYPTING_SECURE_CHANNEL...',
+				'> LOADING_DEV_TOOLS_MODULE...',
+				'> MOUNTING_VIRTUAL_FILESYSTEM...',
+				'> ACCESS_GRANTED: WELCOME_CREATOR',
+			],
+			barSize: 40,
+			duration: 1500,
+			logDelay: 100,
+			redirect: '/playground',
+			onBeforeRedirect: () => {
+				localStorage.setItem('playground_access', 'granted')
+			},
+		},
+
 		// ============================================================
 		// ADD MORE COMMANDS HERE! Example:
 		// 'MATRIX': {
@@ -231,6 +255,16 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		window.location.href = path
 	}
 
+    // Helper: Generate SHA-256 hash
+    async function sha256(message: string) {
+        const msgBuffer = new TextEncoder().encode(message)
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
+        const hashArray = Array.from(new Uint8Array(hashBuffer))
+        const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+        return hashHex
+    }
+
+
 	// ============================================================
 	// CORE SYSTEM - No need to modify below this line
 	// ============================================================
@@ -271,8 +305,11 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	hiddenForm.appendChild(hiddenInput)
 	document.body.appendChild(hiddenForm)
 
-	// Focus handling - only focus terminal when clicking outside interactive elements
+	// Focus handling - only focus terminal when clicking outside interactive elements AND on desktop
 	document.addEventListener('click', (e) => {
+		// Mobile check: Only allow focus if screen is MD or larger
+		if (!window.matchMedia('(min-width: 768px)').matches) return
+
 		const target = e.target as HTMLElement
 		// Don't steal focus from nav, search, buttons, links, inputs, etc.
 		const isInteractive = target.closest('nav, a, button, input, [role="button"], [data-search]')
@@ -281,8 +318,8 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		}
 	})
 
-	// Auto-focus on load (only if not focused on something else)
-	if (!document.activeElement || document.activeElement === document.body) {
+	// Auto-focus on load (only if not focused on something else AND on desktop)
+	if ((!document.activeElement || document.activeElement === document.body) && window.matchMedia('(min-width: 768px)').matches) {
 		hiddenInput.focus()
 	}
 
@@ -299,7 +336,13 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		p.className = 'opacity-0'
 		p.style.borderRight = '2px solid transparent'
 
-		terminalLogs.appendChild(p)
+		// Insert BEFORE command line so the input always stays at the bottom
+		if (commandLine && commandLine.parentNode === terminalLogs) {
+			terminalLogs.insertBefore(p, commandLine)
+		} else {
+			terminalLogs.appendChild(p)
+		}
+		
 		terminalLogs.scrollTop = terminalLogs.scrollHeight
 
 		requestAnimationFrame(() => {
@@ -319,7 +362,13 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 		const pBar = document.createElement('div')
 		pBar.className = 'mt-4 font-bold whitespace-pre mb-20'
-		terminalLogs.appendChild(pBar)
+		
+		// Insert BEFORE command line
+		if (commandLine && commandLine.parentNode === terminalLogs) {
+			terminalLogs.insertBefore(pBar, commandLine)
+		} else {
+			terminalLogs.appendChild(pBar)
+		}
 
 		const totalChars = barSize
 		const steps = 50 // Number of updates
@@ -337,15 +386,27 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		await new Promise((r) => setTimeout(r, 200))
 	}
 
+	// Password Protection State
+	let isPasswordMode = false
+	const PLAYGROUND_HASH = '8a2266f450423a535981b12c13c39562b59e4ff8f8574a9b3a6d7a8c526b681c' // SHA-256 for "GEMINI"
+
 	// Input handling
 	hiddenInput.addEventListener('input', (e) => {
 		if (isExecuting) return
 
 		const val = (e.target as HTMLInputElement).value.toUpperCase()
-		const cleanVal = val.replace(/[^A-Z0-9 ]/g, '')
+		// Allow A-Z, 0-9, spaces, and dots (for commands like .EXE)
+		const cleanVal = val.replace(/[^A-Z0-9 .]/g, '')
 
 		if (val !== cleanVal) hiddenInput.value = cleanVal
-		if (typeTarget) typeTarget.textContent = cleanVal
+		
+		if (typeTarget) {
+			if (isPasswordMode) {
+				typeTarget.textContent = '*'.repeat(cleanVal.length)
+			} else {
+				typeTarget.textContent = cleanVal
+			}
+		}
 	})
 
 	// Command execution
@@ -354,7 +415,93 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		if (isExecuting) return
 
 		const input = hiddenInput.value.toUpperCase().trim()
-		const command = commands[input]
+
+		// --- PASSWORD MODE LOGIC ---
+		if (isPasswordMode) {
+			isExecuting = true
+			if (commandLine) commandLine.style.display = 'none'
+
+			// "Double Hash" check (User input -> Hash -> Compare)
+			const hash = await sha256(input) // input is UPPERCASE from value, maybe we want case-insensitive?
+			// But for "1234" it's same. If we want complex passwords, we might need original case. 
+			// However current input logic forces UpperCase. let's stick to simple "1234".
+			
+			if (hash === PLAYGROUND_HASH) {
+				// Success
+				await executeCommand({
+					logs: [
+						'> VERIFYING_HASH...',
+						'> ACCESS_GRANTED',
+						'> INITIALIZING_ENVIRONMENT...',
+						'> WELCOME_ADMINISTRATOR'
+					],
+					barSize: 40,
+					duration: 1500,
+					redirect: '/playground',
+					onBeforeRedirect: () => {
+						localStorage.setItem('playground_access', 'granted')
+					}
+				}, lang)
+			} else {
+				// Failed
+				await executeCommand({
+					logs: [
+						'> VERIFYING_HASH...',
+						'> ACCESS_DENIED',
+						'> INCORRECT_PASSWORD',
+						'> TERMINATING_SESSION...'
+					],
+					duration: 1000,
+					redirect: 'none' // Special case to just reset
+				}, lang)
+				
+				// Reset terminal to ready state (hacky via reload or just reset)
+				// For now, redirect 'none' will just end. We need to reset UI.
+				isPasswordMode = false
+				hiddenInput.value = ''
+				if (typeTarget) typeTarget.textContent = ''
+				if (commandLine) commandLine.style.display = 'flex'
+				// Restore cursor
+				hiddenInput.focus()
+				isExecuting = false
+				
+				// Add a new prompt line
+				await typeLog('> _')
+			}
+			return
+		}
+
+		// --- NORMAL COMMAND LOGIC ---
+
+		if (input === 'RUN PLAYGROUND.EXE') {
+			isExecuting = true
+			hiddenInput.blur() // Temporarily blur to stop typing
+			if (commandLine) commandLine.style.display = 'none'
+
+			// Log the prompt sequence
+			await typeLog('> INITIATING_SECURITY_PROTOCOL...')
+			await new Promise(r => setTimeout(r, 500))
+			await typeLog('> ENTER PASSWORD:')
+			
+			// Reset for password input
+			hiddenInput.value = ''
+			if (typeTarget) typeTarget.textContent = ''
+			if (commandLine) commandLine.style.display = 'flex'
+			
+			isPasswordMode = true
+			isExecuting = false
+			hiddenInput.focus()
+			return
+		}
+
+		// Check for direct match (legacy/non-secret commands)
+		let command = commands[input]
+
+		// If not found, check hashed commands (legacy fallback)
+		if (!command) {
+			const hash = await sha256(input)
+			command = commands[hash]
+		}
 
 		if (command && terminalLogs) {
 			isExecuting = true
@@ -362,6 +509,11 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			if (commandLine) commandLine.style.display = 'none'
 
 			await executeCommand(command, lang)
+		} else {
+			// Unknown command feedback
+			await typeLog(`> UNKNOWN_COMMAND: ${input}`)
+			hiddenInput.value = ''
+			if (typeTarget) typeTarget.textContent = ''
 		}
 	})
 </script>
