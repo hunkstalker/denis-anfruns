@@ -34,12 +34,12 @@ let nextPost: TilPost | null = null
 if (post.data.series) {
 	const allPosts = await getTils()
 	const seriesPosts = allPosts
-		.filter((p) => p.data.series === post.data.series && p.data.lang === 'es')
+		.filter(p => p.data.series === post.data.series && p.data.lang === 'es')
 		.sort((a, b) => {
 			if (!a.data.pubDate || !b.data.pubDate) return 0
 			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 		})
-	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
+	const currentIndex = seriesPosts.findIndex(p => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }
 ---
@@ -76,12 +76,15 @@ if (post.data.series) {
 	siteTitle={siteTitle}
 	title={post.data.title}
 	lang={lang}
-	description={post.data.title}>
-    <MarkAsRead slug={post.slug} collection="til" />
+	description={post.data.title}
+	isWide={!!post.data.series}>
+	{/* Activate wide mode if series exists */}
+	<MarkAsRead slug={post.slug} collection='til' />
 	{/* Conditional Layout: Full width if no series/toc, Sidebar otherwise */}
 	<div
 		class={post.data.series || headings.length > 0
-			? 'col-span-1 lg:col-span-8'
+			//Si hay SeriesWidget
+			? 'col-span-1 lg:col-span-8 pl-4'
 			: 'lg:col-span-8 lg:col-start-3'}>
 		<div class='mb-8'>
 			<BackLink
@@ -128,11 +131,15 @@ if (post.data.series) {
 			data-pagefind-filter='type:til'
 			data-pagefind-meta={`description:${post.data.description || ''}, series:${post.data.series || ''}, seriesTitle:${post.data.seriesTitle || ''}, seriesDescription:${post.data.seriesDescription || ''}`}>
 			{/* Hidden content for Pagefind indexing - allows search with highlighting */}
-			{(post.data.seriesTitle || post.data.seriesDescription) && (
-				<span class='sr-only' data-pagefind-weight='2'>
-					{post.data.seriesTitle}{post.data.seriesTitle && post.data.seriesDescription ? ' · ' : ''}{post.data.seriesDescription}
-				</span>
-			)}
+			{
+				(post.data.seriesTitle || post.data.seriesDescription) && (
+					<span class='sr-only' data-pagefind-weight='2'>
+						{post.data.seriesTitle}
+						{post.data.seriesTitle && post.data.seriesDescription ? ' · ' : ''}
+						{post.data.seriesDescription}
+					</span>
+				)
+			}
 			<Content />
 		</article>
 
@@ -145,34 +152,38 @@ if (post.data.series) {
 					Volver arriba
 				</button>
 
-				{nextPost && (
-					<a
-						href={`/til/${nextPost.slug.replace(/\/es$/, '')}/`}
-						class='group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]'>
-						Siguiente
-						<ChevronRight class='transition-transform group-hover:translate-x-1' />
-					</a>
-				)}
+				{
+					nextPost && (
+						<a
+							href={`/til/${nextPost.slug.replace(/\/es$/, '')}/`}
+							class='group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]'>
+							Siguiente
+							<ChevronRight class='transition-transform group-hover:translate-x-1' />
+						</a>
+					)
+				}
 			</div>
 		</footer>
 
 		<div class='h-24'></div>
 	</div>
 
-			<aside class='hidden lg:col-span-4 lg:block'>
-				<div class='sticky top-32 space-y-8'>
-					{post.data.series && (
-						<SeriesWidget
-							seriesId={post.data.series}
-							currentSlug={post.slug}
-							lang={lang}
-							collection='til'
-							id='desktop-series'
-						/>
-					)}
-					{headings.length > 0 && <TableOfContents headings={headings} lang={lang} />}
-				</div>
-			</aside>
+	<aside class='hidden lg:col-span-4 lg:block pl-2'>
+		<div class='sticky top-24 space-y-8 mt-2.5'>
+			{
+				post.data.series && (
+					<SeriesWidget
+						seriesId={post.data.series}
+						currentSlug={post.slug}
+						lang={lang}
+						collection='til'
+						id='desktop-series'
+					/>
+				)
+			}
+			{headings.length > 0 && <TableOfContents headings={headings} lang={lang} />}
+		</div>
+	</aside>
 </ContentLayout>
 
 <script>

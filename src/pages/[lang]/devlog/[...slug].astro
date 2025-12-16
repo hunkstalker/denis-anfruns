@@ -81,10 +81,11 @@ if (post.data.series) {
 	siteTitle={post.data.title}
 	lang={lang}
 	description={post.data.description}
-	image={post.data.ogImage ?? post.data.heroImage}>
+	image={post.data.ogImage ?? post.data.heroImage}
+	isWide={!!post.data.series}>
 	<MarkAsRead slug={post.slug} collection='blog' />
 	<div
-		class='col-span-1 lg:col-span-8 xl:col-span-8'
+		class='col-span-1 lg:col-span-8 xl:col-span-8 pl-4'
 		data-pagefind-body
 		data-pagefind-filter={`type:${post.data.tags.some(t => t.toLowerCase() === 'project') ? 'project' : 'devlog'}`}
 		data-pagefind-meta={`description:${post.data.description}`}>
@@ -268,8 +269,8 @@ if (post.data.series) {
 	</div>
 
 	<!-- Columna derecha de Widgets -->
-	<aside class='hidden lg:col-span-4 lg:block'>
-		<div class='sticky top-32 space-y-8'>
+	<aside class='hidden lg:col-span-4 lg:block pl-2'>
+		<div class='sticky top-24 space-y-8 mt-2.5'>
 			{
 				post.data.series && (
 					<SeriesWidget
