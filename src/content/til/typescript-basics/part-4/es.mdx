@@ -38,11 +38,11 @@ const users: Usuario[] = [
     }
 ]} />
 
-Si intentas meter un número en nuestro array de `skills` (que es de strings), TS gritará.
+Si intentamos meter un número en nuestro array de `skills` (que es de strings), TS gritará.
 
 ## Tuplas: Arrays con reglas estrictas
 
-A veces sabes **exactamente** cuántos elementos tiene un array y de qué tipo son en cada posición.
+A veces sabemos **exactamente** cuántos elementos tiene un array y de qué tipo son en cada posición.
 Eso es una **Tupla**.
 
 El ejemplo más famoso es el hook `useState` de React:
@@ -75,7 +75,7 @@ role = ["guest", 3, "extra"]; // ❌ Mal (Demasiados elementos)`,
 ]} />
 
 ### ¿Para qué sirven?
-Son útiles cuando quieres devolver múltiples valores de una función sin crear un objeto.
+Son útiles cuando queremos devolver múltiples valores de una función sin crear un objeto.
 
 *   Coordenadas: `[x, y]` -> `[number, number]`
 *   Rangos: `[inicio, fin]`
@@ -83,7 +83,7 @@ Son útiles cuando quieres devolver múltiples valores de una función sin crear
 
 ## Arrays de Lectura (`ReadonlyArray`)
 
-Al igual que con los objetos, puedes hacer arrays inmutables.
+Al igual que con los objetos, podemos hacer arrays inmutables.
 
 <CodeTabs items={[
     {
@@ -97,17 +97,17 @@ todoList.push("Leche"); // ❌ Error: Property 'push' does not exist on type 're
 
 ¡Genial para programación funcional y evitar efectos secundarios!
 
-## ¡Pruébalo!
+## ¡Probémoslo!
 
-1. Crea un array de strings.
-2. Intenta hacer `.push(123)` (verás el error).
-3. Crea una tupla `[string, boolean]` (ej: Nombre y si está activo).
+1. Creemos un array de strings.
+2. Intentemos hacer `.push(123)` (veremos el error).
+3. Creemos una tupla `[string, boolean]` (ej: Nombre y si está activo).
 
 <TSEditor
   client:only="react"
   showConsole={true}
   files={{
-    'main.ts': `// Tu código aquí
+    'main.ts': `// Nuestro código aquí
 `
   }}
 />

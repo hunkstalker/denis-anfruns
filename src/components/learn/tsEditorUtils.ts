@@ -54,21 +54,48 @@ export const transpileFiles = async (
 	const worker = await monaco.languages.typescript.getTypeScriptWorker()
 	const modules: Record<string, string> = {}
 	
-	// Obtenemos el cliente del worker usando cualquier URI válida
-	const dummyUri = getFileUri(monaco, activeFile)
-	const client = await worker(dummyUri)
+
 
 	for (const [filename, content] of Object.entries(files)) {
-		const uri = getFileUri(monaco, filename)
-		// Aseguramos que el modelo exista
-		if (!monaco.editor.getModel(uri)) {
-			monaco.editor.createModel(content, 'typescript', uri)
+		const originalUri = getFileUri(monaco, filename)
+		const originalModel = monaco.editor.getModel(originalUri)
+		
+		let transpileUri = originalUri
+		let isShadowModel = false
+
+		// Si el contenido difiere del modelo (ej. inyección de validación), usamos modelo sombra
+		if (!originalModel || originalModel.getValue() !== content) {
+			const shadowFilename = `__shadow__${filename}`
+			transpileUri = getFileUri(monaco, shadowFilename)
+			
+			// Si existe un modelo sombra previo, lo reusamos o recreamos
+			const existingShadow = monaco.editor.getModel(transpileUri)
+			if (existingShadow) {
+				existingShadow.setValue(content)
+			} else {
+				monaco.editor.createModel(content, 'typescript', transpileUri)
+			}
+			isShadowModel = true
+		} else {
+			// Sincronización defensiva por si acaso syncModels no corrió
+			if (originalModel.getValue() !== content) {
+				originalModel.setValue(content)
+			}
 		}
 		
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const result: any = await client.getEmitOutput(uri.toString())
-		if (result.outputFiles[0]) {
-			modules[filename] = result.outputFiles[0].text
+		try {
+			// Obtenemos el cliente específico para este URI (para asegurar que lo encuentra)
+			const client = await worker(transpileUri)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const result: any = await client.getEmitOutput(transpileUri.toString())
+			if (result.outputFiles[0]) {
+				modules[filename] = result.outputFiles[0].text
+			}
+		} finally {
+			// Limpiamos el modelo sombra para no ensuciar el editor
+			if (isShadowModel) {
+				monaco.editor.getModel(transpileUri)?.dispose()
+			}
 		}
 	}
 
@@ -100,9 +127,9 @@ export const createCommonJSRuntime = (modules: Record<string, string>, entryPoin
 			moduleCache[cleanPath] = module;
 
 			// Ejecutar el wrapper del módulo
-			// Inyectamos 'customConsole' que pasaremos al constructor de Function
-			const wrapper = new Function('exports', 'require', 'module', 'console', modules[cleanPath]);
-			wrapper(module.exports, require, module, customConsole);
+			// Inyectamos 'customConsole' y 'onSuccess' que pasaremos al constructor de Function
+			const wrapper = new Function('exports', 'require', 'module', 'console', 'onSuccess', modules[cleanPath]);
+			wrapper(module.exports, require, module, customConsole, onSuccess);
 
 			return module.exports;
 		}
@@ -117,12 +144,16 @@ export const createCommonJSRuntime = (modules: Record<string, string>, entryPoin
  * Crea una Function a partir del código runtime y la ejecuta, inyectando la consola personalizada.
  * Maneja errores de ejecución.
  */
-export const executeRuntime = (runtimeCode: string, consoleHandler: ConsoleHandler) => {
+export const executeRuntime = (
+	runtimeCode: string,
+	consoleHandler: ConsoleHandler,
+	onSuccess?: () => void
+) => {
 	try {
-		// Creamos la función final que recibe 'customConsole'
+		// Creamos la función final que recibe 'customConsole' y 'onSuccess'
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const runtimeFunc = new Function('customConsole', runtimeCode)
-		runtimeFunc(consoleHandler)
+		const runtimeFunc = new Function('customConsole', 'onSuccess', runtimeCode)
+		runtimeFunc(consoleHandler, onSuccess)
 	} catch (err: unknown) {
 		consoleHandler.error('Error de Ejecución:', err instanceof Error ? err.message : String(err))
 	}

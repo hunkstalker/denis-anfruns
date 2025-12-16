@@ -3,9 +3,10 @@ import infoIcon from '@icons/info-circle.svg?raw'
 import warningIcon from '@icons/warning-triangle.svg?raw'
 import errorIcon from '@icons/error-circle.svg?raw'
 import successIcon from '@icons/check-circle.svg?raw'
+import partyPopperIcon from '@icons/party-popper.svg?raw'
 
 interface Props {
-	type?: 'info' | 'warning' | 'error' | 'success' | 'tip'
+	type?: 'info' | 'warning' | 'error' | 'success' | 'tip' | 'party'
 	title?: string
 	filled?: boolean | string
 	icon?: boolean
@@ -20,6 +21,7 @@ const icons = {
 	error: errorIcon,
 	success: successIcon,
 	tip: infoIcon, // Reusing info icon for tip
+	party: partyPopperIcon,
 }
 
 const styles = {
@@ -59,6 +61,14 @@ const styles = {
 			? 'text-teal-700 dark:text-teal-300'
 			: 'text-teal-600 dark:text-teal-400',
 	},
+	party: {
+		container: isFilled
+			? 'bg-fuchsia-100 dark:bg-fuchsia-500/30 border-2 border-fuchsia-500 text-fuchsia-900 dark:text-fuchsia-100'
+			: 'bg-fuchsia-50 dark:bg-fuchsia-500/10 border border-fuchsia-200 dark:border-fuchsia-500/20 text-fuchsia-900 dark:text-fuchsia-200',
+		iconColor: isFilled
+			? 'text-fuchsia-700 dark:text-fuchsia-300'
+			: 'text-fuchsia-600 dark:text-fuchsia-400',
+	},
 }
 
 const colors = {
@@ -67,6 +77,7 @@ const colors = {
 	error: '#ef4444',
 	success: '#22c55e',
 	tip: '#14b8a6',
+	party: '#d946ef',
 }
 const baseColor = colors[type]
 const inlineStyle = isFilled

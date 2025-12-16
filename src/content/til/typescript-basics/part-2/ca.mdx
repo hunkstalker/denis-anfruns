@@ -68,10 +68,16 @@ El millor d'això no és només la seguretat, és l'**experiència de desenvolup
 
 **Prova-ho tu mateix:** Posa't entre les cometes i prem Ctrl + Espai a cadascuna. A la primera no hi ha suggeriments (és un `string` genèric). A la segona l'editor et suggereix les opcions vàlides.
 
+import validationCode from './validation.ts?raw';
+
 <div className="mb-8">
   <TSEditor
     client:only="react"
-    height="280px"
+    height="480px"
+    showConsole={true}
+    allowAddFile={false}
+    validationCode={validationCode}
+    successSound="/audio/grunt-birthday-party-sound.mp3"
     files={{
       'sense-tipus.ts': `// Sense autocompletat - accepta qualsevol string
   function enviarString(missatge: string) {

@@ -68,10 +68,16 @@ The best part is not just the safety, it's the **developer experience**.
 
 **Try it yourself:** Place your cursor between the quotes and press Ctrl + Space in each one. In the first one there are no suggestions (it's a generic `string`). In the second one the editor suggests the valid options.
 
+import validationCode from './validation.ts?raw';
+
 <div className="mb-8">
   <TSEditor
     client:only="react"
-    height="280px"
+    height="480px"
+    showConsole={true}
+    allowAddFile={false}
+    validationCode={validationCode}
+    successSound="/audio/grunt-birthday-party-sound.mp3"
     files={{
       'no-types.ts': `// No autocomplete - accepts any string
   function sendString(message: string) {

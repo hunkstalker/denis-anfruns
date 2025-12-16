@@ -7,7 +7,7 @@ import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
 import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
-Aquí es donde mucha gente se pierde. Empiezas a ver `<T>`, `interface`, `type`, `return T`... todo mezclado y parece jeroglífico.
+Aquí es donde mucha gente se pierde. Empezamos a ver `<T>`, `interface`, `type`, `return T`... todo mezclado y parece jeroglífico.
 
 Vamos a desenredarlo paso a paso.
 
@@ -35,28 +35,28 @@ const b: CajaType<string> = { valor: "Hola" };`,
     }
 ]} />
 
-No hay diferencia funcional real para datos simples. Usa la que prefieras (yo suelo usar `interface` para objetos y `type` para funciones/uniones).
+No hay diferencia funcional real para datos simples. Usemos la que prefiramos (solemos usar `interface` para objetos y `type` para funciones/uniones).
 
 ## El Patrón "Wrapper" (Datawrapper)
 
 Este es el caso de uso #1 en el mundo real: Respuestas de API.
-Tienes una estructura fija (`data`, `status`, `error`) pero el contenido de `data` cambia según la llamada.
+Tenemos una estructura fija (`data`, `status`, `error`) pero el contenido de `data` cambia según la llamada.
 
 <CodeTabs items={[
     {
 		label: 'TypeScript',
-		code: `// Define la "cáscara" genérica
+		code: `// Definamos la "cáscara" genérica
 interface ApiResponse<Data> {
     status: number;
     message: string;
     data: Data; // 👈 Aquí va la magia
 }
 
-// Define tus modelos concretos
+// Definamos nuestros modelos concretos
 interface User { id: number; name: string; }
 interface Product { sku: string; price: number; }
 
-// ¡Combínalos!
+// ¡Combinémoslos!
 type UserResponse = ApiResponse<User>;
 type ProductResponse = ApiResponse<Product>;
 
@@ -73,7 +73,7 @@ function fetchUser(): UserResponse {
 
 ## "Prop Drilling" de Tipos
 
-A veces tienes Generics dentro de Generics. Es como pasar una variable de un abuelo a un nieto.
+A veces tenemos Generics dentro de Generics. Es como pasar una variable de un abuelo a un nieto.
 
 <CodeTabs items={[
     {
@@ -101,7 +101,7 @@ type UsersApi = ApiResponse<PaginatedResponse<User>>;
 
 ## Generics en Funciones Flecha
 
-La sintaxis aquí es un poco rara y asusta al principio, especialmente en archivos `.tsx` (React), porque `<T>` se confunde con una etiqueta HTML.
+La sintaxis aquí puede llegar a asustar, especialmente en archivos `.tsx` (React) y donde se vuelve más complejo.
 
 <CodeTabs items={[
     {
@@ -112,25 +112,25 @@ function identity<T>(arg: T): T { return arg; }
 // Función flecha
 const identityArrow = <T>(arg: T): T => arg;
 
-// ⚠️ En archivos .tsx (React), necesitas una coma para que no crea que es HTML
+// ⚠️ En archivos .tsx (React), necesitamos una coma para que no crea que es HTML
 const hookEnReact = <T,>(arg: T) => { ... };`,
 		lang: 'typescript'
     }
 ]} />
 
-## ¡Pruébalo!
+## ¡Probémoslo!
 
-Crea una interfaz `Respuesta<T>` con `datos: T` y `error: string | null`.
-Luego crea un objeto que use esa interfaz con `number`.
+Creemos una interfaz `Respuesta<T>` con `datos: T` y `error: string | null`.
+Luego creemos un objeto que use esa interfaz con `number`.
 
 <TSEditor
   client:only="react"
   showConsole={true}
   files={{
-    'main.ts': `// Tu código aquí
+    'main.ts': `// Nuestro código aquí
 
 `
   }}
 />
 
-En la **Parte 9**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacerte la vida más fácil.
+En la **Parte 9**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacernos la vida más fácil.

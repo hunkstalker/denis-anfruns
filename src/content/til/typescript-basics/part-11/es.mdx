@@ -7,17 +7,17 @@ import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
 import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
-Hemos llegado al final. Si has seguido todo hasta aquí, ya sabes más TypeScript que el 80% de los desarrolladores.
-Para terminar, veamos algunos patrones que te harán parecer un mago.
+Hemos llegado al final. Si hemos seguido todo hasta aquí, ya sabemos más TypeScript que el 80% de los desarrolladores.
+Para terminar, veamos algunos patrones que nos harán parecer unos magos.
 
 ## Sobrecarga de Funciones (Function Overloads)
 
-A veces una función puede hacer cosas muy distintas según qué le pases.
+A veces una función puede hacer cosas muy distintas según qué le pasemos.
 
-Si le pasas un `string`, devuelve `string`.
-Si le pasas un `number`, devuelve `boolean`.
+Si pasamos un `string`, devuelve `string`.
+Si pasamos un `number`, devuelve `boolean`.
 
-¿Cómo tipamos eso? Con "Overloads". Escribes la firma varias veces antes de la implementación real.
+¿Cómo tipamos eso? Con "Overloads". Escribimos la firma varias veces antes de la implementación real.
 
 <CodeTabs items={[
     {
@@ -44,7 +44,7 @@ const b = convertir(50);     // TS sabe que 'b' es boolean`,
 
 ## Creando una Mini-Store (Tipo Zustand/Redux)
 
-Vamos a juntar **Generics**, **Constraints** y **Partial** para crear un gestor de estado.
+Juntemos **Generics**, **Constraints** y **Partial** para crear un gestor de estado.
 
 <CodeTabs items={[
     {
@@ -84,9 +84,9 @@ myStore.setState({ user: 123 });      // ❌ Error de tipo`,
 
 ## Despedida
 
-TypeScript tiene una curva de aprendizaje. Al principio parece que solo te pone trabas y te obliga a escribir más.
-Pero llega un día en que refactorizas 20 archivos, TypeScript te grita 5 errores, los corriges, y al ejecutar... **todo funciona a la primera**.
+TypeScript tiene una curva de aprendizaje. Al principio parece que solo nos pone trabas y nos obliga a escribir más.
+Pero llega un día en que refactorizamos 20 archivos, TypeScript nos grita 5 errores, los corregimos, y al ejecutar... **todo funciona a la primera**.
 
-Ese es el momento en que te enamoras.
+Ese es el momento en que nos enamoramos.
 
 ¡Gracias por leer! 🚀

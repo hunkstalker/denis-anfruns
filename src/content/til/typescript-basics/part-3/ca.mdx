@@ -1,0 +1,157 @@
+---
+title: 'TypeScript # 3: Objectes i Interfícies'
+description: 'Com donar forma a les teves dades. Interfícies, Types i per què "any" és el teu enemic.'
+lang: 'ca'
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Fins ara hem vist tipus primitius (`string`, `number`, `boolean`). Però el món real funciona amb **objectes**.
+Usuaris, Productes, Comandes... tots són objectes amb múltiples propietats.
+
+## L'Anarquia dels Objectes Anònims
+
+En JavaScript pur, solem passar objectes d'un costat a l'altre confiant en la nostra memòria.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'JavaScript (Anarquia)',
+		code: `function imprimirUsuari(usuari) {
+    // 🤞 Esperem que 'usuari' tingui aquestes propietats...
+    console.log("Nom: " + usuari.name.toUpperCase());
+    console.log("Edat: " + usuari.age);
+}
+
+// Un mes després, algú crida la funció així:
+imprimirUsuari({ nom: "Denis", edat: 40 }); 
+// 💥 CRASH: Cannot read properties of undefined (reading 'toUpperCase')
+// Per què? Perquè passem "nom" en català però la funció esperava "name" en anglès.`,
+		lang: 'javascript'
+    }
+]} />
+
+TypeScript evita això obligant-te a definir la **FORMA** (Shape) dels teus objectes.
+
+## Interfícies: El Contracte
+
+Una `interface` és com un contracte. Si un objecte diu ser un `Usuari`, **HA_DE** complir el contracte.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `interface Usuari {
+    name: string;
+    age: number;
+    isDeveloper: boolean;
+}
+
+const denis: Usuari = {
+    name: "Denis",
+    age: 39,
+    isDeveloper: true
+}; // ✅ Compleix el contracte
+
+const pepe: Usuari = {
+    name: "Pepe"
+}; // ❌ Error: Falten les propietats 'age' i 'isDeveloper'`,
+		lang: 'typescript'
+    }
+]} />
+
+## Propietats Opcionals (`?`)
+
+A vegades no tenim totes les dades. Potser l'`email` és opcional.
+Per a això fem servir el signe d'interrogació `?` després del nom de la propietat.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Producte {
+    id: number;
+    nom: string;
+    descripcio?: string; // 👈 Opcional (string | undefined)
+}
+
+const taula: Producte = {
+    id: 1,
+    nom: "Taula d'escriptori"
+    // No cal posar descripció
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## Propietats de Només Lectura (`readonly`)
+
+Si vols assegurar-te que una propietat **mai canvi** després de crear l'objecte (com un ID), fes servir `readonly`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Configuracio {
+    readonly apiKey: string;
+    theme: "light" | "dark";
+}
+
+const config: Configuracio = {
+    apiKey: "xyz-123",
+    theme: "light"
+};
+
+config.theme = "dark"; // ✅ Pots canviar-ho
+config.apiKey = "abc-999"; // ❌ Error: Cannot assign to 'apiKey' because it is a read-only property.`,
+		lang: 'typescript'
+    }
+]} />
+
+## `type` vs `interface`?
+
+Veuràs gent fent servir `type Usuari = { ... }` en lloc d'`interface Usuari { ... }`.
+Per definir la forma d'un objecte, tots dos funcionen gairebé igual.
+
+> **Regla d'or (per ara):**
+> *   Fes servir **`interface`** per definir objectes que representen entitats (Usuari, Post, Producte).
+> *   Fes servir **`type`** per a Unions (`string | number`), primitius o tuples.
+
+A la Part 8 aprofundirem en les diferències tècniques, però per ara queda't amb això.
+
+## Prova-ho tu!
+
+Anem a posar a prova el que has après. Has de definir una interfície i crear un objecte específic per passar la validació oculta.
+
+**Requisits de l'exercici:**
+
+1.  Defineix una interfície anomenada `Videojoc` amb:
+    *   `titol` (string)
+    *   `any` (number)
+    *   `plataforma` (opcional, string)
+2.  Crea un objecte constant anomenat `jocPreferit` que implementi aquesta interfície.
+3.  Les dades han de ser exactament: **"The Legend of Zelda"**, any **1986**.
+
+import validationCode from './validation.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `// 1. Defineix la teva interfície 'Videojoc' aquí
+// interface Videojoc ...
+
+
+// 2. Crea l'objecte 'jocPreferit' amb les dades demanades
+const jocPreferit = {
+
+};
+
+console.log("Resultat:", jocPreferit);`
+  }}
+  validationCode={validationCode}
+  successSound="/audio/grunt-birthday-party-sound.mp3"
+/>
+
+A la **Part 4**, veurem què passa quan tenim molts objectes iguals... és a dir, **Arrays**.

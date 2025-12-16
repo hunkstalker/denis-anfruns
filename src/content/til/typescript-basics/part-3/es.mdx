@@ -33,7 +33,7 @@ imprimirUsuario({ nombre: "Denis", edad: 40 });
     }
 ]} />
 
-TypeScript evita esto obligándote a definir la **FORMA** (Shape) de tus objetos.
+TypeScript evita esto obligándonos a definir la **FORMA** (Shape) de nuestros objetos.
 
 ## Interfaces: El Contrato
 
@@ -88,7 +88,7 @@ const mesa: Producto = {
 
 ## Propiedades de Solo Lectura (`readonly`)
 
-Si quieres asegurarte de que una propiedad **nunca cambie** después de crear el objeto (como un ID), usa `readonly`.
+Si queremos asegurarnos de que una propiedad **nunca cambie** después de crear el objeto (como un ID), usemos `readonly`.
 
 <CodeTabs items={[
     {
@@ -111,35 +111,50 @@ config.apiKey = "abc-999"; // ❌ Error: Cannot assign to 'apiKey' because it is
 
 ## ¿`type` vs `interface`?
 
-Verás gente usando `type Usuario = { ... }` en lugar de `interface Usuario { ... }`.
+Veremos gente usando `type Usuario = { ... }` en lugar de `interface Usuario { ... }`.
 Para definir la forma de un objeto, ambos funcionan casi igual.
 
 > **Regla de oro (por ahora):**
-> *   Usa **`interface`** para definir objetos que representan entidades (Usuario, Post, Producto).
-> *   Usa **`type`** para Uniones (`string | number`), primitivos o tuplas.
+> *   Usemos **`interface`** para definir objetos que representan entidades (Usuario, Post, Producto).
+> *   Usemos **`type`** para Uniones (`string | number`), primitivos o tuplas.
 
-En la Parte 8 profundizaremos en las diferencias técnicas, pero por ahora quédate con eso.
+En la Parte 8 profundizaremos en las diferencias técnicas, pero por ahora quedémonos con eso.
 
-## ¡Inténtalo tú!
+## ¡Intentémoslo!
 
-Crea una interfaz `Videojuego` con:
-1. `titulo` (string)
-2. `año` (number)
-3. `plataforma` (opcional)
+Vamos a poner a prueba lo aprendido. Tenemos que definir una interfaz y crear un objeto específico para pasar la validación.
 
-Y crea una variable que use esa interfaz.
+**Requisitos del ejercicio:**
+
+1.  Definamos una interfaz llamada `Videojuego` con:
+    *   `titulo` (string)
+    *   `anio` (number) — *Usamos `anio` para evitar la `ñ` en código.*
+    *   `plataforma` (opcional, string)
+2.  Creemos un objeto constante llamado `juegoFavorito` que implemente esa interfaz.
+3.  Los datos deben ser exactamente: **"The Legend of Zelda"**, año **1986**.
+
+<Callout type="party" title="¡Ey!">
+    <p>Probemos a activar el volumen del editor antes de darle al botón > Run cuando vayamos a resolver el ejercicio!</p>
+</Callout>
+
+import validationCode from './validation.ts?raw';
 
 <TSEditor
   client:only="react"
   showConsole={true}
+  validationCode={validationCode}
+  successSound="/audio/grunt-birthday-party-sound.mp3"
   files={{
-    'main.ts': `// define tu interface aquí
+    'main.ts': `// 1. Definamos nuestra interface 'Videojuego' aquí
+// interface Videojuego ...
 
-const miJuego = {
-    
+
+// 2. Creamos el objeto 'juegoFavorito' con los datos pedidos
+const juegoFavorito = {
+
 };
 
-console.log(miJuego);`
+console.log("Resultado:", juegoFavorito);`
   }}
 />
 

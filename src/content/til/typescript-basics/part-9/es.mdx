@@ -8,11 +8,11 @@ import Callout from '../../../../components/mdx/Callout.astro';
 import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 TypeScript viene con una "navaja suiza" de tipos predefinidos llamados **Utility Types**.
-Son Generics que toman un tipo y te devuelven una versión modificada.
+Son Generics que toman un tipo y nos devuelven una versión modificada.
 
 ## `Partial<T>` (Todo opcional)
 
-Imagina que tienes un usuario completo, pero para una actualización (PATCH), solo envías los campos que cambiaron.
+Imaginemos que tenemos un usuario completo, pero para una actualización (PATCH), solo envíamos los campos que cambiaron.
 
 <CodeTabs items={[
     {
@@ -40,7 +40,7 @@ Lo contrario a Partial. Quita todos los `?` de una interfaz.
 
 ## `Pick<T, Keys>` (Elige lo que quieres)
 
-A veces tienes una interfaz gigante y solo necesitas un par de campos para un componente pequeño.
+A veces tenemos una interfaz gigante y solo necesitamos un par de campos para un componente pequeño.
 
 <CodeTabs items={[
     {
@@ -77,7 +77,7 @@ type UsuarioPublico = Omit<Usuario, "password">;`,
 
 ## `Record<Keys, Type>` (Diccionarios)
 
-Cuando quieres un objeto donde las claves son, por ejemplo, IDs, y los valores son Usuarios.
+Cuando queremos un objeto donde las claves son, por ejemplo, IDs, y los valores son Usuarios.
 
 <CodeTabs items={[
     {
@@ -90,9 +90,9 @@ Cuando quieres un objeto donde las claves son, por ejemplo, IDs, y los valores s
     }
 ]} />
 
-## ¡Pruébalo!
+## ¡Probémoslo!
 
-Tienes una interfaz `Todo`. Usa:
+Tenemos una interfaz `Todo`. Usemos:
 1. `Partial` para definir una variable `update`.
 2. `Pick` para definir una variable `preview` que solo tenga el título.
 
@@ -107,10 +107,10 @@ Tienes una interfaz `Todo`. Usa:
     completed: boolean;
 }
 
-// 1. Define 'TodoUpdate' usando Partial
+// 1. Definimos 'TodoUpdate' usando Partial
 type TodoUpdate = any; 
 
-// 2. Define 'TodoPreview' usando Pick (solo title y completed)
+// 2. Definimos 'TodoPreview' usando Pick (solo title y completed)
 type TodoPreview = any;
 `
   }}

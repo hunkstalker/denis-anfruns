@@ -1,0 +1,157 @@
+---
+title: 'TypeScript # 3: Objects and Interfaces'
+description: 'How to shape your data. Interfaces, Types, and why "any" is your enemy.'
+lang: 'en'
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+So far we've seen primitive types (`string`, `number`, `boolean`). But the real world runs on **objects**.
+Users, Products, Orders... they are all objects with multiple properties.
+
+## The Anarchy of Anonymous Objects
+
+In pure JavaScript, we often pass objects around trusting our memory.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'JavaScript (Anarchy)',
+		code: `function printUser(user) {
+    // 🤞 Let's hope 'user' has these properties...
+    console.log("Name: " + user.name.toUpperCase());
+    console.log("Age: " + user.age);
+}
+
+// A month later, someone calls the function like this:
+printUser({ nombre: "Denis", edad: 40 }); 
+// 💥 CRASH: Cannot read properties of undefined (reading 'toUpperCase')
+// Why? Because we passed "nombre" (Spanish) but the function expected "name" (English).`,
+		lang: 'javascript'
+    }
+]} />
+
+TypeScript prevents this by forcing you to define the **SHAPE** of your objects.
+
+## Interfaces: The Contract
+
+An `interface` is like a contract. If an object claims to be a `User`, it **MUST** fulfill the contract.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `interface User {
+    name: string;
+    age: number;
+    isDeveloper: boolean;
+}
+
+const denis: User = {
+    name: "Denis",
+    age: 39,
+    isDeveloper: true
+}; // ✅ Fulfills the contract
+
+const pepe: User = {
+    name: "Pepe"
+}; // ❌ Error: Missing properties 'age' and 'isDeveloper'`,
+		lang: 'typescript'
+    }
+]} />
+
+## Optional Properties (`?`)
+
+Sometimes we don't have all the data. Maybe the `email` is optional.
+For that, we use the question mark `?` after the property name.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Product {
+    id: number;
+    name: string;
+    description?: string; // 👈 Optional (string | undefined)
+}
+
+const desk: Product = {
+    id: 1,
+    name: "Desk"
+    // No need to include description
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## Read-only Properties (`readonly`)
+
+If you want to ensure that a property **never changes** after creating the object (like an ID), use `readonly`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Configuration {
+    readonly apiKey: string;
+    theme: "light" | "dark";
+}
+
+const config: Configuration = {
+    apiKey: "xyz-123",
+    theme: "light"
+};
+
+config.theme = "dark"; // ✅ You can change this
+config.apiKey = "abc-999"; // ❌ Error: Cannot assign to 'apiKey' because it is a read-only property.`,
+		lang: 'typescript'
+    }
+]} />
+
+## `type` vs `interface`?
+
+You'll see people using `type User = { ... }` instead of `interface User { ... }`.
+To define the shape of an object, both work almost the same.
+
+> **Golden Rule (for now):**
+> *   Use **`interface`** to define objects that represent entities (User, Post, Product).
+> *   Use **`type`** for Unions (`string | number`), primitives, or tuples.
+
+In Part 8, we will dive deeper into technical differences, but for now, stick with this.
+
+## Try it yourself!
+
+Let's put what you've learned to the test. You need to define an interface and create a specific object to pass the hidden validation.
+
+**Exercise Requirements:**
+
+1.  Define an interface called `VideoGame` with:
+    *   `title` (string)
+    *   `year` (number)
+    *   `platform` (optional, string)
+2.  Create a constant object called `favoriteGame` that implements this interface.
+3.  The data must be exactly: **"The Legend of Zelda"**, year **1986**.
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `// 1. Define your 'VideoGame' interface here
+// interface VideoGame ...
+
+
+// 2. Create the 'favoriteGame' object with the requested data
+const favoriteGame = {
+
+};
+
+console.log("Result:", favoriteGame);`
+  }}
+  validationCode={validationCode}
+  successSound="/audio/grunt-birthday-party-sound.mp3"
+/>
+
+In **Part 4**, we'll see what happens when we have many identical objects... that is, **Arrays**.

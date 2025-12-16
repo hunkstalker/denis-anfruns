@@ -33,6 +33,7 @@ Componentes estructurales y definición de rutas.
 Elementos visuales y componentes base de la interfaz.
 - `styles/` - CSS global, fuentes y variables de diseño.
 - `icons/` - Recursos gráficos SVG y componentes de iconos.
+- `icons/tech/` - Recursos gráficos SVG específicos de tecnologías.
 - `components/ui/` - **Átomos/Moléculas**: Componentes base pequeños y reutilizables (Botones, Inputs, Badges).
 - `components/common/` - Componentes genéricos de uso común en toda la app.
 - `components/layout/` - Componentes estructurales de la UI (Header, Footer, Head).

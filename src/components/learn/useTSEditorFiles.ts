@@ -8,12 +8,12 @@ import { useState, useCallback, useRef } from 'react'
  * - Creación y renombrado de archivos.
  * - Eliminación de archivos.
  */
-export const useTSEditorFiles = (initialFiles: Record<string, string>) => {
+export const useTSEditorFiles = (initialFiles: Record<string, string>, initialActiveFile?: string) => {
 	// Estado principal de los archivos { "main.ts": "código..." }
 	const [localFiles, setLocalFiles] = useState<Record<string, string>>(initialFiles)
 	
 	// Archivo seleccionado actualmente en el editor
-	const [activeFile, setActiveFile] = useState<string>(Object.keys(initialFiles)[0])
+	const [activeFile, setActiveFile] = useState<string>(initialActiveFile || Object.keys(initialFiles)[0])
 
 	// Estados para la interfaz de creación de archivos
 	const [isCreatingFile, setIsCreatingFile] = useState(false)

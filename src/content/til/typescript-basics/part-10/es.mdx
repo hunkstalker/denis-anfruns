@@ -28,7 +28,7 @@ type B = EsString<number>; // "No"`,
 ## La palabra clave `infer`
 
 Sirve para crear una **variable temporal** dentro de esa condición.
-Imagina que quieres saber qué devuelve una función, pero no tienes acceso a su código fuente, solo al tipo de la función.
+Imaginemos que queremos saber qué devuelve una función, pero no tenemos acceso a su código fuente, solo al tipo de la función.
 
 <CodeTabs items={[
     {
@@ -51,15 +51,15 @@ type Resultado = GetReturnType<typeof dameNumero>;
 
 ## Ejemplo Útil: Unpack Promise
 
-Imagina que tienes una `Promise<User>`, pero quieres obtener el tipo `User` directamente.
+Imaginemos que tenemos una `Promise<User>`, pero queremos obtener el tipo `User` directamente.
 
 <CodeTabs items={[
     {
 		label: 'TypeScript',
-		code: `// Tienes esto:
+		code: `// Tenemos esto:
 type RespuestaPromesa = Promise<{ id: number; name: string }>;
 
-// Quieres esto:
+// Queremos esto:
 // { id: number; name: string }
 
 // Solución con infer:
@@ -72,9 +72,9 @@ type UsuarioDesempaquetado = UnpackPromise<RespuestaPromesa>;
     }
 ]} />
 
-## ¡Pruébalo!
+## ¡Probémoslo!
 
-Crea un tipo `UnpackArray<T>` que extraiga el tipo de un array.
+Creemos un tipo `UnpackArray<T>` que extraiga el tipo de un array.
 `UnpackArray<string[]>` debería devolver `string`.
 
 <TSEditor

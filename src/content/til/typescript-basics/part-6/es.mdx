@@ -14,7 +14,7 @@ Ahí entran los **Generics**. Son como "parámetros" pero para Tipos.
 
 ## El Problema: Duplicación o `any`
 
-Imagina una función que devuelve lo que le pasas (clásica función `identity`).
+Imaginemos una función que devuelve lo que le pasas (clásica función `identity`).
 
 <CodeTabs
   status="error"
@@ -37,7 +37,7 @@ const resultado = returnAny("Hola");
 
 ## La Solución: Generics `<T>`
 
-Podemos decirle a la función: *"Oye, voy a pasarte un tipo al que llamaremos `T`. Úsalo para tipar el argumento y el retorno"*.
+Podemos decirle a la función: *"Oye, vamos a pasarte un tipo al que llamaremos `T`. Úsalo para tipar el argumento y el retorno"*.
 
 <CodeTabs
   status="success"
@@ -57,7 +57,7 @@ const str = identity("Hola"); // str es "Hola" (literal) o string`,
     }
 ]} />
 
-La `T` es una convención (viene de *Type*), pero puedes llamarlo como quieras: `<Data>`, `<Response>`, `<Props>`.
+La `T` es una convención (viene de *Type*), pero podemos llamarlo como queramos: `<Data>`, `<Response>`, `<Props>`.
 
 ## Interfaces Genéricas
 
@@ -87,7 +87,7 @@ const cajaDeRegalo: Caja<number> = {
 
 ## Ejemplo Real: `useState`
 
-Si has usado React, ya has usado Generics sin saberlo.
+Si hemos usado React, ya hemos usado Generics sin saberlo.
 
 <CodeTabs items={[
     {
@@ -103,9 +103,9 @@ const [user, setUser] = useState<Usuario | null>(null);`,
     }
 ]} />
 
-## ¡Pruébalo!
+## ¡Probémoslo!
 
-Crea una función `envolver` que tome un valor de tipo `T` y lo devuelva dentro de un array `[T]`.
+Creemos una función `envolver` que tome un valor de tipo `T` y lo devuelva dentro de un array `[T]`.
 
 <TSEditor
   client:only="react"

@@ -12,7 +12,7 @@ En la parte anterior vimos que `<T>` puede ser cualquier cosa. A veces, eso es *
 
 ## Restricciones (`extends`)
 
-Imagina esta función:
+Imaginemos esta función:
 
 <CodeTabs
   status="error"
@@ -54,9 +54,9 @@ obtenerLongitud(123); // ❌ Error: number no tiene .length`,
 
 ## Generics con `keyof` (El truco maestro)
 
-Este patrón lo verás en todas partes. Queremos una función que obtenga una propiedad de un objeto de forma segura.
+Este patrón lo veremos en todas partes. Queremos una función que obtenga una propiedad de un objeto de forma segura.
 
-Necesitamos definr dos Generics:
+Necesitamos definir dos Generics:
 1. `T`: El objeto.
 2. `K`: La clave (key). Pero `K` no puede ser cualquier string, debe ser **una key de T**.
 
@@ -87,7 +87,7 @@ Esto es muy útil para no obligar al usuario a escribir el tipo siempre.
 <CodeTabs items={[
     {
 		label: 'TypeScript',
-		code: `// Si no me pasas T, asumiré que es 'string'
+		code: `// Si no pasamos T, asumiré que es 'string'
 interface RespuestaAPI<T = string> {
     data: T;
     error: boolean;
@@ -108,9 +108,9 @@ const respuestaCompleja: RespuestaAPI<number> = {
     }
 ]} />
 
-## ¡Pruébalo!
+## ¡Probémoslo!
 
-Crea una función `fusionar` que tome dos objetos `obj1` y `obj2` y los combine. Tipa la función usando dos generics `T` y `U`.
+Creemos una función `fusionar` que tome dos objetos `obj1` y `obj2` y los combine. Tipemos la función usando dos generics `T` y `U`.
 
 <TSEditor
   client:only="react"

@@ -56,7 +56,7 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 ├── packages/
 │   └── astro-search-badges/  # Submodule: componente de search badges
 ├── public/
-│   └── fonts/, images
+│   └── fonts/, images, audio
 └── dist/                 # Build output + Pagefind index
 ```
 
