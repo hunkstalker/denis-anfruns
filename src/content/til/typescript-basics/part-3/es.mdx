@@ -1,0 +1,146 @@
+---
+title: 'TypeScript # 3: Objetos e Interfaces'
+description: 'Cómo dar forma a tus datos. Interfaces, Types y por qué "any" es tu enemigo.'
+lang: 'es'
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Hasta ahora hemos visto tipos primitivos (`string`, `number`, `boolean`). Pero el mundo real funciona con **objetos**.
+Usuarios, Productos, Pedidos... todos son objetos con múltiples propiedades.
+
+## La Anarquía de los Objetos Anónimos
+
+En JavaScript puro, solemos pasar objetos de un lado a otro confiando en nuestra memoria.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'JavaScript (Anarquía)',
+		code: `function imprimirUsuario(usuario) {
+    // 🤞 Esperemos que 'usuario' tenga estas propiedades...
+    console.log("Nombre: " + usuario.name.toUpperCase());
+    console.log("Edad: " + usuario.age);
+}
+
+// Un mes después, alguien llama a la función así:
+imprimirUsuario({ nombre: "Denis", edad: 40 }); 
+// 💥 CRASH: Cannot read properties of undefined (reading 'toUpperCase')
+// ¿Por qué? Porque pasamos "nombre" en español pero la función esperaba "name" en inglés.`,
+		lang: 'javascript'
+    }
+]} />
+
+TypeScript evita esto obligándote a definir la **FORMA** (Shape) de tus objetos.
+
+## Interfaces: El Contrato
+
+Una `interface` es como un contrato. Si un objeto dice ser un `Usuario`, **DEBE** cumplir el contrato.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `interface Usuario {
+    name: string;
+    age: number;
+    isDeveloper: boolean;
+}
+
+const denis: Usuario = {
+    name: "Denis",
+    age: 39,
+    isDeveloper: true
+}; // ✅ Cumple el contrato
+
+const pepe: Usuario = {
+    name: "Pepe"
+}; // ❌ Error: Faltan las propiedades 'age' e 'isDeveloper'`,
+		lang: 'typescript'
+    }
+]} />
+
+## Propiedades Opcionales (`?`)
+
+A veces no tenemos todos los datos. Quizás el `email` es opcional.
+Para eso usamos el signo de interrogación `?` después del nombre de la propiedad.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Producto {
+    id: number;
+    nombre: string;
+    descripcion?: string; // 👈 Opcional (string | undefined)
+}
+
+const mesa: Producto = {
+    id: 1,
+    nombre: "Mesa de escritorio"
+    // No hace falta poner descripción
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## Propiedades de Solo Lectura (`readonly`)
+
+Si quieres asegurarte de que una propiedad **nunca cambie** después de crear el objeto (como un ID), usa `readonly`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Configuracion {
+    readonly apiKey: string;
+    theme: "light" | "dark";
+}
+
+const config: Configuracion = {
+    apiKey: "xyz-123",
+    theme: "light"
+};
+
+config.theme = "dark"; // ✅ Puedes cambiarlo
+config.apiKey = "abc-999"; // ❌ Error: Cannot assign to 'apiKey' because it is a read-only property.`,
+		lang: 'typescript'
+    }
+]} />
+
+## ¿`type` vs `interface`?
+
+Verás gente usando `type Usuario = { ... }` en lugar de `interface Usuario { ... }`.
+Para definir la forma de un objeto, ambos funcionan casi igual.
+
+> **Regla de oro (por ahora):**
+> *   Usa **`interface`** para definir objetos que representan entidades (Usuario, Post, Producto).
+> *   Usa **`type`** para Uniones (`string | number`), primitivos o tuplas.
+
+En la Parte 8 profundizaremos en las diferencias técnicas, pero por ahora quédate con eso.
+
+## ¡Inténtalo tú!
+
+Crea una interfaz `Videojuego` con:
+1. `titulo` (string)
+2. `año` (number)
+3. `plataforma` (opcional)
+
+Y crea una variable que use esa interfaz.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `// define tu interface aquí
+
+const miJuego = {
+    
+};
+
+console.log(miJuego);`
+  }}
+/>
+
+En la **Parte 4**, veremos qué pasa cuando tenemos muchos objetos iguales... es decir, **Arrays**.

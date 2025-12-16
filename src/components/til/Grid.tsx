@@ -1,9 +1,9 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TilCard from './Card'
-import type { TilPost } from '../../utils/til-content'
-import type { Tag } from '../../data/tags'
-import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
+import type { TilPost } from '@utils/til-content'
+import type { Tag } from '@data/tags'
+import { useIntersectionObserver } from '@hooks/useIntersectionObserver'
 
 interface Props {
 	posts: TilPost[]

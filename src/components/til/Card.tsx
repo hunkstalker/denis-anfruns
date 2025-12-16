@@ -1,14 +1,14 @@
-import { useReadStatus } from '../../hooks/useReadStatus'
-import { BADGE_LABELS } from '../../utils/read-status'
-import type { TilPost } from '../../utils/til-content'
+import { useReadStatus } from '@hooks/useReadStatus'
+import { BADGE_LABELS } from '@utils/read-status'
+import type { TilPost } from '@utils/til-content'
 import { Badge } from '../ui/Badge'
 import { ArrowUpRight } from 'lucide-react'
-import typescriptSvg from '../../icons/typescript.svg?raw'
-import gitSvg from '../../icons/git.svg?raw'
-import powerappsSvg from '../../icons/power-apps.svg?raw'
-import astroSvg from '../../icons/astro-logo.svg?raw'
-import javascriptSvg from '../../icons/javascript.svg?raw'
-import viteSvg from '../../icons/vite.svg?raw'
+import typescriptSvg from '@icons/tech/typescript.svg?raw'
+import gitSvg from '@icons/tech/git.svg?raw'
+import powerappsSvg from '@icons/tech/power-apps.svg?raw'
+import astroSvg from '@icons/tech/astro-logo.svg?raw'
+import javascriptSvg from '@icons/tech/javascript.svg?raw'
+import viteSvg from '@icons/tech/vite.svg?raw'
 
 interface Props {
 	post: TilPost

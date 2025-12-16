@@ -1,13 +1,13 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro'
-import Nav from '../../components/layout/Nav.astro'
+import BaseLayout from '@layouts/BaseLayout.astro'
+import Nav from '@components/layout/Nav.astro'
 
-import { getDevlogs, groupDevlogsBySeries, type DevlogPost } from '../../utils/devlog-content'
-import { getLangFromSlug, type SupportedLang } from '../../utils/blogi18n'
-import { languages } from '../../i18n/ui'
-import { useTranslations } from '../../i18n/utils'
-import TilAside from '../../components/til/Aside.astro'
-import DevLogGrid from '../../components/devlog/Grid'
+import { getDevlogs, groupDevlogsBySeries } from '@utils/devlog-content'
+import { getLangFromSlug, type SupportedLang } from '@utils/blogi18n'
+import { languages } from '@i18n/ui'
+import { useTranslations } from '@i18n/utils'
+import TilAside from '@components/til/Aside.astro'
+import DevLogGrid from '@components/devlog/Grid'
 
 export async function getStaticPaths() {
 	return Object.keys(languages)
@@ -27,7 +27,6 @@ const devlogs = groupDevlogsBySeries(posts)
 
 const articles = devlogs
 ---
-
 <BaseLayout siteTitle={t('blog.title')} lang={lang}>
 	<Nav lang={lang as 'es' | 'en' | 'ca'} />
 	<div class="container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28">

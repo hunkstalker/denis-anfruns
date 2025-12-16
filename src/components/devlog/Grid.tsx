@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import DevLogCard from './Card'
-import type { DevlogPost } from '../../utils/devlog-content'
-import { useDevLogFilter } from '../../hooks/useDevLogFilter'
+import type { DevlogPost } from '@utils/devlog-content'
+import { useDevLogFilter } from '@hooks/useDevLogFilter'
 import DevLogFilterBar from './FilterBar'
-import { useIntersectionObserver } from '../../hooks/useIntersectionObserver'
+import { useIntersectionObserver } from '@hooks/useIntersectionObserver'
 
 interface Props {
 	posts: DevlogPost[]

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import { useStore } from '@nanostores/react'
-import { isMenuOpen } from '../../stores/menuStore'
+import { isMenuOpen } from '@stores/menuStore'
 import { ChevronDown, Shapes } from 'lucide-react'
 
 interface MenuItem {

@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content'
-import BaseLayout from '../../layouts/BaseLayout.astro'
-import BackLink from '../../components/ui/BackLink.astro'
-import Nav from '../../components/layout/Nav.astro'
+import BaseLayout from '@layouts/BaseLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import Nav from '@components/layout/Nav.astro'
 
 export async function getStaticPaths() {
 	const pages = await getCollection('privacy')

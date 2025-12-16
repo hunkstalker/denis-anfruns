@@ -1,0 +1,122 @@
+---
+title: 'TypeScript #6: Generics (Lo básico)'
+description: 'La herramienta más potente de TS. Aprende a escribir código reutilizable y flexible con <T>.'
+lang: 'es'
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Hasta ahora, nuestros tipos eran fijos. `string` es siempre `string`.
+Pero, ¿y si queremos crear una función o un componente que funcione con **cualquier tipo**, pero sin perder la seguridad?
+
+Ahí entran los **Generics**. Son como "parámetros" pero para Tipos.
+
+## El Problema: Duplicación o `any`
+
+Imagina una función que devuelve lo que le pasas (clásica función `identity`).
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Opción 1: Duplicar código para cada tipo
+function returnString(val: string): string { return val; }
+function returnNumber(val: number): number { return val; }
+
+// Opción 2: Usar 'any' (Perdemos el tipo)
+function returnAny(val: any): any { return val; }
+
+const resultado = returnAny("Hola"); 
+// TS no sabe que 'resultado' es string, cree que es 'any'.
+// resultado.toUpperCase(); // ❌ No autocompleta`,
+		lang: 'typescript'
+    }
+]} />
+
+## La Solución: Generics `<T>`
+
+Podemos decirle a la función: *"Oye, voy a pasarte un tipo al que llamaremos `T`. Úsalo para tipar el argumento y el retorno"*.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function identity<T>(val: T): T {
+    return val;
+}
+
+// Uso explícito (le pasamos el tipo)
+const num = identity<number>(123); // num es number
+
+// Inferencia (TS es listo y lo adivina)
+const str = identity("Hola"); // str es "Hola" (literal) o string`,
+		lang: 'typescript'
+    }
+]} />
+
+La `T` es una convención (viene de *Type*), pero puedes llamarlo como quieras: `<Data>`, `<Response>`, `<Props>`.
+
+## Interfaces Genéricas
+
+Esto es súper común en React o respuestas de API.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Una caja que puede contener cualquier COSA
+interface Caja<T> {
+    contenido: T;
+    etiqueta: string;
+}
+
+const cajaDeZapatos: Caja<string> = {
+    contenido: "Nike Air",
+    etiqueta: "Deportes"
+};
+
+const cajaDeRegalo: Caja<number> = {
+    contenido: 1000,
+    etiqueta: "Dinero"
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## Ejemplo Real: `useState`
+
+Si has usado React, ya has usado Generics sin saberlo.
+
+<CodeTabs items={[
+    {
+		label: 'React',
+		code: `// useState es una función Genérica: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]
+
+// Inferencia:
+const [name, setName] = useState("Denis"); // TS infiere que T es string
+
+// Explícito (útil cuando el valor inicial es null):
+const [user, setUser] = useState<Usuario | null>(null);`,
+		lang: 'tsx'
+    }
+]} />
+
+## ¡Pruébalo!
+
+Crea una función `envolver` que tome un valor de tipo `T` y lo devuelva dentro de un array `[T]`.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `// function envolver...
+
+const num = envolver(10);
+console.log(num); // Debería ser [10]
+`
+  }}
+/>
+
+En la **Parte 7**, subiremos el nivel. Veremos cómo **restringir** esos Generics (para que no valga "cualquier cosa") y cómo darles valores por defecto.

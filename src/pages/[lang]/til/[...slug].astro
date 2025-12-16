@@ -1,14 +1,14 @@
 ---
-import { getTils, type TilPost } from '../../../utils/til-content'
-import ContentLayout from '../../../layouts/ContentLayout.astro'
-import BackLink from '../../../components/ui/BackLink.astro'
-import ChevronUp from '../../../icons/chevron-up.svg'
-import ChevronRight from '../../../icons/chevron-right.svg'
-import { languages } from '../../../i18n/ui'
-import { useTranslations } from '../../../i18n/utils'
-import SeriesWidget from '../../../components/common/SeriesWidget.astro'
-import TableOfContents from '../../../components/common/TableOfContents.astro'
-import MarkAsRead from '../../../components/common/MarkAsRead.astro'
+import { getTils, type TilPost } from '@utils/til-content'
+import ContentLayout from '@layouts/ContentLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import ChevronUp from '@icons/chevron-up.svg'
+import ChevronRight from '@icons/chevron-right.svg'
+import { languages } from '@i18n/ui'
+import { useTranslations } from '@i18n/utils'
+import SeriesWidget from '@components/common/SeriesWidget.astro'
+import TableOfContents from '@components/common/TableOfContents.astro'
+import MarkAsRead from '@components/common/MarkAsRead.astro'
 
 export async function getStaticPaths() {
 	const allPosts = await getTils()

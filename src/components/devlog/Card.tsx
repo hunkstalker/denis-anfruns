@@ -1,7 +1,7 @@
-import { useReadStatus } from '../../hooks/useReadStatus'
-import { BADGE_LABELS } from '../../utils/read-status'
-import type { DevlogPost } from '../../utils/devlog-content'
-import { getBaseSlug } from '../../utils/blogi18n'
+import { useReadStatus } from '@hooks/useReadStatus'
+import { BADGE_LABELS } from '@utils/read-status'
+import type { DevlogPost } from '@utils/devlog-content'
+import { getBaseSlug } from '@utils/blogi18n'
 import { ArrowUpRight } from 'lucide-react'
 import { Badge } from '../ui/Badge'
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getBadgeStatus, type BadgeStatus, type CollectionType } from '../utils/read-status'
+import { getBadgeStatus, type BadgeStatus, type CollectionType } from '@utils/read-status'
 
 export function useReadStatus(
   slug: string,
@@ -24,7 +24,7 @@ export function useReadStatus(
 
     checkStatus()
 
-    const handleUpdate = (e: Event) => {
+    const handleUpdate = () => {
       // We could filter by collection in the event detail, 
       // but checking everything is cheap enough for now.
       checkStatus()

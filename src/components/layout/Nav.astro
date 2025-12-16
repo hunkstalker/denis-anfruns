@@ -1,22 +1,21 @@
 ---
 // Importación de componentes UI
-import Button from '../ui/Button.astro'
-import ThemeToggle from '../ui/ThemeToggle.astro'
-import LanguagePicker from '../ui/LanguagePicker.astro'
+import Button from '@components/ui/Button.astro'
+import ThemeToggle from '@components/ui/ThemeToggle.astro'
+import LanguagePicker from '@components/ui/LanguagePicker.astro'
 import MenuToggle from './MenuToggle'
 import MobileMenu from './MobileMenu'
 import NavDropdown from './NavDropdown'
-import Search from '../search/Search.astro'
-import SearchResults from '../search/SearchResults.astro'
+import Search from '@components/search/Search.astro'
+import SearchResults from '@components/search/SearchResults.astro'
 
-// Importación de utilidades de internacionalización y navegación
-import { useTranslations } from '../../i18n/utils'
-import { navItems } from '../../i18n/navigation'
+import { useTranslations } from '@i18n/utils'
+import { navItems } from '@i18n/navigation'
 
 // Importación de Iconos
 
-import SearchIcon from '../../icons/search.svg'
-import PlaygroundIcon from '../../icons/playground.svg'
+import SearchIcon from '@icons/search.svg'
+import PlaygroundIcon from '@icons/playground.svg'
 
 // Definición de las Props
 interface Props {
@@ -26,8 +25,8 @@ interface Props {
 // Extracción de props y configuración de traducciones
 const { lang = 'es' } = Astro.props
 // Importación de componentes UI
-import SearchBadges from '../../../packages/astro-search-badges/src/SearchBadges.astro'
-import { ui } from '../../i18n/ui'
+import SearchBadges from 'astro-search-badges/src/SearchBadges.astro'
+import { ui } from '@i18n/ui'
 
 const t = useTranslations(lang)
 
@@ -166,7 +165,6 @@ const menuItems = navItems.map(item => {
 				</button>
 
 				<!-- Barra de Búsqueda (Solo Desktop) - Estilo Híbrido -->
-				<!-- Barra de Búsqueda (Solo Desktop) - Estilo Híbrido -->
 				<div
 					class='group/search relative hidden w-48 shrink transition-all duration-300 md:block lg:w-72 xl:w-96'>
 					<div class='relative w-full'>
@@ -219,7 +217,7 @@ const menuItems = navItems.map(item => {
 <Search lang={lang} />
 
 <script>
-	import { ui, defaultLang } from '../../i18n/ui'
+	import { ui, defaultLang } from '@i18n/ui'
 
 	// Lógica para abrir el buscador desde el botón móvil
 	const searchMobileBtn = document.getElementById('search-mobile-btn')

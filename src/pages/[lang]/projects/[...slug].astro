@@ -1,11 +1,11 @@
 ---
-import { getProjects } from '../../../utils/project-content'
-import BaseLayout from '../../../layouts/BaseLayout.astro'
-import Nav from '../../../components/layout/Nav.astro'
-import { getLangFromSlug } from '../../../utils/blogi18n'
-import { useTranslations } from '../../../i18n/utils'
-import { languages } from '../../../i18n/ui'
-import ChevronLeft from '../../../icons/chevron-left.svg'
+import { getProjects } from '@utils/project-content'
+import BaseLayout from '@layouts/BaseLayout.astro'
+import Nav from '@components/layout/Nav.astro'
+import { getLangFromSlug } from '@utils/blogi18n'
+import { useTranslations } from '@i18n/utils'
+import { languages } from '@i18n/ui'
+import ChevronLeft from '@icons/chevron-left.svg'
 
 export async function getStaticPaths() {
 	const projects = await getProjects()

@@ -1,17 +1,17 @@
 ---
-import { getDevlogs, type DevlogPost } from '../../utils/devlog-content'
-import ContentLayout from '../../layouts/ContentLayout.astro'
-import BackLink from '../../components/ui/BackLink.astro'
-import TableOfContents from '../../components/common/TableOfContents.astro'
-import SeriesWidget from '../../components/common/SeriesWidget.astro'
+import { getDevlogs, type DevlogPost } from '@utils/devlog-content'
+import ContentLayout from '@layouts/ContentLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import TableOfContents from '@components/common/TableOfContents.astro'
+import SeriesWidget from '@components/common/SeriesWidget.astro'
 
-import MarkAsRead from '../../components/common/MarkAsRead.astro'
-import { getLangFromSlug, getBaseSlug } from '../../utils/blogi18n'
-import { useTranslations } from '../../i18n/utils'
+import MarkAsRead from '@components/common/MarkAsRead.astro'
+import { getLangFromSlug, getBaseSlug } from '@utils/blogi18n'
+import { useTranslations } from '@i18n/utils'
 
-import ChevronUp from '../../icons/chevron-up.svg'
-import ChevronRight from '../../icons/chevron-right.svg'
-import ListIcon from '../../icons/list.svg'
+import ChevronUp from '@icons/chevron-up.svg'
+import ChevronRight from '@icons/chevron-right.svg'
+import ListIcon from '@icons/list.svg'
 
 export async function getStaticPaths() {
 	const posts = await getDevlogs()

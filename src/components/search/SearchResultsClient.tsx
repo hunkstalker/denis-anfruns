@@ -1,6 +1,46 @@
 import React, { useEffect, useRef, useState } from 'react'
-import type { Pagefind, PagefindResult } from '../../types/pagefind'
 import { RocketIcon, PinIcon, BookmarkIcon } from './SearchIcons'
+
+interface PagefindResult {
+	id: string
+	data: () => Promise<any>
+	url: string
+	content: string
+	excerpt: string
+	filters: Record<string, string[]>
+	meta: {
+		title: string
+		image: string
+	}
+	anchors: {
+		element: string
+		id: string
+		text: string
+		location: number
+	}[]
+	weighted_locations: {
+		weight: number
+		balanced_score: number
+		location: number
+	}[]
+	locations: number[]
+	raw_content: string
+	raw_url: string
+	score: number
+	sub_results: {
+		title: string
+		url: string
+		locations: number[]
+		excerpt: string
+	}[]
+	word_count: number
+	language: string
+}
+
+interface Pagefind {
+	search: (query: string) => Promise<{ results: PagefindResult[] }>
+	options: (options: any) => void
+}
 
 type SearchResult = {
 	url: string
@@ -160,7 +200,7 @@ export default function SearchResultsClient({
 				const currentLang = document.documentElement.lang || 'es'
 
 				// Filter by language
-				const langFiltered = data.filter((r) => {
+				const langFiltered = data.filter((r: SearchResult) => {
 					if (r.language) return r.language === currentLang
 					// URL Fallback
 					if (currentLang === 'es') return !r.url.startsWith('/en/') && !r.url.startsWith('/ca/')

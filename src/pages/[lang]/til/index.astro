@@ -1,11 +1,11 @@
 ---
-import ContentLayout from '../../../layouts/ContentLayout.astro'
-import BackLink from '../../../components/ui/BackLink.astro'
-import { getTils } from '../../../utils/til-content'
-import { useTranslations } from '../../../i18n/utils'
-import { languages } from '../../../i18n/ui'
-import type { SupportedLang } from '../../../utils/blogi18n'
-import Grid from '../../../components/til/Grid'
+import ContentLayout from '@layouts/ContentLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import { getTils } from '@utils/til-content'
+import { useTranslations } from '@i18n/utils'
+import { languages } from '@i18n/ui'
+import type { SupportedLang } from '@utils/blogi18n'
+import Grid from '@components/til/Grid'
 
 export async function getStaticPaths() {
 	return Object.keys(languages)

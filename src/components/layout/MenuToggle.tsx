@@ -1,5 +1,5 @@
 import { useStore } from '@nanostores/react'
-import { isMenuOpen } from '../../stores/menuStore'
+import { isMenuOpen } from '@stores/menuStore'
 import { Menu, X } from 'lucide-react'
 
 interface Props {

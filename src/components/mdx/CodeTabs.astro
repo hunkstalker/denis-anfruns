@@ -1,7 +1,7 @@
 ---
-import { getHighlighterInstance } from '../../utils/highlighter'
-import copyIconSvg from '../../icons/copy.svg?raw'
-import checkIconSvg from '../../icons/check.svg?raw'
+import { getHighlighterInstance } from '@utils/highlighter'
+import copyIconSvg from '@icons/copy.svg?raw'
+import checkIconSvg from '@icons/check.svg?raw'
 
 interface TabItem {
 	label: string
@@ -16,9 +16,9 @@ interface Props {
 
 const { items, status = 'default' } = Astro.props
 
-import { useTranslations } from '../../i18n/utils'
+import { useTranslations } from '@i18n/utils'
 
-import type { Lang } from '../../i18n/ui'
+import type { Lang } from '@i18n/ui'
 
 const lang = Astro.currentLocale || 'es'
 const t = useTranslations(lang as Lang)
