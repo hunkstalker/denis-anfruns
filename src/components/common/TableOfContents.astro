@@ -1,0 +1,132 @@
+---
+import type { MarkdownHeading } from 'astro'
+import { useTranslations } from '../../i18n/utils'
+import type { SupportedLang } from '../../utils/blogi18n'
+import ListIcon from '../../icons/list.svg'
+import IconChevronUp from '../../icons/chevron-up.svg'
+
+interface Props {
+	headings: MarkdownHeading[]
+	lang?: SupportedLang
+	mode?: 'static' | 'collapsible'
+}
+
+const { headings, lang = 'es', mode = 'static' } = Astro.props
+const t = useTranslations(lang)
+
+const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3).map(h => ({
+	...h,
+	cleanText: h.text.replace(/[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}]+/gu, '').trim()
+}))
+const tocId = 'toc-' + Math.random().toString(36).substr(2, 9)
+---
+
+{
+	toc.length > 0 && (
+		mode === 'collapsible' ? (
+			<div
+				id={tocId}
+				class='toc-widget group rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900 mb-8'
+				data-state='closed'>
+				<button class='accordion-trigger flex w-full cursor-pointer list-none items-center justify-between font-medium text-zinc-900 dark:text-zinc-100'>
+					<span class='flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
+						<ListIcon class="size-3.5" />
+						{t('blog.tableOfContents')}
+					</span>
+					<IconChevronUp class='chevron-icon size-4 text-zinc-500 transition-transform duration-300' width="16" height="16" />
+				</button>
+				<div class='accordion-content grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out'>
+					<div class='overflow-hidden'>
+						<ul class="space-y-1 mt-4 toc-list">
+							{toc.map((heading) => {
+								return (
+								<a
+									href={`#${heading.slug}`}
+									class={`block py-1 text-zinc-500 no-underline hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 ${heading.depth === 2 ? 'pl-4' : 'text-xs pl-8'} `}
+								>
+									{heading.cleanText}
+								</a>
+								)
+							})}
+						</ul>
+					</div>
+				</div>
+			</div>
+		) : (
+		<nav class="toc-container max-h-[calc(100vh-10rem)] overflow-y-auto pr-4 text-sm">
+			<h3 class="text-xs mb-4 flex items-center gap-2 px-3 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+				<ListIcon class="size-3.5" />
+				{t('blog.tableOfContents')}
+			</h3>
+			<ul class="space-y-1 toc-list">
+				{toc.map((heading) => {
+                    return (
+					<a
+						href={`#${heading.slug}`}
+						class={`block py-1 text-zinc-500 no-underline hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 ${heading.depth === 2 ? 'pl-4' : 'text-xs pl-8'} `}
+					>
+						{heading.cleanText}
+					</a>
+				    )
+                })}
+
+			</ul>
+		</nav>
+		)
+	)
+}
+
+<script>
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.getAttribute('id')
+			if (entry.intersectionRatio > 0) {
+				document.querySelectorAll('.toc-container a, .toc-widget a').forEach((link) => {
+					link.classList.remove(
+						'text-blue-600',
+						'font-medium',
+						'border-l-2',
+						'border-blue-500',
+						'-ml-0.5',
+                        'dark:text-blue-400'
+					)
+				})
+				const activeLinks = document.querySelectorAll(`.toc-container a[href="#${id}"], .toc-widget a[href="#${id}"]`)
+				activeLinks.forEach(link => {
+					link.classList.add('text-blue-600', 'dark:text-blue-400', 'font-medium')
+				})
+			}
+		})
+	})
+
+	document.querySelectorAll('article h2, article h3').forEach((h) => {
+		observer.observe(h)
+	})
+
+	function initTocAccordion() {
+		document.querySelectorAll('.toc-widget .accordion-trigger').forEach(trigger => {
+			const newTrigger = trigger.cloneNode(true) as HTMLElement
+			trigger.parentNode?.replaceChild(newTrigger, trigger)
+
+			newTrigger.addEventListener('click', e => {
+				const target = e.target as HTMLElement
+				const widget = target.closest('.toc-widget') as HTMLElement
+				const content = widget?.querySelector('.accordion-content')
+				const icon = widget?.querySelector('.chevron-icon')
+
+				if (widget && widget.dataset.state === 'closed') {
+					widget.dataset.state = 'open'
+					content?.classList.replace('grid-rows-[0fr]', 'grid-rows-[1fr]')
+					icon?.classList.add('rotate-180')
+				} else if (widget) {
+					widget.dataset.state = 'closed'
+					content?.classList.replace('grid-rows-[1fr]', 'grid-rows-[0fr]')
+					icon?.classList.remove('rotate-180')
+				}
+			})
+		})
+	}
+
+	document.addEventListener('astro:page-load', initTocAccordion)
+	initTocAccordion()
+</script>

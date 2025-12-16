@@ -5,7 +5,7 @@ import BackLink from '../../components/ui/BackLink.astro'
 import ChevronUp from '../../icons/chevron-up.svg'
 import ChevronRight from '../../icons/chevron-right.svg'
 import SeriesWidget from '../../components/common/SeriesWidget.astro'
-import TableOfContents from '../../components/devlog/TableOfContents.astro'
+import TableOfContents from '../../components/common/TableOfContents.astro'
 import MarkAsRead from '../../components/common/MarkAsRead.astro'
 
 export async function getStaticPaths() {
@@ -110,6 +110,15 @@ if (post.data.series) {
 			<hr class='animate-fade-in-up mt-8 border-stone-400 delay-300 dark:border-zinc-800' />
 		</div>
 
+		{/* Mobile TOC */}
+		{
+			headings.length > 0 && (
+				<div class='mb-8 lg:hidden'>
+					<TableOfContents headings={headings} lang={lang} mode='collapsible' />
+				</div>
+			)
+		}
+
 		{/* Mobile Series Widget */}
 		{
 			post.data.series && (
@@ -120,6 +129,7 @@ if (post.data.series) {
 						lang={lang}
 						collection='til'
 						id='mobile-series'
+						mode='collapsible'
 					/>
 				</div>
 			)

@@ -4,6 +4,7 @@ import { getDevlogs, type DevlogPost } from '../../utils/devlog-content'
 import { getBaseSlug, getLangFromSlug, type SupportedLang } from '../../utils/blogi18n'
 import CheckIcon from '../../icons/check.svg'
 import { Badge } from '../ui/Badge'
+import ChevronUp from '../../icons/chevron-up.svg'
 
 interface Props {
 	seriesId: string
@@ -11,6 +12,7 @@ interface Props {
 	lang?: SupportedLang
 	collection: 'til' | 'devlog'
 	id?: string // Explicit ID to handle multiple instances (mobile/desktop)
+	mode?: 'static' | 'collapsible'
 }
 
 const badgetText = {
@@ -19,7 +21,7 @@ const badgetText = {
 	en: { 'b.new': 'NEW' },
 }
 
-const { seriesId, currentSlug, lang = 'es', collection, id } = Astro.props
+const { seriesId, currentSlug, lang = 'es', collection, id, mode = 'static' } = Astro.props
 
 // Generate distinct ID for this widget instance if not provided
 const widgetId = id || 'sw-' + Math.random().toString(36).substr(2, 9)
@@ -96,102 +98,221 @@ const enableScroll = totalPosts > 6
 const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 ---
 
-<div id={widgetId} class='series-widget'>
-	<h3
-		class='text-xs mb-4 flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
-		Serie:
-		<span class='font-medium normal-case tracking-normal text-[--tangerine]'>
-			{titleInfo}
-		</span>
-	</h3>
+{
+	mode === 'collapsible' ? (
+		<div
+			id={widgetId}
+			class='series-widget group rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900'
+			data-state='closed'>
+			<button class='accordion-trigger flex w-full cursor-pointer list-none items-center justify-between font-medium text-zinc-900 dark:text-zinc-100'>
+				<span class='text-xs flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
+					Serie:
+					<span class='font-medium normal-case tracking-normal text-[--tangerine-hover] dark:text-[--tangerine]'>
+						{titleInfo}
+					</span>
+				</span>
+				<ChevronUp class='chevron-icon size-4 text-zinc-500 transition-transform duration-300' />
+			</button>
+			<div class='accordion-content grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out'>
+				<div class='overflow-hidden'>
+					<div class='relative mt-4'>
+						<ul
+							class={`scrollbar-none relative snap-y space-y-0 ${enableScroll ? 'max-h-[24.5rem] overflow-y-auto overscroll-contain' : ''}`}>
+							{seriesItems.map((post, index) => {
+								const isCurrent = index === currentIndex
+								const isFirst = index === 0
+								const isLast = index === totalPosts - 1
 
-	<div class='relative'>
-		<ul
-			class={`relative space-y-0 scrollbar-none snap-y ${enableScroll ? 'max-h-[24.5rem] overflow-y-auto overscroll-contain' : ''}`}>
-			{
-				seriesItems.map((post, index) => {
-					const isCurrent = index === currentIndex
-					const isFirst = index === 0
-					const isLast = index === totalPosts - 1
+								const stickyClass = enableScroll
+									? isFirst
+										? 'sticky top-0 z-20'
+										: isLast
+											? 'sticky bottom-0 z-20'
+											: 'relative z-0'
+									: 'relative z-0'
 
-					const stickyClass = enableScroll
-						? isFirst
-							? 'sticky top-0 z-20'
-							: isLast
-								? 'sticky bottom-0 z-20'
-								: 'relative z-0'
-						: 'relative z-0'
+								const bgClass =
+									enableScroll && (isFirst || isLast) ? 'bg-zinc-50 dark:bg-zinc-900' : ''
 
-					const bgClass = enableScroll && (isFirst || isLast) ? 'bg-white dark:bg-zinc-950' : ''
+								return (
+									<li
+										class={`group ${stickyClass} ${bgClass} relative border-transparent transition-colors duration-200`}
+										id={
+											isFirst
+												? `series-start-${seriesId}-${widgetId}`
+												: isLast
+													? `series-end-${seriesId}-${widgetId}`
+													: undefined
+										}>
+										{/* Conector de líneas */}
+										{!isSinglePostFinished && (
+											<>
+												{!isFirst && (
+													<div class='absolute left-[23px] top-0 z-0 h-7 w-0.5 bg-zinc-400 dark:bg-zinc-800' />
+												)}
+												{!isLast && (
+													<div class='absolute bottom-0 left-[23px] top-7 z-0 w-0.5 bg-zinc-400 dark:bg-zinc-800' />
+												)}
+												{isLast && !post.isEnd && (
+													<div
+														class={`absolute left-[23px] z-0 h-8 w-0.5 border-l-2 border-dashed border-zinc-400 dark:border-zinc-800 ${enableScroll ? 'top-9' : 'top-7'}`}
+													/>
+												)}
+											</>
+										)}
+										{/* Fake Borders for Sticky Items - Full Width; Z-index lower than lines */}
+										{isFirst && enableScroll && (
+											<div
+												id={`border-bottom-${widgetId}`}
+												class='absolute bottom-0 left-0 right-0 z-10 h-[2px] bg-transparent transition-colors'
+											/>
+										)}
+										{isLast && enableScroll && (
+											<div
+												id={`border-top-${widgetId}`}
+												class='absolute left-0 right-0 top-0 z-10 h-[2px] bg-transparent transition-colors'
+											/>
+										)}
 
-					return (
-						<li
-							class={`group pl-12 pr-4 ${stickyClass} ${bgClass} border-transparent transition-colors duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-900`}
-							id={
-								isFirst
-									? `series-start-${seriesId}-${widgetId}`
-									: isLast
-										? `series-end-${seriesId}-${widgetId}`
-										: undefined
-							}>
-							{/* Conector de líneas */}
-							{!isSinglePostFinished && (
-								<>
-									{/* Línea de ENTRADA (Arriba -> Centro): Para todos menos el primero */}
-									{!isFirst && (
-										<div class='absolute left-[23px] top-0 -z-10 h-7 w-0.5 bg-zinc-200 dark:bg-zinc-800' />
-									)}
-
-									{/* Línea de SALIDA (Centro -> Abajo): Para todos menos el último */}
-									{!isLast && (
-										<div class='absolute bottom-0 left-[23px] top-7 -z-10 w-0.5 bg-zinc-200 dark:bg-zinc-800' />
-									)}
-
-									{/* Línea DASHED (Centro -> Abajo): Solo si es el último y NO ha terminado */}
-									{isLast && !post.isEnd && (
 										<div
-											class={`absolute left-[23px] -z-10 h-8 w-0.5 border-l-2 border-dashed border-zinc-200 dark:border-zinc-800 ${enableScroll ? 'top-9' : 'top-7'}`}
-										/>
+											class={`series-status absolute left-3 z-30 flex size-6 items-center justify-center rounded-full border-2 border-zinc-400 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950 ${isLast && enableScroll ? 'top-6' : 'top-4'}`}
+											data-slug={post.slug}
+											id={isCurrent ? `current-series-item-${widgetId}` : undefined}>
+											<CheckIcon class='check-icon size-3.5 text-zinc-400 opacity-0 transition-opacity' />
+											{isCurrent && (
+												<div class='current-dot absolute size-2 rounded-full bg-[--tangerine]' />
+											)}
+										</div>
+
+										<a
+											href={post.href}
+											data-astro-prefetch
+											class={`flex h-14 w-full items-center justify-between gap-4 rounded-lg pl-12 pr-4 text-sm leading-snug transition-colors duration-200 hover:bg-stone-300 dark:hover:bg-zinc-900 ${
+												isCurrent
+													? 'font-bold text-zinc-900 dark:text-white'
+													: 'text-zinc-600 hover:text-[--tangerine-hover] group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100'
+											}`}>
+											<span class='line-clamp-2' title={post.title}>
+												{post.title}
+											</span>
+											{post.isNew && (
+												<Badge
+													variant='subtle'
+													className='new-badge flex-shrink-0 uppercase tracking-wider text-[10px]'>
+													{badgetText[lang]['b.new']}
+												</Badge>
+											)}
+										</a>
+									</li>
+								)
+							})}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	) : (
+		<div id={widgetId} class='series-widget'>
+			<h3 class='text-xs mb-4 flex items-center gap-2 font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500'>
+				Serie:
+				<span class='font-medium normal-case tracking-normal text-[--tangerine-hover] dark:text-[--tangerine]'>{titleInfo}</span>
+			</h3>
+
+			<div class='relative'>
+				<ul
+					class={`scrollbar-none relative snap-y space-y-0 ${enableScroll ? 'max-h-[24.5rem] overflow-y-auto overscroll-contain' : ''}`}>
+					{seriesItems.map((post, index) => {
+						const isCurrent = index === currentIndex
+						const isFirst = index === 0
+						const isLast = index === totalPosts - 1
+
+						const stickyClass = enableScroll
+							? isFirst
+								? 'sticky top-0 z-20'
+								: isLast
+									? 'sticky bottom-0 z-20'
+									: 'relative z-0'
+							: 'relative z-0'
+
+						const bgClass = enableScroll ? 'bg-stone-200 dark:bg-zinc-950' : ''
+
+						return (
+							<li
+								class={`group ${stickyClass} ${bgClass} relative border-transparent transition-colors duration-200`}
+								id={
+									isFirst
+										? `series-start-${seriesId}-${widgetId}`
+										: isLast
+											? `series-end-${seriesId}-${widgetId}`
+											: undefined
+								}>
+								{/* Conector de líneas */}
+								{!isSinglePostFinished && (
+									<>
+										{!isFirst && (
+											<div class='absolute left-[23px] top-0 z-0 h-7 w-0.5 bg-zinc-400 dark:bg-zinc-800' />
+										)}
+										{!isLast && (
+											<div class='absolute bottom-0 left-[23px] top-7 z-0 w-0.5 bg-zinc-400 dark:bg-zinc-800' />
+										)}
+										{isLast && !post.isEnd && (
+											<div
+												class={`absolute left-[23px] z-0 h-8 w-0.5 border-l-2 border-dashed border-zinc-400 dark:border-zinc-800 ${enableScroll ? 'top-9' : 'top-7'}`}
+											/>
+										)}
+									</>
+								)}
+								{/* Fake Borders for Sticky Items - Full Width; Z-index lower than lines */}
+								{isFirst && enableScroll && (
+									<div
+										id={`border-bottom-desktop-${widgetId}`}
+										class='absolute bottom-0 left-0 right-0 z-10 h-[2px] bg-transparent transition-colors'
+									/>
+								)}
+								{isLast && enableScroll && (
+									<div
+										id={`border-top-desktop-${widgetId}`}
+										class='absolute left-0 right-0 top-0 z-10 h-[2px] bg-transparent transition-colors'
+									/>
+								)}
+
+								<div
+									class={`series-status absolute left-3 z-30 flex size-6 items-center justify-center rounded-full border-2 border-zinc-400 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950 ${isLast && enableScroll ? 'top-6' : 'top-4'}`}
+									data-slug={post.slug}
+									id={isCurrent ? `current-series-item-${widgetId}` : undefined}>
+									<CheckIcon class='check-icon size-3.5 text-zinc-400 opacity-0 transition-opacity' />
+									{isCurrent && (
+										<div class='current-dot absolute size-2 rounded-full bg-[--tangerine]' />
 									)}
-								</>
-							)}
+								</div>
 
-							<div
-								class={`series-status absolute left-3 z-10 flex size-6 items-center justify-center rounded-full border-2 border-zinc-300 bg-white shadow-sm transition-all dark:border-zinc-600 dark:bg-zinc-950 ${isLast && enableScroll ? 'top-6' : 'top-4'}`}
-								data-slug={post.slug}
-								id={isCurrent ? `current-series-item-${widgetId}` : undefined}>
-								<CheckIcon class='check-icon size-3.5 text-white opacity-0 transition-opacity' />
-								{isCurrent && (
-									<div class='current-dot absolute size-2 rounded-full bg-[--tangerine]' />
-								)}
-							</div>
-
-							<a
-								href={post.href}
-								data-astro-prefetch
-								class={`relative flex h-14 w-full items-center justify-between gap-4 text-sm leading-snug transition-colors ${
-									isCurrent
-										? 'font-bold text-zinc-900 dark:text-white'
-										: 'text-zinc-600 hover:text-[--tangerine-hover] group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100'
-								}`}>
-								<span class='line-clamp-2' title={post.title}>
-									{post.title}
-								</span>
-								{post.isNew && (
-									<Badge
-										variant='subtle'
-										className='new-badge flex-shrink-0 uppercase tracking-wider text-[10px]'>
-										{badgetText[lang]['b.new']}
-									</Badge>
-								)}
-							</a>
-						</li>
-					)
-				})
-			}
-		</ul>
-	</div>
-</div>
+								<a
+									href={post.href}
+									data-astro-prefetch
+									class={`flex h-14 w-full items-center justify-between gap-4 rounded-lg pl-12 pr-4 text-sm leading-snug transition-colors duration-200 hover:bg-stone-300 dark:hover:bg-zinc-900 ${
+										isCurrent
+											? 'font-bold text-zinc-900 dark:text-white'
+											: 'text-zinc-600 hover:text-[--tangerine-hover] group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:text-zinc-100'
+									}`}>
+									<span class='line-clamp-2' title={post.title}>
+										{post.title}
+									</span>
+									{post.isNew && (
+										<Badge
+											variant='subtle'
+											className='new-badge flex-shrink-0 uppercase tracking-wider text-[10px]'>
+											{badgetText[lang]['b.new']}
+										</Badge>
+									)}
+								</a>
+							</li>
+						)
+					})}
+				</ul>
+			</div>
+		</div>
+	)
+}
 
 <script is:inline define:vars={{ currentSlug, seriesId, widgetId, storageKey, enableScroll }}>
 	function initSeriesWidget() {
@@ -215,8 +336,11 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 				if (badge) badge.classList.add('hidden')
 
 				if (!isCurrent) {
-					el.classList.add('bg-emerald-500', 'border-emerald-500', 'dark:border-emerald-500')
-					el.querySelector('.check-icon')?.classList.remove('opacity-0')
+					const icon = el.querySelector('.check-icon')
+					if (icon) {
+						icon.classList.remove('opacity-0', 'text-zinc-400')
+						icon.classList.add('text-emerald-600', 'dark:text-emerald-500', 'stroke-[3]')
+					}
 				}
 			}
 		})
@@ -226,38 +350,120 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 		const lastItem = document.getElementById(`series-end-${seriesId}-${widgetId}`)
 
 		if (enableScroll && container && firstItem && lastItem) {
+			// Select fake border elements. Try both mobile/desktop IDs or class based?
+			// Since IDs must be unique and we have conditional rendering, let's look them up relative to the widget or by precise ID.
+			// Actually, ID is simpler.
+			const borderBottom =
+				document.getElementById(`border-bottom-${widgetId}`) ||
+				document.getElementById(`border-bottom-desktop-${widgetId}`)
+			const borderTop =
+				document.getElementById(`border-top-${widgetId}`) ||
+				document.getElementById(`border-top-desktop-${widgetId}`)
+
+			// Cache inner items for performance
+			const listItems = Array.from(container.querySelectorAll('li'))
+			const innerItems = listItems.slice(1, -1) // Exclude sticky header/footer
+
+			// Helper for shape management
+			const setShape = (el, shape) => {
+				if (!el) return
+				el.classList.remove('rounded-lg', 'rounded-t-lg', 'rounded-b-lg', 'rounded-t-none', 'rounded-b-none', 'rounded-none')
+				
+				if (shape === 'all-rounded') el.classList.add('rounded-lg')
+				else if (shape === 'top-rounded') el.classList.add('rounded-t-lg', 'rounded-b-none') // Round Top, Square Bottom
+				else if (shape === 'bottom-rounded') el.classList.add('rounded-b-lg', 'rounded-t-none') // Square Top, Round Bottom
+				else if (shape === 'all-square') el.classList.add('rounded-none')
+			}
+
 			const handleScroll = () => {
 				const { scrollTop, scrollHeight, clientHeight } = container
 				const isAtTop = scrollTop <= 0
 				const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 2
+				
+				const firstLink = firstItem.querySelector('a')
+				const lastLink = lastItem.querySelector('a')
 
-				// Primero item
+				// --- STICKY ITEMS LOGIC ---
+
+				// Primero item shadow/border
 				if (!isAtTop) {
-					firstItem.classList.add('border-b-2', 'border-zinc-200', 'dark:border-slate-700', 'z-30')
+					firstItem.classList.add('z-30')
 					firstItem.classList.remove('z-20')
+
+					if (borderBottom) {
+						borderBottom.classList.remove('bg-transparent')
+						borderBottom.classList.add('bg-zinc-500', 'dark:bg-slate-700')
+					}
+					
+					// Sticky Active: Round Top, Square Bottom (touches line below)
+					setShape(firstLink, 'top-rounded')
 				} else {
-					firstItem.classList.remove(
-						'border-b-2',
-						'border-zinc-200',
-						'dark:border-slate-700',
-						'z-30',
-					)
+					firstItem.classList.remove('z-30')
 					firstItem.classList.add('z-20')
+					if (borderBottom) {
+						borderBottom.classList.add('bg-transparent')
+						borderBottom.classList.remove('bg-zinc-500', 'dark:bg-slate-700')
+					}
+
+					// Sticky Inactive: All Rounded (floating)
+					setShape(firstLink, 'all-rounded')
 				}
 
-				// Último item
+				// Último item shadow/border
 				if (!isAtBottom) {
-					lastItem.classList.add('border-t', 'border-zinc-200', 'dark:border-slate-700')
+					if (borderTop) {
+						borderTop.classList.remove('bg-transparent')
+						borderTop.classList.add('bg-zinc-500', 'dark:bg-slate-700')
+					}
+
+					// Sticky Active: Square Top (touches line above), Round Bottom
+					setShape(lastLink, 'bottom-rounded')
 				} else {
-					lastItem.classList.remove('border-t', 'border-zinc-200', 'dark:border-slate-700')
+					if (borderTop) {
+						borderTop.classList.add('bg-transparent')
+						borderTop.classList.remove('bg-zinc-500', 'dark:bg-slate-700')
+					}
+
+					// Sticky Inactive: All Rounded (floating)
+					setShape(lastLink, 'all-rounded')
 				}
+
+				// --- INTERIOR ITEMS COLLISION LOGIC ---
+				
+				const headerHeight = firstItem.offsetHeight
+				const footerHeight = lastItem.offsetHeight
+				
+				// Buffer exacto para cambiar justo cuando empieza a ocultarse
+				const headerLimit = scrollTop + headerHeight - 2
+				const footerLimit = scrollTop + clientHeight - footerHeight + 2
+
+				innerItems.forEach(item => {
+					const link = item.querySelector('a')
+					if (!link) return
+
+					const isTopColliding = item.offsetTop < headerLimit
+					const isBottomColliding = item.offsetTop + item.offsetHeight > footerLimit
+
+					if (isTopColliding && isBottomColliding) {
+						setShape(link, 'all-square')
+					} else if (isTopColliding) {
+						// Choca arriba (con header): Square Top, Round Bottom
+						setShape(link, 'bottom-rounded')
+					} else if (isBottomColliding) {
+						// Choca abajo (con footer): Round Top, Square Bottom
+						setShape(link, 'top-rounded')
+					} else {
+						setShape(link, 'all-rounded')
+					}
+				})
 			}
 			container.addEventListener('scroll', handleScroll)
 			handleScroll()
 		}
 
 		const currentItem = document.getElementById(`current-series-item-${widgetId}`)
-		if (currentItem && container) {
+		// Only scroll if the item is visible (e.g., not inside a closed details element)
+		if (currentItem && container && currentItem.offsetParent !== null) {
 			setTimeout(() => {
 				currentItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
 			}, 100)
@@ -267,4 +473,31 @@ const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
 	window.addEventListener('read-status-changed', initSeriesWidget)
 	initSeriesWidget()
 	document.addEventListener('astro:page-load', initSeriesWidget)
+
+	function initAccordion() {
+		document.querySelectorAll('.series-widget .accordion-trigger').forEach(trigger => {
+			// Remove existing listeners to avoid duplicates if re-init
+			const newTrigger = trigger.cloneNode(true)
+			trigger.parentNode.replaceChild(newTrigger, trigger)
+
+			newTrigger.addEventListener('click', e => {
+				const widget = e.target.closest('.series-widget')
+				const content = widget.querySelector('.accordion-content')
+				const icon = widget.querySelector('.chevron-icon')
+
+				if (widget.dataset.state === 'closed') {
+					widget.dataset.state = 'open'
+					content.classList.replace('grid-rows-[0fr]', 'grid-rows-[1fr]')
+					icon.classList.add('rotate-180')
+				} else {
+					widget.dataset.state = 'closed'
+					content.classList.replace('grid-rows-[1fr]', 'grid-rows-[0fr]')
+					icon.classList.remove('rotate-180')
+				}
+			})
+		})
+	}
+
+	document.addEventListener('astro:page-load', initAccordion)
+	initAccordion()
 </script>
