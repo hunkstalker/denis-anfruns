@@ -177,11 +177,15 @@ async function normalizeCollection(collectionName, isNested) {
 	}
 }
 
-async function main() {
+export async function normalize() {
 	for (const col of COLLECTIONS) {
 		await normalizeCollection(col.name, col.isNested)
 	}
 	console.log('✨ All content normalized!')
 }
 
-main()
+// Execute if run directly
+import { fileURLToPath } from 'url'
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+	normalize()
+}

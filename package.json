@@ -13,6 +13,7 @@
 		"test": "pnpm normalize:content && pnpm verify:content && pnpm check && pnpm build",
 		"normalize:content": "node scripts/normalize-content.mjs",
 		"verify:content": "node scripts/verify-content.mjs",
+		"set-badge": "node scripts/set-new-badge.mjs",
 		"check:drafts": "node scripts/check-drafts.mjs",
 		"menu": "node scripts/menu.mjs",
 		"lint": "eslint .",

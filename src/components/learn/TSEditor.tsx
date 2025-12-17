@@ -90,7 +90,7 @@ const TSEditor = ({
 	const [consoleOutput, setConsoleOutput] = useState<string[]>([])
 	const [isRunning, setIsRunning] = useState(false)
 	const [consoleHeight, setConsoleHeight] = useState(160)
-	
+
 	// --- Estado UI Local ---
 	const [checkResult, setCheckResult] = useState<{
 		status: 'idle' | 'success' | 'error'

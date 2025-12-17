@@ -41,7 +41,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	<!-- Terminal Overlay - Always Visible -->
 	<div
 		id="terminal-overlay"
-		class="pointer-events-none fixed inset-0 z-50 overflow-hidden font-mono text-zinc-900 dark:text-white hidden md:block"
+		class="pointer-events-none fixed inset-0 z-50 hidden overflow-hidden font-mono text-zinc-900 dark:text-white md:block"
 	>
 		<!-- Left-aligned terminal window -->
 		<div
@@ -49,7 +49,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		>
 			<div
 				id="terminal-logs"
-				class="text-xs flex max-h-[50vh] flex-col gap-1 overflow-hidden font-bold tracking-wider mask-image-fade md:max-h-full md:text-sm"
+				class="text-xs mask-image-fade flex max-h-[50vh] flex-col gap-1 overflow-hidden font-bold tracking-wider md:max-h-full md:text-sm"
 			>
 				<div id="command-line" class="flex items-center">
 					<span class="mr-2">&gt;</span>
@@ -194,7 +194,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 		// Secret Playground Access
 		// "RUN PLAYGROUND.EXE" hashed (SHA-256)
-		'dcc5b20bef132083b0f1f6baaa2f5738dcad807e6669ae43d67c9a75e1667a57': {
+		dcc5b20bef132083b0f1f6baaa2f5738dcad807e6669ae43d67c9a75e1667a57: {
 			logs: [
 				'> SYSTEM_OVERRIDE_DETECTED',
 				'> DECRYPTING_SECURE_CHANNEL...',
@@ -255,15 +255,14 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		window.location.href = path
 	}
 
-    // Helper: Generate SHA-256 hash
-    async function sha256(message: string) {
-        const msgBuffer = new TextEncoder().encode(message)
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
-        return hashHex
-    }
-
+	// Helper: Generate SHA-256 hash
+	async function sha256(message: string) {
+		const msgBuffer = new TextEncoder().encode(message)
+		const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer)
+		const hashArray = Array.from(new Uint8Array(hashBuffer))
+		const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+		return hashHex
+	}
 
 	// ============================================================
 	// CORE SYSTEM - No need to modify below this line
@@ -319,7 +318,10 @@ const siteTitle = 'Denis Anfruns - Error 404'
 	})
 
 	// Auto-focus on load (only if not focused on something else AND on desktop)
-	if ((!document.activeElement || document.activeElement === document.body) && window.matchMedia('(min-width: 768px)').matches) {
+	if (
+		(!document.activeElement || document.activeElement === document.body) &&
+		window.matchMedia('(min-width: 768px)').matches
+	) {
 		hiddenInput.focus()
 	}
 
@@ -342,7 +344,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		} else {
 			terminalLogs.appendChild(p)
 		}
-		
+
 		terminalLogs.scrollTop = terminalLogs.scrollHeight
 
 		requestAnimationFrame(() => {
@@ -362,7 +364,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 		const pBar = document.createElement('div')
 		pBar.className = 'mt-4 font-bold whitespace-pre mb-20'
-		
+
 		// Insert BEFORE command line
 		if (commandLine && commandLine.parentNode === terminalLogs) {
 			terminalLogs.insertBefore(pBar, commandLine)
@@ -399,7 +401,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		const cleanVal = val.replace(/[^A-Z0-9 .]/g, '')
 
 		if (val !== cleanVal) hiddenInput.value = cleanVal
-		
+
 		if (typeTarget) {
 			if (isPasswordMode) {
 				typeTarget.textContent = '*'.repeat(cleanVal.length)
@@ -423,38 +425,44 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 			// "Double Hash" check (User input -> Hash -> Compare)
 			const hash = await sha256(input) // input is UPPERCASE from value, maybe we want case-insensitive?
-			// But for "1234" it's same. If we want complex passwords, we might need original case. 
+			// But for "1234" it's same. If we want complex passwords, we might need original case.
 			// However current input logic forces UpperCase. let's stick to simple "1234".
-			
+
 			if (hash === PLAYGROUND_HASH) {
 				// Success
-				await executeCommand({
-					logs: [
-						'> VERIFYING_HASH...',
-						'> ACCESS_GRANTED',
-						'> INITIALIZING_ENVIRONMENT...',
-						'> WELCOME_ADMINISTRATOR'
-					],
-					barSize: 40,
-					duration: 1500,
-					redirect: '/playground',
-					onBeforeRedirect: () => {
-						localStorage.setItem('playground_access', 'granted')
-					}
-				}, lang)
+				await executeCommand(
+					{
+						logs: [
+							'> VERIFYING_HASH...',
+							'> ACCESS_GRANTED',
+							'> INITIALIZING_ENVIRONMENT...',
+							'> WELCOME_ADMINISTRATOR',
+						],
+						barSize: 40,
+						duration: 1500,
+						redirect: '/playground',
+						onBeforeRedirect: () => {
+							localStorage.setItem('playground_access', 'granted')
+						},
+					},
+					lang,
+				)
 			} else {
 				// Failed
-				await executeCommand({
-					logs: [
-						'> VERIFYING_HASH...',
-						'> ACCESS_DENIED',
-						'> INCORRECT_PASSWORD',
-						'> TERMINATING_SESSION...'
-					],
-					duration: 1000,
-					redirect: 'none' // Special case to just reset
-				}, lang)
-				
+				await executeCommand(
+					{
+						logs: [
+							'> VERIFYING_HASH...',
+							'> ACCESS_DENIED',
+							'> INCORRECT_PASSWORD',
+							'> TERMINATING_SESSION...',
+						],
+						duration: 1000,
+						redirect: 'none', // Special case to just reset
+					},
+					lang,
+				)
+
 				// Reset terminal to ready state (hacky via reload or just reset)
 				// For now, redirect 'none' will just end. We need to reset UI.
 				isPasswordMode = false
@@ -464,7 +472,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 				// Restore cursor
 				hiddenInput.focus()
 				isExecuting = false
-				
+
 				// Add a new prompt line
 				await typeLog('> _')
 			}
@@ -480,14 +488,14 @@ const siteTitle = 'Denis Anfruns - Error 404'
 
 			// Log the prompt sequence
 			await typeLog('> INITIATING_SECURITY_PROTOCOL...')
-			await new Promise(r => setTimeout(r, 500))
+			await new Promise((r) => setTimeout(r, 500))
 			await typeLog('> ENTER PASSWORD:')
-			
+
 			// Reset for password input
 			hiddenInput.value = ''
 			if (typeTarget) typeTarget.textContent = ''
 			if (commandLine) commandLine.style.display = 'flex'
-			
+
 			isPasswordMode = true
 			isExecuting = false
 			hiddenInput.focus()

@@ -1,7 +1,7 @@
 ---
 import ContentLayout from '@layouts/ContentLayout.astro'
 import BackLink from '@components/ui/BackLink.astro'
-import { getTils } from '@utils/til-content'
+import { getTils, groupTilsBySeries } from '@utils/til-content'
 import { useTranslations } from '@i18n/utils'
 import { languages } from '@i18n/ui'
 import type { SupportedLang } from '@utils/blogi18n'
@@ -16,52 +16,18 @@ export async function getStaticPaths() {
 const { lang } = Astro.params
 const t = useTranslations(lang as SupportedLang)
 
-const tilCollection = await getTils()
+const allTils = await getTils()
 
-// Lógica de Agrupación por Series
-const seriesMap = new Map<string, typeof tilCollection>()
-const soloPosts: typeof tilCollection = []
-
-for (const post of tilCollection) {
-    // Filtrar solo los del idioma actual y válidos
-    if (post.data.lang !== lang || !post.data.pubDate || (import.meta.env.PROD && post.data.draft === true)) continue;
-
-	if (post.data.series) {
-		const list = seriesMap.get(post.data.series) || []
-		list.push(post)
-		seriesMap.set(post.data.series, list)
-	} else {
-		soloPosts.push(post)
-	}
-}
-
-// Procesar series
-const finalSeriesPosts = Array.from(seriesMap.values()).map((list) => {
-	list.sort((a, b) => {
-		return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-	})
-
-	const part1 = list[0]
-	const latestPart = list[list.length - 1]
-
-    // Check if ANY part in the series is marked as new
-    const hasNewContent = list.some(p => p.data.new)
-
-	const entry = {
-		...part1,
-		data: {
-			...part1.data,
-			pubDate: latestPart.data.pubDate,
-            new: hasNewContent
-		},
-	}
-	return entry
+const tilCollection = allTils.filter((post) => {
+	// Filtrar solo los del idioma actual y válidos
+	if (post.data.lang !== lang) return false
+	if (!post.data.pubDate) return false
+	if (import.meta.env.PROD && post.data.draft === true) return false
+	return true
 })
 
-// Unificar y ordenar todo
-const tils = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
-	return b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-})
+// Uso de lógica compartida (añade seriesCount correctamente)
+const tils = groupTilsBySeries(tilCollection)
 ---
 
 <ContentLayout
@@ -83,12 +49,18 @@ const tils = [...soloPosts, ...finalSeriesPosts].sort((a, b) => {
 
 		<Grid
 			client:load
+			transition:persist
 			posts={tils}
 			lang={lang as SupportedLang}
 			labels={{
 				all: t('search.all'),
 				noResults: t('blog.withoutTILs'),
 				readNote: t('blog.readNote'),
+				view: t('blog.view'),
+				viewAll: t('blog.view.all'),
+				viewSingles: t('blog.view.singles'),
+				viewSeries: t('blog.view.series'),
+				filters: t('nav.filters'),
 			}}
 		/>
 	</div>

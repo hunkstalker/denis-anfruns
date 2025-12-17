@@ -1,5 +1,7 @@
 ---
 import ChevronLeft from '@icons/chevron-left.svg'
+import { useTranslations } from '@i18n/utils'
+import type { SupportedLang } from '@utils/blogi18n'
 
 interface Props {
 	href: string
@@ -10,55 +12,68 @@ interface Props {
 }
 
 const { href, label, class: className, hideIcon = false, id } = Astro.props
+const lang = (Astro.currentLocale || 'es') as SupportedLang
+const t = useTranslations(lang)
+const backLabel = t('blog.back')
 ---
 
 <a
 	href={href}
 	id={id || (className?.includes('go-back') ? 'go-back-link' : undefined)}
 	data-astro-prefetch
+	data-back-label={backLabel}
 	class:list={[
 		'animate-fade-in-up mb-6 mt-2.5 flex w-fit items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]',
 		className,
 	]}
 >
 	{!hideIcon && <ChevronLeft />}
-	{label}
+	<span class="link-text">{label}</span>
 </a>
 
 <script>
-	const ORIGIN_KEY = 'backlink-origin'
-	const goBackLink = document.getElementById('go-back-link')
+	document.addEventListener('astro:page-load', () => {
+		const goBackLink = document.getElementById('go-back-link') as HTMLAnchorElement
 
-	if (goBackLink) {
-		// On first load, save the origin URL (only if coming from our site and not already saved)
-		const currentOrigin = sessionStorage.getItem(ORIGIN_KEY)
-		const isInternalReferrer =
-			document.referrer && document.referrer.startsWith(window.location.origin)
-		const isPrivacyPage = (url: string) => url.toLowerCase().includes('privacypolicy')
+		if (goBackLink) {
+			const savedOrigin = sessionStorage.getItem('backlink-origin')
+			const isInternalReferrer =
+				document.referrer && document.referrer.startsWith(window.location.origin)
 
-		// Save origin only if:
-		// 1. No origin saved yet, OR
-		// 2. The saved origin is a privacy page (language change happened)
-		if (!currentOrigin || isPrivacyPage(currentOrigin)) {
-			if (isInternalReferrer && !isPrivacyPage(document.referrer)) {
-				sessionStorage.setItem(ORIGIN_KEY, document.referrer)
+			// 1. Check if we have a saved origin (e.g. from Privacy Policy)
+			if (savedOrigin && savedOrigin.startsWith(window.location.origin)) {
+				goBackLink.addEventListener('click', (e) => {
+					e.preventDefault()
+					sessionStorage.removeItem('backlink-origin')
+					window.location.href = savedOrigin
+				})
+			}
+			// 2. Smart Logic: Check if we came from /blog/ or /til/
+			else if (isInternalReferrer) {
+				const referrerPath = new URL(document.referrer).pathname
+				const cameFromBlog = referrerPath.includes('/blog')
+				const cameFromTil = referrerPath.includes('/til')
+
+				const currentPath = window.location.pathname
+				const isOnTil = currentPath.includes('/til/')
+				const isSamePage = referrerPath === currentPath
+
+				if (!isSamePage) {
+					if ((isOnTil && cameFromTil) || (isOnTil && cameFromBlog)) {
+						// Update text to generic "Go back"
+						const textSpan = goBackLink.querySelector('.link-text')
+						if (textSpan && goBackLink.dataset.backLabel) {
+							textSpan.textContent = goBackLink.dataset.backLabel
+						}
+
+						// Use history.back() to preserve scroll position
+						goBackLink.addEventListener('click', (e) => {
+							e.preventDefault()
+							history.back()
+						})
+					}
+				}
 			}
 		}
-
-		goBackLink.addEventListener('click', (e) => {
-			e.preventDefault()
-
-			const savedOrigin = sessionStorage.getItem(ORIGIN_KEY)
-
-			if (savedOrigin && savedOrigin.startsWith(window.location.origin)) {
-				// Clear the saved origin and navigate
-				sessionStorage.removeItem(ORIGIN_KEY)
-				window.location.href = savedOrigin
-			} else if (isInternalReferrer) {
-				window.location.href = document.referrer
-			} else {
-				history.back()
-			}
-		})
-	}
+	})
 </script>

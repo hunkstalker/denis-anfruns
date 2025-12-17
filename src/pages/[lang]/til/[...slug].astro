@@ -12,14 +12,14 @@ import MarkAsRead from '@components/common/MarkAsRead.astro'
 
 export async function getStaticPaths() {
 	const allPosts = await getTils()
-	const posts = allPosts.filter(post => {
+	const posts = allPosts.filter((post) => {
 		return import.meta.env.PROD ? post.data.draft !== true : true
 	})
-	const supportedLangs = Object.keys(languages).filter(lang => lang !== 'es')
+	const supportedLangs = Object.keys(languages).filter((lang) => lang !== 'es')
 
 	return posts
-		.filter(post => supportedLangs.includes(post.data.lang))
-		.map(post => {
+		.filter((post) => supportedLangs.includes(post.data.lang))
+		.map((post) => {
 			return {
 				params: {
 					lang: post.data.lang,
@@ -45,12 +45,12 @@ let nextPost: TilPost | null = null
 if (post.data.series) {
 	const allPosts = await getTils()
 	const seriesPosts = allPosts
-		.filter(p => p.data.series === post.data.series && p.data.lang === lang)
+		.filter((p) => p.data.series === post.data.series && p.data.lang === lang)
 		.sort((a, b) => {
 			if (!a.data.pubDate || !b.data.pubDate) return 0
 			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 		})
-	const currentIndex = seriesPosts.findIndex(p => p.slug === post.slug)
+	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }
 ---
@@ -88,39 +88,43 @@ if (post.data.series) {
 	title={post.data.title}
 	lang={lang}
 	description={post.data.title}
-	isWide={!!post.data.series}>
-	<MarkAsRead slug={post.slug} collection='til' />
+	isWide={!!post.data.series}
+>
+	<MarkAsRead slug={post.slug} collection="til" />
 	{/* Conditional Layout */}
 	<div
 		class={post.data.series || headings.length > 0
 			? 'col-span-1 lg:col-span-8 pl-4'
-			: 'lg:col-span-8 lg:col-start-3'}>
-		<div class='mb-8'>
+			: 'lg:col-span-8 lg:col-start-3'}
+	>
+		<div class="mb-8">
 			<BackLink href={`/${lang}/blog`} label={t('blog.backToBlog')} />
 
 			<h1
-				class='animate-fade-in-up mb-6 text-3xl font-bold leading-tight delay-100 dark:text-zinc-200 md:text-4xl'>
+				class="animate-fade-in-up mb-6 text-3xl font-bold leading-tight delay-100 dark:text-zinc-200 md:text-4xl"
+			>
 				{post.data.title}
 			</h1>
 
 			<div
-				class='animate-fade-in-up flex flex-wrap gap-4 font-mono text-sm text-zinc-500 delay-200'>
+				class="animate-fade-in-up flex flex-wrap gap-4 font-mono text-sm text-zinc-500 delay-200"
+			>
 				<time datetime={post.data.pubDate!.toISOString()}>
 					{post.data.pubDate!.toLocaleDateString(lang, { dateStyle: 'long' })}
 				</time>
-				<div class='flex gap-2'>
-					{(post.data.tags || []).map(tag => <span>#{tag}</span>)}
+				<div class="flex gap-2">
+					{(post.data.tags || []).map((tag) => <span>#{tag}</span>)}
 				</div>
 			</div>
 
-			<hr class='animate-fade-in-up mt-8 border-stone-400 delay-300 dark:border-zinc-800' />
+			<hr class="animate-fade-in-up mt-8 border-stone-400 delay-300 dark:border-zinc-800" />
 		</div>
 
 		{/* Mobile TOC */}
 		{
 			headings.length > 0 && (
-				<div class='mb-8 lg:hidden'>
-					<TableOfContents headings={headings} lang={lang} mode='collapsible' />
+				<div class="mb-8 lg:hidden">
+					<TableOfContents headings={headings} lang={lang} mode="collapsible" />
 				</div>
 			)
 		}
@@ -128,28 +132,29 @@ if (post.data.series) {
 		{/* Mobile Series Widget */}
 		{
 			post.data.series && (
-				<div class='mb-8 lg:hidden'>
+				<div class="mb-8 lg:hidden">
 					<SeriesWidget
 						seriesId={post.data.series}
 						currentSlug={post.slug}
 						lang={lang}
-						collection='til'
-						id='mobile-series'
-						mode='collapsible'
+						collection="til"
+						id="mobile-series"
+						mode="collapsible"
 					/>
 				</div>
 			)
 		}
 
 		<article
-			class='prose prose-lg max-w-none dark:prose-invert'
+			class="prose prose-lg max-w-none dark:prose-invert"
 			data-pagefind-body
-			data-pagefind-filter='type:til'
-			data-pagefind-meta={`description:${post.data.description || ''}, series:${post.data.series || ''}, seriesTitle:${post.data.seriesTitle || ''}, seriesDescription:${post.data.seriesDescription || ''}`}>
+			data-pagefind-filter="type:til"
+			data-pagefind-meta={`description:${post.data.description || ''}, series:${post.data.series || ''}, seriesTitle:${post.data.seriesTitle || ''}, seriesDescription:${post.data.seriesDescription || ''}`}
+		>
 			{/* Hidden content for Pagefind indexing - allows search with highlighting */}
 			{
 				(post.data.seriesTitle || post.data.seriesDescription) && (
-					<span class='sr-only' data-pagefind-weight='2'>
+					<span class="sr-only" data-pagefind-weight="2">
 						{post.data.seriesTitle}
 						{post.data.seriesTitle && post.data.seriesDescription ? ' · ' : ''}
 						{post.data.seriesDescription}
@@ -159,12 +164,13 @@ if (post.data.series) {
 			<Content />
 		</article>
 
-		<footer class='mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800'>
-			<div class='flex items-center justify-between'>
+		<footer class="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
+			<div class="flex items-center justify-between">
 				<button
-					id='scroll-to-top'
-					class='group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]'>
-					<ChevronUp class='transition-transform group-hover:-translate-y-0.5' />
+					id="scroll-to-top"
+					class="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
+				>
+					<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
 					{t('blog.backToTop')}
 				</button>
 
@@ -172,31 +178,31 @@ if (post.data.series) {
 					nextPost && (
 						<a
 							href={`/${lang}/til/${nextPost.slug.replace(new RegExp(`/${lang}$`), '')}/`}
-							class='group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]'>
+							class="group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
+						>
 							{t('blog.nextPost')}
-							<ChevronRight class='transition-transform group-hover:translate-x-1' />
+							<ChevronRight class="transition-transform group-hover:translate-x-1" />
 						</a>
 					)
 				}
 			</div>
 		</footer>
 
-		<div class='h-24'></div>
+		<div class="h-24"></div>
 	</div>
 
 	{/* Desktop Sidebar Widget */}
 	{
 		(post.data.series || headings.length > 0) && (
-			<aside class='hidden lg:col-span-4 lg:block pl-2'>
-				<div class='sticky top-24 space-y-8 mt-2.5'>
-
+			<aside class="hidden pl-2 lg:col-span-4 lg:block">
+				<div class="sticky top-24 mt-2.5 space-y-8">
 					{post.data.series && (
-						<SeriesWidget 
-							seriesId={post.data.series} 
-							currentSlug={post.slug} 
-							lang={lang} 
-							collection='til'
-							id='desktop-series'
+						<SeriesWidget
+							seriesId={post.data.series}
+							currentSlug={post.slug}
+							lang={lang}
+							collection="til"
+							id="desktop-series"
 						/>
 					)}
 					{headings.length > 0 && <TableOfContents headings={headings} lang={lang} />}

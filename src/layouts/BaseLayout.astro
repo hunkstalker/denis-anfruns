@@ -3,6 +3,7 @@ import BaseHead from '../components/layout/BaseHead.astro'
 import Footer from '../components/layout/Footer.astro'
 import experiencieYears from '../utils/experiencieYears'
 import type { Lang } from '../i18n/ui'
+import { ClientRouter } from 'astro:transitions'
 
 interface Props {
 	siteTitle: string
@@ -23,7 +24,7 @@ const formattedTitle = siteTitle.includes(`Denis`)
 <html lang={lang}>
 	<head>
 		<!-- Theme Script (Inline & Blocking to prevent FOUC) -->
-		<script is:inline>
+		<script is:inline data-astro-rerun>
 			;(function () {
 				const theme = localStorage.getItem('theme')
 				const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -35,14 +36,23 @@ const formattedTitle = siteTitle.includes(`Denis`)
 					document.documentElement.classList.remove('dark')
 					document.documentElement.style.colorScheme = 'light'
 				}
+				
+				// Keep theme state during View Transition
+				document.addEventListener('astro:before-swap', (ev) => {
+					ev.newDocument.documentElement.classList.add(...document.documentElement.classList)
+					ev.newDocument.documentElement.style.colorScheme = document.documentElement.style.colorScheme
+				})
 			})()
 		</script>
 		<BaseHead
 			title={formattedTitle}
 			description={description || defaultDescription}
 			image={image}
+			description={description || defaultDescription}
+			image={image}
 			robots={robots}
 		/>
+		<ClientRouter />
 	</head>
 	<body class="flex min-h-screen flex-col bg-stone-200 dark:bg-zinc-950">
 		<!-- GBackground de puntos -->

@@ -1,0 +1,172 @@
+---
+title: Sistema de Metadatos Automático y DRY en Astro
+lang: es
+slug: astro-metadata-system
+---
+import Callout from '@components/mdx/Callout.astro';
+
+En este TIL vamos a destripar cómo funciona el sistema de gestión de metadatos que utilizamos en este proyecto. Si te has fijado, nuestros archivos Markdown (`.mdx`) están inusualmente limpios de frontmatter repetitivo. Esto no es magia, es ingeniería (bueno, un poco de magia de scripts sí que es).
+
+## El Problema: Duplicidad en i18n
+
+Cuando trabajas con internacionalización (i18n) en Astro utilizando *Content Collections*, lo estándar es tener un archivo por idioma. Por ejemplo:
+
+```text
+src/content/blog/
+  my-post-es.md
+  my-post-en.md
+  my-post-ca.md
+```
+
+El problema surge cuando tienes que mantener los metadatos sincronizados. ¿La fecha de publicación? La misma en los tres. ¿La imagen de portada? La misma. ¿Los tags? Los mismos (o casi).
+
+Si decides cambiar la imagen de portada, tienes que editar 3 archivos. Si te equivocas en la fecha en uno, tienes inconsistencias. **Repetir código (o datos) viola el principio DRY (Don't Repeat Yourself)** y es una fuente de errores humanos garantizada.
+
+## La Solución: Arquitectura de Carpetas y `meta.json`
+
+En lugar de archivos sueltos, adoptamos una estructura de carpetas por contenido:
+
+```text
+src/content/til/astro-metadata-system/
+  meta.json   <-- La Fuente de la Verdad (Datos Comunes)
+  es.mdx      <-- Contenido en Español
+  en.mdx      <-- Contenido en Inglés
+  ca.mdx      <-- Contenido en Catalán
+```
+
+### ¿Qué va dónde?
+
+- **`meta.json`**: Contiene todo lo que es agnóstico del idioma.
+    - `pubDate`
+    - `updatedDate`
+    - `tags`
+    - `heroImage`
+    - `series` (si pertenece a una)
+    - `draft`
+- **`*.mdx`**: Contiene solo lo específico del idioma y lo necesario para que Astro pueda generar el slug.
+    - `title`
+    - `description`
+    - `slug`
+
+## La Magia: Normalización Automática
+
+Astro no soporta nativamente leer de un `meta.json` y fusionarlo con el frontmatter de los `.mdx` durante el build... a menos que se lo enseñemos.
+
+Para ello, hemos creado un script: `scripts/normalize-content.mjs`. Este script se ejecuta automáticamente antes de que Astro empiece a trabajar (gracias al hook `astro:config:setup` en `astro.config.mjs`).
+
+### ¿Qué hace el script?
+
+<Callout type="info" title="Automatización">
+El script recorre todas tus colecciones de contenido y para cada carpeta realiza tres pasos clave:
+</Callout>
+
+<details>
+<summary>📄 Ver código completo de <code>scripts/normalize-content.mjs</code></summary>
+
+```javascript
+// scripts/normalize-content.mjs
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const PROJECT_ROOT = path.resolve(__dirname, '..')
+const CONTENT_ROOT = path.join(PROJECT_ROOT, 'src', 'content')
+
+// Collections to normalize
+const COLLECTIONS = [
+	{ name: 'til', isNested: false }, // Flat: til/slug/
+	{ name: 'devlog', isNested: true }, // Nested: devlog/series/slug/
+]
+
+// ... (configuración de campos comunes)
+
+async function normalizeCollection(collectionName, isNested) {
+	// ... (lógica de iteración de directorios)
+    // 1. Cargar o Inicializar meta.json
+    // 2. Fusionar datos (meta.json gana)
+    // 3. Limpiar archivos MDX
+}
+// Nota: Puedes ver el archivo completo en el repositorio
+```
+</details>
+
+1.  **Carga o Crea `meta.json`**:
+    Busca si existe el archivo `meta.json`. Si no existe, intenta crearlo extrayendo los datos comunes del archivo `es.mdx` (nuestra fuente de verdad por defecto). Esto facilita migrar contenido viejo al nuevo sistema: simplemente crea la carpeta, mueve los archivos y corre el script. Él solito extraerá las fechas y tags del markdown y los moverá al JSON.
+
+2.  **Fusiona los Datos**:
+    Toma los datos de `meta.json` y los compara con los de `es.mdx`. Si hay datos en el JSON, estos *ganan*. El JSON es la autoridad.
+
+3.  **Limpia los Archivos MDX**:
+    Esta es la parte más "agresiva" y útil. El script reescribe tus archivos `.mdx`. Si encuentra que tienes definido `pubDate` o `tags` dentro del archivo `.mdx` y esos datos ya están asegurados en `meta.json`, los **borra del frontmatter del archivo**.
+    Esto asegura que **no puedas** tener datos desincronizados accidentalmente. Si intentas añadir una fecha distinta al `en.mdx`, el script la borrará la próxima vez que ejecutes `dev` o `build`, forzando el uso de la fecha centralizada.
+
+### Integración en `astro.config.mjs`
+
+Para que esto sea transparente, lo inyectamos como una integración de Astro:
+
+```javascript
+// astro.config.mjs
+import { normalize } from './scripts/normalize-content.mjs'
+
+export default defineConfig({
+  integrations: [
+    // ... otros plugins
+    {
+      name: 'normalize-content',
+      hooks: {
+        'astro:config:setup': async () => {
+          await normalize()
+        },
+      },
+    },
+  ],
+})
+```
+
+Gracias a esto, nunca te olvidas de ejecutarlo. Es parte del ciclo de vida del desarrollo.
+
+## Validación Robusta: `verify-content.mjs`
+
+La normalización ordena los datos, pero ¿quién asegura que sean correctos? Aquí entra `scripts/verify-content.mjs`.
+
+<details>
+<summary>📄 Ver código completo de <code>scripts/verify-content.mjs</code></summary>
+
+```javascript
+// scripts/verify-content.mjs
+import fs from 'fs'
+import path from 'path'
+// ...
+// Helper to recursively find meta.json files
+function findMetaFiles(dir, fileList = []) {
+    // ...
+}
+
+// Main verification
+async function verify() {
+	console.log('🔍 Iniciando verificación de contenido...')
+    // 1. GLOBAL CHECKS (fechas, tags)
+    // 2. SERIES CHECKS (orden de partes)
+    // 3. MDX PURITY CHECKS (campos prohibidos)
+}
+verify()
+```
+</details>
+
+Este script no modifica nada, solo juzga. Verifica reglas de negocio estrictas:
+
+- **Fechas**: ¿Es `pubDate` una fecha válida? ¿Es `updatedDate` posterior a `pubDate`?
+- **Series**: Si es un Devlog en serie, verifica que la Parte 1 sea anterior a la Parte 2.
+- **Pureza**: En colecciones estrictas como TIL, se asegura de que *realmente* no queden campos prohibidos (como `series` o `draft`) dentro de los `.mdx`. Si el script de normalización fallase o alguien editase manualmente ignorando el sistema, este script detendría el CI/CD.
+
+## Conclusión
+
+Este sistema nos permite:
+1.  **Escribir menos**: Defines los metadatos una vez.
+2.  **Reducir errores**: Imposible tener fechas dispares entre idiomas.
+3.  **Migrar fácil**: El script ayuda a mover contenido legacy al nuevo formato automáticamente.
+4.  **Dormir tranquilos**: Las validaciones en CI aseguran que todo lo que llega a producción cumple el estándar.
+
+Es un ejemplo de cómo invertir un poco de tiempo en *tooling* (herramientas internas) ahorra horas de mantenimiento a largo plazo.

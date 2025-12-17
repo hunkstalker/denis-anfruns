@@ -36,30 +36,38 @@ export interface User {
 }
 ---
 
-<ContentLayout title='TypeScript Playground' description='Test your TypeScript skills' lang='es' robots='noindex, nofollow'>
+<ContentLayout
+	title="TypeScript Playground"
+	description="Test your TypeScript skills"
+	lang="es"
+	robots="noindex, nofollow"
+>
 	<div
-		id='secret-playground'
-		style='display: none;'
-		class='col-span-1 lg:col-span-10 lg:col-start-2'>
-		<div class='mx-auto max-w-none text-center'>
-			<h1 class="font-bold text-3xl md:text-5xl text-zinc-900 dark:text-white mb-12 flex flex-wrap items-center justify-center gap-4">
+		id="secret-playground"
+		style="display: none;"
+		class="col-span-1 lg:col-span-10 lg:col-start-2"
+	>
+		<div class="mx-auto max-w-none text-center">
+			<h1
+				class="mb-12 flex flex-wrap items-center justify-center gap-4 text-3xl font-bold text-zinc-900 dark:text-white md:text-5xl"
+			>
 				Playground
 				<div class="flex gap-3">
-					<span 
-						class="inline-block h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-lg" 
+					<span
+						class="inline-block h-8 w-8 overflow-hidden rounded-lg sm:h-10 sm:w-10"
 						title="JavaScript"
-						set:html={JSIcon} 
+						set:html={JSIcon}
 					/>
-					<span 
-						class="inline-block h-8 w-8 sm:h-10 sm:w-10 overflow-hidden rounded-lg" 
+					<span
+						class="inline-block h-8 w-8 overflow-hidden rounded-lg sm:h-10 sm:w-10"
 						title="TypeScript"
-						set:html={TSIcon} 
+						set:html={TSIcon}
 					/>
 				</div>
 			</h1>
 		</div>
-		<div class='mt-8'>
-			<TSEditor client:only='react' files={multiFileExample} height='800px' showConsole />
+		<div class="mt-8">
+			<TSEditor client:only="react" files={multiFileExample} height="800px" showConsole />
 		</div>
 	</div>
 

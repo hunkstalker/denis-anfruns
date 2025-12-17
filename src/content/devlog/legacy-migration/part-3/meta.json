@@ -1,8 +1,14 @@
 {
-	"pubDate": "2023-03-15",
-	"tags": ["devlog", "architecture"],
-	"heroImage": "/placeholder-social.jpg",
-	"series": "legacy-migration",
-	"seriesTitle": "Legacy Migration",
-	"draft": true
+  "pubDate": "2023-03-15",
+  "tags": [
+    "devlog",
+    "architecture",
+    "vite"
+  ],
+  "heroImage": "/placeholder-social.jpg",
+  "series": "legacy-migration",
+  "seriesTitle": "Legacy Migration",
+  "draft": true,
+  "icon": "vite",
+  "new": false
 }

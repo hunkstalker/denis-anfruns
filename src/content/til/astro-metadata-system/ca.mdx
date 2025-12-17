@@ -1,0 +1,36 @@
+---
+title: Sistema de Metadates Automàtic i DRY a Astro
+lang: ca
+slug: astro-metadata-system
+---
+import Callout from '@components/mdx/Callout.astro';
+
+En aquest TIL destriparem com funciona el sistema de gestió de metadates que utilitzem en aquest projecte. Si t'hi has fixat, els nostres fitxers Markdown (`.mdx`) estan inusualment nets de frontmatter repetitiu. Això no és màgia, és enginyeria (bé, una mica de màgia de scripts sí que és).
+
+## El Problema: Duplicitat en i18n
+
+Quan treballes amb internacionalització (i18n) a Astro utilitzant *Content Collections*, la duplicitat es converteix en un problema. Mantenir metadates com dates, etiquetes i imatges sincronitzades en diversos fitxers (un per idioma) viola el principi DRY (Don't Repeat Yourself) i porta a inconsistències.
+
+## La Solució: Arquitectura de Carpetes i `meta.json`
+
+En lloc de fitxers solts, utilitzem una estructura de carpeta per contingut:
+
+```text
+src/content/til/astro-metadata-system/
+  meta.json   <-- La Font de la Veritat (Dades Comunes)
+  es.mdx      <-- Contingut en Espanyol
+  en.mdx      <-- Contingut en Anglès
+  ca.mdx      <-- Contingut en Català
+```
+
+- **`meta.json`**: Conté tot el que és agnòstic de l'idioma (`pubDate`, `tags`, `heroImage`, etc.).
+- **`*.mdx`**: Conté només el que és específic de l'idioma i essencial per a la compilació (`title`, `slug`).
+
+## L'Automatització
+
+Un script personalitzat, `scripts/normalize-content.mjs`, s'executa automàticament mitjançant el hook `astro:config:setup` d'Astro. Aquest script:
+
+1.  **Centralitza Dades**: Extreu metadates comunes dels fitxers de contingut cap a `meta.json`.
+2.  **Neteja MDX**: Elimina el frontmatter redundant dels fitxers `.mdx`, forçant-los a dependre del `meta.json` central.
+
+Això assegura que les dades estiguin sempre sincronitzades en tots els idiomes.

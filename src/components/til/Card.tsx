@@ -22,12 +22,12 @@ interface Props {
 
 // Map icon IDs to their SVG content (key matches tag name or icon field)
 const iconSvgs: Record<string, string> = {
-	'typescript': typescriptSvg,
-	'git': gitSvg,
-	'powerapps': powerappsSvg,
-	'astro': astroSvg,
-	'javascript': javascriptSvg,
-	'vite': viteSvg,
+	typescript: typescriptSvg,
+	git: gitSvg,
+	powerapps: powerappsSvg,
+	astro: astroSvg,
+	javascript: javascriptSvg,
+	vite: viteSvg,
 }
 
 // Get decorative icons for a TIL (can return multiple for fan effect)
@@ -63,7 +63,8 @@ export default function TilCard({ post, lang, labels, badgeVariant = 'solid' }: 
 	const cleanSlug = post.slug.replace(/(?:\/es|\/en|\/ca)$/, '')
 	const href = lang === 'es' ? `/til/${cleanSlug}/` : `/${lang}/til/${cleanSlug}/`
 
-	const readText = labels?.readNote || (lang === 'en' ? 'Read note' : lang === 'ca' ? 'Llegir nota' : 'Leer nota')
+	const readText =
+		labels?.readNote || (lang === 'en' ? 'Read note' : lang === 'ca' ? 'Llegir nota' : 'Leer nota')
 	const seriesBadgeText = lang === 'en' ? 'Series' : lang === 'ca' ? 'Sèrie' : 'Serie'
 
 	const badgeStatus = useReadStatus(
@@ -71,7 +72,7 @@ export default function TilCard({ post, lang, labels, badgeVariant = 'solid' }: 
 		'til',
 		!!post.data.new,
 		post.data.allSlugs,
-		post.data.newSlugs
+		post.data.newSlugs,
 	)
 
 	const showBadge = badgeStatus !== null
@@ -93,19 +94,21 @@ export default function TilCard({ post, lang, labels, badgeVariant = 'solid' }: 
 			{decorativeIcons.length > 0 && (
 				<div className="pointer-events-none absolute -bottom-8 -right-12 z-0">
 					{decorativeIcons.map((svg, index) => {
-						const baseRotation = fanRotations[index] ?? (-15 + (index * 15))
+						const baseRotation = fanRotations[index] ?? -15 + index * 15
 						return (
 							<div
 								key={index}
-								className="icon-fan absolute size-44 opacity-[0.12] transition-all duration-500 ease-out group-hover:opacity-[0.35] group-hover:scale-110 dark:opacity-[0.20] dark:group-hover:opacity-[0.45] [&_svg]:size-full"
-								style={{
-									'--base-rotation': `${baseRotation}deg`,
-									'--hover-rotation': `${baseRotation + 10}deg`,
-									transform: `rotate(var(--base-rotation))`,
-									right: `${index * 20}px`,
-									bottom: `${index * 5}px`,
-									zIndex: decorativeIcons.length - index,
-								} as React.CSSProperties}
+								className="icon-fan absolute size-44 opacity-[0.12] transition-all duration-500 ease-out group-hover:scale-110 group-hover:opacity-[0.35] dark:opacity-[0.20] dark:group-hover:opacity-[0.45] [&_svg]:size-full"
+								style={
+									{
+										'--base-rotation': `${baseRotation}deg`,
+										'--hover-rotation': `${baseRotation + 10}deg`,
+										transform: `rotate(var(--base-rotation))`,
+										right: `${index * 20}px`,
+										bottom: `${index * 5}px`,
+										zIndex: decorativeIcons.length - index,
+									} as React.CSSProperties
+								}
 								aria-hidden="true"
 								dangerouslySetInnerHTML={{ __html: svg }}
 							/>
@@ -117,10 +120,7 @@ export default function TilCard({ post, lang, labels, badgeVariant = 'solid' }: 
 			{/* Content (below link overlay) */}
 			<div className="pointer-events-none relative z-0 mb-1 flex items-center justify-between gap-2">
 				<div className="flex items-center gap-3">
-					<time
-						className="text-xs text-zinc-500"
-						dateTime={post.data.pubDate.toISOString()}
-					>
+					<time className="text-xs text-zinc-500" dateTime={post.data.pubDate.toISOString()}>
 						{post.data.pubDate.toLocaleDateString(undefined, {
 							month: 'short',
 							day: 'numeric',
@@ -158,4 +158,3 @@ export default function TilCard({ post, lang, labels, badgeVariant = 'solid' }: 
 		</article>
 	)
 }
-

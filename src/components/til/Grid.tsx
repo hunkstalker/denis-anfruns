@@ -5,6 +5,7 @@ import type { TilPost } from '@utils/til-content'
 import type { Tag } from '@data/tags'
 import { useIntersectionObserver } from '@hooks/useIntersectionObserver'
 
+// Props interface update
 interface Props {
 	posts: TilPost[]
 	lang: 'es' | 'en' | 'ca'
@@ -12,14 +13,32 @@ interface Props {
 		all: string
 		noResults: string
 		readNote: string
+		view: string
+		viewAll: string
+		viewSingles: string
+		viewSeries: string
+		filters: string
 	}
 }
+
+import ViewModeFilter from './ViewModeFilter'
+import TagFilter from './TagFilter'
+import MobileFilters from './MobileFilters'
 
 export default function TilGrid({ posts, lang, labels }: Props) {
 	const [filter, setFilter] = useState<Tag | 'all'>(() => {
 		if (typeof window !== 'undefined') {
 			const params = new URLSearchParams(window.location.search)
 			return (params.get('tag') as Tag) || 'all'
+		}
+		return 'all'
+	})
+
+	const [viewMode, setViewMode] = useState<'all' | 'singles' | 'series'>(() => {
+		if (typeof window !== 'undefined') {
+			const params = new URLSearchParams(window.location.search)
+			const mode = params.get('view')
+			if (mode === 'singles' || mode === 'series') return mode
 		}
 		return 'all'
 	})
@@ -35,26 +54,39 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
 			const url = new URL(window.location.href)
-			if (filter === 'all') {
-				url.searchParams.delete('tag')
-			} else {
-				url.searchParams.set('tag', filter)
-			}
+			if (filter === 'all') url.searchParams.delete('tag')
+			else url.searchParams.set('tag', filter)
+
+			if (viewMode === 'all') url.searchParams.delete('view')
+			else url.searchParams.set('view', viewMode)
+
 			window.history.replaceState(null, '', url.toString())
 		}
-	}, [filter, mounted])
+	}, [filter, viewMode, mounted])
 
-	// Extract unique tags
+	// Extract unique tags (Only first 2 tags per post are used for filtering)
 	const tags = useMemo(() => {
-		const allTags = posts.flatMap((post) => post.data.tags || [])
+		const allTags = posts.flatMap((post) => (post.data.tags || []).slice(0, 2))
 		return [...new Set(allTags)].sort()
 	}, [posts])
 
 	// Filter posts
 	const filteredPosts = useMemo(() => {
-		if (filter === 'all') return posts
-		return posts.filter((post) => post.data.tags?.includes(filter))
-	}, [posts, filter])
+		let result = posts
+
+		// 1. Filter by View Mode
+		if (viewMode === 'singles') {
+			result = result.filter((post) => !post.data.seriesCount)
+		} else if (viewMode === 'series') {
+			result = result.filter((post) => !!post.data.seriesCount)
+		}
+
+		// 2. Filter by Tag
+		if (filter !== 'all') {
+			result = result.filter((post) => post.data.tags?.includes(filter))
+		}
+		return result
+	}, [posts, filter, viewMode])
 
 	// Infinite Scroll state
 	const INITIAL_COUNT = 24
@@ -83,31 +115,45 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 
 	return (
 		<div className="w-full">
-			{/* Filters */}
-			<div className="no-scrollbar mb-10 flex w-full items-center gap-2 overflow-x-auto pb-4 md:flex-wrap md:pb-0">
-				<button
-					onClick={() => setFilter('all')}
-					className={`w-24 shrink-0 rounded-full border py-1.5 text-center text-sm font-medium transition-colors ${
-						mounted && filter === 'all'
-							? 'border-[--tangerine-hover] bg-[--tangerine-hover] text-zinc-900 dark:border-[--tangerine] dark:bg-[--tangerine] dark:text-zinc-900'
-							: 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800'
-					}`}
-				>
-					{labels.all}
-				</button>
-				{tags.map((tag) => (
-					<button
-						key={tag}
-						onClick={() => setFilter(tag)}
-						className={`shrink-0 whitespace-nowrap rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
-							mounted && filter === tag
-								? 'border-[--tangerine-hover] bg-[--tangerine-hover] text-zinc-900 dark:border-[--tangerine] dark:bg-[--tangerine] dark:text-zinc-900'
-								: 'border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800'
-						}`}
-					>
-						#{tag}
-					</button>
-				))}
+			{/* Mobile Filters (Dropdown) */}
+			<MobileFilters
+				viewMode={viewMode}
+				setViewMode={setViewMode}
+				viewLabels={{
+					all: labels.viewAll,
+					singles: labels.viewSingles,
+					series: labels.viewSeries,
+				}}
+				viewLabel={labels.view}
+				tags={tags}
+				filter={filter}
+				setFilter={setFilter}
+				tagLabelAll={labels.all}
+				mounted={mounted}
+				labelFilters={labels.filters}
+			/>
+
+			{/* Desktop Filters (Sidebar-like / Top Stack) */}
+			<div className="mb-10 hidden flex-col items-start gap-6 md:flex">
+				<ViewModeFilter
+					viewMode={viewMode}
+					setViewMode={setViewMode}
+					mounted={mounted}
+					label={labels.view}
+					labels={{
+						all: labels.viewAll,
+						singles: labels.viewSingles,
+						series: labels.viewSeries,
+					}}
+				/>
+
+				<TagFilter
+					tags={tags}
+					filter={filter}
+					setFilter={setFilter}
+					mounted={mounted}
+					labelAll={labels.all}
+				/>
 			</div>
 
 			{/* Grid */}

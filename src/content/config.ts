@@ -1,5 +1,5 @@
 import { defineCollection, z } from 'astro:content'
-import { TAGS } from '../data/tags'
+// import { TAGS } from '../data/tags' // Validation too strict for CMS
 
 const privacy = defineCollection({
 	type: 'content',
@@ -19,9 +19,9 @@ const devlog = defineCollection({
 		heroImage: z.string().optional(),
 		descriptionHeroImage: z.string().optional(),
 		ogImage: z.string().optional(),
-		tags: z.array(z.enum(TAGS)).default([]).optional(),
+		tags: z.array(z.string()).default([]).optional(),
 		series: z.string().optional(),
-		seriesTitle: z.string().optional(),
+		seriesTitle: z.string().or(z.object({ es: z.string(), en: z.string(), ca: z.string().optional() })).optional(),
 		new: z.boolean().default(false),
         end: z.boolean().optional(),
 		lang: z.enum(['es', 'en', 'ca']).default('es'),
@@ -32,13 +32,13 @@ const devlog = defineCollection({
 const til = defineCollection({
 	type: 'content',
 	schema: z.object({
-		title: z.string(),
+		title: z.string().optional(),
 		description: z.string().optional(),
 		pubDate: z.coerce.date().optional(),
-		tags: z.array(z.enum(TAGS)).default([]).optional(),
+		tags: z.array(z.string()).default([]).optional(),
 		series: z.string().optional(),
-		seriesTitle: z.string().optional(),
-        seriesDescription: z.string().optional(),
+		seriesTitle: z.string().or(z.object({ es: z.string(), en: z.string(), ca: z.string().optional() })).optional(),
+        seriesDescription: z.string().or(z.object({ es: z.string(), en: z.string(), ca: z.string().optional() })).optional(),
 		lang: z.enum(['es', 'en', 'ca']).default('es'),
 		new: z.boolean().default(false),
         end: z.boolean().optional(),
@@ -57,7 +57,7 @@ const projects = defineCollection({
 		heroImage: z.string().optional(),
 		descriptionHeroImage: z.string().optional(),
 		ogImage: z.string().optional(),
-		tags: z.array(z.enum(TAGS)).default([]).optional(),
+		tags: z.array(z.string()).default([]).optional(),
 		lang: z.enum(['es', 'en', 'ca']).default('es'),
 		draft: z.boolean().default(false),
 	}),

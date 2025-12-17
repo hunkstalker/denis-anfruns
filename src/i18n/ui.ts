@@ -24,6 +24,8 @@ export const ui = {
 		'nav.search.filter.projects': 'Proyectos',
 		'nav.noResults': 'No se han encontrado resultados',
 		'nav.menu': 'Menú',
+
+		'nav.filters': 'Filtros',
 		'nav.search.label': 'Buscar',
 
 		// BÚSQUEDA Y CUERPO
@@ -54,11 +56,16 @@ export const ui = {
 		'blog.withoutTILs': 'No hay notas TIL todavía.',
 		'blog.tilDescription': 'Fragmentos de conocimiento.',
 		'blog.backToBlog': 'Volver al Blog',
+		'blog.back': 'Volver atrás',
 		'blog.backToTop': 'Volver arriba',
 		'blog.nextPost': 'Siguiente',
 		'blog.previousPost': 'Anterior',
 		'blog.updated': 'Actualizado',
 		'blog.seriesBadge': 'Serie',
+		'blog.view': 'Vista',
+		'blog.view.all': 'Todo',
+		'blog.view.singles': 'Notas',
+		'blog.view.series': 'Series',
 		'blog.tableOfContents': 'En esta página',
 		'toc.title': 'Tabla de contenidos',
 		'series.github.title': 'Código fuente',
@@ -117,6 +124,8 @@ export const ui = {
 		'nav.search.filter.projects': 'Projectes',
 		'nav.noResults': "No s'han trobat resultats",
 		'nav.menu': 'Menú',
+
+		'nav.filters': 'Filtres',
 		'nav.search.label': 'Cercar',
 
 		// BÚSQUEDA
@@ -135,7 +144,7 @@ export const ui = {
 		// BLOG
 		'blog.title': 'Bitàcora Digital',
 		'blog.description':
-		'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi (TILs).',
+			'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi (TILs).',
 		'blog.series': 'DevLogs',
 		'blog.recent': 'Més Recents',
 		'blog.devLogDescription': 'Articles sobre el desenvolupament dels meus projectes.',
@@ -147,11 +156,16 @@ export const ui = {
 		'blog.withoutTILs': 'Encara no hi ha notes TIL.',
 		'blog.tilDescription': 'Fragments de coneixement.',
 		'blog.backToBlog': 'Tornar al Blog',
+		'blog.back': 'Tornar enrere',
 		'blog.backToTop': 'Tornar adalt',
 		'blog.nextPost': 'Següent',
 		'blog.previousPost': 'Anterior',
 		'blog.updated': 'Actualitzat',
 		'blog.seriesBadge': 'Sèrie',
+		'blog.view': 'Vista',
+		'blog.view.all': 'Tot',
+		'blog.view.singles': 'Notes',
+		'blog.view.series': 'Sèries',
 		'blog.tableOfContents': 'En aquesta pàgina',
 		'toc.title': 'Taula de continguts',
 		'series.github.title': 'Codi font',
@@ -207,6 +221,8 @@ export const ui = {
 		'nav.search.filter.projects': 'Projects',
 		'nav.noResults': 'No results found',
 		'nav.menu': 'Menu',
+
+		'nav.filters': 'Filters',
 		'nav.search.label': 'Search',
 
 		// SEARCH & BODY
@@ -237,11 +253,16 @@ export const ui = {
 		'blog.withoutTILs': 'No TIL notes yet.',
 		'blog.tilDescription': 'Snippets of knowledge.',
 		'blog.backToBlog': 'Back to Blog',
+		'blog.back': 'Go back',
 		'blog.backToTop': 'Back to Top',
 		'blog.nextPost': 'Next',
 		'blog.previousPost': 'Previous',
 		'blog.updated': 'Updated',
 		'blog.seriesBadge': 'Series',
+		'blog.view': 'View',
+		'blog.view.all': 'All',
+		'blog.view.singles': 'Notes',
+		'blog.view.series': 'Series',
 		'blog.tableOfContents': 'On this page',
 		'toc.title': 'Table of Contents',
 		'series.github.title': 'Source code',

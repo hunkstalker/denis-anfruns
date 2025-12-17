@@ -12,8 +12,8 @@ const t = useTranslations(lang)
 // Obtener y filtrar posts
 const rawPosts = await getDevlogs()
 const posts = rawPosts
-    .filter((post) => getLangFromSlug(post.slug) === lang && post.data.pubDate)
-    .filter((post) => import.meta.env.PROD ? post.data.draft !== true : true)
+	.filter((post) => getLangFromSlug(post.slug) === lang && post.data.pubDate)
+	.filter((post) => (import.meta.env.PROD ? post.data.draft !== true : true))
 const devlogs = groupDevlogsBySeries(posts)
 ---
 

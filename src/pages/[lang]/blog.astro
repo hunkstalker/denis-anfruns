@@ -20,13 +20,14 @@ const t = useTranslations(lang)
 const rawPosts = await getDevlogs()
 // Use shared logic for filtering and grouping
 const posts = rawPosts
-    .filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
-    .filter((post) => import.meta.env.PROD ? post.data.draft !== true : true)
+	.filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
+	.filter((post) => (import.meta.env.PROD ? post.data.draft !== true : true))
 
 const devlogs = groupDevlogsBySeries(posts)
 
 const articles = devlogs
 ---
+
 <BaseLayout siteTitle={t('blog.title')} lang={lang}>
 	<Nav lang={lang as 'es' | 'en' | 'ca'} />
 	<div class="container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28">

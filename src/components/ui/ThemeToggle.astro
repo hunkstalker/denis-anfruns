@@ -82,7 +82,7 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 </button>
 
 <script is:inline>
-	;(() => {
+	function initThemeToggle() {
 		const btn = document.getElementById('themeToggle')
 		if (!btn) return
 
@@ -123,7 +123,12 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 			}, 100)
 		}
 
-		btn.addEventListener(
+		// Remove existing listeners to avoid duplicates (optional but safe)
+		const existingClone = btn.cloneNode(true)
+		btn.parentNode.replaceChild(existingClone, btn)
+		const newBtn = document.getElementById('themeToggle')
+
+		newBtn.addEventListener(
 			'click',
 			() => {
 				addTapFeedback()
@@ -156,5 +161,8 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 
 		// Sincronizar UI con el estado actual (ya aplicado por el script inicial)
 		updateUI()
-	})()
+	}
+
+	// Run on initial load and after every navigation
+	document.addEventListener('astro:page-load', initThemeToggle)
 </script>

@@ -1,16 +1,20 @@
 {
-	"seriesTitle": {
-		"es": "TypeScript Básico",
-		"en": "TypeScript Basics",
-		"ca": "TypeScript Bàsic"
-	},
-	"seriesDescription": {
-		"es": "Mini-curso sobre fundamentos de TypeScript.",
-		"en": "Mini-course on TypeScript fundamentals.",
-		"ca": "Mini-curs sobre fonaments de TypeScript."
-	},
-	"tags": ["typescript", "typeof", "keyof"],
-	"pubDate": "2025-12-19T10:00:00Z",
-	"new": true,
-	"draft": true
+  "seriesTitle": {
+    "es": "TypeScript Básico",
+    "en": "TypeScript Basics",
+    "ca": "TypeScript Bàsic"
+  },
+  "seriesDescription": {
+    "es": "Mini-curso sobre fundamentos de TypeScript.",
+    "en": "Mini-course on TypeScript fundamentals.",
+    "ca": "Mini-curs sobre fonaments de TypeScript."
+  },
+  "tags": [
+    "typescript",
+    "typeof",
+    "keyof"
+  ],
+  "pubDate": "2025-12-19T10:00:00Z",
+  "draft": true,
+  "new": false
 }

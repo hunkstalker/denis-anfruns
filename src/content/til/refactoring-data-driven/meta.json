@@ -1,4 +1,9 @@
 {
-	"pubDate": "2025-12-13T14:15:00Z",
-	"tags": ["javascript", "refactoring", "clean-code"]
+  "pubDate": "2025-12-13T14:15:00Z",
+  "tags": [
+    "javascript",
+    "refactoring",
+    "clean-code"
+  ],
+  "new": false
 }

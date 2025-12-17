@@ -1,0 +1,115 @@
+---
+title: 'TypeScript #4: Arrays i Tuples'
+description: 'Llistes de coses i la màgia de les Tuples (o per què useState torna un array).'
+lang: 'ca'
+---
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+A la part anterior vam veure Objectes. Ara, què passa si tenim **molts** objectes? Necessitem una llista.
+
+## Arrays `[]`
+
+Hi ha dues formes de definir un array en TypeScript. Ambdues són idèntiques, és qüestió de gustos.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Opció A: Tipus[] (La més comuna)
+const skills: string[] = ["React", "Astro", "TypeScript"];
+
+// Opció B: Array<Tipus> (Sintaxi Genèrica)
+const years: Array<number> = [2020, 2021, 2022];
+
+// Array d'Objectes (usant la interfície de la part anterior)
+interface Usuari {
+    name: string;
+    age: number;
+}
+
+const users: Usuari[] = [
+    { name: "Denis", age: 39 },
+    { name: "Pepe", age: 25 }
+];`,
+		lang: 'typescript'
+    }
+]} />
+
+Si intentem ficar un número al nostre array de `skills` (que és d'strings), TS cridarà.
+
+## Tuples: Arrays amb regles estrictes
+
+A vegades sabem **exactament** quants elements té un array i de quin tipus són a cada posició.
+Això és una **Tupla**.
+
+L'exemple més famós és el hook `useState` de React:
+
+<CodeTabs items={[
+    {
+		label: 'React (Exemple)',
+		code: `// useState torna una tupla: [valor, funcio]
+// posició 0 sempre és l'estat (string)
+// posició 1 sempre és el setter (funció)
+const [name, setName] = useState("Denis");`,
+		lang: 'tsx'
+    }
+]} />
+
+En TypeScript es defineix així:
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Tupla: [string, number]
+// El primer HA DE SER string, el segon HA DE SER number.
+let role: [string, number] = ["admin", 1];
+
+role = ["user", 2]; // ✅ Bé
+role = [1, "admin"]; // ❌ Malament (Ordre incorrecte)
+role = ["guest", 3, "extra"]; // ❌ Malament (Massa elements)`,
+		lang: 'typescript'
+    }
+]} />
+
+### Per a què serveixen?
+Són útils quan volem tornar múltiples valors d'una funció sense crear un objecte.
+
+*   Coordenades: `[x, y]` -> `[number, number]`
+*   Rangs: `[inici, fi]`
+*   Estats: `[loading, error, data]`
+
+## Arrays de Lectura (`ReadonlyArray`)
+
+Igual que amb els objectes, podem fer arrays immutables.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const todoList: readonly string[] = ["Comprar pa"];
+
+todoList.push("Llet"); // ❌ Error: Property 'push' does not exist on type 'readonly string[]'.`,
+		lang: 'typescript'
+    }
+]} />
+
+Genial per a programació funcional i evitar efectes secundaris!
+
+## Provem-ho!
+
+1. Creem un array de strings.
+2. Intentem fer `.push(123)` (veurem l'error).
+3. Creem una tupla `[string, boolean]` (ex: Nom i si està actiu).
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `// El nostre codi aquí
+`
+  }}
+/>
+
+A la **Part 5**, les coses es posen series. Deixem el bàsic i entrem a la màgia de TypeScript: aprendrem a que TS **escrigui els tipus per nosaltres** usant `typeof` i `keyof`.
