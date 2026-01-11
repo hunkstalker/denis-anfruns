@@ -93,7 +93,7 @@ const menuItems = navItems.map(item => {
 ---
 
 <nav
-	class='fixed inset-x-0 top-0 z-50 border-b border-zinc-200/50 bg-[#f8f6f3] shadow-sm dark:border-zinc-700/50 dark:bg-zinc-900/70'>
+	class='fixed inset-x-0 top-0 z-50 border-b border-zinc-200/50 bg-[#f8f6f3]/80 backdrop-blur-md shadow-sm dark:border-zinc-700/50 dark:bg-zinc-900/70'>
 	<div class='container'>
 		<div class='flex items-center justify-between py-4 md:py-6'>
 			<!-- Menú Hamburguesa (Móvil) & Menu Portal -->
@@ -188,13 +188,13 @@ const menuItems = navItems.map(item => {
 					<!-- Overlay de fondo -->
 					<div
 						id='desktop-search-overlay'
-						class='fixed inset-x-0 top-[calc(100%+1px)] z-40 hidden h-screen bg-zinc-900/40 opacity-0 backdrop-blur-[2px]'>
+						class='fixed inset-x-0 top-[calc(100%+1px)] z-40 hidden h-screen bg-zinc-900/20 opacity-0'>
 					</div>
 
 					<!-- Panel de Resultados (Mega-Dropdown) -->
 					<div
 						id='desktop-search-results'
-						class='invisible fixed inset-x-0 top-24 z-50 mx-auto max-w-6xl origin-top -translate-y-4 overflow-hidden rounded-2xl border border-stone-300/50 bg-stone-200/80 opacity-0 shadow-2xl backdrop-blur-xl transition-all duration-300 ease-out dark:border-white/10 dark:bg-zinc-900/50'>
+						class='invisible fixed inset-x-0 top-24 z-50 mx-auto max-w-6xl origin-top -translate-y-4 overflow-hidden rounded-2xl border border-stone-300/50 bg-stone-100 opacity-0 shadow-2xl transition-all duration-300 ease-out dark:border-white/10 dark:bg-zinc-900'>
 						<!-- Contenido Unificado -->
 						<div class='w-full'>
 							<SearchResults
