@@ -1,182 +1,184 @@
 ---
-description: 'La parte difícil: combinar Generics, Interfaces y Tipos sin volverse loco.'
+pubDate: '2025-12-20T10:00:00Z'
+tags: ['typescript', 'generics', 'basics']
 draft: true
 new: true
+title: 'TypeScript #8: Generics (Lo básico)'
+description: La herramienta más potente de TS. Aprende a escribir código reutilizable y flexible con <T>.
+series: typescript-basics
+seriesTitle: Fundamentos de TypeScript
+seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.
 lang: es
-pubDate: '2025-12-22T10:00:00Z'
-seriesDescription: "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos."
-seriesTitle: "Fundamentos de TypeScript"
-tags: ['typescript', 'generics', 'interfaces']
-title: 'TypeScript #8: Mezclando Conceptos (Generics + Interfaces)'
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
 import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
-Aquí es donde mucha gente se pierde. Empezamos a ver `<T>`, `interface`, `type`, `return T`... todo mezclado y parece jeroglífico.
+Hasta ahora, nuestros tipos eran fijos. `string` es siempre `string`.
+Pero, ¿y si queremos crear una función o un componente que funcione con **cualquier tipo**, pero sin perder la seguridad?
 
-Vamos a desenredarlo paso a paso.
+Ahí entran los **Generics**. Son como "parámetros" pero para Tipos.
 
-## Generics en Interfaces vs Tipos
+## El Problema: Duplicación o `any`
 
-¿Cuándo usar uno u otro? La sintaxis es casi idéntica.
+Imaginemos una función que devuelve lo que le pasas (clásica función `identity`).
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Opción 1: Duplicar código para cada tipo
+function returnString(val: string): string { return val; }
+function returnNumber(val: number): number { return val; }
+
+// Opción 2: Usar 'any' (Perdemos el tipo)
+function returnAny(val: any): any { return val; }
+
+const resultado = returnAny("Hola"); 
+// TS no sabe que 'resultado' es string, cree que es 'any'.
+// resultado.toUpperCase(); // ❌ No autocompleta`,
+		lang: 'typescript'
+    }
+]} />
+
+## La Solución: Generics `<T>`
+
+Podemos decirle a la función: *"Oye, vamos a pasarte un tipo al que llamaremos `T`. Úsalo para tipar el argumento y el retorno"*.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function identity<T>(val: T): T {
+    return val;
+}
+
+// Uso explícito (le pasamos el tipo)
+const num = identity<number>(123); // num es number
+
+// Inferencia (TS es listo y lo adivina)
+const str = identity("Hola"); // str es "Hola" (literal) o string`,
+		lang: 'typescript'
+    }
+]} />
+
+La `T` es una convención (viene de *Type*), pero podemos llamarlo como queramos: `<Data>`, `<Response>`, `<Props>`.
+
+## Interfaces Genéricas
+
+Esto es súper común en React o respuestas de API.
 
 <CodeTabs items={[
     {
 		label: 'TypeScript',
-		code: `// Opción A: Interface Genérica
-interface CajaInterface<T> {
-    valor: T;
+		code: `// Una caja que puede contener cualquier COSA
+interface Caja<T> {
+    contenido: T;
+    etiqueta: string;
 }
 
-// Opción B: Type Genérico
-type CajaType<T> = {
-    valor: T;
+const cajaDeZapatos: Caja<string> = {
+    contenido: "Nike Air",
+    etiqueta: "Deportes"
 };
 
-// Se usan IGUAL
-const a: CajaInterface<string> = { valor: "Hola" };
-const b: CajaType<string> = { valor: "Hola" };`,
+const cajaDeRegalo: Caja<number> = {
+    contenido: 1000,
+    etiqueta: "Dinero"
+};`,
 		lang: 'typescript'
     }
 ]} />
 
-No hay diferencia funcional real para datos simples. Usemos la que prefiramos (solemos usar `interface` para objetos y `type` para funciones/uniones).
+## Ejemplo Real: `useState`
 
-## El Patrón "Wrapper" (Datawrapper)
-
-Este es el caso de uso #1 en el mundo real: Respuestas de API.
-Tenemos una estructura fija (`data`, `status`, `error`) pero el contenido de `data` cambia según la llamada.
+Si hemos usado React, ya hemos usado Generics sin saberlo.
 
 <CodeTabs items={[
     {
-		label: 'TypeScript',
-		code: `// Definamos la "cáscara" genérica
-interface ApiResponse<Data> {
-    status: number;
-    message: string;
-    data: Data; // 👈 Aquí va la magia
-}
+		label: 'React',
+		code: `// useState es una función Genérica: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]
 
-// Definamos nuestros modelos concretos
-interface User { id: number; name: string; }
-interface Product { sku: string; price: number; }
+// Inferencia:
+const [name, setName] = useState("Denis"); // TS infiere que T es string
 
-// ¡Combinémoslos!
-type UserResponse = ApiResponse<User>;
-type ProductResponse = ApiResponse<Product>;
-
-function fetchUser(): UserResponse {
-    return {
-        status: 200,
-        message: "OK",
-        data: { id: 1, name: "BartoloDev" } // TS sabe que data es User
-    };
-}`,
-		lang: 'typescript'
+// Explícito (útil cuando el valor inicial es null):
+const [user, setUser] = useState<Usuario | null>(null);`,
+		lang: 'tsx'
     }
 ]} />
 
-## "Prop Drilling" de Tipos
+### Uniones vs Generics
 
-A veces tenemos Generics dentro de Generics. Es como pasar una variable de un abuelo a un nieto.
+Igual has pensado: *"¿Y si uso `string | number` en vez de `<T>`?"*
 
-<CodeTabs items={[
-    {
-		label: 'TypeScript',
-		code: `interface PaginatedResponse<T> {
-    items: T[];       // Array de T
-    total: number;
-    page: number;
-}
+```typescript
+function echo(val: string | number): string | number { return val; }
+const res = echo("Hola"); // TS cree que 'res' es 'string | number' ❌
+// Perdiste la precisión: TS ya no sabe que es un string.
+```
 
-// ApiResponse contiene PaginatedResponse, que contiene User
-type UsersApi = ApiResponse<PaginatedResponse<User>>;
+Con `<T>`, TS mantiene la conexión: entró string -> sale string.
 
-// Parece complejo, pero TS lo resuelve solo:
-// UsersApi = { 
-//   status: number,
-//   message: string,
-//   data: { 
-//      items: User[], 
-//      total: number,
-//      page: number,
-//   } 
-// }`,
-		lang: 'typescript'
-    }
-]} />
+---
 
-## Generics en Funciones Flecha
+### ¡Probémoslo!
 
-La sintaxis aquí puede llegar a asustar, especialmente en archivos `.tsx` (React) y donde se vuelve más complejo.
-
-<CodeTabs items={[
-    {
-		label: 'TypeScript',
-		code: `// Función normal
-function identity<T>(arg: T): T { return arg; }
-
-// Función flecha
-const identityArrow = <T>(arg: T): T => arg;
-
-// ⚠️ En archivos .tsx (React), necesitamos una coma para que no crea que es HTML
-const hookEnReact = <T,>(arg: T) => { ... };`,
-		lang: 'typescript'
-    }
-]} />
-
-## ¡Probémoslo!
-
-Creemos una interfaz `Respuesta<T>` con `datos: T` y `error: string | null`.
-Luego creemos un objeto que use esa interfaz con `number`.
+Crea una función `envolver` que **metas lo que metas**, te lo devuelva dentro de un **array**.
+Si metes `10`, sale `[10]`. Si metes `"hola"`, sale `["hola"]`.
 
 <TSEditor
   client:only="react"
-  id="ex-generics-wrapper"
+  id="ex-generics-basic"
   showConsole={true}
   successSound="success"
   defaultMuted={false}
   height="600px"
   files={{
-    'main.ts': `// Reto: 
-// 1. Define una interfaz genérica 'Respuesta' con:
-//    - el campo 'datos' que sea de tipo genérico
-//    - el campo 'error' que sea de tipo string | null
-// 2. Crea un objeto 'acierto' que use nuestra interface genérica con datos=42
-// 3. Crea un objeto 'fallo' que use nuestra interface genérica con datos="Ups"
+    'main.ts': `// Reto: Crea la función genérica 'envolver'
+// Debe recibir un valor de tipo T y devolver un array de T (T[])
 
-// Escribe tu código aquí:
-interface Respuesta...
+function envolver... // Implementa aquí tu solución
 
-const acierto...
-const fallo...
+// 🧪 Pruebas (No toques esto):
+const n = envolver(10);
+const s = envolver("hola");
+
+console.log("Número envuelto:", n);
+console.log("Texto envuelto:", s);
 `
   }}
   validationCode={`
      try {
-        // 1. Comprobar existencia
+        // 1. Verificar si existe la función
         // @ts-ignore
-        if (typeof acierto === 'undefined' || typeof fallo === 'undefined') {
-            throw new Error("Debes crear las variables 'acierto' y 'fallo'.");
+        if (typeof envolver !== 'function') throw new Error("No has creado la función 'envolver'");
+
+        // 2. Verificar lógica en tiempo de ejecución
+        // @ts-ignore
+        const testNum = envolver(123);
+        // @ts-ignore
+        const testStr = envolver("test");
+
+        if (!Array.isArray(testNum) || testNum[0] !== 123) {
+             throw new Error("envolver(123) debería devolver [123]");
+        }
+        if (!Array.isArray(testStr) || testStr[0] !== "test") {
+             throw new Error("envolver('test') debería devolver ['test']");
         }
 
-        // 2. Comprobar tipos runtime
-        // @ts-ignore
-        if (acierto.datos !== 42 || typeof fallo.datos !== 'string') {
-             throw new Error("Los valores de 'acierto' o 'fallo' no son los esperados.");
-        }
+        // 3. Verificaciones extra de trampa (evitar que devuelva el mismo array si se le pasa array)
+        if (testNum.length !== 1) throw new Error("El array devuelto debe tener exactamente 1 elemento");
 
         if (typeof onSuccess === 'function') onSuccess();
-        console.log("✅ ¡Perfecto! Dominas los interfaces genéricos.");
-        console.log("Objetos creados correctamente:");
-        console.log(JSON.stringify({ acierto, fallo }, null, 2));
-
+        console.log("✅ ¡Excelente! Has creado tu primer Generic.");
     } catch (e) {
         console.error(e.message);
     }
   `}
 />
 
-En la **Parte 9**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacernos la vida más fácil.
+En la **Parte 7**, subiremos el nivel. Veremos cómo **restringir** esos Generics (para que no valga "cualquier cosa") y cómo darles valores por defecto.

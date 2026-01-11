@@ -1,203 +1,173 @@
 ---
-description: Partial, Pick, Omit... Herramientas que TS te regala para transformar tipos sin tener que reescribirlos.
+pubDate: '2025-12-21T10:00:00Z'
+tags: ['typescript', 'generics', 'constraints']
 draft: true
 new: true
+title: 'TypeScript #9: Generics Intermedios (Constraints)'
+description: Cómo domar a los Generics para que no acepten "cualquier cosa". Constraints, valores por defecto y el truco de keyof.
+series: typescript-basics
+seriesTitle: Fundamentos de TypeScript
+seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.
 lang: es
-pubDate: '2025-12-23T10:00:00Z'
-seriesDescription: "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos."
-seriesTitle: "Fundamentos de TypeScript"
-tags: ['typescript', 'utility-types', 'advanced']
-title: 'TypeScript #9: Utility Types (Tus mejores amigos)'
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
 import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
-TypeScript viene con una "navaja suiza" de tipos predefinidos llamados **Utility Types**.
-Son Generics que toman un tipo y nos devuelven una versión modificada.
+En la parte anterior vimos que `<T>` puede ser cualquier cosa. A veces, eso es **demasiado flexible**.
+¿Qué pasa si queremos que `T` tenga sí o sí una propiedad `.length`?
 
-## `Partial<T>` (Todo opcional)
+## Restricciones (`extends`)
 
-Imaginemos que tenemos un usuario completo, pero para una actualización (PATCH), solo envíamos los campos que cambiaron.
+Imaginemos esta función:
 
-<CodeTabs items={[
+<CodeTabs
+  status="error"
+  items={[
     {
 		label: 'TypeScript',
-		code: `interface Usuario {
-    id: number;
-    nombre: string;
-    email: string;
+		code: `function obtenerLongitud<T>(item: T) {
+    return item.length; // ❌ Error: Property 'length' does not exist on type 'T'.
 }
 
-function actualizarUsuario(id: number, cambios: Partial<Usuario>) {
-    // 'cambios' ahora es como si todas las props tuvieran '?'
-    // { id?: number; nombre?: string; email?: string; }
-    ...
+// TS se queja porque T podría ser un número (que no tiene .length), 
+// o un boolean...`,
+		lang: 'typescript'
+    }
+]} />
+
+Para arreglarlo, usamos `extends` para poner una **restricción** (Constraint).
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Le decimos: "T puede ser lo que quieras, PERO debe extender (cumplir) esta forma"
+interface TieneLongitud {
+    length: number;
 }
 
-actualizarUsuario(1, { nombre: "BartoloDev" }); // ✅ Válido`,
-		lang: 'typescript'
-    }
-]} />
-
-## `Required<T>` (Todo obligatorio)
-
-Lo contrario a Partial. Quita todos los `?` de una interfaz.
-
-## `Pick<T, Keys>` (Elige lo que quieres)
-
-A veces tenemos una interfaz gigante y solo necesitamos un par de campos para un componente pequeño.
-
-<CodeTabs items={[
-    {
-		label: 'TypeScript',
-		code: `interface Producto {
-    id: number;
-    nombre: string;
-    precio: number;
-    descripcion: string;
-    stock: number;
-    ...
+function obtenerLongitud<T extends TieneLongitud>(item: T) {
+    return item.length; // ✅ Ahora TS sabe que existe
 }
 
-// Creamos un nuevo tipo solo con nombre y precio
-type EtiquetaProducto = Pick<Producto, "nombre" | "precio">;
-// { nombre: string; precio: number; }`,
+obtenerLongitud("Hola"); // ✅ string tiene .length
+obtenerLongitud([1, 2, 3]); // ✅ array tiene .length
+obtenerLongitud(123); // ❌ Error: number no tiene .length`,
 		lang: 'typescript'
     }
 ]} />
 
-## `Omit<T, Keys>` (Quita lo que NO quieres)
+## Generics con `keyof` (El truco maestro)
 
-Lo contrario a Pick. Elimina campos específicos.
-Muy útil para quitar datos sensibles o innecesarios.
+Este patrón lo veremos en todas partes. Queremos una función que obtenga una propiedad de un objeto de forma segura.
+
+Necesitamos definir dos Generics:
+1. `T`: El objeto.
+2. `K`: La clave (key). Pero `K` no puede ser cualquier string, debe ser **una key de T**.
 
 <CodeTabs items={[
     {
 		label: 'TypeScript',
-		code: `// Un Usuario sin la contraseña
-type UsuarioPublico = Omit<Usuario, "password">;`,
-		lang: 'typescript'
-    }
-]} />
+		code: `function getProperty<T, K extends keyof T>(obj: T, key: K) {
+    return obj[key];
+}
 
-## `Record<Keys, Type>` (Diccionarios)
-
-Este es un poco especial. Sirve para crear objetos donde **no sabemos el nombre de las propiedades**, pero sabemos qué valores tendrán.
-
-Piensa en una **Agenda Telefónica**:
-- Las **Claves** (Keys) son nombres (Strings).
-- Los **Valores** (Type) son números (Numbers).
-
-No sabemos si guardarás a "Pepe" o "María", pero sabemos que la estructura siempre será `Nombre -> Numero`.
-
-<CodeTabs items={[
-    {
-		label: 'TypeScript',
-		code: `// Un objeto normal requiere saber las claves de antemano
-// interface Agenda { pepe: number } // ❌ Poco práctico
-
-// Con Record, definimos el "molde" de la clave y el valor
-type Agenda = Record<string, number>;
-
-const misContactos: Agenda = {
-    "Pepe": 666555444,
-    "Maria": 612312312,
-    // "Juan": "hola" // ❌ Error: el valor debe ser number
-};`,
-		lang: 'typescript'
-    }
-]} />
-
-<Callout type="tip" title="¿Por qué no usar Map?">
-En JavaScript moderno existe `Map`, que es un diccionario real. En TypeScript sería `Map<string, number>`.
-
-Sin embargo, usamos `Record` (Objetos) el 90% del tiempo porque **los Objetos se convierten a JSON automáticamente**, mientras que los `Map` se pierden al enviarlos a una API.
-</Callout>
-
-<CodeTabs items={[
-    {
-		label: 'Map vs Record',
-		code: `// --- Opción A: Record (Objeto de toda la vida) ---
-// Ideal para guardar en Base de Datos o enviar a Frontend
-type AgendaRecord = Record<string, number>;
-
-const agenda1: AgendaRecord = {
-    "Pepe": 666555444
+const developer = {
+    name: "BartoloDev",
+    language: "TypeScript"
 };
 
-// --- Opción B: Map (La forma "Pro") ---
-// Ideal para lógica interna compleja (sets, gets, size...)
-type AgendaMap = Map<string, number>;
+getProperty(developer, "name"); // ✅ TS sabe que esto devuelve string
+getProperty(developer, "age"); // ❌ Error: "age" no es una key de developer`,
+		lang: 'typescript'
+    }
+]} />
 
-const agenda2: AgendaMap = new Map();
-agenda2.set("Pepe", 666555444); // ✅ TS te vigila que metas number
-// agenda2.set("Juan", "hola"); // ❌ Error!`,
+## Valores por Defecto (`=`)
+
+Al igual que en las funciones normales (`function suma(a, b = 0)`), los Generics pueden tener valores por defecto.
+
+Esto es muy útil para no obligar al usuario a escribir el tipo siempre.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Si no pasamos T, asumiré que es 'string'
+interface RespuestaAPI<T = string> {
+    data: T;
+    error: boolean;
+}
+
+// Uso sin pasar tipo (usa el default)
+const respuestaSimple: RespuestaAPI = {
+    data: "Todo ok", // T es string
+    error: false
+};
+
+// Uso especificando tipo
+const respuestaCompleja: RespuestaAPI<number> = {
+    data: 200, // T es number
+    error: false
+};`,
 		lang: 'typescript'
     }
 ]} />
 
 ## ¡Probémoslo!
 
-Tenemos una interfaz `Todo`. Usemos:
-1. `Partial` para definir una variable `update`.
-2. `Pick` para definir una variable `preview` que solo tenga el título.
-3. `Record` para crear un `Catalogo` donde guardemos Todo por su ID (string).
+Creemos una función `fusionar` que tome dos objetos `obj1` y `obj2` y los combine. Tipemos la función usando dos generics `T` y `U`.
 
 <TSEditor
   client:only="react"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  height="850px"
+  id="ex-generics-constraints"
+  showConsole={false}
+  defaultMuted={true}
+  height="500px"
   files={{
-    'main.ts': `interface Todo {
-    id: number;
-    title: string;
-    description: string;
-    completed: boolean;
+    'main.ts': `// Reto: Modifica 'fusionar' para que SOLO acepte objetos reales.
+// 1. Añade generics <T, U> a la función.
+// 2. Usa 'extends object' (en minúscula) para restringirlos. 
+//      -> Esto bloqueará números, strings y booleanos.
+//      -> Si usas 'Object' (mayúscula), los primitivos se colarían.
+
+function fusionar(obj1: any, obj2: any) {
+    return { ...obj1, ...obj2 };
 }
 
-// 1. Definimos 'TodoUpdate' usando Partial (Todo opcional)
-type TodoUpdate = any; 
+const user = { nombre: "BartoloDev" };
+const settings = { theme: "dark" };
 
-// 2. Definimos 'TodoPreview' usando Pick (solo title y completed)
-type TodoPreview = any;
+// ✅ Caso de éxito (esto funcionará siempre):
+const resultado = fusionar(user, settings); 
+console.log("Resultado:", resultado);
 
-// 3. Definimos 'TodoDictionary' usando Record
-// Clave: string (el ID), Valor: Todo
-type TodoDictionary = any;
-
-// Pruebas (No tocar)
-const testUpdate: TodoUpdate = { title: "Solo titulo" }; // ✅
-const testPreview: TodoPreview = { title: "Ver", completed: false }; // ✅
-
-// ✅ Debería permitir guardar Todo con cualquier clave string
-const testDiccionario: TodoDictionary = {
-    "todo-1": { id: 1, title: "A", description: "D", completed: false },
-    "urgente": { id: 2, title: "B", description: "D", completed: true }
-};
+// 🧪 Comprobación. Esto es lo que queremos evitar, que se pueda colar un número.
+// Si al descomentar la línea de abajo sale un error, ¡has superado el reto!
+// fusionar(user, 123);
 `
   }}
   validationCode={`
-     // Verificación de Tipos (Anti-Trampas)
-     type IsAny<T> = 0 extends (1 & T) ? true : false;
-     
-     // Chequeos de tipo estricto
-     const _checkUpdate: IsAny<TodoUpdate> = false;
-     const _checkPreview: IsAny<TodoPreview> = false;
-     const _checkRecord: IsAny<TodoDictionary> = false;
+     try {
+        if (!/extends\s+object/.test(code)) {
+             throw new Error("⚠️ Debes usar 'extends object' (minúscula) para bloquear primitivos.");
+        }
 
-     // Chequeo runtime adicional para Record (asegurar que es un objeto)
-     if (typeof testDiccionario !== 'object') {
-         throw new Error("testDiccionario debe ser un objeto.");
-     }
+        // Check if returns intersection (roughly)
+        // @ts-ignore
+        const res = fusionar({a:1}, {b:2});
+        if (res.a !== 1 || res.b !== 2) throw new Error("La lógica de fusión se ha roto.");
 
-     if (typeof onSuccess === 'function') onSuccess();
-     console.log("✅ ¡Genial! Has dominado los Utility Types (incluido Record).");
-     console.log("Diccionario creado:", Object.keys(testDiccionario).length, "elementos.");
+        if (typeof onSuccess === 'function') onSuccess();
+        console.log("✅ ¡Ejercicio Superado! Has creado una función robusta.");
+        console.log("🔒 Has bloqueado exitosamente el paso de tipos primitivos.");
+
+    } catch (e) {
+        console.error(e.message);
+    }
   `}
 />
 
-En la **Parte 10**, entraremos en territorio avanzado. Usaremos `infer` para que TypeScript "extraiga" tipos de lugares imposibles, como el tipo de retorno de una función.
+En la **Parte 8**, abordaremos una de las mayores confusiones: **Generics en Interfaces vs en Tipos**, y cómo pasar tipos de padres a hijos (prop drilling de tipos).

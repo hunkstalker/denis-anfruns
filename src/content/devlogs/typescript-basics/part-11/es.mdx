@@ -1,100 +1,204 @@
 ---
-description: La traca final. Sobrecarga de funciones, Builders y cómo crear tu propia mini-librería type-safe.
+pubDate: '2025-12-23T10:00:00Z'
+tags: ['typescript', 'utility-types', 'advanced']
 draft: true
-end: true
+new: true
+title: 'TypeScript #11: Utility Types (Tus mejores amigos)'
+description: Partial, Pick, Omit... Herramientas que TS te regala para transformar tipos sin tener que reescribirlos.
+series: typescript-basics
+seriesTitle: Fundamentos de TypeScript
+seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.
 lang: es
-new: false
-pubDate: '2025-12-25T10:00:00Z'
-seriesDescription: "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos."
-seriesTitle: "Fundamentos de TypeScript"
-tags: ['typescript', 'patterns', 'advanced']
-title: 'TypeScript #11: Patrones Reales'
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
 import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
-Hemos llegado al final. Si hemos seguido todo hasta aquí, ya sabemos más TypeScript que el 80% de los desarrolladores.
-Para terminar, veamos algunos patrones que nos harán parecer unos magos.
+TypeScript viene con una "navaja suiza" de tipos predefinidos llamados **Utility Types**.
+Son Generics que toman un tipo y nos devuelven una versión modificada.
 
-## Sobrecarga de Funciones (Function Overloads)
+## `Partial<T>` (Todo opcional)
 
-A veces una función puede hacer cosas muy distintas según qué le pasemos.
-
-Si pasamos un `string`, devuelve `string`.
-Si pasamos un `number`, devuelve `boolean`.
-
-¿Cómo tipamos eso? Con "Overloads". Escribimos la firma varias veces antes de la implementación real.
+Imaginemos que tenemos un usuario completo, pero para una actualización (PATCH), solo envíamos los campos que cambiaron.
 
 <CodeTabs items={[
     {
 		label: 'TypeScript',
-		code: `// Sobrecarga 1 (Firma pública)
-function convertir(input: string): string[];
-// Sobrecarga 2 (Firma pública)
-function convertir(input: number): boolean;
-
-// Implementación (Privada - debe ser lo bastante amplia para cubrir todo)
-function convertir(input: string | number): any {
-    if (typeof input === "string") {
-        return input.split("");
-    } else {
-        return input > 10;
-    }
+		code: `interface Usuario {
+    id: number;
+    nombre: string;
+    email: string;
 }
 
-const a = convertir("Hola"); // TS sabe que 'a' es string[]
-const b = convertir(50);     // TS sabe que 'b' es boolean`,
+function actualizarUsuario(id: number, cambios: Partial<Usuario>) {
+    // 'cambios' ahora es como si todas las props tuvieran '?'
+    // { id?: number; nombre?: string; email?: string; }
+    ...
+}
+
+actualizarUsuario(1, { nombre: "BartoloDev" }); // ✅ Válido`,
 		lang: 'typescript'
     }
 ]} />
 
-## Creando una Mini-Store (Tipo Zustand/Redux)
+## `Required<T>` (Todo obligatorio)
 
-Juntemos **Generics**, **Constraints** y **Partial** para crear un gestor de estado.
+Lo contrario a Partial. Quita todos los `?` de una interfaz.
+
+## `Pick<T, Keys>` (Elige lo que quieres)
+
+A veces tenemos una interfaz gigante y solo necesitamos un par de campos para un componente pequeño.
 
 <CodeTabs items={[
     {
 		label: 'TypeScript',
-		code: `class Store<T extends object> {
-    private state: T;
-
-    constructor(initialState: T) {
-        this.state = initialState;
-    }
-
-    getState(): T {
-        return this.state;
-    }
-
-    // Usamos Partial<T> para permitir actualizar solo trozos
-    setState(newState: Partial<T>) {
-        this.state = { ...this.state, ...newState };
-    }
+		code: `interface Producto {
+    id: number;
+    nombre: string;
+    precio: number;
+    descripcion: string;
+    stock: number;
+    ...
 }
 
-interface AppState {
-    user: string;
-    darkMode: boolean;
-}
-
-const myStore = new Store<AppState>({ 
-    user: "Denis", 
-    darkMode: false 
-});
-
-myStore.setState({ darkMode: true }); // ✅
-myStore.setState({ user: 123 });      // ❌ Error de tipo`,
+// Creamos un nuevo tipo solo con nombre y precio
+type EtiquetaProducto = Pick<Producto, "nombre" | "precio">;
+// { nombre: string; precio: number; }`,
 		lang: 'typescript'
     }
 ]} />
 
-## Despedida
+## `Omit<T, Keys>` (Quita lo que NO quieres)
 
-TypeScript tiene una curva de aprendizaje. Al principio parece que solo nos pone trabas y nos obliga a escribir más.
-Pero llega un día en que refactorizamos 20 archivos, TypeScript nos grita 5 errores, los corregimos, y al ejecutar... **todo funciona a la primera**.
+Lo contrario a Pick. Elimina campos específicos.
+Muy útil para quitar datos sensibles o innecesarios.
 
-Ese es el momento en que nos enamoramos.
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Un Usuario sin la contraseña
+type UsuarioPublico = Omit<Usuario, "password">;`,
+		lang: 'typescript'
+    }
+]} />
 
-¡Gracias por leer! 🚀
+## `Record<Keys, Type>` (Diccionarios)
+
+Este es un poco especial. Sirve para crear objetos donde **no sabemos el nombre de las propiedades**, pero sabemos qué valores tendrán.
+
+Piensa en una **Agenda Telefónica**:
+- Las **Claves** (Keys) son nombres (Strings).
+- Los **Valores** (Type) son números (Numbers).
+
+No sabemos si guardarás a "Pepe" o "María", pero sabemos que la estructura siempre será `Nombre -> Numero`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Un objeto normal requiere saber las claves de antemano
+// interface Agenda { pepe: number } // ❌ Poco práctico
+
+// Con Record, definimos el "molde" de la clave y el valor
+type Agenda = Record<string, number>;
+
+const misContactos: Agenda = {
+    "Pepe": 666555444,
+    "Maria": 612312312,
+    // "Juan": "hola" // ❌ Error: el valor debe ser number
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="tip" title="¿Por qué no usar Map?">
+En JavaScript moderno existe `Map`, que es un diccionario real. En TypeScript sería `Map<string, number>`.
+
+Sin embargo, usamos `Record` (Objetos) el 90% del tiempo porque **los Objetos se convierten a JSON automáticamente**, mientras que los `Map` se pierden al enviarlos a una API.
+</Callout>
+
+<CodeTabs items={[
+    {
+		label: 'Map vs Record',
+		code: `// --- Opción A: Record (Objeto de toda la vida) ---
+// Ideal para guardar en Base de Datos o enviar a Frontend
+type AgendaRecord = Record<string, number>;
+
+const agenda1: AgendaRecord = {
+    "Pepe": 666555444
+};
+
+// --- Opción B: Map (La forma "Pro") ---
+// Ideal para lógica interna compleja (sets, gets, size...)
+type AgendaMap = Map<string, number>;
+
+const agenda2: AgendaMap = new Map();
+agenda2.set("Pepe", 666555444); // ✅ TS te vigila que metas number
+// agenda2.set("Juan", "hola"); // ❌ Error!`,
+		lang: 'typescript'
+    }
+]} />
+
+## ¡Probémoslo!
+
+Tenemos una interfaz `Todo`. Usemos:
+1. `Partial` para definir una variable `update`.
+2. `Pick` para definir una variable `preview` que solo tenga el título.
+3. `Record` para crear un `Catalogo` donde guardemos Todo por su ID (string).
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  height="850px"
+  files={{
+    'main.ts': `interface Todo {
+    id: number;
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+// 1. Definimos 'TodoUpdate' usando Partial (Todo opcional)
+type TodoUpdate = any; 
+
+// 2. Definimos 'TodoPreview' usando Pick (solo title y completed)
+type TodoPreview = any;
+
+// 3. Definimos 'TodoDictionary' usando Record
+// Clave: string (el ID), Valor: Todo
+type TodoDictionary = any;
+
+// Pruebas (No tocar)
+const testUpdate: TodoUpdate = { title: "Solo titulo" }; // ✅
+const testPreview: TodoPreview = { title: "Ver", completed: false }; // ✅
+
+// ✅ Debería permitir guardar Todo con cualquier clave string
+const testDiccionario: TodoDictionary = {
+    "todo-1": { id: 1, title: "A", description: "D", completed: false },
+    "urgente": { id: 2, title: "B", description: "D", completed: true }
+};
+`
+  }}
+  validationCode={`
+     // Verificación de Tipos (Anti-Trampas)
+     type IsAny<T> = 0 extends (1 & T) ? true : false;
+     
+     // Chequeos de tipo estricto
+     const _checkUpdate: IsAny<TodoUpdate> = false;
+     const _checkPreview: IsAny<TodoPreview> = false;
+     const _checkRecord: IsAny<TodoDictionary> = false;
+
+     // Chequeo runtime adicional para Record (asegurar que es un objeto)
+     if (typeof testDiccionario !== 'object') {
+         throw new Error("testDiccionario debe ser un objeto.");
+     }
+
+     if (typeof onSuccess === 'function') onSuccess();
+     console.log("✅ ¡Genial! Has dominado los Utility Types (incluido Record).");
+     console.log("Diccionario creado:", Object.keys(testDiccionario).length, "elementos.");
+  `}
+/>
+
+En la **Parte 10**, entraremos en territorio avanzado. Usaremos `infer` para que TypeScript "extraiga" tipos de lugares imposibles, como el tipo de retorno de una función.

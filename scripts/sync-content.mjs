@@ -15,8 +15,8 @@ const COLLECTIONS = [
 
 // Fields that should be synced from Main Language (ES) to others
 const SYNC_FIELDS = [
-    'title',
-    'description',
+    // 'title', // Localized
+    // 'description', // Localized
 	'pubDate',
 	'updatedDate',
 	'draft',
@@ -24,8 +24,8 @@ const SYNC_FIELDS = [
 	'heroImage',
 	'ogImage',
 	'series',     // ID of the series
-	'seriesTitle', // Only if string (common title), objects are localized
-    'seriesDescription',
+	// 'seriesTitle', // Localized
+    // 'seriesDescription', // Localized
 	'new',
 	'end',
 	'icon'
@@ -93,21 +93,21 @@ function parseFrontmatter(content) {
 function stringifyFrontmatter(data, originalContent) {
     // Orden preferido de campos en el frontmatter
     const FIELD_ORDER = [
-        'title',
-        'description',
         'pubDate',
         'updatedDate',
         'tags',
-        'lang',
+        'heroImage',
+        'ogImage',
+        'icon',
+        'draft',
+        'new',
+        'end',
+        'title',
+        'description',
         'series',
         'seriesTitle',
         'seriesDescription',
-        'icon',
-        'heroImage',
-        'ogImage',
-        'new',
-        'end',
-        'draft',
+        'lang',
     ]
     
     // Ordenar keys: primero los del orden predefinido, luego el resto alfabéticamente
@@ -191,6 +191,13 @@ function processDirectory(dirPath) {
         } else {
             // Just read what's there
             commonData = parseFrontmatter(esContent)
+            
+            // FORCE REFORMAT (Temporary)
+            const sortedEsContent = stringifyFrontmatter(commonData, esContent)
+            if (sortedEsContent !== esContent) {
+                fs.writeFileSync(esPath, sortedEsContent)
+                console.log(`Formatted ${path.relative(CONTENT_ROOT, esPath)}`)
+            }
         }
     } else {
         // No ES file? Skip syncing (nothing to sync from)

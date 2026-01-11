@@ -1,0 +1,101 @@
+---
+pubDate: '2025-12-25T10:00:00Z'
+tags: ['typescript', 'patterns', 'advanced']
+draft: true
+new: false
+end: true
+title: 'TypeScript #13: Patrones Reales'
+description: La traca final. Sobrecarga de funciones, Builders y cómo crear tu propia mini-librería type-safe.
+series: typescript-basics
+seriesTitle: Fundamentos de TypeScript
+seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.
+lang: es
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Hemos llegado al final. Si hemos seguido todo hasta aquí, ya sabemos más TypeScript que el 80% de los desarrolladores.
+Para terminar, veamos algunos patrones que nos harán parecer unos magos.
+
+## Sobrecarga de Funciones (Function Overloads)
+
+A veces una función puede hacer cosas muy distintas según qué le pasemos.
+
+Si pasamos un `string`, devuelve un `array de caracteres` (`string[]`).
+Si pasamos un `number`, devuelve `boolean`.
+
+¿Cómo tipamos eso? Con "Overloads". Escribimos la firma varias veces antes de la implementación real.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Sobrecarga 1 (Firma pública)
+function convertir(input: string): string[];
+// Sobrecarga 2 (Firma pública)
+function convertir(input: number): boolean;
+
+// Implementación (Privada - debe ser lo bastante amplia para cubrir todo)
+function convertir(input: string | number): any {
+    if (typeof input === "string") {
+        return input.split("");
+    } else {
+        return input > 10;
+    }
+}
+
+const a = convertir("Hola"); // TS sabe que 'a' es string[]
+const b = convertir(50);     // TS sabe que 'b' es boolean`,
+		lang: 'typescript'
+    }
+]} />
+
+## Creando una Mini-Store (Tipo Zustand/Redux)
+
+Juntemos **Generics**, **Constraints** y **Partial** para crear un gestor de estado.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `class Store<T extends object> {
+    private state: T;
+
+    constructor(initialState: T) {
+        this.state = initialState;
+    }
+
+    getState(): T {
+        return this.state;
+    }
+
+    // Usamos Partial<T> para permitir actualizar solo trozos
+    setState(newState: Partial<T>) {
+        this.state = { ...this.state, ...newState };
+    }
+}
+
+interface AppState {
+    user: string;
+    darkMode: boolean;
+}
+
+const myStore = new Store<AppState>({ 
+    user: "Denis", 
+    darkMode: false 
+});
+
+myStore.setState({ darkMode: true }); // ✅
+myStore.setState({ user: 123 });      // ❌ Error de tipo`,
+		lang: 'typescript'
+    }
+]} />
+
+## Despedida
+
+TypeScript tiene una curva de aprendizaje. Al principio parece que solo nos pone trabas y nos obliga a escribir más.
+Pero llega un día en que refactorizamos 20 archivos, TypeScript nos grita 5 errores, los corregimos, y al ejecutar... **todo funciona a la primera**.
+
+Ese es el momento en que nos enamoramos.
+
+¡Gracias por leer! 🚀

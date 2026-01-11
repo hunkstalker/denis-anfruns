@@ -1,0 +1,137 @@
+---
+pubDate: '2025-12-24T10:00:00Z'
+tags: ['typescript', 'infer', 'advanced']
+draft: true
+new: false
+title: 'TypeScript #12: Advanced Inference (infer)'
+description: La palabra clave más misteriosa de TypeScript. Aprende a extraer tipos desde dentro de otros tipos.
+series: typescript-basics
+seriesTitle: Fundamentos de TypeScript
+seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.
+lang: es
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Si Generics es el nivel experto, `infer` es nivel **Maestro Jedi**.
+Se usa dentro de los **Conditional Types** para "sacar" un tipo que está encerrado dentro de otro.
+
+## Tipos Condicionales
+
+Primero, entendamos esto. Es como un `if/else` pero para tipos.
+
+En este contexto, la palabra clave `extends` **no significa herencia de clases**. Piénsalo más bien como una **pregunta de compatibilidad**:
+
+> ¿Es el tipo de la izquierda (`T`) asignable al tipo de la derecha (`string`)?
+Si la respuesta es **Sí**, el resultado es el **Tipo Literal** `"Sí"`. Si es **No**, el resultado es el **Tipo Literal** `"No"`.
+*(Recuerda que en TypeScript, una cadena específica puede ser su propio tipo)*.
+
+<CodeTabs items={[
+    {
+		label: 'ejemplo.ts',
+		code: `type EsString<T> = T extends string ? "Sí" : "No";
+
+type A = EsString<string>; // "Sí"
+type B = EsString<number>; // "No"`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="info" title='"Funciones de Tipos"'>
+	Si lo has pensado, estás en lo cierto: **Estás programando con tipos.**
+
+	*   `TypeName<T>` es la **función** (y `T` el parámetro).
+	*   `extends ? :` es la **lógica** (el `if/else`).
+	*   El tipo resultante es el **return**.
+</Callout>
+
+## La palabra clave `infer`
+
+Sirve para crear una **variable temporal** dentro de esa condición.
+Imaginemos que queremos saber **qué tipo** devuelve una función.
+
+Para ello, primero necesitamos saber cómo describir "cualquier función" en TypeScript.
+Un tipo de función genérica se ve así: `(...args: any[]) => any`.
+*   `...args`: Esto es sintaxis JS (Rest Parameter). Recoge **todos** los argumentos en un array.
+*   `: any[]`: Dice que ese array puede contener **cualquier cantidad** de cosas de **cualquier tipo**.
+*   `=> any`: Devuelve cualquier cosa.
+
+Si hacemos `T extends (...args: any[]) => any`, estamos preguntando: **"¿Es T una función?"**.
+
+Ahora viene la magia: Si en lugar de `=> any` ponemos `=> infer R`, le estamos diciendo a TS:
+*"Si T es una función, **infiere** (averigua) su **tipo de retorno** y guárdalo en la variable `R`"*.
+
+<CodeTabs items={[
+    {
+		label: 'ejemplo.ts',
+		code: `type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+// Desglose:
+// 1. T extends (...args: any[]) => ...  -> ¿Es T una función?
+// 2. ... => infer R                     -> Si lo es, captura su retorno en 'R'.
+// 3. ? R                                -> Devuélveme ese 'R'.
+// 4. : never                            -> Si no es función, devuelve 'never'.
+
+function dameNumero() { return 42; }
+
+type Resultado = GetReturnType<typeof dameNumero>; 
+// TS mira la función, ve que devuelve number, e infiere que R = number.
+// Resultado es 'number'.`,
+		lang: 'typescript'
+    }
+]} />
+
+## Ejemplo Útil: Unpack Promise
+
+Imaginemos que tenemos una `Promise<User>`, pero queremos obtener el tipo `User` directamente.
+
+<CodeTabs items={[
+    {
+		label: 'ejemplo.ts',
+		code: `// Tenemos esto:
+type RespuestaPromesa = Promise<{ id: number; name: string }>;
+
+// Queremos esto:
+// { id: number; name: string }
+
+// Solución con infer:
+type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
+
+type UsuarioDesempaquetado = UnpackPromise<RespuestaPromesa>;
+// Resultado: { id: number; name: string }
+// TS infirió lo que había DENTRO de la promesa y lo llamó 'U'.`,
+		lang: 'typescript'
+    }
+]} />
+
+## ¡Probémoslo!
+
+Creemos un tipo `UnpackArray<T>` que extraiga el tipo de un array.
+`UnpackArray<string[]>` debería devolver `string`.
+
+<Callout type="tip" title="¿Por qué devuelve string y no array?">
+  Fíjate en la condición `extends (infer U)[]`.
+  Le estamos preguntando: *"¿Es `T` un Array de algo (`U`)?"*.
+  
+  Si `T` es `string[]`, entonces ese "algo" (`U`) es `string`.
+  ¡Estamos extrayendo el tipo de dato que hay **dentro** del array!
+</Callout>
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `type UnpackArray<T> = T extends (infer U)[] ? U : T;
+
+type ArrayStrings = string[];
+type Unpacked = UnpackArray<ArrayStrings>;
+
+// Comprueba si funciona (hover sobre Unpacked)
+// Debería ser 'string'
+`
+  }}
+/>
+
+En la **Parte 11** (y final), pondremos todo junto. Veremos patrones de diseño reales, sobrecarga de funciones y cómo crear tu propia mini-librería "Type-Safe".
