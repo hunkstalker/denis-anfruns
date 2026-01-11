@@ -83,7 +83,7 @@ function getRecursiveFiles(dir: string, collection: string, items: any[] = []) {
 					items.push({
 						id: relativePath.replace(/\\/g, '/'), // normalization
 						filePath: metaPath,
-						collection, // 'til' or 'devlog' inherited from root scan
+						collection, // 'notes' or 'devlog' inherited from root scan
 						...json,
 						title: title || json.title, // Use extracted title if available
 						series: seriesId, // Inferred!
@@ -101,11 +101,11 @@ function getRecursiveFiles(dir: string, collection: string, items: any[] = []) {
 }
 
 export const GET: APIRoute = async () => {
-	const tilItems = getRecursiveFiles(path.join(CONTENT_DIR, 'til'), 'til')
+	const notesItems = getRecursiveFiles(path.join(CONTENT_DIR, 'notes'), 'notes')
 	const devlogItems = getRecursiveFiles(path.join(CONTENT_DIR, 'devlog'), 'devlog')
 
 	// Sort by new (optional, client does it too)
-	const allItems = [...tilItems, ...devlogItems]
+	const allItems = [...notesItems, ...devlogItems]
 
 	return new Response(JSON.stringify(allItems), {
 		headers: { 'Content-Type': 'application/json' },

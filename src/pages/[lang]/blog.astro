@@ -2,11 +2,11 @@
 import BaseLayout from '@layouts/BaseLayout.astro'
 import Nav from '@components/layout/Nav.astro'
 
-import { getDevlogs, groupDevlogsBySeries } from '@utils/devlog-content'
+import { getDevlogs, groupDevlogsBySeries } from '@utils/devlogs-content'
 import { getLangFromSlug, type SupportedLang } from '@utils/blogi18n'
 import { languages } from '@i18n/ui'
 import { useTranslations } from '@i18n/utils'
-import TilAside from '@components/til/Aside.astro'
+import NotesAside from '@components/notes/Aside.astro'
 import DevLogGrid from '@components/devlog/Grid'
 
 export async function getStaticPaths() {
@@ -47,7 +47,7 @@ const articles = devlogs
 							{t('blog.series')}
 						</h2>
 						<a
-							href={`/${lang}/devlog/`}
+							href={`/${lang}/devlogs/`}
 							class="group flex items-center gap-1 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
 						>
 							{t('blog.viewAll')}
@@ -82,7 +82,7 @@ const articles = devlogs
 			</div>
 
 			<!-- Columna lateral: TILs -->
-			<TilAside lang={lang} limit={6} />
+			<NotesAside lang={lang} limit={6} />
 		</div>
 	</div>
 </BaseLayout>

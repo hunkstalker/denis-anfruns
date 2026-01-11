@@ -1,0 +1,67 @@
+---
+import ContentLayout from '@layouts/ContentLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import { getNotes, groupNotesBySeries } from '@utils/notes-content'
+import { useTranslations } from '@i18n/utils'
+import { languages } from '@i18n/ui'
+import type { SupportedLang } from '@utils/blogi18n'
+import Grid from '@components/notes/Grid'
+
+export async function getStaticPaths() {
+	return Object.keys(languages)
+		.filter((lang) => lang !== 'es')
+		.map((lang) => ({ params: { lang: lang as SupportedLang } }))
+}
+
+const { lang } = Astro.params
+const t = useTranslations(lang as SupportedLang)
+
+const allNotes = await getNotes()
+
+const noteCollection = allNotes.filter((post) => {
+	// Filtrar solo los del idioma actual y válidos
+	if (post.data.lang !== lang) return false
+	if (!post.data.pubDate) return false
+	if (import.meta.env.PROD && post.data.draft === true) return false
+	return true
+})
+
+// Uso de lógica compartida (añade seriesCount correctamente)
+const notes = groupNotesBySeries(noteCollection)
+---
+
+<ContentLayout
+	title={t('blog.note')}
+	siteTitle={`Notes - ${t('blog.note')}`}
+	lang={lang as SupportedLang}
+>
+	<div class="lg:col-span-12">
+		<div class="mb-8">
+			<BackLink href={lang === 'es' ? '/blog' : `/${lang}/blog`} label={t('blog.back')} />
+
+			<h1 class="mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200">
+				{t('blog.note')}
+			</h1>
+
+			<p class="text-lg text-zinc-500">{t('blog.noteDescription')}</p>
+			<hr class="animate-fade-in-up mt-8 border-stone-400 dark:border-zinc-800" />
+		</div>
+
+		<Grid
+			client:load
+			transition:persist
+			posts={notes}
+			lang={lang as SupportedLang}
+			labels={{
+				all: t('search.all'),
+				noResults: t('blog.withoutNotes'),
+				readNote: t('blog.readNote'),
+				view: t('blog.view'),
+				viewAll: t('blog.view.all'),
+				viewSingles: t('blog.view.singles'),
+				viewSeries: t('blog.view.series'),
+				filters: t('nav.filters'),
+			}}
+		/>
+	</div>
+</ContentLayout>

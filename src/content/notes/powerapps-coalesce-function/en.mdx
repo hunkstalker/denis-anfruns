@@ -1,0 +1,35 @@
+---
+title: Nulos elegantes con Coalesce
+description: Sustituye anidaciones If por un simple Coalesce para valores por defecto.
+pubDate: '2025-12-01T00:00:00.000Z'
+tags: ['powerapps', 'power-fx']
+lang: en
+icon: powerapps
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
+
+Stop nesting `If` statements to check if a value is blank. `Coalesce` returns the first value that is **not null** (blank) from the list of arguments.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps',
+      code: `// ❌ Verbose
+If(IsBlank(TextInput1.Text), "No Name", TextInput1.Text)
+
+// ✅ Elegant
+Coalesce(TextInput1.Text, "No Name")`,
+lang: 'power fx'
+}
+]}
+/>
+
+It's perfect for default values in forms or labels.
+
+<Callout type="warning" title="Mind the separator" filled>
+	Remember that if your Power Apps is configured for the **European region**, you will need to
+	change commas `,` to semicolons `;` in formulas. And use double semicolons `;;` for chaining
+	functions where normally a single semicolon `;` would be used.
+</Callout>

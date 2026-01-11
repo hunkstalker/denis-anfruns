@@ -58,7 +58,7 @@ export default function AdminHiddenSidebar({
 							<div className="flex-1 min-w-0">
 								<h4 className="font-medium text-xs text-zinc-700 dark:text-zinc-200 truncate">{item.title || item.id}</h4>
 								<div className="flex items-center gap-2 mt-0.5">
-									<Badge size="xs" variant="subtle" intent={item.collection === 'til' ? 'emerald' : 'blue'}>{item.collection}</Badge>
+									<Badge size="xs" variant="subtle" intent={item.collection === 'notes' ? 'emerald' : 'blue'}>{item.collection}</Badge>
 									<span className="text-[10px] text-zinc-400 font-mono truncate">{item.series || 'No Series'}</span>
 								</div>
 							</div>

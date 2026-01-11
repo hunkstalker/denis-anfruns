@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import DevLogCard from './Card'
-import type { DevlogPost } from '@utils/devlog-content'
+import type { DevlogPost } from '@utils/devlogs-content'
 import { useDevLogFilter } from '@hooks/useDevLogFilter'
 import DevLogFilterBar from './FilterBar'
 import { useIntersectionObserver } from '@hooks/useIntersectionObserver'

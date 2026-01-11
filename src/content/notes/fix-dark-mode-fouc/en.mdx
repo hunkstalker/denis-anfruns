@@ -1,0 +1,77 @@
+---
+title: 'FOUC en Astro: Guía Definitiva, Parte I (Script + Config)'
+description: Elimina el flash blanco y el salto de layout al cargar el tema oscuro.
+pubDate: '2025-12-11T10:00:00Z'
+tags: ['astro', 'javascript']
+lang: en
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+
+FOUC (Flash of Unstyled Content) is one of the hardest problems I've always struggled to fix. It's a headache. Now, in this project I encountered two levels of FOUC, and here is how I solved both.
+
+## Level 1: The White Flash
+
+The browser paints the page white by default before loading your dark styles.
+**Solution:** Inject a "blocking" script into the `<head>` of the main Layout.
+
+Keep in mind that this is also part of the logic to control between light and dark themes when initializing the site.
+
+<CodeTabs
+	items={[
+		{
+			label: 'BaseLayout.astro',
+			code: `<head>
+  <script is:inline>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (theme === 'dark' || (!theme && systemDark)) {
+        document.documentElement.classList.add('dark');
+        // Direct style injection for absolute immediacy
+        document.documentElement.style.backgroundColor = '#131313';
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '#ffffff';
+         document.documentElement.style.colorScheme = 'light';
+      }
+    })();
+  </script>
+</head>`,
+			lang: 'html',
+		},
+	]}
+/>
+
+## Level 2: The Layout Shift (Deferred CSS)
+
+Despite the script, navigating between pages caused elements to "disassemble" for an instant.
+**The Culprit:** A misconfigured optimization plugin (`@playform/inline`).
+
+This plugin inlines critical CSS, but if placed **before** other build processes in `astro.config.mjs`, it can cause CSS to load asynchronously in an incorrect order, triggering layout shifts. Or at least that's what Gemini 3 told me.
+
+**Solution:**
+Move optimization plugins to the **end** of the `integrations` array or... what actually fixed the problem for me, getting rid of it.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'astro.config.mjs', 
+      code: `export default defineConfig({
+  // BAD: inline() before mdx()
+  // integrations: [tailwind(), react(), inline(), mdx()],
+
+// GOOD: Optimizations at the end (or disabled if problematic)
+integrations: [tailwind(), react(), mdx() /*, inline() */],
+});`,
+lang: 'javascript'
+}
+]}
+/>
+
+This integration inlines CSS into the HTML, it should serve to optimize loading, but at least in my case it came at the cost of adding that FOUC.
+For now, its removal hasn't affected me in any apparent way.
+
+> **Lesson:** Visual stability (CLS) is more important than saving 2ms of load time. If an optimization breaks the experience, remove it.

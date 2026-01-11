@@ -1,7 +1,7 @@
 export interface ContentItem {
 	id: string; // "folder/slug" or "slug"
 	filePath: string;
-	collection: 'til' | 'devlog';
+	collection: 'notes' | 'devlogs';
 	series?: string;
 	title: string;
 	new?: boolean;
@@ -16,7 +16,7 @@ export interface SeriesFolder {
 	id: string; // The series ID
 	type: 'folder';
 	title: string; // Series title
-	collection: 'til' | 'devlog';
+	collection: 'notes' | 'devlogs';
 	icon?: string; // Propagated icon
 	children: ContentItem[];
 	pubDate?: string; // Latest child date

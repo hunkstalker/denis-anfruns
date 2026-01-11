@@ -1,0 +1,137 @@
+---
+description: Cómo crear tipos a partir de valores y olvidarse de mantener tipos sincronizados manualmente.
+draft: true
+lang: es
+new: false
+pubDate: '2025-12-19T10:00:00Z'
+seriesDescription: {"es": "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.", "en": "Learn TypeScript from scratch diving deep into inference and types."}
+seriesTitle: {"es": "Fundamentos de TypeScript", "en": "TypeScript Basics"}
+tags: ['typescript', 'typeof', 'keyof']
+title: 'TypeScript #5: La Magia de typeof y keyof'
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Aquí es donde TypeScript deja de ser "JavaScript con tipos" y se convierte en un superpoder.
+Hasta ahora hemos definido tipos manualmente. Pero, ¿y si pudiéramos **generar los tipos automáticamente** desde nuestro código?
+
+## `typeof`: Extrayendo el ADN
+
+En JS, `typeof` devuelve un string ("string", "number", "object").
+En TS, si lo usamos en un contexto de tipos, devuelve **el tipo completo**.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `const settings = {
+    theme: "dark",
+    notifications: true,
+    version: 1.0
+};
+
+// En vez de escribir la interfaz manualmente...
+// type Settings = { theme: string; notifications: boolean; version: number }; 😴
+
+type Settings = typeof settings; 
+// 🪄 ¡Boom! TS acaba de escribir la interfaz por ti.`,
+		lang: 'typescript'
+    }
+]} />
+
+Esto es brutal para APIs o librerías de terceros (o nuestras propias constantes de configuración). Tenemos una "Single Source of Truth" (Fuente Única de Verdad): el valor. El tipo se adapta solo.
+
+## `keyof`: Dame las llaves
+
+`keyof` toma un **Tipo** y nos devuelve una Unión de sus claves (keys).
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Usuario {
+    name: string;
+    age: number;
+    email: string;
+}
+
+type UsuarioKeys = keyof Usuario;
+// Es equivalente a: "name" | "age" | "email"`,
+		lang: 'typescript'
+    }
+]} />
+
+¿Para qué sirve? Para que no podamos pedir propiedades que no existen.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `function getProperty(user: Usuario, key: keyof Usuario) {
+    return user[key];
+}
+
+const me: Usuario = { name: "Denis", age: 39, email: "..." };
+
+getProperty(me, "name"); // ✅
+getProperty(me, "password"); // ❌ Error: Argument of type '"password"' is not assignable...`,
+		lang: 'typescript'
+    }
+]} />
+
+## El Combo Definitivo: `keyof typeof`
+
+Esta es una de las combinaciones más usadas en TypeScript real.
+Se usa cuando queremos sacar los keys de un **objeto/valor** que ya existe (no de una interfaz).
+
+1. `typeof objeto` -> Nos da el Tipo del objeto.
+2. `keyof (Tipo)` -> Nos da las keys de ese Tipo.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const COLORES = {
+    rojo: "#FF0000",
+    verde: "#00FF00",
+    azul: "#0000FF"
+} as const; // 'as const' hace que sean literales y readonly
+
+// Queremos un tipo que solo permita "rojo" | "verde" | "azul"
+type NombreColor = keyof typeof COLORES;
+
+function pintar(color: NombreColor) { ... }
+
+pintar("rojo"); // ✅
+pintar("amarillo"); // ❌`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="info" title="Nota Pro" filled>
+    El `as const` es vital aquí. Si no lo ponemos, TS inferirá que propiedades son `string`, y `typeof` será muy genérico. Con `as const` le decimos: "¡Esto no cambia, es literal!".
+</Callout>
+
+## ¡Probémoslo!
+
+Usemos el editor. Creemos un objeto `config` con varias opciones. Usemos `typeof` para sacar su tipo y creemos una función que reciba ese tipo.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `const config = {
+    mode: "dark",
+    debug: true
+};
+
+// 1. Crea el tipo Config a partir de 'config'
+type Config = any; // 👈 Modifica esto
+
+// 2. Crea el tipo ConfigKeys a partir de 'Config'
+type ConfigKeys = any; // 👈 Modifica esto
+`
+  }}
+/>
+
+En la **Parte 6** veremos los **Generics**, la herramienta que nos permite crear componentes y funciones reutilizables que funcionan con cualquier tipo (el famoso `<T>`).

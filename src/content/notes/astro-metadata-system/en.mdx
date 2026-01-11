@@ -1,0 +1,198 @@
+---
+title: Sistema ES First - Sincronización Automática de Contenido i18n
+description: Cómo funciona el sistema de sincronización de metadatos desde el archivo español hacia los demás idiomas.
+pubDate: '2025-12-16T19:00:00.000Z'
+tags: ['astro', 'automation', 'workflow', 'i18n']
+lang: en
+new: true
+draft: true
+---
+
+import Callout from '@components/mdx/Callout.astro';
+import CodeTabs from '@components/mdx/CodeTabs.astro';
+
+In this note, we'll explain how the multilingual content synchronization system works in this project. If you've noticed, our Spanish content files act as the **source of truth** for common metadata.
+
+## The Problem: Duplication in i18n
+
+When working with internationalization (i18n) in Astro using *Content Collections*, the standard approach is to have one file per language:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'File structure',
+			code: `src/content/notes/my-note/
+  es.mdx    ← Spanish Content
+  en.mdx    ← English Content`,
+			lang: 'text',
+		}
+	]}
+/>
+
+The problem arises when you need to keep metadata synchronized. The publication date? Same in all three. Tags? Same. Draft status? Same.
+
+If you decide to change the publication date, you have to edit 3 files. **Repeating data violates the DRY principle (Don't Repeat Yourself)** and is a guaranteed source of errors.
+
+## The Solution: ES First
+
+We adopt an **ES First** (Spanish First) approach:
+
+<Callout type="info" title="ES First Principle">
+The `es.mdx` file is the **source of truth** for all common metadata. Other languages automatically inherit these values.
+</Callout>
+
+### What Goes Where?
+
+**In `es.mdx` (Master):**
+- `title`, `description` (Spanish version)
+- `pubDate`, `updatedDate`
+- `tags`, `draft`, `new`
+- `series`, `heroImage`, `ogImage`
+
+**In `en.mdx` / `ca.mdx`:**
+- `title`, `description` (translated version)
+- `lang` (language identifier)
+- Everything else is **automatically synced** from `es.mdx`
+
+## The Magic: `sync-content.mjs`
+
+The script `scripts/sync-content.mjs` runs automatically before every `dev` or `build`:
+
+<CodeTabs
+	items={[
+		{
+      label: 'package.json',
+      code: `"dev": "pnpm sync:content && astro dev"
+"build": "pnpm sync:content && astro build && pagefind --site dist"`,
+      lang: 'json',
+		},
+	]}
+/>
+
+### What Does the Script Do?
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'Flow Diagram',
+			code: `ES es.mdx (MASTER)
+      │
+      │ SYNC_FIELDS: pubDate, tags, draft,
+      │              series, heroImage, new...
+      ▼
+┌──────────────┐
+│  en.mdx      │ ← Receives fields from ES
+│  ca.mdx      │ ← Receives fields from ES
+└──────────────┘`,
+			lang: 'text',
+		},
+	]}
+/>
+
+1. **Reads `es.mdx`** as the source of truth
+2. **Extracts syncable fields** (`SYNC_FIELDS`)
+3. **Updates `en.mdx` and `ca.mdx`** with those values
+
+### Synced Fields
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'scripts/sync-content.mjs',
+			code: `const SYNC_FIELDS = [
+    'title',        // Only if no translated version
+    'description',  // Only if no translated version
+    'pubDate',
+    'updatedDate',
+    'draft',
+    'tags',
+    'heroImage',
+    'ogImage',
+    'series',
+    'new',
+    'end',
+    'icon'`,
+			lang: 'JavaScript'
+		}
+	]}	
+/>
+
+### Configuring the Master Language
+
+The master language is defined in `scripts/sync-content.mjs`. By default, we use Spanish (`es.mdx`) as the source of truth:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'sync-content.mjs',
+			code: `// Master file (Source of Truth)
+const esPath = path.join(dirPath, 'es.mdx')
+
+// Languages that receive data from the master
+const others = ['en.mdx', 'ca.mdx']`,
+			lang: 'javascript',
+		},
+	]}
+/>
+
+If you wanted to change the master language to English, you would modify these lines:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'sync-content.mjs (English as master)',
+			code: `const masterPath = path.join(dirPath, 'en.mdx')
+const others = ['es.mdx', 'ca.mdx']`,
+			lang: 'javascript',
+		},
+	]}
+/>
+
+<Callout type="info" title="Why Spanish?">
+In this project, Spanish is the author's native language and has the highest volume of content. That's why it's the natural source of truth.
+</Callout>
+
+## Workflow
+
+### Creating New Content
+
+1. Create the folder: `src/content/notes/my-new-note/`
+2. Create `es.mdx` with all metadata
+3. Create `en.mdx` and `ca.mdx` with only `lang`, `title`, `description`
+4. Run `pnpm dev` → the script syncs automatically
+
+### Modifying Metadata
+
+1. Edit **only `es.mdx`**
+2. Run `pnpm dev` or `pnpm build`
+3. Changes propagate to other languages
+
+<Callout type="warning" title="Important">
+Never edit `pubDate`, `tags`, or `draft` directly in `en.mdx` or `ca.mdx`. Those changes will be overwritten on the next sync.
+</Callout>
+
+## Benefits
+
+1. **Write less**: Define metadata once
+2. **Zero sync errors**: Impossible to have different dates between languages
+3. **Natural flow**: Edit Spanish, the rest updates automatically
+4. **Transparent**: Runs automatically, no commands to remember
+
+## Validation: `verify-content.mjs`
+
+The script `scripts/verify-content.mjs` validates that everything is correct:
+
+- Is `pubDate` a valid date?
+- Is `updatedDate` after `pubDate`?
+- Do series have the correct part order?
+
+It runs with `pnpm verify:content` and is integrated into the `pnpm test` command.
+
+## Conclusion
+
+This **ES First** system allows us to keep multilingual content synchronized effortlessly. Spanish acts as the master, and other languages automatically inherit common metadata while maintaining their own title and description translations.

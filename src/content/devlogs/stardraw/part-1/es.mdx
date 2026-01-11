@@ -1,0 +1,279 @@
+---
+description: Inicio del desarrollo de StarDraw, un proyecto para dominar React y crear mi primer proyecto público.
+descriptionHeroImage: Captura de un test de Konva
+heroImage: /assets/stardraw/hero-stardraw_v2.webp
+new: true
+ogImage: /assets/stardraw/ogImg-stardraw_v2.webp
+pubDate: '2025-11-22T20:28:00Z'
+series: StarDraw
+seriesTitle: StarDraw ✨
+tags: ['react', 'fabricjs', 'canvas']
+title: Inicio del proyecto
+updatedDate: '2025-12-10T09:29:00Z'
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro'
+import GithubCommitLink from '../../../../components/mdx/GithubCommitLink.astro'
+
+Inicio la sección con este artículo dedicado al que probablemente será mi primer desarrollo público. Estos artículos no pretenden ser guias para enseñar nada a nadie, más bien es un diario del proceso de desarrollo.
+
+Cada proyecto lo empezaré dividiendo las ideas y analizando las necesidades. Intentaré plasmar el trabajo lo más detallado posible y seguramente si después veo que hay que hacer cambios o actualizaciones en el código que influyan en este artículo intentaré añadir referencias.
+
+## Mi objetivo
+
+Lo que pretendo es pelear con <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>React</span> para aprenderlo mejor junto a <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>TypeScript</span> creando una aplicación desde cero y utilizando tecnologías modernas. La idea nace simplemente de la necesidad, ya que en el trabajo estoy intentando diversificar mi perfil porque hasta ahora llevo 4 años con <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Power Apps</span>, unos pocos meses en la solución de errores de estilos en proyectos ya en producción con React y en mi propio sitio desarrollado en <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Astro</span>. Finalmente necesito rellenar mi portfolio con algún proyecto así que si este proyecto tiene éxito podría ser el primero.
+
+Ya de paso, también este proyecto me da contenido para darle algo de vidilla a mi portfolio y crear algo que tenía ganas de hacer desde hace mucho mucho tiempo, un jardín digital. Un lugar donde dejar mis ideas, descubrimientos o progresos en el desarrollo.
+
+En el transcurso de desarrollo de este proyecto, StarDraw ✨😎 no busco sólo clonar funcionalidades, sino ya de paso <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>entender el "cómo" funcionan algunas cosas por detrás</span> y aportar algunas ideas propias que hagan mi herramienta más útil de lo que a mi me ofrece Excalidraw. El proyecto será FOSS y se publicará en GitHub para que cualquiera pueda usarlo o contribuir. Además, sopesaré la idea de mantenerla en producción si no se disparan los costes.
+
+Llegados a esto, las tecnologías que están decididas son:
+
+- React 19 + Vite + TypeScript
+
+Y las alternativas en respectivas tecnologías que me planteo investigar son:
+
+- Konva o Fabric.js
+- Overwatch o Zustand
+- SortableJS o React DnD
+
+### La idea
+
+Mientras aprendo, quiero construir un clon de Excalidraw pero personalizado a mi gusto, tanto en diseño como en funcionalidades, con algunos extras dado que echo en falta cosas en la herramienta original.
+
+- Mejor control de los colores en modo oscuro.
+- Guardar/exportar directamente una imagen PNG/JPG de cualquier elemento seleccionado del canvas.
+- Ajuste de cuadrícula para los elementos.
+- Más opciones de tipografía para los textos.
+- Mejor gestión de tamaños de texto.
+- Mejor gestión de colores de texto.
+- Soporte para diagramas tipo de nodos o bases de datos.
+
+Partes importantes que quiero mantener son la <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>filosofía "local first"</span> y la posibilidad de exportar los proyectos en un formato que más tarde se pueda cargar y continuar editando.
+
+### Stack Tecnológico
+
+#### 1. React 19 + Vite + TypeScript
+
+No he trabajado mucho en proyectos desde cero con React, pero por todo lo que tengo leído hasta ahora sé que es una tecnología madura, de largo recorrido y con muchas bibliotecas que le dan soporte que facilitan hacer mucha varieda de cosas, y por eso la elijo. Pero lo más importante, como mencioné, tengo en concreto la necesidad de aprenderlo bien por mi trabajo junto a TypeScript así que esto está decidido desde el inicio.
+
+#### 2. Biblioteca de canvas
+
+Esta sería la pieza más importante del proyecto, obviamente es algo que no voy a construir de cero, hoy no 🤣, y como no tengo ni idea de cómo desarrollar este tipo de aplicación le pregunto a Gemini 3 a ver qué me recomienda usar y su respuesta es <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Konva</span>. Según me dice, Konva es una biblioteca para el manejo del canvas.
+
+<div class="relative mb-6 mt-2 rounded-xl rounded-tl-none border border-blue-100 bg-blue-50 p-4 text-blue-900 shadow-sm dark:border-blue-800/50 dark:bg-blue-900/20 dark:text-blue-100">
+	<p class="m-0 italic">
+		"Trabajar directamente con la API de Canvas del navegador es verboso y complejo de mantener.
+		Konva nos ofrece una abstracción orientada a objetos (capas, grupos, formas) y `react-konva` nos
+		permite manejarlo de forma declarativa, integrándose perfectamente con el ciclo de vida de
+		React."
+	</p>
+</div>
+
+Bueno, y como no me voy a quedar con la primera opción sigo buscando alternativas, y por el camino descubro <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Fabric.js</span>, que también es una biblioteca para el manejo del canvas bastante utilizada. Ante la indecisión y como soy un poco forofo del rendimiento busco documentación al respecto y encuentro un artículo reciente.
+
+<a
+	href="https://medium.com/@www.blog4j.com/konva-js-vs-fabric-js-in-depth-technical-comparison-and-use-case-analysis-9c247968dd0f"
+	target="_blank noreferrer noopener"
+>
+	Konva.js vs Fabric.js: In-depth Technical Comparison and Use Case Analysis
+</a>
+
+La conclusión que se saca es que Konva ofrece un mejor rendimiento cuando se enfrenta a mucha carga. En el caso de Fabric.js no es mala biblioteca en absoluto, su ventaja es que es más fácil de utilizar a cambio de menor rendimiento.
+
+Es difícil decidir, lo que pienso es que es probable que el rendimiento que ofrece Konva no lo llegue a aprovechar nunca ya que explican que está orientado a la creación de juegos, y eso es decir mucho. Fabric.js por su lado es probable que me ayude no a calentarme demasiado la cabeza y por lo tanto a no perder demasiado tiempo... ¡y oye! si cambio de opinión creo que nunca es tarde para refactorizar y probar con Konva una vez el proyecto esté terminado. Así que por ahora creo que probaré con Fabric.js.
+
+#### 3. Manejo de estados globales
+
+Esto lo tengo bastante claro. <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Zustand</span> es una biblioteca ligera y muy utilizada. No es la única opción, y por el camino leo sobre un nuevo competidor que tiene mucho mejor rendimiento, <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Overwatch TS</span>, pero me quedo con Zustand porque tampoco es plan de complicarme. Me apunto lo de Overwatch para algún futuro proyecto. Aquí la meta es aprender React y para eso no debo complicarme demasiado, además esta filosofía es la correcta si no quiero terminar abandonando el proyecto, necesito romper la barrera y publicar mi primer proyecto.
+
+Os dejo con un artículo que compara dos de las principales bibliotecas de manejo de estados globales y Overwatch TS. O sea, de verdad, si es cierto lo de Overwatch TS parece que les pasa la mano por la cara. Pero es un poco el mismo caso de Konva ¿merece la pena para proyectos pequeños de bajas exigencias?
+
+<a
+	href="https://medium.com/@karandeepsinghworkspace/redux-toolkit-vs-zustand-vs-overwatch-who-wins-the-performance-benchmark-e090a504b1e7"
+	target="_blank noreferrer noopener"
+>
+	Redux Toolkit vs Zustand vs Overwatch: Who wins the performance benchmark?
+</a>
+
+#### 4. Herramientas auxiliares
+
+Pregunté a Gemini 3 algunas cosas respecto a si Fabric.js o Konva ofrecían funcionalidades para organizar capas o elementos de la UI fácilmente con Drag & Drop y me recomendó utilizar <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>SortableJS</span>.
+
+Supongo que más adelante cuando llegue al tema lo investigaré mejor, pero por ahora vi este otro artículo que compara tres bibliotecas para manejar drag & drop en React.
+
+<a
+	href="https://npm-compare.com/es-ES/react-dnd,sortablejs,vuedraggable"
+	target="_blank noreferrer noopener"
+>
+	react-dnd, sortablejs, vuedraggable
+</a>
+
+Por último, mientras hacía pruebas empecé a usar los iconos <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>lucide-react</span> así que en este proyecto los seguiré usando.
+
+### Primeros pasos del desarrollo
+
+Lo básico, creo el proyecto con Vite y un template de React con TypeScript.
+Luego, instalar Fabric.js, Zustand, Tailwind y lucide-react.
+
+<CodeTabs
+	items={[
+		{
+			label: 'npm',
+			code: 'npm create vite@latest -- --template react-ts\nnpm install fabric zustand tailwindcss lucide-react',
+			lang: 'bash',
+		},
+		{
+			label: 'pnpm',
+			code: 'pnpm create vite@latest -- --template react-ts\npnpm add fabric zustand tailwindcss lucide-react',
+			lang: 'bash',
+		},
+		{
+			label: 'yarn',
+			code: 'yarn create vite --template react-ts\nyarn add fabric zustand tailwindcss lucide-react',
+			lang: 'bash',
+		},
+	]}
+/>
+
+Respecto a Tailwind, voy a explicar un momento los siguientes pasos. Desde la versión 4 Tailwind se integra con Vite mediante un plugin, una vez instalado tailwindcss, donde antes había que inicializarlo ahora hay que instalar el plugin. Ejecutaremos este comando para instalarlo como dependencia de desarrollo con -D.
+
+<CodeTabs
+	items={[
+		{ label: 'npm', code: 'npm install -D @tailwindcss/vite', lang: 'bash' },
+		{ label: 'pnpm', code: 'pnpm add -D @tailwindcss/vite', lang: 'bash' },
+		{ label: 'yarn', code: 'yarn add -D @tailwindcss/vite', lang: 'bash' },
+	]}
+/>
+Una vez instalado el plugin, hay que añadirlo al archivo de configuración de Vite haciendo el import
+de yailwind y añadiéndolo como plugin.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'vite.config.ts', 
+      code: `import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+    plugins: [tailwindcss(), ...],
+});`, 
+      lang: 'ts' 
+    }
+  ]}
+/>
+
+El resultado en la actualidad es algo como esto:
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'vite.config.ts', 
+      code: `import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite' // Importamos el plugin
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),  // Y lo añadimos aquí. Plugins que modifican el 
+                    // build (como React o Tailwind) van aquí.
+  ],
+})`, 
+      lang: 'ts' 
+    }
+  ]}
+/>
+
+Y ahora reemplaza el contenido de `index.css` por el siguiente import:
+
+<CodeTabs
+	items={[
+		{
+			label: 'index.css',
+			code: `@import "tailwindcss"`,
+			lang: 'css',
+		},
+	]}
+/>
+
+Ya llegamos a los últimos pasos, hay que limpiar un poco el código por defecto que genera la plantilla de Vite. Solo tenemos que eliminar el archivo `src/App.css`, limpiar el archivo `src/App.tsx` y asegurarnos de que `src/main.tsx` contenga lo básico.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'App.tsx',
+      code: `function App() {
+    return (
+      <div>
+        <h1 className="text-3xl font-bold underline">Star Draw</h1>
+      </div>
+    )
+  }
+
+export default App`, 
+      lang: 'tsx' 
+    },
+    { 
+      label: 'main.tsx', 
+      code: `import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+`, 
+      lang: 'tsx' 
+    }
+  ]}
+/>
+
+Borraré también los archivos `assets/react.svg` y `assets/vite.svg`.
+
+Ahora, idealmente, cada vez que completemos una pieza de código, cambio o característica lo suyo es guardar cambios en git con un commit, pero no tenemos repositorio inicializado, por lo que lo iniciaizaremos creando el repositorio de git local y luego lo subiremos a GitHub.
+
+<CodeTabs
+	items={[
+		{
+			label: 'bash',
+			code: `git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/hunkstalker/stardraw
+git push -u origin main`,
+			lang: 'bash',
+		},
+	]}
+/>
+
+Recordatorio:
+
+<div class="text-base">
+
+- **`git init`**: Inicializa el repositorio de git local.
+- **`git add .`**: La palabra `add` sirve para añadir cambios al stage (preparación) y el punto `.` selecciona todos los archivos.
+- **`git commit -m "Initial commit"`**: Crea el primer commit. El flag `-m` permite añadir el mensaje del commit directamente.
+- **`git branch -M main`**: Renombra la rama actual a `main`.
+  > **Nota**: Esto es útil si tu configuración por defecto crea la rama como `master`.
+- **`git remote add origin ...`**: Vincula el repositorio local con el remoto. `origin` es el alias que usaremos para referirnos a la URL del repositorio (https://github.com/hunkstalker/stardraw).
+- **`git push -u origin main`**: Sube los cambios a GitHub. El flag `-u` vincula tu rama local `main` con la remota `origin/main`, permitiéndote usar simplemente `git push` en el futuro.
+
+</div>
+
+Al final de cada artículo trataré de dejar el enlace al commit en GitHub concreto para que se pueda ver cómo quedó el código exacto en este punto.
+
+<div class="mb-6 mt-4">
+	<GithubCommitLink
+		href="https://github.com/hunkstalker/stardraw/tree/b1850d4a0043bd86df6b08dbb607b3b89fe7396f"
+		title="Código final - Initial commit"
+	/>
+</div>
+
+¡Bien! Y con esto tengo todo el proceso inicial de crear un proyecto en Vite + React dejándolo completamente limpio. Y lo tenemos subido a GitHub. Aquí quedará para cuando cualquiera quiera consultarlo. <span class='text-[--tangerine-hover] dark:text-[--tangerine]'>Esto no es una guía, pero podéis aprender conmigo.</span>
+
+En la próxima entrada me pondré con la estructura del proyecto creando las carpetas y archivos principales y crear el Canvas con Fabric.js.

@@ -1,0 +1,126 @@
+---
+description: Partial, Pick, Omit... Herramientas que TS te regala para transformar tipos sin tener que reescribirlos.
+draft: true
+lang: es
+new: false
+pubDate: '2025-12-23T10:00:00Z'
+seriesDescription: {"es": "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.", "en": "Learn TypeScript from scratch diving deep into inference and types."}
+seriesTitle: {"es": "Fundamentos de TypeScript", "en": "TypeScript Basics"}
+tags: ['typescript', 'utility-types', 'advanced']
+title: 'TypeScript #9: Utility Types (Tus mejores amigos)'
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+TypeScript viene con una "navaja suiza" de tipos predefinidos llamados **Utility Types**.
+Son Generics que toman un tipo y nos devuelven una versión modificada.
+
+## `Partial<T>` (Todo opcional)
+
+Imaginemos que tenemos un usuario completo, pero para una actualización (PATCH), solo envíamos los campos que cambiaron.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Usuario {
+    id: number;
+    nombre: string;
+    email: string;
+}
+
+function actualizarUsuario(id: number, cambios: Partial<Usuario>) {
+    // 'cambios' ahora es como si todas las props tuvieran '?'
+    // { id?: number; nombre?: string; email?: string; }
+    ...
+}
+
+actualizarUsuario(1, { nombre: "Denis" }); // ✅ Válido`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Required<T>` (Todo obligatorio)
+
+Lo contrario a Partial. Quita todos los `?` de una interfaz.
+
+## `Pick<T, Keys>` (Elige lo que quieres)
+
+A veces tenemos una interfaz gigante y solo necesitamos un par de campos para un componente pequeño.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Producto {
+    id: number;
+    nombre: string;
+    precio: number;
+    descripcion: string;
+    stock: number;
+    ...
+}
+
+// Creamos un nuevo tipo solo con nombre y precio
+type EtiquetaProducto = Pick<Producto, "nombre" | "precio">;
+// { nombre: string; precio: number; }`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Omit<T, Keys>` (Quita lo que NO quieres)
+
+Lo contrario a Pick. Elimina campos específicos.
+Muy útil para quitar datos sensibles o innecesarios.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Un Usuario sin la contraseña
+type UsuarioPublico = Omit<Usuario, "password">;`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Record<Keys, Type>` (Diccionarios)
+
+Cuando queremos un objeto donde las claves son, por ejemplo, IDs, y los valores son Usuarios.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const usuariosCache: Record<string, Usuario> = {
+    "user-1": { id: 1, nombre: "Denis", ... },
+    "user-2": { id: 2, nombre: "Pepe", ... }
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## ¡Probémoslo!
+
+Tenemos una interfaz `Todo`. Usemos:
+1. `Partial` para definir una variable `update`.
+2. `Pick` para definir una variable `preview` que solo tenga el título.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `interface Todo {
+    id: number;
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+// 1. Definimos 'TodoUpdate' usando Partial
+type TodoUpdate = any; 
+
+// 2. Definimos 'TodoPreview' usando Pick (solo title y completed)
+type TodoPreview = any;
+`
+  }}
+/>
+
+En la **Parte 10**, entraremos en territorio avanzado. Usaremos `infer` para que TypeScript "extraiga" tipos de lugares imposibles, como el tipo de retorno de una función.

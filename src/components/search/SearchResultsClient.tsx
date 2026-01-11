@@ -65,7 +65,7 @@ interface SearchResultsClientProps {
 		[key: string]: string
 	}
 	counts: {
-		til: number
+		notes: number
 		project: number
 		devlog: number
 	}
@@ -159,7 +159,7 @@ export default function SearchResultsClient({
 		const container = initialContentRef.current
 
 		// Toggle Sections
-		const sections = ['project', 'til', 'devlog']
+		const sections = ['project', 'notes', 'devlog']
 
 		sections.forEach((sectionType) => {
 			const sectionEl = container.querySelector(`[data-section="${sectionType}"]`)
@@ -227,14 +227,14 @@ export default function SearchResultsClient({
 	const filteredResults = results.filter((r) => {
 		if (filter === 'all') return true
 		if (filter === 'project') return r.filters.type?.includes('project')
-		if (filter === 'til') return r.filters.type?.includes('til')
+		if (filter === 'notes') return r.filters.type?.includes('notes')
 		if (filter === 'devlog') return !r.filters.type || r.filters.type.includes('devlog')
 		return true
 	})
 
 	// Calculate Sections (for rendering)
 	const projects = filteredResults.filter((r) => r.filters.type?.includes('project'))
-	const tils = filteredResults.filter((r) => r.filters.type?.includes('til'))
+	const notes = filteredResults.filter((r) => r.filters.type?.includes('notes'))
 	const blogs = filteredResults.filter((r) => !r.filters.type || r.filters.type.includes('devlog'))
 
 	const hasResults = filteredResults.length > 0
@@ -295,7 +295,7 @@ export default function SearchResultsClient({
 	const chips = [
 		{ id: 'all', label: labels['search.all'], count: 999 },
 		{ id: 'project', label: labels['search.project'], count: counts.project },
-		{ id: 'til', label: labels['search.til'], count: counts.til },
+		{ id: 'notes', label: labels['search.notes'], count: counts.notes },
 		{ id: 'devlog', label: labels['search.devblog'], count: counts.devlog },
 	].filter((chip) => chip.count > 0)
 
@@ -336,7 +336,7 @@ export default function SearchResultsClient({
 								<p>{labels['nav.noResults']}</p>
 							</div>
 						)}
-						{renderSection(labels['blog.til'], PinIcon, tils)}
+						{renderSection(labels['blog.note'], PinIcon, notes)}
 						{renderSection(labels['nav.projects'], RocketIcon, projects)}
 						{renderSection(labels['blog.series'], BookmarkIcon, blogs)}
 					</>

@@ -1,0 +1,51 @@
+---
+import ContentLayout from '@layouts/ContentLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import { getNotes, groupNotesBySeries } from '@utils/notes-content'
+import { useTranslations } from '@i18n/utils'
+import Grid from '@components/notes/Grid'
+
+const lang = 'es'
+const t = useTranslations(lang)
+
+const allNotes = await getNotes()
+const notesCollection = allNotes
+	.filter(p => p.data.lang === lang)
+	.filter(p => p.data.lang === lang && p.data.pubDate)
+	.filter(p => (import.meta.env.PROD ? p.data.draft !== true : true))
+
+// Use shared grouping logic
+const notes = groupNotesBySeries(notesCollection)
+---
+
+<ContentLayout title={t('blog.note')} siteTitle={`Notes - ${t('blog.note')}`} lang={lang}>
+	<div class='lg:col-span-12'>
+		<div class='mb-8'>
+			<BackLink href={lang === 'es' ? '/blog' : `/${lang}/blog`} label={t('blog.back')} />
+
+			<h1 class='mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200'>
+				{t('blog.note')}
+			</h1>
+
+			<p class='text-lg text-zinc-500'>{t('blog.noteDescription')}</p>
+			<hr class='animate-fade-in-up mt-8 border-stone-400 dark:border-zinc-800' />
+		</div>
+
+		<Grid
+			client:load
+			transition:persist
+			posts={notes}
+			lang={lang}
+			labels={{
+				all: t('search.all'),
+				noResults: t('blog.withoutNotes'),
+				readNote: t('blog.readNote'),
+				view: t('blog.view'),
+				viewAll: t('blog.view.all'),
+				viewSingles: t('blog.view.singles'),
+				viewSeries: t('blog.view.series'),
+				filters: t('nav.filters'),
+			}}
+		/>
+	</div>
+</ContentLayout>

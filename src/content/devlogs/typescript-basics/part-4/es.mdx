@@ -1,0 +1,123 @@
+---
+description: Listas de cosas y la magia de las Tuplas (o por qué useState devuelve un array).
+draft: false
+lang: es
+new: true
+pubDate: '2025-12-17T18:00:00Z'
+series: typescript-basics
+seriesDescription: {"es": "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.", "en": "Learn TypeScript from scratch diving deep into inference and types."}
+seriesTitle: {"es": "Fundamentos de TypeScript", "en": "TypeScript Basics"}
+tags: ['typescript', 'series']
+title: 'TypeScript #4: Arrays y Tuplas'
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+En la parte anterior vimos Objetos. Ahora, ¿qué pasa si tenemos **muchos** objetos? Necesitamos una lista.
+
+## Arrays `[]`
+
+Hay dos formas de definir un array en TypeScript. Ambas son idénticas, es cuestión de gustos.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Opción A: Tipo[] (La más común)
+const skills: string[] = ["React", "Astro", "TypeScript"];
+
+// Opción B: Array<Tipo> (Sintaxis Genérica)
+const years: Array<number> = [2020, 2021, 2022];
+
+// Array de Objetos (usando la interfaz de la parte anterior)
+interface Usuario {
+    name: string;
+    age: number;
+}
+
+const users: Usuario[] = [
+    { name: "Denis", age: 39 },
+    { name: "Pepe", age: 25 }
+];`,
+		lang: 'typescript'
+    }
+]} />
+
+Si intentamos meter un número en nuestro array de `skills` (que es de strings), TS gritará.
+
+## Tuplas: Arrays con reglas estrictas
+
+A veces sabemos **exactamente** cuántos elementos tiene un array y de qué tipo son en cada posición.
+Eso es una **Tupla**.
+
+El ejemplo más famoso es el hook `useState` de React:
+
+<CodeTabs items={[
+    {
+		label: 'React (Ejemplo)',
+		code: `// useState devuelve una tupla: [valor, funcion]
+// posición 0 siempre es el estado (string)
+// posición 1 siempre es el setter (función)
+const [name, setName] = useState("Denis");`,
+		lang: 'tsx'
+    }
+]} />
+
+En TypeScript se define así:
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Tupla: [string, number]
+// El primero DEBE ser string, el segundo DEBE ser number.
+let role: [string, number] = ["admin", 1];
+
+role = ["user", 2]; // ✅ Bien
+role = [1, "admin"]; // ❌ Mal (Orden incorrecto)
+role = ["guest", 3, "extra"]; // ❌ Mal (Demasiados elementos)`,
+		lang: 'typescript'
+    }
+]} />
+
+### ¿Para qué sirven?
+Son útiles cuando queremos devolver múltiples valores de una función sin crear un objeto.
+
+*   Coordenadas: `[x, y]` -> `[number, number]`
+*   Rangos: `[inicio, fin]`
+*   Estados: `[loading, error, data]`
+
+## Arrays de Lectura (`ReadonlyArray`)
+
+Al igual que con los objetos, podemos hacer arrays inmutables.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const todoList: readonly string[] = ["Comprar pan"];
+
+todoList.push("Leche"); // ❌ Error: Property 'push' does not exist on type 'readonly string[]'.`,
+		lang: 'typescript'
+    }
+]} />
+
+¡Genial para programación funcional y evitar efectos secundarios!
+
+## ¡Probémoslo!
+
+1. Creemos un array de strings.
+2. Intentemos hacer `.push(123)` (veremos el error).
+3. Creemos una tupla `[string, boolean]` (ej: Nombre y si está activo).
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `// Nuestro código aquí
+`
+  }}
+/>
+
+En la **Parte 5**, las cosas se ponen serias. Dejamos lo básico y entramos en la magia de TypeScript: aprenderemos a que TS **escriba los tipos por nosotros** usando `typeof` y `keyof`.

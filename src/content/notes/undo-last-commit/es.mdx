@@ -1,0 +1,109 @@
+---
+description: Reset soft, amend y force push para corregir errores en el historial.
+draft: false
+icon: git
+lang: es
+new: true
+pubDate: '2025-12-14T18:00:00Z'
+tags: ['git']
+title: Undo Last Commit
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
+
+A veces metemos la pata hasta el fondo en el último commit y no basta con un simple `revert`. Queremos borrarlo de la faz de la tierra (local y remotamente) como si nunca hubiera existido.
+
+<Callout type="warning" title="Peligro: Destructivo" filled={true}>
+	Este método **elimina cambios**. Si trabajas en un equipo, asegúrate de que nadie haya bajado tus
+	cambios antes de hacer esto o tendrás problemas.
+</Callout>
+
+### 1. Corregir mensaje o archivo olvidado (Opción Rápida)
+
+Si solo te equivocaste en el mensaje o olvidaste añadir un archivo, no hace falta resetear. Añade los cambios y "enmienda" el commit. Esto reemplaza el último commit por uno nuevo corrigendo el error.
+
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git add .
+git commit --amend`,
+			lang: 'bash',
+		},
+	]}
+/>
+
+Al ejecutar esto, se abrirá tu editor de texto predeterminado (Vim, Nano, VS Code...) con el mensaje del commit anterior.
+
+1. Modifica el mensaje si quieres.
+2. **Guarda y cierra el archivo** (en Vim: `:wq`).
+3. Git detectará que has terminado y creará el nuevo commit reemplazando el viejo.
+
+### 2. Retroceder sin perder nada (Local)
+
+Usamos `reset --soft` para deshacer el commit pero **mantener tus cambios** preparados (staged). Así puedes corregir lo que estaba mal, añadir lo que faltaba y volver a commitear.
+
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git reset --soft HEAD~1`,
+			lang: 'bash',
+		},
+	]}
+/>
+
+### 3. Machacar la historia (Remoto)
+
+Ahora tu repo local está "en el pasado" pero GitHub sigue "en el futuro". Si intentas hacer un push normal, git te rechazará. Necesitas forzar la escritura para que el remoto acepte tu versión antigua como la "verdad absoluta".
+
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git push origin +main`,
+			lang: 'bash',
+		},
+	]}
+/>
+
+> **Nota**: El símbolo `+` antes del nombre de la rama (`+main`) es una sintaxis corta para `--force`. Hace lo mismo pero te hace sentir más hacker.
+
+## Alternativa Peligrosa: Hard Reset (La opción Nuclear)
+
+Si `git reset --soft` es como deshacer escritura, `git reset --hard` es como quemar el papel y empezar nuevo. Es la opción nuclear para cuando **no quieres recuperar nada** de lo que hiciste en el último commit.
+
+<Callout type="warning" title="Peligro Extremo" filled={true}>
+	Este comando **elimina permanentemente** todos los cambios en tus archivos que no hayas
+	commiteado. No hay vuelta atrás (fácil). Úsalo solo si estás 100% seguro de que tu trabajo
+	reciente es basura.
+</Callout>
+
+### 1. Borrar rastro (Local)
+
+Esto mueve el puntero hacia atrás y sincroniza tu directorio de trabajo con ese estado antiguo.
+
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git reset --hard HEAD~1`,
+			lang: 'bash',
+		},
+	]}
+/>
+
+### 2. Forzar la historia (Remoto)
+
+Igual que con el soft reset, el remoto rechazará esto porque has reescrito el pasado.
+
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git push origin +main`,
+			lang: 'bash',
+		},
+	]}
+/>

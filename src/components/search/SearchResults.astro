@@ -1,7 +1,7 @@
 ---
 import { useTranslations } from '@i18n/utils'
-import { getTils } from '@utils/til-content'
-import { getDevlogs } from '@utils/devlog-content'
+import { getNotes } from '@utils/notes-content'
+import { getDevlogs } from '@utils/devlogs-content'
 import { getProjects } from '@utils/project-content'
 import { getLangFromSlug, getBaseSlug } from '@utils/blogi18n'
 
@@ -28,37 +28,37 @@ const t = useTranslations(lang)
 const labels = {
 	'nav.projects': t('nav.projects'),
 	'nav.blog': t('nav.blog'),
-	'blog.til': t('blog.til'),
+	'blog.note': t('blog.note'),
 	'blog.series': t('blog.series'),
 	'nav.noResults': t('nav.noResults'),
 	'search.all': t('search.all'),
 	'search.project': t('search.project'),
-	'search.til': t('search.til'),
+	'search.notes': t('search.notes'),
 	'search.devblog': t('search.devblog'),
 }
 
 // --- SERVER LOGIC (Build Time) ---
-const allTils = await getTils()
+const allNotes = await getNotes()
 const allDevlog = (await getDevlogs()).filter((p) =>
 	import.meta.env.PROD ? p.data.draft !== true : true,
 )
 const allProjects = await getProjects()
 
 // Helper to build href
-const buildHref = (type: 'til' | 'devlog' | 'projects', slug: string) => {
+const buildHref = (type: 'notes' | 'devlog' | 'projects', slug: string) => {
 	const baseSlug = type === 'devlog' ? getBaseSlug(slug) : slug.split('/')[0]
 	return lang === 'es' ? `/${type}/${baseSlug}/` : `/${lang}/${type}/${baseSlug}/`
 }
 
 // Transform data into card items
-const tilItems = allTils
+const noteItems = allNotes
 	.filter((p) => p.data.lang === lang)
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 12)
 	.map((item) => ({
-		href: buildHref('til', item.slug),
-		title: item.data.title,
-		description: item.data.description,
+		href: buildHref('notes', item.slug),
+		title: item.data.title || '',
+		description: item.data.description || '',
 		date: item.data.pubDate,
 	}))
 
@@ -99,12 +99,12 @@ const devlogItems = allDevlog
 	)
 	.map((item) => ({
 		href: buildHref('devlog', item.slug),
-		title: item.data.title,
-		description: item.data.description,
+		title: item.data.title || '',
+		description: item.data.description || '',
 		date: item.data.pubDate,
 	}))
 
-const hasContent = tilItems.length > 0 || projectItems.length > 0 || devlogItems.length > 0
+const hasContent = noteItems.length > 0 || projectItems.length > 0 || devlogItems.length > 0
 ---
 
 <SearchResultsClient
@@ -114,7 +114,7 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || devlogItems
 	containerId={resultsContainerId}
 	labels={labels}
 	counts={{
-		til: tilItems.length,
+		notes: noteItems.length,
 		project: projectItems.length,
 		devlog: devlogItems.length,
 	}}
@@ -128,15 +128,15 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || devlogItems
 						{t('blog.recent')}
 					</h3>
 
-					{/* Order: TIL → Projects → Devlogs */}
+					{/* Order: Notes → Projects → Devlogs */}
 					<SearchSection
-						title={t('blog.til')}
+						title={t('blog.note')}
 						icon={PinIcon}
-						items={tilItems}
+						items={noteItems}
 						mode={mode}
 						lang={lang}
 						initialLimit={mode === 'desktop' ? 6 : 6}
-						type="til"
+						type="notes" 
 					/>
 					<SearchSection
 						title={t('nav.projects') || 'Projects'}
@@ -145,7 +145,7 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || devlogItems
 						mode={mode}
 						lang={lang}
 						initialLimit={3}
-						hasBorderTop={tilItems.length > 0 && mode === 'mobile'}
+						hasBorderTop={noteItems.length > 0 && mode === 'mobile'}
 						type="project"
 					/>
 					<SearchSection
@@ -155,7 +155,7 @@ const hasContent = tilItems.length > 0 || projectItems.length > 0 || devlogItems
 						mode={mode}
 						lang={lang}
 						initialLimit={3}
-						hasBorderTop={(tilItems.length > 0 || projectItems.length > 0) && mode === 'mobile'}
+						hasBorderTop={(noteItems.length > 0 || projectItems.length > 0) && mode === 'mobile'}
 						type="devlog"
 					/>
 				</>

@@ -1,0 +1,194 @@
+---
+title: Sistema ES First - Sincronización Automática de Contenido i18n
+description: Cómo funciona el sistema de sincronización de metadatos desde el archivo español hacia los demás idiomas.
+pubDate: '2025-12-16T19:00:00.000Z'
+tags: ['astro', 'automation', 'workflow', 'i18n']
+lang: es
+new: true
+draft: true
+---
+
+import Callout from '@components/mdx/Callout.astro';
+import CodeTabs from '@components/mdx/CodeTabs.astro';
+
+En esta nota vamos a explicar cómo funciona el sistema de sincronización de contenido multilingüe que utilizamos en este proyecto. Si te has fijado, nuestros archivos de contenido en español actúan como **fuente de verdad** para los metadatos comunes.
+
+## El Problema: Duplicidad en i18n
+
+Cuando trabajas con internacionalización (i18n) en Astro utilizando *Content Collections*, lo estándar es tener un archivo por idioma:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'Estructura de archivos',
+			code: `src/content/notes/mi-nota/
+  es.mdx    ← Contenido en Español
+  en.mdx    ← Contenido en Inglés`,
+			lang: 'text',
+		}
+	]}
+/>
+
+El problema surge cuando tienes que mantener los metadatos sincronizados. ¿La fecha de publicación? La misma en los tres. ¿Los tags? Los mismos. ¿El estado de borrador? El mismo.
+
+Si decides cambiar la fecha de publicación, tienes que editar 3 archivos. **Repetir datos viola el principio DRY (Don't Repeat Yourself)** y es una fuente de errores garantizada.
+
+## La Solución: ES First
+
+Adoptamos un enfoque **ES First** (Español Primero):
+
+<Callout type="info" title="Principio ES First">
+El archivo `es.mdx` es la **fuente de verdad** para todos los metadatos comunes. Los demás idiomas heredan automáticamente estos valores.
+</Callout>
+
+### ¿Qué va dónde?
+
+**En `es.mdx` (Master):**
+- `title`, `description` (versión en español)
+- `pubDate`, `updatedDate`
+- `tags`, `draft`, `new`
+- `series`, `heroImage`, `ogImage`
+
+**En `en.mdx` / `ca.mdx`:**
+- `title`, `description` (versión traducida)
+- `lang` (identificador del idioma)
+- El resto se **sincroniza automáticamente** desde `es.mdx`
+
+## La Magia: `sync-content.mjs`
+
+El script `scripts/sync-content.mjs` se ejecuta automáticamente antes de cada `dev` o `build`:
+
+<CodeTabs
+	items={[
+		{
+      label: 'package.json',
+      code: `"dev": "pnpm sync:content && astro dev"
+"build": "pnpm sync:content && astro build && pagefind --site dist"`,
+      lang: 'json',
+		},
+	]}
+/>
+
+### ¿Qué hace el script?
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'Diagrama de Flujo',
+			code: `ES es.mdx (MASTER)
+      │
+      │ SYNC_FIELDS: pubDate, tags, draft,
+      │              series, heroImage, new...
+      ▼
+┌──────────────┐
+│  en.mdx      │ ← Recibe los campos del ES
+│  ca.mdx      │ ← Recibe los campos del ES
+└──────────────┘`,
+			lang: 'text',
+		},
+	]}
+/>
+
+1. **Lee `es.mdx`** como fuente de verdad
+2. **Extrae los campos sincronizables** (`SYNC_FIELDS`)
+3. **Actualiza `en.mdx` y `ca.mdx`** con esos valores
+
+### Campos Sincronizados
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'scripts/sync-content.mjs',
+			code: `const SYNC_FIELDS = [
+    'title',        // Solo si no hay versión traducida
+    'description',  // Solo si no hay versión traducida
+    'pubDate',
+    'updatedDate',
+    'draft',
+    'tags',
+    'heroImage',
+    'ogImage',
+    'series',
+    'new',
+    'end',
+    'icon'`,
+			lang: 'JavaScript'
+		}
+	]}	
+/>
+
+### Configurar el idioma maestro
+
+El idioma maestro se define en `scripts/sync-content.mjs`. Por defecto, usamos español (`es.mdx`) como fuente de verdad:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'sync-content.mjs',
+			code: `// Archivo maestro (Fuente de Verdad)
+const esPath = path.join(dirPath, 'es.mdx')
+
+// Idiomas que reciben los datos del maestro
+const others = ['en.mdx', 'ca.mdx']`,
+			lang: 'javascript',
+		},
+	]}
+/>
+
+Si quisieras cambiar el idioma maestro a inglés, modificarías estas líneas:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'sync-content.mjs (inglés como maestro)',
+			code: `const masterPath = path.join(dirPath, 'en.mdx')
+const others = ['es.mdx', 'ca.mdx']`,
+			lang: 'javascript',
+		},
+	]}
+/>
+
+## Flujo de Trabajo
+
+### Crear contenido nuevo
+
+1. Crea la carpeta: `src/content/notes/mi-nueva-nota/`
+2. Crea `es.mdx` con todos los metadatos
+3. Crea `en.mdx` y `ca.mdx` con solo `lang`, `title`, `description`
+4. Ejecuta `pnpm dev` → el script sincroniza automáticamente
+
+### Modificar metadatos
+
+1. Edita **solo `es.mdx`**
+2. Ejecuta `pnpm dev` o `pnpm build`
+3. Los cambios se propagan a los demás idiomas
+
+<Callout type="warning" title="Importante">
+Nunca edites `pubDate`, `tags` o `draft` directamente en `en.mdx` o `ca.mdx`. Esos cambios se sobrescribirán en la próxima sincronización.
+</Callout>
+
+## Beneficios
+
+1. **Escribir menos**: Defines los metadatos una sola vez
+2. **Cero errores de sincronización**: Imposible tener fechas dispares entre idiomas
+3. **Flujo natural**: Editas el español, el resto se actualiza solo
+4. **Transparente**: Se ejecuta automáticamente, no requiere recordar comandos
+
+## Validación: `verify-content.mjs`
+
+El script `scripts/verify-content.mjs` valida que todo esté correcto:
+
+- ¿Es `pubDate` una fecha válida?
+- ¿Es `updatedDate` posterior a `pubDate`?
+- ¿Las series tienen el orden correcto de partes?
+
+Se ejecuta con `pnpm verify:content` y está integrado en el comando `pnpm test`.
+
+## Conclusión
+
+Este sistema **ES First** nos permite mantener el contenido multilingüe sincronizado sin esfuerzo. El español actúa como master, y los demás idiomas heredan automáticamente los metadatos comunes mientras mantienen sus propias traducciones de título y descripción.

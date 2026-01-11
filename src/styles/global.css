@@ -193,7 +193,7 @@ mark {
 	}
 }
 
-/* TIL Card icon rotation on hover */
-.til-card:hover .icon-fan {
+/* Note Card icon rotation on hover */
+.note-card:hover .icon-fan {
 	transform: rotate(var(--hover-rotation)) !important;
 }

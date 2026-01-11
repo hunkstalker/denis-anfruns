@@ -1,0 +1,57 @@
+---
+title: Código más limpio con la función With
+description: Define variables locales en fórmulas Power Fx para evitar repeticiones.
+pubDate: '2025-12-03T00:00:00.000Z'
+tags: ['powerapps', 'power-fx']
+lang: en
+icon: powerapps
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
+
+When a `Patch` or `Filter` formula grows in complexity, it is common to end up repeating `User().Email` or `LookUp(...)` multiple times, making it hard to read. The `With` function is the solution for "Clean Code" in Power Apps.
+
+It allows you to define **local variables** that only exist during the execution of that formula, making the code more readable and efficient by avoiding recalculating the same values.
+
+### Use Case: Creating a Complex Record
+
+Without `With`, the code becomes noisy and repetitive.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps', 
+      code: `// ❌ Repetitive: Calling User() 4 times
+Patch(Requests, Defaults(Requests), {
+    Title: "Request from " & User().FullName,
+    RequesterEmail: User().Email,
+    Manager: LookUp(Users, Email = User().Email).Manager,
+    Department: LookUp(Users, Email = User().Email).Department
+});
+
+// ✅ With 'With': Define context once
+With({
+// Scope: Local variables calculated just once
+CurrentUser: User(),
+UserProfile: LookUp(Users, Email = User().Email)
+},
+Patch(Requests, Defaults(Requests), {
+Title: "Request from " & CurrentUser.FullName,
+RequesterEmail: CurrentUser.Email,
+Manager: UserProfile.Manager,
+Department: UserProfile.Department
+})
+);`,
+lang: 'power fx'
+}
+]}
+/>
+
+It is better than creating context variables (`UpdateContext`) that you later have to remember to clear. Use it whenever you need to control the scope of local variables.
+
+<Callout type="warning" title="Mind the separator" filled>
+	Remember that if your Power Apps is configured for the **European region**, you will need to
+	change commas `,` to semicolons `;` in formulas. And use double semicolons `;;` for chaining
+	functions where normally a single semicolon `;` would be used.
+</Callout>

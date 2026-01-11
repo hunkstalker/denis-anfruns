@@ -1,0 +1,102 @@
+---
+description: La palabra clave más misteriosa de TypeScript. Aprende a extraer tipos desde dentro de otros tipos.
+draft: true
+lang: es
+new: false
+pubDate: '2025-12-24T10:00:00Z'
+seriesDescription: {"es": "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.", "en": "Learn TypeScript from scratch diving deep into inference and types."}
+seriesTitle: {"es": "Fundamentos de TypeScript", "en": "TypeScript Basics"}
+tags: ['typescript', 'infer', 'advanced']
+title: 'TypeScript #10: Advanced Inference (infer)'
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Si Generics es el nivel experto, `infer` es nivel **Maestro Jedi**.
+Se usa dentro de los **Conditional Types** para "sacar" un tipo que está encerrado dentro de otro.
+
+## Tipos Condicionales
+
+Primero, entendamos esto. Es como un `if/else` pero para tipos.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `type EsString<T> = T extends string ? "Sí" : "No";
+
+type A = EsString<string>; // "Sí"
+type B = EsString<number>; // "No"`,
+		lang: 'typescript'
+    }
+]} />
+
+## La palabra clave `infer`
+
+Sirve para crear una **variable temporal** dentro de esa condición.
+Imaginemos que queremos saber qué devuelve una función, pero no tenemos acceso a su código fuente, solo al tipo de la función.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+// ¿Qué hace esto?
+// 1. Comprueba si T es una función.
+// 2. Si lo es, guarda lo que devuelve en una variable llamada 'R' (infer R).
+// 3. Devuelve 'R'.
+
+function dameNumero() { return 42; }
+
+type Resultado = GetReturnType<typeof dameNumero>; 
+// TS mira la función, ve que devuelve number, e infiere que R = number.
+// Resultado es 'number'.`,
+		lang: 'typescript'
+    }
+]} />
+
+## Ejemplo Útil: Unpack Promise
+
+Imaginemos que tenemos una `Promise<User>`, pero queremos obtener el tipo `User` directamente.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Tenemos esto:
+type RespuestaPromesa = Promise<{ id: number; name: string }>;
+
+// Queremos esto:
+// { id: number; name: string }
+
+// Solución con infer:
+type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
+
+type UsuarioDesempaquetado = UnpackPromise<RespuestaPromesa>;
+// Resultado: { id: number; name: string }
+// TS infirió lo que había DENTRO de la promesa y lo llamó 'U'.`,
+		lang: 'typescript'
+    }
+]} />
+
+## ¡Probémoslo!
+
+Creemos un tipo `UnpackArray<T>` que extraiga el tipo de un array.
+`UnpackArray<string[]>` debería devolver `string`.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `type UnpackArray<T> = T extends (infer U)[] ? U : T;
+
+type ArrayStrings = string[];
+type Unpacked = UnpackArray<ArrayStrings>;
+
+// Comprueba si funciona (hover sobre Unpacked)
+// Debería ser 'string'
+`
+  }}
+/>
+
+En la **Parte 11** (y final), pondremos todo junto. Veremos patrones de diseño reales, sobrecarga de funciones y cómo crear tu propia mini-librería "Type-Safe".

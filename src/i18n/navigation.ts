@@ -16,8 +16,8 @@ export const navItems: readonly NavItem[] = [
 		path: '/blog/',
 		enabled: true,
 		children: [
-			{ key: 'blog.series', path: '/devlog/', enabled: true },
-			{ key: 'blog.til', path: '/til/', enabled: true },
+			{ key: 'blog.series', path: '/devlogs/', enabled: true },
+			{ key: 'blog.note', path: '/notes/', enabled: true },
 		],
 	},
 	{ key: 'nav.projects', path: '/projects/', enabled: false },

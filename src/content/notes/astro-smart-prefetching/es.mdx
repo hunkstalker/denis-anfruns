@@ -1,0 +1,44 @@
+---
+title: 'Smart Prefetching: Equilibrio entre Velocidad y Recursos'
+description: Carga inteligente de páginas bajo demanda en Astro usando hover en lugar de eager loading.
+pubDate: '2025-12-13T15:00:00Z'
+tags: ['astro', 'performance']
+lang: es
+new: true
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+
+Cuando tenemos una web multi-idioma, la tentación es grande: "¿Y si cargo en segundo plano (prefetch) todos los idiomas nada más entrar para que el cambio sea instantáneo?"
+
+### El Coste Oculto del "Eager Loading"
+
+Cargar masivamente páginas que el usuario quizás nunca visite tiene consecuencias:
+
+1.  **Desperdicio de Datos**: Si un usuario entra en español y nunca cambia, has descargado el doble o triple de peso inútilmente.
+2.  **Batería y CPU**: El navegador tiene que parsear y procesar esos recursos extra.
+3.  **Saturación**: Si tu web tiene muchas imágenes, el prefetch agresivo compite por el ancho de banda con el contenido que el usuario _sí_ está viendo ahora mismo.
+
+### La Estrategia Inteligente: Prefetch on Hover
+
+Astro ofrece una solución perfecta que anticipa la **intención** en lugar de asumir el comportamiento.
+
+<CodeTabs
+	items={[
+		{
+			label: 'Strategy',
+			code: `<a href="/en" data-astro-prefetch="hover">
+  English
+</a>`,
+			lang: 'html',
+		},
+	]}
+/>
+
+1.  El usuario mueve el ratón hacia el botón de idioma (intención clara).
+2.  En ese instante (`hover`), Astro descarga la página destino.
+3.  Tardan unos ~200ms en hacer clic. Para entonces, la página ya está en caché.
+
+### Resultado
+
+Obtienes la misma sensación de **navegación instantánea** (0ms) pero solo consumes recursos cuando hay una alta probabilidad de que el usuario los necesite. Es el equilibrio perfecto.

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const contentDir = path.join(__dirname, '../src/content')
-const collections = ['devlog', 'til']
+const collections = ['devlogs', 'notes']
 
 console.log('🔍 Buscando contenido en borrador (draft: true)...\n')
 
@@ -25,21 +25,8 @@ function checkDirectory(dir) {
 			const ext = path.extname(item.name).toLowerCase()
 			const relativePath = path.relative(contentDir, fullPath)
 
-			// Check meta.json
-			if (item.name === 'meta.json') {
-				try {
-					const content = fs.readFileSync(fullPath, 'utf-8')
-					const json = JSON.parse(content)
-					if (json.draft === true) {
-						console.log(`📝 [DRAFT] ${relativePath} (meta.json)`)
-						foundDrafts++
-					}
-				} catch (e) {
-					console.error(`❌ Error reading ${item.name}:`, e.message)
-				}
-			}
 			// Check MD/MDX frontmatter
-			else if (ext === '.md' || ext === '.mdx') {
+			if (ext === '.md' || ext === '.mdx') {
 				try {
 					const content = fs.readFileSync(fullPath, 'utf-8')
 					// Simple frontmatter extraction

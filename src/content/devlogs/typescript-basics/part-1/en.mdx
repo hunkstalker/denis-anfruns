@@ -1,0 +1,168 @@
+---
+title: 'TypeScript # 1: La Inferencia trabaja por ti'
+description: ¿Por qué escribir tipos cuando TypeScript ya los sabe? Entendiendo const vs let y la inferencia automática.
+pubDate: '2025-12-14T20:00:00Z'
+tags: ['typescript', 'learning', 'series']
+lang: en
+series: typescript-basics
+seriesTitle: {"es":"Fundamentos de TypeScript","en":"TypeScript Basics"}
+seriesDescription: {"es":"Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.","en":"Learn TypeScript from scratch diving deep into inference and types."}
+new: false
+draft: false
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+export const age = new Date().getFullYear() - 1985
+
+## Welcome! 🚀
+
+This is the first part of a series that will try to make you understand TypeScript _**for real**_, not just so you can copy and paste "any" when the compiler complains.
+
+The goal of the full series is to end up understanding that TypeScript is not just JavaScript with types, but that TypeScript is a typing proto-language to create any type structure you need for your projects and making it so that, although yes, everything is slower and heavier with the damn 👹 warnings, in the end you gain in code safety and robustness.
+
+I am no expert, but I have always thought that the best way to learn is to try to teach others. This forces you to approach each topic in a way that anyone can understand and see it from many perspectives.
+
+That's why, in this series, I will try to explain each concept from scratch, without using complex technical terms, without using technical language that only those who already know TypeScript understand.
+
+The first thing we will start with is understanding that **TypeScript is smart. You don't have to explain the obvious to it.**
+
+<Callout type="info" title="Info" filled>
+    Note: This is the first entry in a series of TILs about learning. Although it is different from the rest of the TILs which are short notes, I thought about reusing it because, after all, it follows the same idea of something you learn day by day. For now, this is an experiment.
+</Callout>
+
+## Type Inference
+
+Many devs (like me) coming from strongly typed languages (like older C, Java, or C#) are naturally accustomed to the idea of typing everything.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'example.ts',
+		code: `// ❌ Redundant (Unnecessary Boilerplate)
+const userName: string = "Denis";
+const userAge: number = ${age};
+const isAdmin: boolean = true;`,
+		lang: 'typescript'
+    }
+]} />
+
+TypeScript already knows that "Denis" is a string. You don't have to swear it.
+
+<CodeTabs
+  status="success"
+  items={[
+  {
+    label: 'example.ts',
+    code: `// ✅ Perfect (Clean and readable)
+const userName = "Denis"; // TS infers: string (or literal "Denis", we'll see this later)
+const userAge = ${age};       // TS infers: number
+const isAdmin = true;     // TS infers: boolean`,
+    lang: 'typescript'
+    }
+  ]} />
+
+This is called **Type Inference**. You let TS deduce the type from the initial value.
+
+## `const` vs `let`: The Key Difference
+
+This is where things get interesting and where TS shines.
+
+### With `let` (Mutable Variables)
+When you use `let`, TS assumes that you are going to change the value, so it infers the "general" primitive type.
+
+<CodeTabs items={[
+  {
+  label: 'TypeScript',
+  code: `// TS understands this as: "Ah, 'status' is a STRING and it will change to any other string".
+let status = "pending";
+
+status = "success"; // ✅ Good
+status = "error";   // ✅ Good
+
+status = 123;       // ❌ If you try this it will return an error.
+// You cannot put a number into a string.`,
+  lang: 'typescript'
+  }
+]} />
+
+### With `const` (Constants)
+When you use `const`, TS knows that this value **will never change**. So it can be much more specific.
+
+<CodeTabs items={[
+  {
+    label: 'TypeScript',
+    code: `const method = "GET";
+// TS says: "This is not just a string. It is THE string 'GET'".
+// The literal type is "GET".
+`,
+  lang: 'typescript'
+  }
+]} />
+
+This seems silly now, but it is the basis for understanding why sometimes TS complains that `"GET"` is not assignable to `string` (or vice versa) in complex configurations.
+
+## When TO annotate types
+
+So, if TS infers it, is it never necessary to place types? No, there are cases where it is necessary:
+
+1.  **When inference fails or is too broad**:
+
+From my point of view with little experience, I would let TS infer any (or put it myself) in cases where I don't know what is going to happen, whether due to errors or because the response can be very broad.
+
+<CodeTabs items={[
+  {
+    label: 'TypeScript',
+    code: `// TS infers 'any' if not configured in 'strict' mode (which forces you to always annotate types)
+let data; 
+data = fetchSomething(); // You can pass it whatever you want and TS won't complain.`,
+    lang: 'typescript'
+  }
+]} />
+
+But be careful with any, because you are stripping TS of all its purpose. Ideally, you shouldn't be forced to use it.
+
+2.  **In function parameters** (Here it is mandatory!):
+
+<CodeTabs items={[
+  {
+    label: 'TypeScript',
+    code: `// ❌ TS cannot read your mind nor know who will call this
+function greet(person) {
+    ...
+}
+
+// ✅ Here you define the contract
+function greet(person: string) {
+    ...
+}`, 
+    lang: 'typescript'
+  }
+]} />
+
+3.  **To define explicit return contracts**:
+    Sometimes you want to ensure that your function returns X, even if it infers Y.
+
+## Summary of Part 1
+
+*   **Less is more**: If TS can infer it, don't write it. Your code will be cleaner.
+*   **Variable (`let`)** = General Type (`string`, `number`).
+*   **Constant (`const`)** = Literal Type (The exact value).
+
+In **Part 2**, we will look at how to use those literal types to our favor with **Unions**, and how to tell TS: *"This variable can only be 'admin' or 'user', nothing else"*.
+
+## Experiment!
+
+Here you have a real TypeScript editor running in your browser to test what you learned.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `console.log("Hello world!");
+`
+  }}
+/>

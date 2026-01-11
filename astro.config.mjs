@@ -3,7 +3,6 @@ import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
 import mdx from '@astrojs/mdx'
 import svgr from 'vite-plugin-svgr'
-import { normalize } from './scripts/normalize-content.mjs'
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,17 +11,6 @@ export default defineConfig({
 		tailwind(),
 		react(),
 		mdx(),
-		// Auto-normalization disabled to prevent double-refresh loop in dev
-		// Run 'pnpm normalize:content' manually if needed.
-		// {
-		// 	name: 'normalize-content',
-		// 	hooks: {
-		// 		'astro:config:setup': async () => {
-		// 			await normalize()
-		// 		},
-		// 	},
-		// },
-
 	],
 	prefetch: true,
 	i18n: {

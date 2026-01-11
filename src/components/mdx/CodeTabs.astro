@@ -12,9 +12,13 @@ interface TabItem {
 interface Props {
 	items: TabItem[]
 	status?: 'default' | 'success' | 'error'
+	hideTabs?: boolean // true = hide tabs bar, default = show tabs
 }
 
-const { items, status = 'default' } = Astro.props
+const { items, status = 'default', hideTabs = false } = Astro.props
+
+// Show tabs by default, hide only if explicitly set
+const displayTabs = !hideTabs
 
 import { useTranslations } from '@i18n/utils'
 
@@ -31,7 +35,7 @@ const highlighter = await getHighlighterInstance()
 const commonClasses = '!m-0 min-h-[4rem] !rounded-none p-4 text-sm leading-relaxed md:text-base'
 
 const highlightedItems = await Promise.all(
-	items.map(async (item) => {
+	items.map(async item => {
 		const lang = item.lang || 'text'
 
 		const generateHtml = (theme: string) => {
@@ -88,7 +92,7 @@ const highlightedItems = await Promise.all(
 			htmlLight: generateHtml('github-light'),
 			htmlDark: generateHtml('github-dark'),
 		}
-	}),
+	})
 )
 
 const statusClasses = {
@@ -100,54 +104,52 @@ const statusClasses = {
 
 <div
 	id={uniqueId}
-	class={`code-tabs-container my-6 overflow-hidden rounded-lg border-2 bg-zinc-100 dark:bg-zinc-900 ${statusClasses[status]}`}
->
-	<!-- Pestañas de código -->
-	<div
-		class="flex items-center justify-between rounded-t-lg border-b border-zinc-200 bg-zinc-50 px-2 pt-2 dark:border-zinc-800 dark:bg-zinc-900/50"
-	>
-		<div class="scrollbar-none flex flex-1 items-center overflow-x-auto" role="tablist">
-			{
-				items.map((item, index) => (
-					<button
-						role="tab"
-						aria-selected={index === 0 ? 'true' : 'false'}
-						aria-controls={`${uniqueId}-panel-${index}`}
-						data-index={index}
-						data-lang={item.lang}
-						class:list={[
-							'tab-button mr-1 whitespace-nowrap rounded-t-lg border-x border-t px-4 py-2 text-sm font-medium',
-							index === 0
-								? 'active border-zinc-200 border-b-white bg-white text-zinc-900 dark:border-zinc-800 dark:border-b-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
-								: 'border-transparent bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200',
-						]}
-					>
-						{item.label}
-					</button>
-				))
-			}
+	class={`code-tabs-container my-6 overflow-hidden rounded-lg border-2 bg-zinc-100 dark:bg-zinc-900 ${statusClasses[status]}`}>
+	<!-- Pestañas de código (solo si hay más de un item o showTabs=true) -->
+	{displayTabs && (
+		<div
+			class='flex items-center justify-between rounded-t-lg border-b border-zinc-200 bg-zinc-50 px-2 pt-2 dark:border-zinc-800 dark:bg-zinc-900/50'>
+			<div class='scrollbar-none flex flex-1 items-center overflow-x-auto' role='tablist'>
+				{
+					items.map((item, index) => (
+						<button
+							role='tab'
+							aria-selected={index === 0 ? 'true' : 'false'}
+							aria-controls={`${uniqueId}-panel-${index}`}
+							data-index={index}
+							data-lang={item.lang}
+							class:list={[
+								'tab-button mr-1 whitespace-nowrap rounded-t-lg border-x border-t px-4 py-2 text-sm font-medium',
+								index === 0
+									? 'active border-zinc-200 border-b-white bg-white text-zinc-900 dark:border-zinc-800 dark:border-b-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
+									: 'border-transparent bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200',
+							]}>
+							{item.label}
+						</button>
+					))
+				}
+			</div>
+			<div class='shrink-0 pb-2 pl-4 pr-2'>
+				<span class='text-xs lang-label select-none font-mono text-zinc-400 dark:text-zinc-500'>
+					{items[0].lang}
+				</span>
+			</div>
 		</div>
-		<div class="shrink-0 pb-2 pl-4 pr-2">
-			<span class="text-xs lang-label select-none font-mono text-zinc-400 dark:text-zinc-500">
-				{items[0].lang}
-			</span>
-		</div>
-	</div>
+	)}
 
 	<!-- Botón de copia de código -->
-	<div class="group relative">
-		<div class="absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100">
+	<div class='group relative'>
+		<div class='absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100'>
 			<button
-				class="copy-button cursor-pointer rounded-md bg-zinc-200/50 p-1.5 text-zinc-500 backdrop-blur-sm transition-all hover:bg-zinc-200 hover:text-zinc-700 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20 dark:hover:text-white"
+				class='copy-button cursor-pointer rounded-md bg-zinc-200/50 p-1.5 text-zinc-500 backdrop-blur-sm transition-all hover:bg-zinc-200 hover:text-zinc-700 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20 dark:hover:text-white'
 				title={copyLabel}
 				aria-label={copyLabel}
 				data-label-copy={copyLabel}
-				data-label-copied={copiedLabel}
-			>
-				<span class="copy-icon flex items-center justify-center [&>svg]:size-4">
+				data-label-copied={copiedLabel}>
+				<span class='copy-icon flex items-center justify-center [&>svg]:size-4'>
 					<Fragment set:html={copyIconSvg} />
 				</span>
-				<span class="check-icon hidden flex items-center justify-center [&>svg]:size-4">
+				<span class='check-icon items-center justify-center [&>svg]:size-4' style='display: none;'>
 					<Fragment set:html={checkIconSvg} />
 				</span>
 			</button>
@@ -157,11 +159,10 @@ const statusClasses = {
 			highlightedItems.map((item, index) => (
 				<div
 					id={`${uniqueId}-panel-${index}`}
-					role="tabpanel"
-					class:list={['tab-panel bg-white dark:bg-zinc-900', { hidden: index !== 0 }]}
-				>
-					<div class="block dark:hidden" set:html={item.htmlLight} />
-					<div class="hidden dark:block" set:html={item.htmlDark} />
+					role='tabpanel'
+					class:list={['tab-panel bg-white dark:bg-zinc-900', { hidden: index !== 0 }]}>
+					<div class='block dark:hidden' set:html={item.htmlLight} />
+					<div class='hidden dark:block' set:html={item.htmlDark} />
 				</div>
 			))
 		}
@@ -184,13 +185,13 @@ const statusClasses = {
 		const langLabel = container.querySelector('.lang-label')
 
 		// TAB SWITCHING
-		tabs.forEach((tab) => {
+		tabs.forEach(tab => {
 			tab.addEventListener('click', () => {
 				const index = Number(tab.getAttribute('data-index'))
 				const lang = tab.getAttribute('data-lang')
 
 				// Actualización de pestañas
-				tabs.forEach((t) => {
+				tabs.forEach(t => {
 					t.setAttribute('aria-selected', 'false')
 					t.classList.remove(
 						'active',
@@ -201,7 +202,7 @@ const statusClasses = {
 						'border-zinc-200',
 						'dark:border-zinc-800',
 						'border-b-white',
-						'dark:border-b-zinc-900',
+						'dark:border-b-zinc-900'
 					)
 					t.classList.add(
 						'bg-transparent',
@@ -211,7 +212,7 @@ const statusClasses = {
 						'dark:hover:text-zinc-200',
 						'border-transparent',
 						'hover:bg-zinc-100',
-						'dark:hover:bg-zinc-800',
+						'dark:hover:bg-zinc-800'
 					)
 				})
 
@@ -224,7 +225,7 @@ const statusClasses = {
 					'dark:hover:text-zinc-200',
 					'border-transparent',
 					'hover:bg-zinc-100',
-					'dark:hover:bg-zinc-800',
+					'dark:hover:bg-zinc-800'
 				)
 				tab.classList.add(
 					'active',
@@ -235,7 +236,7 @@ const statusClasses = {
 					'border-zinc-200',
 					'dark:border-zinc-800',
 					'border-b-white',
-					'dark:border-b-zinc-900',
+					'dark:border-b-zinc-900'
 				)
 
 				// Actualización de etiqueta de idioma
@@ -257,7 +258,7 @@ const statusClasses = {
 		// Funcionalidad de copiar
 		copyBtn?.addEventListener('click', async () => {
 			// Buscar el panel visible
-			const visiblePanel = Array.from(panels).find((p) => !p.classList.contains('hidden'))
+			const visiblePanel = Array.from(panels).find(p => !p.classList.contains('hidden'))
 			if (!visiblePanel) return
 
 			// Buscar el bloque de código visible dentro del panel (ya que ahora hay dos: light y dark)
@@ -284,17 +285,21 @@ const statusClasses = {
 				const labelCopy = copyBtn.getAttribute('data-label-copy') || 'Copy code'
 				const labelCopied = copyBtn.getAttribute('data-label-copied') || 'Copied!'
 
-				copyIcon?.classList.add('hidden')
-				checkIcon?.classList.remove('hidden')
-				checkIcon?.classList.add('text-green-500')
+				if (copyIcon instanceof HTMLElement) copyIcon.style.display = 'none'
+				if (checkIcon instanceof HTMLElement) {
+					checkIcon.style.display = 'flex'
+					checkIcon.classList.add('text-green-500')
+				}
 
 				copyBtn.setAttribute('title', labelCopied)
 				copyBtn.setAttribute('aria-label', labelCopied)
 
 				setTimeout(() => {
-					copyIcon?.classList.remove('hidden')
-					checkIcon?.classList.add('hidden')
-					checkIcon?.classList.remove('text-green-500')
+					if (copyIcon instanceof HTMLElement) copyIcon.style.display = 'flex'
+					if (checkIcon instanceof HTMLElement) {
+						checkIcon.style.display = 'none'
+						checkIcon.classList.remove('text-green-500')
+					}
 
 					copyBtn.setAttribute('title', labelCopy)
 					copyBtn.setAttribute('aria-label', labelCopy)

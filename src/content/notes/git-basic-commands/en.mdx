@@ -1,0 +1,38 @@
+---
+title: Comandos básicos de Git para iniciar proyecto
+description: Lista rápida de comandos para inicializar un repo y subirlo a GitHub por primera vez.
+pubDate: '2025-12-13T15:00:00Z'
+tags: ['git']
+lang: en
+icon: git
+new: true
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+
+Quick list of essential commands to initialize a local repository and push it to GitHub for the first time.
+
+<CodeTabs
+	items={[
+		{
+			label: 'Bash',
+			code: `git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin {repository-url}
+git push -u origin main`,
+			lang: 'bash',
+		},
+	]}
+/>
+
+### What each command does
+
+- **`git init`**: Initializes the local git repository.
+- **`git add .`**: The `add` command stages changes for commit, and the dot `.` selects all files.
+- **`git commit -m "Initial commit"`**: Creates the first commit. The `-m` flag allows you to add the commit message directly.
+- **`git branch -M main`**: Renames the current branch to `main`.
+  > **Note**: This is useful if your default configuration creates the branch as `master`.
+- **`git remote add origin ...`**: Links the local repository with the remote. `origin` is the alias we'll use to refer to the repository URL (https://github.com/hunkstalker/stardraw).
+- **`git push -u origin main`**: Pushes changes to GitHub. The `-u` flag links your local `main` branch with the remote `origin/main`, allowing you to simply use `git push` in the future.

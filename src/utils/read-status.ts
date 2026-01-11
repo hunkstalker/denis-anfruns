@@ -1,8 +1,8 @@
 export type BadgeStatus = 'NEW' | 'UPDATED' | null
-export type CollectionType = 'blog' | 'til'
+export type CollectionType = 'devlogs' | 'notes'
 
 const getStorageKey = (collection: CollectionType) =>
-	collection === 'blog' ? 'blog:read-posts' : 'til:read-posts'
+	collection === 'devlogs' ? 'blog:read-posts' : 'notes:read-posts'
 
 export function getReadPosts(collection: CollectionType): string[] {
 	if (typeof localStorage === 'undefined') return []

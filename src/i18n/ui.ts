@@ -31,7 +31,7 @@ export const ui = {
 		// BÚSQUEDA Y CUERPO
 		'search.all': 'Todo',
 		'search.project': 'PRO',
-		'search.til': 'TIL',
+		'search.notes': 'NOTE',
 		'search.devblog': 'DEV',
 		'header.role': 'Desarrollador Full Stack',
 		'header.years': 'años',
@@ -43,19 +43,19 @@ export const ui = {
 
 		// BLOG
 		'blog.title': 'Bitácora Digital',
-		'blog.description':
-			'Un espacio donde documento mi aprendizaje. Desde artículos profundos hasta pequeños fragmentos de código (TILs).',
+		'blog.description': 'Un espacio donde documento mi aprendizaje. Desde artículos profundos hasta pequeños fragmentos de código.',
 		'blog.series': 'DevLogs',
 		'blog.recent': 'Más Recientes',
 		'blog.devLogDescription': 'Artículos sobre el desarrollo de mis proyectos.',
 		'blog.withoutArticles': 'No hay DevLogs todavía.',
 		'blog.readArticle': 'Leer DevLog',
 		'blog.viewAll': 'Ver todo',
+		
+		// ES
 		'blog.readNote': 'Leer nota',
-		'blog.til': 'Notas TIL',
-		'blog.withoutTILs': 'No hay notas TIL todavía.',
-		'blog.tilDescription': 'Fragmentos de conocimiento.',
-		'blog.backToBlog': 'Volver al Blog',
+		'blog.note': 'Notas',
+		'blog.withoutNotes': 'No hay notas todavía.',
+		'blog.noteDescription': 'Fragmentos de conocimiento.',
 		'blog.back': 'Volver atrás',
 		'blog.backToTop': 'Volver arriba',
 		'blog.nextPost': 'Siguiente',
@@ -93,8 +93,7 @@ export const ui = {
 		'about.intro.deal':
 			'**Soluciones de alto rendimiento** client-side, sitios dinámicos de **gran experiencia para el usuario** o soportes con Web API Nativas que garantizan una **base sólida**.',
 		'about.garden.title': 'El Jardín Digital',
-		'about.garden.text':
-			'Este lugar es un **"Jardín Digital"**. Aquí no solo publicaré proyectos terminados, sino que documento mis desarrollos o experimentos así como pequeñas notas que me sirvan día a día (TILs). Me encanta enseñar y compartir así que espero que este repositorio nos sea de ayuda a ambos. Creo firmemente en el **Código Libre** ❤️',
+		'about.garden.text': 'Este lugar es un **"Jardín Digital"**. Aquí no solo publicaré proyectos terminados, sino que documento mis desarrollos o experimentos así como pequeñas notas que me sirvan día a día. Me encanta enseñar y compartir así que espero que este repositorio nos sea de ayuda a ambos. Creo firmemente en el **Código Libre** ❤️',
 		'about.personal.title': 'Más allá del código',
 		'about.personal.text': `Cuando no estoy programando, te costará encontrarme 🤣 
       disfruto desconectando con una buena serie, película o perdiéndome en algún videojuego. 
@@ -131,7 +130,7 @@ export const ui = {
 		// BÚSQUEDA
 		'search.all': 'Tots',
 		'search.project': 'PROJECTES',
-		'search.til': 'TIL',
+		'search.notes': 'NOTE',
 		'search.devblog': 'DEV',
 		'header.role': 'Desenvolupador Full Stack',
 		'header.years': 'anys',
@@ -143,8 +142,7 @@ export const ui = {
 
 		// BLOG
 		'blog.title': 'Bitàcora Digital',
-		'blog.description':
-			'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi (TILs).',
+		'blog.description': 'Un espai on documentar el meu aprenentatge. Des de articles profunds fins petits fragments de codi.',
 		'blog.series': 'DevLogs',
 		'blog.recent': 'Més Recents',
 		'blog.devLogDescription': 'Articles sobre el desenvolupament dels meus projectes.',
@@ -152,10 +150,9 @@ export const ui = {
 		'blog.readArticle': 'Llegir DevLog',
 		'blog.viewAll': 'Veure tot',
 		'blog.readNote': 'Llegir nota',
-		'blog.til': 'Notes TIL',
-		'blog.withoutTILs': 'Encara no hi ha notes TIL.',
-		'blog.tilDescription': 'Fragments de coneixement.',
-		'blog.backToBlog': 'Tornar al Blog',
+		'blog.note': 'Notes',
+		'blog.withoutNotes': 'Encara no hi ha notes.',
+		'blog.noteDescription': 'Fragments de coneixement.',
 		'blog.back': 'Tornar enrere',
 		'blog.backToTop': 'Tornar adalt',
 		'blog.nextPost': 'Següent',
@@ -190,8 +187,7 @@ export const ui = {
 		'about.intro.deal':
 			"**Solucions d'alt rendiment** client-side, llocs dinàmics de **gran experiència per a l'usuari** o suports amb Web API Natives que garanteixen una **base sòlida**.",
 		'about.garden.title': 'El Jardí Digital',
-		'about.garden.text':
-			'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia (TILs). M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
+		'about.garden.text': 'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia. M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
 		'about.personal.title': 'Més enllà del codi',
 		'about.personal.text': `Quan no estic programant, et costarà trobar-me 🤣 
       gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. 
@@ -228,7 +224,7 @@ export const ui = {
 		// SEARCH & BODY
 		'search.all': 'All',
 		'search.project': 'PRO',
-		'search.til': 'TIL',
+		'search.notes': 'NOTE',
 		'search.devblog': 'DEV',
 		'header.role': 'Full Stack Developer',
 		'header.years': 'years',
@@ -240,8 +236,7 @@ export const ui = {
 
 		// BLOG
 		'blog.title': 'Digital Log',
-		'blog.description':
-			'A space where I document my learning. From deep articles to small code snippets (TILs).',
+		'blog.description': 'A space where I document my learning. From deep articles to small code snippets.',
 		'blog.series': 'DevLogs',
 		'blog.recent': 'Most Recent',
 		'blog.devLogDescription': 'Articles about the development of my projects.',
@@ -249,10 +244,9 @@ export const ui = {
 		'blog.readArticle': 'Read DevLog',
 		'blog.viewAll': 'View all',
 		'blog.readNote': 'Read note',
-		'blog.til': 'TIL Notes',
-		'blog.withoutTILs': 'No TIL notes yet.',
-		'blog.tilDescription': 'Snippets of knowledge.',
-		'blog.backToBlog': 'Back to Blog',
+		'blog.note': 'Notes',
+		'blog.withoutNotes': 'No notes yet.',
+		'blog.noteDescription': 'Snippets of knowledge.',
 		'blog.back': 'Go back',
 		'blog.backToTop': 'Back to Top',
 		'blog.nextPost': 'Next',
@@ -290,8 +284,7 @@ export const ui = {
 		'about.intro.deal':
 			'**High-performance** client-side solutions, dynamic sites with **great user experience**, or supports with Native Web APIs that guarantee a **solid foundation**.',
 		'about.garden.title': 'The Digital Garden',
-		'about.garden.text':
-			'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I verify my developments or experiments as well as small notes that serve me day to day (TILs). I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
+		'about.garden.text': 'This place is a **"Digital Garden"**. Here I will not only publish finished projects, but I verify my developments or experiments as well as small notes that serve me day to day. I love teaching and sharing so I hope this repository helps both of us. I firmly believe in **Open Source** ❤️',
 		'about.personal.title': 'Beyond the Code',
 		'about.personal.text': `When I'm not coding, you'll have a hard time finding me 🤣 
       I enjoy disconnecting with a good series, movie, or getting lost in a video game. 

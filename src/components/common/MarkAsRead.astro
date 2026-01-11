@@ -1,11 +1,17 @@
 ---
 interface Props {
 	slug: string
-	collection: 'blog' | 'til'
+	collection: 'devlogs' | 'notes'
 }
 
 const { slug, collection } = Astro.props
-const key = collection === 'blog' ? 'blog:read-posts' : 'til:read-posts'
+const key = collection === 'devlogs' ? 'blog:read-posts' : 'notes:read-posts'
+// Using legacy keys for data preservation if desired? User didn't specify. 
+// "collection" prop is passed to `markPostAsRead`. Let's see what that function does.
+// If markPostAsRead uses the collection string as part of the key directly, changing the string here changes the key.
+// But lines 12-19 call markPostAsRead(slug, collection).
+// So I should check read-status.ts.
+// For now, I'll update interface but I must check read-status.ts.
 ---
 
 <script>

@@ -32,7 +32,7 @@ export default function AdminDashboard() {
 			window.history.replaceState({}, '', url.toString());
 		}
 	}, [activeSeries]);
-	const [filter, setFilter] = useState<'all' | 'til' | 'devlog' | 'hidden'>('all');
+	const [filter, setFilter] = useState<'all' | 'notes' | 'devlogs' | 'hidden'>('all');
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
 
@@ -277,7 +277,7 @@ export default function AdminDashboard() {
 				setEditingItem({
 					id: 'BULK_EDIT',
 					title: `${selectedItems.length} items selected`, // Display count of actual items
-					collection: selectedItems[0]?.collection || 'til',
+					collection: selectedItems[0]?.collection || 'notes',
 					filePath: 'MULTIPLE_FILES',
 					new: allNew,
 					draft: allDraft,
@@ -458,7 +458,7 @@ export default function AdminDashboard() {
 							<svg className={`w-4 h-4 transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>
 						</button>
 						<div className="w-px bg-zinc-200 dark:bg-zinc-700 mx-1 my-1"></div>
-						{(['all', 'til', 'devlog'] as const).map(f => (
+						{(['all', 'notes', 'devlogs'] as const).map(f => (
 							<button
 								key={f}
 								onClick={() => setFilter(f)}
@@ -515,12 +515,12 @@ export default function AdminDashboard() {
 						<AnimatePresence mode="popLayout">
 							{displayedItems.map((item) => {
 								const isFolder = (item as any).type === 'folder';
-								const isTil = item.collection === 'til';
+								const isNote = item.collection === 'notes';
 
 								if (isFolder) {
 									const folder = item as SeriesFolder;
-									const folderIconColor = isTil ? 'text-emerald-500' : 'text-blue-500';
-									const folderRingHover = isTil ? 'group-hover:ring-emerald-500/30' : 'group-hover:ring-blue-500/30';
+									const folderIconColor = isNote ? 'text-emerald-500' : 'text-blue-500';
+									const folderRingHover = isNote ? 'group-hover:ring-emerald-500/30' : 'group-hover:ring-blue-500/30';
 
 									return (
 										<motion.div
@@ -550,7 +550,7 @@ export default function AdminDashboard() {
 														<svg className={`w-10 h-10 ${folderIconColor} fill-current opacity-20 group-hover:opacity-100 transition-all duration-300`} viewBox="0 0 24 24"><path d="M20 18c0 .55-.45 1-1 1H5c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5.17l1.41 1.41C11.97 6.8 12.47 7 13 7h6c.55 0 1 .45 1 1v10z" /></svg>
 													)}
 													<div className="flex flex-col items-end gap-1">
-														<Badge variant="subtle" size="xs" intent={isTil ? 'emerald' : 'blue'}>SERIES</Badge>
+														<Badge variant="subtle" size="xs" intent={isNote ? 'emerald' : 'blue'}>SERIES</Badge>
 														<button
 															onClick={(e) => {
 																e.stopPropagation();
@@ -666,7 +666,7 @@ export default function AdminDashboard() {
 
 													<div className="flex items-end justify-between">
 														<div className="flex gap-2">
-															<Badge intent={isTil ? 'emerald' : 'blue'} variant="subtle" size="xs" shape="square">
+															<Badge intent={item.collection === 'notes' ? 'emerald' : 'blue'} variant="subtle" size="xs" shape="square">
 																{card.collection.toUpperCase()}
 															</Badge>
 															{card.new && <Badge intent="danger" size="xs">NEW</Badge>}

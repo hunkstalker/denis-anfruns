@@ -1,0 +1,78 @@
+---
+title: 'Scope CSS: Astro vs Frameworks JS'
+description: Cómo Astro aísla estilos automáticamente frente al CSS global de React/Vue.
+pubDate: '2025-12-13T14:30:00Z'
+tags: ['astro', 'css', 'architecture']
+lang: en
+new: true
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+
+Understanding how your framework handles CSS styles is crucial to avoiding conflicts and keeping your code clean. Not all frameworks work the same, and Astro has a very particular approach.
+
+### The "Normal" Approach (Pure React/Vue)
+
+In the traditional React ecosystem, if you import a CSS file into a component, that CSS is usually **global**.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Button.jsx (React)', 
+      code: `import './Button.css'; // DANGER! This is global
+
+export const Button = () => <button className="btn">Click</button>;`, 
+      lang: 'jsx' 
+    },
+    { 
+      label: 'Button.css', 
+      code: `.btn { color: red; } /* Affects ALL elements with class .btn on the web */`, 
+      lang: 'css' 
+    }
+  ]}
+/>
+
+To avoid this, in React we usually use **CSS Modules** (`Button.module.css`) or CSS-in-JS libraries (Styled Components, Emotion).
+
+### The Astro Approach: Scoped by Default
+
+Astro reverses this logic by default. When you write styles inside the `<style>` tag in an `.astro` component, they are **automatically scoped**.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Card.astro', 
+      code: `---
+// Your JS
+---
+<div class="card">
+    <h1>Hello</h1>
+</div>
+
+<style>
+    /* This ONLY affects this component */
+    .card { background: blue; }
+    h1 { color: white; }
+</style>`,
+
+      lang: 'astro'
+    }
+
+]}
+/>
+
+Astro achieves this by adding a unique hash class to your elements (e.g., `.card.astro-HASH123`) at build time.
+
+### When to use what?
+
+1.  **Component Styles**: Always use the `<style>` tag at the end of the `.astro` file. It's safe, requires no extra config, and is automatically removed if the component is unused.
+2.  **Global Styles**: If you need something that affects the entire web (like resets, fonts, or `utilities`), use a `.css` file in `src/styles/` and import it in your main Layout.
+3.  **CSS Modules**: Use them only if you prefer to separate styles into different files but maintaining the scope (e.g., `Component.module.css`), although in Astro it is usually redundant.
+
+### Summary
+
+In Astro, **Co-location** is key. Keep your styles next to your HTML in the same file.
+
+> **Co-location**: The practice of grouping code by _responsibility_ (e.g., a component) rather than by _technology_ (separate .html, .js, .css files).
+
+You will gain maintainability and performance.

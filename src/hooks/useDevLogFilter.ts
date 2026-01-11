@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import type { DevlogPost } from '@utils/devlog-content'
+import type { DevlogPost } from '@utils/devlogs-content'
 
 export function useDevLogFilter(posts: DevlogPost[]) {
 	const [selectedTag, setSelectedTag] = useState<string | null>(() => {

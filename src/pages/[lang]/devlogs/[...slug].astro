@@ -1,0 +1,289 @@
+---
+import { getDevlogs, type DevlogPost } from '@utils/devlogs-content'
+import ContentLayout from '@layouts/ContentLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import TableOfContents from '@components/common/TableOfContents.astro'
+import SeriesWidget from '@components/common/SeriesWidget.astro'
+import MarkAsRead from '@components/common/MarkAsRead.astro'
+import { getLangFromSlug, getBaseSlug } from '@utils/blogi18n'
+import { useTranslations } from '@i18n/utils'
+
+import ChevronUp from '@icons/chevron-up.svg'
+import ChevronRight from '@icons/chevron-right.svg'
+
+export async function getStaticPaths() {
+	const posts = await getDevlogs()
+
+	return posts
+		.filter((post) => getLangFromSlug(post.slug) !== 'es')
+		.map((post) => ({
+			params: {
+				lang: getLangFromSlug(post.slug),
+				slug: getBaseSlug(post.slug),
+			},
+			props: post,
+		}))
+}
+
+type Props = DevlogPost
+
+const post = Astro.props
+const lang = getLangFromSlug(post.slug)
+const t = useTranslations(lang)
+const { Content, headings } = await post.render()
+
+let nextPost: DevlogPost | null = null
+if (post.data.series) {
+	const allPosts = await getDevlogs()
+	const seriesPosts = allPosts
+		.filter((p) => p.data.series === post.data.series && getLangFromSlug(p.slug) === 'es')
+		.sort((a, b) => {
+			if (!a.data.pubDate || !b.data.pubDate) return 0
+			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+		})
+	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
+	nextPost = seriesPosts[currentIndex + 1] || null
+}
+---
+
+<style>
+	.animate-fade-in-up {
+		opacity: 0;
+		animation: fadeInUp 0.8s ease-out forwards;
+	}
+
+	.delay-100 {
+		animation-delay: 0.1s;
+	}
+	.delay-200 {
+		animation-delay: 0.2s;
+	}
+	.delay-300 {
+		animation-delay: 0.3s;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
+
+<ContentLayout
+	title={post.data.title}
+	siteTitle={post.data.title}
+	lang={lang}
+	description={post.data.description}
+	image={post.data.ogImage ?? post.data.heroImage}
+	isWide={!!post.data.series}
+>
+	<MarkAsRead slug={post.slug} collection="devlogs" />
+	<div
+		class="col-span-1 pl-4 lg:col-span-8 xl:col-span-8"
+		data-pagefind-body
+		data-pagefind-filter={`type:${post.data.tags.some((t) => t.toLowerCase() === 'project') ? 'project' : 'devlogs'}`}
+		data-pagefind-meta={`description:${post.data.description}`}
+	>
+		<div class="mb-8">
+			<BackLink href={`/${lang}/blog`} label={t('blog.back')} />
+
+			{
+				post.data.heroImage && (
+					<div class="animate-fade-in-up mb-6">
+						<img
+							src={post.data.heroImage}
+							alt={post.data.title}
+							class="h-auto max-h-[400px] w-full rounded-lg object-cover"
+						/>
+						{post.data.descriptionHeroImage && (
+							<p class="mt-2 text-sm italic text-zinc-500">{post.data.descriptionHeroImage}</p>
+						)}
+					</div>
+				)
+			}
+
+			<div
+				class="animate-fade-in-up mb-4 flex flex-wrap items-center gap-4 font-mono text-sm text-zinc-500 delay-100"
+			>
+				<time datetime={post.data.pubDate.toISOString()}>
+					{
+						post.data.pubDate.toLocaleString(lang, {
+							year: 'numeric',
+							month: 'short',
+							day: 'numeric',
+							hour: '2-digit',
+							minute: '2-digit',
+						})
+					}
+				</time>
+				{
+					post.data.updatedDate && (
+						<>
+							<span>/</span>
+							<span class="text-zinc-500">
+								Updated:{' '}
+								{post.data.updatedDate.toLocaleString(lang, {
+									year: 'numeric',
+									month: 'short',
+									day: 'numeric',
+									hour: '2-digit',
+									minute: '2-digit',
+								})}
+							</span>
+						</>
+					)
+				}
+			</div>
+
+			<h1
+				class="animate-fade-in-up mb-6 text-balance text-3xl font-bold leading-tight delay-200 dark:text-white md:text-5xl"
+			>
+				{post.data.title}
+			</h1>
+
+			<div class="animate-fade-in-up flex flex-wrap gap-2 delay-300">
+				{
+					post.data.tags.map((tag) => (
+						<span class="rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-sm font-medium text-zinc-600 dark:border-zinc-700/50 dark:bg-zinc-800 dark:text-zinc-400">
+							#{tag}
+						</span>
+					))
+				}
+			</div>
+			<hr class="animate-fade-in-up mt-8 border-stone-400 delay-300 dark:border-zinc-800" />
+		</div>
+
+		<!-- Mobile Table of Contents (Collapsible) -->
+		{/* Mobile TOC */}
+		{
+			headings.length > 0 && (
+				<div class="mb-8 lg:hidden">
+					<TableOfContents headings={headings} lang={lang} mode="collapsible" />
+				</div>
+			)
+		}
+
+		{
+			post.data.series && (
+				<div class="mb-8 lg:hidden">
+					<SeriesWidget
+						seriesId={post.data.series}
+						currentSlug={post.slug}
+						lang={lang}
+						collection="devlogs"
+						id="mobile-series"
+						mode="collapsible"
+					/>
+				</div>
+			)
+		}
+
+		<article class="prose max-w-none dark:prose-invert lg:prose-xl">
+			{/* Hidden content for Pagefind indexing - allows search with highlighting */}
+			{
+				post.data.description && (
+					<span class="sr-only" data-pagefind-weight="2">
+						{post.data.description}
+					</span>
+				)
+			}
+			<Content />
+		</article>
+
+		<footer class="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-700">
+			<div class="flex items-center justify-between">
+				<button
+					id="scroll-to-top"
+					class="group flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
+				>
+					<ChevronUp class="transition-transform group-hover:-translate-y-0.5" />
+					{t('blog.backToTop')}
+				</button>
+
+				{
+					nextPost && (
+						<a
+							href={`/${lang}/devlogs/${getBaseSlug(nextPost.slug)}/`}
+							class="group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
+						>
+							{t('blog.nextPost')}
+							<ChevronRight class="transition-transform group-hover:translate-x-1" />
+						</a>
+					)
+				}
+			</div>
+		</footer>
+
+		<script>
+			document.getElementById('scroll-to-top')?.addEventListener('click', () => {
+				window.scrollTo({ top: 0, behavior: 'smooth' })
+			})
+
+			// Mobile TOC Animation
+			const tocDetails = document.querySelector('.mobile-toc') as HTMLDetailsElement
+			const tocSummary = tocDetails?.querySelector('summary')
+			const tocContent = tocDetails?.querySelector('.toc-content') as HTMLElement
+
+			if (tocDetails && tocSummary && tocContent) {
+				tocSummary.addEventListener('click', (e) => {
+					e.preventDefault()
+
+					if (tocDetails.open) {
+						// Closing
+						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
+						// Force reflow
+						const _reflow = tocContent.offsetHeight
+
+						tocContent.style.maxHeight = '0'
+						tocContent.style.opacity = '0'
+
+						setTimeout(() => {
+							tocDetails.open = false
+						}, 300)
+					} else {
+						// Opening
+						tocDetails.open = true
+
+						tocContent.style.maxHeight = '0'
+						tocContent.style.opacity = '0'
+						// Force reflow
+						const _reflow = tocContent.offsetHeight
+
+						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
+						tocContent.style.opacity = '1'
+
+						setTimeout(() => {
+							tocContent.style.maxHeight = 'none'
+						}, 300)
+					}
+				})
+			}
+		</script>
+	</div>
+
+	<!-- Columna derecha de Widgets -->
+	<aside class="hidden pl-2 lg:col-span-4 lg:block">
+		<div class="sticky top-24 mt-2.5 space-y-8">
+			{
+				post.data.series && (
+					<SeriesWidget
+						seriesId={post.data.series}
+						currentSlug={post.slug}
+						lang={lang}
+						collection="devlogs"
+						id="desktop-series"
+					/>
+				)
+			}
+
+			<TableOfContents headings={headings} lang={lang} />
+		</div>
+	</aside>
+
+	<div class="h-16 md:h-24"></div>
+</ContentLayout>

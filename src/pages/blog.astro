@@ -2,10 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Nav from '../components/layout/Nav.astro'
 
-import { getDevlogs, groupDevlogsBySeries, type DevlogPost } from '../utils/devlog-content'
+import { getDevlogs, groupDevlogsBySeries, type DevlogPost } from '../utils/devlogs-content'
 import { getLangFromSlug } from '../utils/blogi18n'
 import { useTranslations } from '../i18n/utils'
-import TilAside from '../components/til/Aside.astro'
+import NotesAside from '../components/notes/Aside.astro'
 import Grid from '../components/devlog/Grid'
 
 import ArrowRightIcon from '../icons/arrow-right.svg'
@@ -43,7 +43,7 @@ const LABEL_DEVLOGS = 'DevLogs'
 					>
 						<h2 class="text-xl font-bold dark:text-zinc-200">{LABEL_DEVLOGS}</h2>
 						<a
-							href="/devlog/"
+							href="/devlogs/"
 							class="group flex items-center gap-1 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
 						>
 							{t('blog.viewAll')}
@@ -67,7 +67,7 @@ const LABEL_DEVLOGS = 'DevLogs'
 			</div>
 
 			<!-- Columna lateral de TILs en /blog -->
-			<TilAside lang={lang} limit={6} />
+			<NotesAside lang={lang} limit={6} />
 		</div>
 	</div>
 </BaseLayout>

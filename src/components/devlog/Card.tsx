@@ -1,6 +1,6 @@
 import { useReadStatus } from '@hooks/useReadStatus'
 import { BADGE_LABELS } from '@utils/read-status'
-import type { DevlogPost } from '@utils/devlog-content'
+import type { DevlogPost } from '@utils/devlogs-content'
 import { getBaseSlug } from '@utils/blogi18n'
 import { ArrowUpRight } from 'lucide-react'
 import { Badge } from '../ui/Badge'
@@ -18,14 +18,14 @@ interface Props {
 export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Props) {
 	const href =
 		lang === 'es'
-			? `/devlog/${getBaseSlug(post.slug)}/`
-			: `/${lang}/devlog/${getBaseSlug(post.slug)}/`
+			? `/devlogs/${getBaseSlug(post.slug)}/`
+			: `/${lang}/devlogs/${getBaseSlug(post.slug)}/`
 
 	const image = post.data.heroImage || post.data.ogImage
 
 	const badgeStatus = useReadStatus(
 		post.slug,
-		'blog',
+		'devlogs',
 		!!post.data.new,
 		post.data.allSlugs,
 		post.data.newSlugs
@@ -65,7 +65,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 				<h3 className="text-lg font-bold transition-colors dark:text-white">
 					<a href={href} data-astro-prefetch>
 						<span className="absolute inset-0"></span>
-						{post.data.seriesTitle}
+						{typeof post.data.seriesTitle === 'string' ? post.data.seriesTitle : post.data.title}
 					</a>
 				</h3>
 

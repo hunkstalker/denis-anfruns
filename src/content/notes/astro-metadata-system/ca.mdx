@@ -1,0 +1,198 @@
+---
+title: Sistema ES First - Sincronización Automática de Contenido i18n
+description: Cómo funciona el sistema de sincronización de metadatos desde el archivo español hacia los demás idiomas.
+pubDate: '2025-12-16T19:00:00.000Z'
+tags: ['astro', 'automation', 'workflow', 'i18n']
+lang: ca
+new: true
+draft: true
+---
+
+import Callout from '@components/mdx/Callout.astro';
+import CodeTabs from '@components/mdx/CodeTabs.astro';
+
+En aquesta nota explicarem com funciona el sistema de sincronització de contingut multilingüe que utilitzem en aquest projecte. Si t'hi has fixat, els nostres arxius de contingut en espanyol actuen com a **font de veritat** per a les metadades comunes.
+
+## El Problema: Duplicitat en i18n
+
+Quan treballes amb internacionalització (i18n) a Astro utilitzant *Content Collections*, l'estàndard és tenir un arxiu per idioma:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'Estructura d\'arxius',
+			code: `src/content/notes/la-meva-nota/
+  es.mdx    ← Contingut en Espanyol
+  en.mdx    ← Contingut en Anglès`,
+			lang: 'text',
+		}
+	]}
+/>
+
+El problema sorgeix quan has de mantenir les metadades sincronitzades. La data de publicació? La mateixa als tres. Els tags? Els mateixos. L'estat d'esborrany? El mateix.
+
+Si decideixes canviar la data de publicació, has d'editar 3 arxius. **Repetir dades viola el principi DRY (Don't Repeat Yourself)** i és una font d'errors garantida.
+
+## La Solució: ES First
+
+Adoptem un enfocament **ES First** (Espanyol Primer):
+
+<Callout type="info" title="Principi ES First">
+L'arxiu `es.mdx` és la **font de veritat** per a totes les metadades comunes. Els altres idiomes hereten automàticament aquests valors.
+</Callout>
+
+### Què va on?
+
+**A `es.mdx` (Master):**
+- `title`, `description` (versió en espanyol)
+- `pubDate`, `updatedDate`
+- `tags`, `draft`, `new`
+- `series`, `heroImage`, `ogImage`
+
+**A `en.mdx` / `ca.mdx`:**
+- `title`, `description` (versió traduïda)
+- `lang` (identificador de l'idioma)
+- La resta es **sincronitza automàticament** des de `es.mdx`
+
+## La Màgia: `sync-content.mjs`
+
+L'script `scripts/sync-content.mjs` s'executa automàticament abans de cada `dev` o `build`:
+
+<CodeTabs
+	items={[
+		{
+			label: 'package.json',
+			code: `"dev": "pnpm sync:content && astro dev"
+"build": "pnpm sync:content && astro build && pagefind --site dist"`,
+			lang: 'json',
+		},
+	]}
+/>
+
+### Què fa l'script?
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'Diagrama de Flux',
+			code: `ES es.mdx (MASTER)
+      │
+      │ SYNC_FIELDS: pubDate, tags, draft,
+      │              series, heroImage, new...
+      ▼
+┌──────────────┐
+│  en.mdx      │ ← Rep els camps de l'ES
+│  ca.mdx      │ ← Rep els camps de l'ES
+└──────────────┘`,
+			lang: 'text',
+		},
+	]}
+/>
+
+1. **Llegeix `es.mdx`** com a font de veritat
+2. **Extreu els camps sincronitzables** (`SYNC_FIELDS`)
+3. **Actualitza `en.mdx` i `ca.mdx`** amb aquests valors
+
+### Camps Sincronitzats
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'scripts/sync-content.mjs',
+			code: `const SYNC_FIELDS = [
+    'title',        // Només si no hi ha versió traduïda
+    'description',  // Només si no hi ha versió traduïda
+    'pubDate',
+    'updatedDate',
+    'draft',
+    'tags',
+    'heroImage',
+    'ogImage',
+    'series',
+    'new',
+    'end',
+    'icon'`,
+			lang: 'JavaScript'
+		}
+	]}	
+/>
+
+### Configurar l'idioma mestre
+
+L'idioma mestre es defineix a `scripts/sync-content.mjs`. Per defecte, utilitzem espanyol (`es.mdx`) com a font de veritat:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'sync-content.mjs',
+			code: `// Arxiu mestre (Font de Veritat)
+const esPath = path.join(dirPath, 'es.mdx')
+
+// Idiomes que reben les dades del mestre
+const others = ['en.mdx', 'ca.mdx']`,
+			lang: 'javascript',
+		},
+	]}
+/>
+
+Si volguessis canviar l'idioma mestre a anglès, modificaries aquestes línies:
+
+<CodeTabs
+	hideTabs
+	items={[
+		{
+			label: 'sync-content.mjs (anglès com a mestre)',
+			code: `const masterPath = path.join(dirPath, 'en.mdx')
+const others = ['es.mdx', 'ca.mdx']`,
+			lang: 'javascript',
+		},
+	]}
+/>
+
+<Callout type="info" title="Per què espanyol?">
+En aquest projecte, l'espanyol és l'idioma natiu de l'autor i el que té més volum de contingut. Per això és la font de veritat natural.
+</Callout>
+
+## Flux de Treball
+
+### Crear contingut nou
+
+1. Crea la carpeta: `src/content/notes/la-meva-nova-nota/`
+2. Crea `es.mdx` amb totes les metadades
+3. Crea `en.mdx` i `ca.mdx` amb només `lang`, `title`, `description`
+4. Executa `pnpm dev` → l'script sincronitza automàticament
+
+### Modificar metadades
+
+1. Edita **només `es.mdx`**
+2. Executa `pnpm dev` o `pnpm build`
+3. Els canvis es propaguen als altres idiomes
+
+<Callout type="warning" title="Important">
+Mai editis `pubDate`, `tags` o `draft` directament a `en.mdx` o `ca.mdx`. Aquests canvis se sobreescriuran a la propera sincronització.
+</Callout>
+
+## Beneficis
+
+1. **Escriure menys**: Defineixes les metadades un sol cop
+2. **Zero errors de sincronització**: Impossible tenir dates dispars entre idiomes
+3. **Flux natural**: Edites l'espanyol, la resta s'actualitza sol
+4. **Transparent**: S'executa automàticament, no cal recordar comandes
+
+## Validació: `verify-content.mjs`
+
+L'script `scripts/verify-content.mjs` valida que tot estigui correcte:
+
+- És `pubDate` una data vàlida?
+- És `updatedDate` posterior a `pubDate`?
+- Les sèries tenen l'ordre correcte de parts?
+
+S'executa amb `pnpm verify:content` i està integrat a la comanda `pnpm test`.
+
+## Conclusió
+
+Aquest sistema **ES First** ens permet mantenir el contingut multilingüe sincronitzat sense esforç. L'espanyol actua com a mestre, i els altres idiomes hereten automàticament les metadades comunes mentre mantenen les seves pròpies traduccions de títol i descripció.

@@ -1,0 +1,84 @@
+---
+description: Transforma lógica duplicada en estructuras de datos iterables.
+lang: es
+new: false
+pubDate: '2025-12-13T14:15:00Z'
+tags: ['javascript', 'refactoring', 'clean-code']
+title: 'Refactorización: De código repetitivo a Data-Driven'
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+
+Una de las optimizaciones más satisfactorias en programación es pasar de una lista interminable de código repetido a una elegante estructura basada en datos.
+
+### El Código "Oloroso" (Smell Code)
+
+Imagina que tienes que reemplazar varias palabras en un texto y luego mostrar iconos para cada una de ellas. La aproximación ingenua suele verse así:
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Antes', 
+      code: `// Reemplazos manuales infinitos...
+const text = originalText
+    .replace('React', '<span id="hl-react">React</span>')
+    .replace('Astro', '<span id="hl-astro">Astro</span>')
+    .replace('Vue', '<span id="hl-vue">Vue</span>');
+
+// Renderizado manual infinito...
+
+<Icon icon={ReactIcon} target="hl-react" />
+<Icon icon={AstroIcon} target="hl-astro" />
+<Icon icon={VueIcon} target="hl-vue" />`, 
+      lang: 'javascript' 
+    }
+  ]}
+/>
+
+Esto es difícil de mantener. Si quieres añadir una tecnología, tienes que tocar el código en dos o más sitios.
+
+### La Solución Data-Driven
+
+En lugar de escribir la lógica varias veces, define tus datos en una sola "fuente de la verdad" (un array de objetos) y deja que el código haga el trabajo sucio.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Después', 
+      code: `// 1. Configuración centralizada
+const technologies = [
+    { name: 'React', id: 'hl-react', icon: ReactIcon },
+    { name: 'Astro', id: 'hl-astro', icon: AstroIcon },
+    { name: 'Vue', id: 'hl-vue', icon: VueIcon }
+];
+
+// 2. Lógica de reemplazo dinámica
+let processedText = originalText;
+technologies.forEach(tech => {
+// ¿Por qué forEach aquí? (Ver nota al final)
+// Usamos RegExp para reemplazar todas las ocurrencias dinámicamente
+processedText = processedText.replace(
+new RegExp(tech.name, 'g'),
+\`<span id="\${tech.id}">\${tech.name}</span>\`
+);
+});
+
+// 3. Renderizado dinámico
+// En tu template (React/Astro/etc):
+{technologies.map(tech => (
+<Icon icon={tech.icon} target={tech.id} />
+))}`,
+lang: 'javascript'
+}
+]}
+/>
+
+### Ventajas
+
+1.  **Mantenibilidad**: Para añadir algo nuevo, solo añades una línea en el array `technologies`.
+2.  **Legibilidad**: La lógica de "qué hacer" está separada de los "datos".
+3.  **Escalabilidad**: Puedes tener 3 o 300 tecnologías, el código lógico no cambia.
+
+## Lectura Recomendada
+
+- [¿Cuándo usar Map y cuándo ForEach?](/til/javascript-map-vs-foreach)

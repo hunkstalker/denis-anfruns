@@ -1,0 +1,41 @@
+---
+title: Delegación Power FX en SharePoint
+description: Cómo manejar grandes listas y evitar el límite de 500/2000 items.
+pubDate: '2025-12-09T00:00:00.000Z'
+tags: ['power-platform', 'sharepoint', 'power-fx']
+lang: ca
+icon: powerapps
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+
+# Delegació Power FX a SharePoint
+
+La "delegació" és la capacitat de Power Apps de dir al servidor: "Filtra tu aquests 10 milions de registres i dona'm només els 5 que necessito".
+
+SharePoint té limitacions severes amb això. Moltes funcions no són delegables, el que significa que Power Apps ha de descarregar els primers 500 (configurable fins a un màxim de 2000 a la configuració de l'app) registres i filtrar-los **localment**. Si la teva dada està al registre 2001, **mai la veuràs**.
+
+### Funcions no delegables comunes
+
+- Manipulació de dates complexa (ex: `Month(DateColumn)`).
+- Cerques de text complexes (ex: `Search` en columnes numèriques).
+
+### Solució: Columnes Calculades o Predeterminats
+
+En lloc de calcular en temps d'execució, prepara les dades.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps',
+      code: `// ❌ No delegable (demana tot al servidor i filtra local)
+Filter(Orders, Year(Created) = 2024)
+
+// ✅ Delegable (passa un rang de dates al servidor)
+Filter(Orders, Created >= Date(2024,1,1) && Created <= Date(2024,12,31))`,
+lang: 'power fx'
+}
+]}
+/>
+
+Ja t'hauràs trobat el triangle groc ⚠️ per tot arreu, però no l'odiïs és un bon xivato, aprofita'l per saber on optimitzar les teves apps.ndida.

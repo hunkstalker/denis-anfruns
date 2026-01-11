@@ -1,0 +1,57 @@
+---
+description: Define variables locales en fórmulas Power Fx para evitar repeticiones.
+icon: powerapps
+lang: es
+pubDate: '2025-12-03T00:00:00.000Z'
+tags: ['powerapps', 'power-fx']
+title: Código más limpio con la función With
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
+
+Cuando una fórmula de `Patch` o `Filter` crece en complejidad, es común acabar repitiendo `User().Email` o `LookUp(...)` múltiples veces, lo que dificulta la lectura. La función `With` es la solución para aplicar "Clean Code" en Power Apps.
+
+Permite definir **variables locales** que solo existen durante la ejecución de esa fórmula, haciendo el código más legible y eficiente al evitar recalcular lo mismo.
+
+### Caso de Uso: Creando un Registro Complejo
+
+Sin `With`, el código se vuelve ruidoso y repetitivo.
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps', 
+      code: `// ❌ Repetitivo: Llamamos a User() 4 veces
+Patch(Solicitudes, Defaults(Solicitudes), {
+    Titulo: "Solicitud de " & User().FullName,
+    EmailSolicitante: User().Email,
+    Jefe: LookUp(Usuarios, Email = User().Email).Manager,
+    Departamento: LookUp(Usuarios, Email = User().Email).Department
+});
+
+// ✅ Con With: Definimos el contexto una vez
+With({
+// Scope: Variables locales calculadas una sola vez
+CurrentUser: User(),
+UserProfile: LookUp(Usuarios, Email = User().Email)
+},
+Patch(Solicitudes, Defaults(Solicitudes), {
+Titulo: "Solicitud de " & CurrentUser.FullName,
+EmailSolicitante: CurrentUser.Email,
+Jefe: UserProfile.Manager,
+Departamento: UserProfile.Department
+})
+);`,
+lang: 'power fx'
+}
+]}
+/>
+
+Es mejor que crear variables de contexto (`UpdateContext`) que luego tienes que acordarte de limpiar. Úsalo siempre que necesites controlar el scope de variables locales.
+
+<Callout type="warning" title="Ojo con el separador" filled>
+	Recuerda que si tienes Power Apps configurado para la **región europea** tendrás que cambiar la
+	coma `,` por punto y coma `;` en las fórmulas. Y Doble punto y coma `;;` para saltos de línea
+	donde normalmente se pondría únicamente un punto y coma `;`.
+</Callout>

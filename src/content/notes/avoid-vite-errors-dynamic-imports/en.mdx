@@ -1,0 +1,40 @@
+---
+title: Evitar errores de Vite con imports dinámicos en desarrollo
+description: Truco para que Vite ignore rutas de archivos que solo existen tras el build.
+pubDate: '2025-12-10T18:00:00Z'
+tags: ['vite']
+lang: en
+new: false
+draft: false
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+
+When you try to dynamically `import()` a file that **does not exist yet** (because it is generated at build time, like the Pagefind index), Vite throws an error in development mode and stops the server.
+
+The typical `/* @vite-ignore */` comment is sometimes not enough if Vite scans the static path.
+
+### The Solution
+
+The trick is to **hide the path in a variable**. By doing this, Vite gives up on static analysis and allows the code to execute (or fail gracefully in a `try/catch`).
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'vite', 
+      code: `try {
+  // ❌ Esto falla en dev si el archivo no existe
+  // await import('/pagefind/pagefind.js');
+
+// ✅ Esto funciona (Vite ignora el análisis)
+const url = '/pagefind/pagefind.js';
+await import(/_ @vite-ignore _/ url);
+} catch (e) {
+console.warn('Pagefind no disponible en dev');
+}`,
+lang: 'javascript'
+}
+]}
+/>
+
+It's a small hack, but very useful for post-build libraries like Pagefind or dynamically generated WASM.

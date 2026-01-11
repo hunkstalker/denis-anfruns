@@ -1,0 +1,53 @@
+---
+title: Rendimiento con Collections
+description: Caché local para reducir llamadas de red en Canvas Apps.
+pubDate: '2025-12-07T00:00:00.000Z'
+tags: ['power-platform', 'sharepoint', 'power-fx']
+lang: en
+icon: powerapps
+draft: false
+---
+
+import CodeTabs from '../../../components/mdx/CodeTabs.astro'
+import Callout from '../../../components/mdx/Callout.astro'
+
+# Performance with Collections
+
+Every time you reference a data source in a gallery or formula (`SharePointList`), Power Apps makes a network call. If you have static or reference data (Menus, Categories, Statuses) that doesn't change every second, you are wasting bandwidth and battery.
+
+The solution is to load them into local memory at startup.
+
+### Local Cache vs. Network
+
+<CodeTabs 
+  items={[
+    { 
+      label: 'Power Apps',
+      code: `// ❌ Slow: Calls SharePoint every time it renders or filters
+Gallery1.Items = SP_CategoryList
+
+// ✅ Fast: Load once, read a thousand times from memory
+// In App.OnStart:
+Concurrent(
+ClearCollect(colMenus, SP_MenuList),
+ClearCollect(colCategories, SP_CategoryList)
+);
+
+// In the Gallery:
+Gallery1.Items = colCategories`,
+lang: 'power fx'
+}
+]}
+/>
+
+### Benefits
+
+- **Instant Speed**: Navigation between screens feels native because the data is already there.
+- **Fewer "marching ants"**: You reduce loading indicators.
+- **Delegation**: You can manipulate collections locally without SharePoint delegation restrictions (for datasets < 2000 items).
+
+<Callout type="warning" title="Mind the volume" filled>
+	Do not try to load tables of 50,000 rows into a mobile collection. Stick to master or
+	configuration data. For large volumes, continue using direct delegation.
+</Callout>
+```

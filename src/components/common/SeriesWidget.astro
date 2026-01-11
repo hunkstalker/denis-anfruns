@@ -1,6 +1,7 @@
+
 ---
-import { getTils, type TilPost } from '@utils/til-content'
-import { getDevlogs, type DevlogPost } from '@utils/devlog-content'
+import { getDevlogs, type DevlogPost } from '@utils/devlogs-content'
+import { getNotes, type NotePost } from '@utils/notes-content'
 import { getBaseSlug, getLangFromSlug, type SupportedLang } from '@utils/blogi18n'
 import CheckIcon from '@icons/check.svg'
 import { Badge } from '../ui/Badge'
@@ -10,7 +11,7 @@ interface Props {
 	seriesId: string
 	currentSlug: string
 	lang?: SupportedLang
-	collection: 'til' | 'devlog'
+	collection: 'notes' | 'devlogs'
 	id?: string // Explicit ID to handle multiple instances (mobile/desktop)
 	mode?: 'static' | 'collapsible'
 }
@@ -40,28 +41,37 @@ let titleInfo = seriesId
 
 // Helper to construct path (moved here to normalize data immediately)
 const getPath = (slug: string) => {
-	if (collection === 'til') {
+	if (collection === 'notes') {
 		const cleanSlug = slug.replace(/\/(es|en|ca)$/, '')
-		return lang === 'es' ? `/til/${cleanSlug}/` : `/${lang}/til/${cleanSlug}/`
+		return lang === 'es' ? `/notes/${cleanSlug}/` : `/${lang}/notes/${cleanSlug}/`
 	} else {
-		return lang === 'es' ? `/devlog/${getBaseSlug(slug)}/` : `/${lang}/devlog/${getBaseSlug(slug)}/`
+		return lang === 'es' ? `/devlogs/${getBaseSlug(slug)}/` : `/${lang}/devlogs/${getBaseSlug(slug)}/`
 	}
 }
 
 // Data Fetching & Normalization Logic
-if (collection === 'til') {
-	const allTils = await getTils()
-	const rawPosts = allTils
+if (collection === 'notes') {
+	const allNotes = await getNotes()
+	const rawPosts = allNotes
 		.filter(post => post.data.series === seriesId && post.data.lang === lang)
 		.sort((a, b) => {
 			if (!a.data.pubDate || !b.data.pubDate) return 0
 			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 		})
 
-	titleInfo = rawPosts[0]?.data.seriesTitle || seriesId
+	// Helper to resolve series title
+	const getSeriesTitle = (p: any) => {
+		if (!p) return seriesId
+		const st = p.data.seriesTitle
+		if (typeof st === 'object') {
+			return st[lang] || st['es']
+		}
+		return st || seriesId
+	}
+	titleInfo = getSeriesTitle(rawPosts[0])
 
 	seriesItems = rawPosts.map(post => ({
-		title: post.data.title,
+		title: post.data.title || '',
 		slug: post.slug,
 		date: post.data.pubDate,
 		href: getPath(post.slug),
@@ -77,10 +87,19 @@ if (collection === 'til') {
 			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 		})
 
-	titleInfo = rawPosts[0]?.data.seriesTitle || seriesId
+	// Helper to resolve series title (same logic)
+	const getSeriesTitle = (p: any) => {
+		if (!p) return seriesId
+		const st = p.data.seriesTitle
+		if (typeof st === 'object') {
+			return st[lang] || st['es']
+		}
+		return st || seriesId
+	}
+	titleInfo = getSeriesTitle(rawPosts[0])
 
 	seriesItems = rawPosts.map(post => ({
-		title: post.data.title,
+		title: post.data.title || '',
 		slug: post.slug,
 		date: post.data.pubDate,
 		href: getPath(post.slug),
@@ -95,7 +114,7 @@ const isSinglePostFinished = seriesItems.length === 1 && seriesItems[0].isEnd
 const currentIndex = seriesItems.findIndex(p => p.slug === currentSlug)
 const totalPosts = seriesItems.length
 const enableScroll = totalPosts > 6
-const storageKey = collection === 'til' ? 'til:read-posts' : 'blog:read-posts'
+const storageKey = collection === 'notes' ? 'notes:read-posts' : 'blog:read-posts'
 ---
 
 {

@@ -1,0 +1,138 @@
+---
+description: Cómo domar a los Generics para que no acepten "cualquier cosa". Constraints, valores por defecto y el truco de keyof.
+draft: true
+lang: es
+new: false
+pubDate: '2025-12-21T10:00:00Z'
+seriesDescription: {"es": "Aprende TypeScript desde cero profundizando en conceptos como inferencia y tipos.", "en": "Learn TypeScript from scratch diving deep into inference and types."}
+seriesTitle: {"es": "Fundamentos de TypeScript", "en": "TypeScript Basics"}
+tags: ['typescript', 'generics', 'constraints']
+title: 'TypeScript #7: Generics Intermedios (Constraints)'
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+En la parte anterior vimos que `<T>` puede ser cualquier cosa. A veces, eso es **demasiado flexible**.
+¿Qué pasa si queremos que `T` tenga sí o sí una propiedad `.length`?
+
+## Restricciones (`extends`)
+
+Imaginemos esta función:
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function obtenerLongitud<T>(item: T) {
+    return item.length; // ❌ Error: Property 'length' does not exist on type 'T'.
+}
+
+// TS se queja porque T podría ser un número (que no tiene .length), 
+// o un boolean...`,
+		lang: 'typescript'
+    }
+]} />
+
+Para arreglarlo, usamos `extends` para poner una **restricción** (Constraint).
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Le decimos: "T puede ser lo que quieras, PERO debe extender (cumplir) esta forma"
+interface TieneLongitud {
+    length: number;
+}
+
+function obtenerLongitud<T extends TieneLongitud>(item: T) {
+    return item.length; // ✅ Ahora TS sabe que existe
+}
+
+obtenerLongitud("Hola"); // ✅ string tiene .length
+obtenerLongitud([1, 2, 3]); // ✅ array tiene .length
+obtenerLongitud(123); // ❌ Error: number no tiene .length`,
+		lang: 'typescript'
+    }
+]} />
+
+## Generics con `keyof` (El truco maestro)
+
+Este patrón lo veremos en todas partes. Queremos una función que obtenga una propiedad de un objeto de forma segura.
+
+Necesitamos definir dos Generics:
+1. `T`: El objeto.
+2. `K`: La clave (key). Pero `K` no puede ser cualquier string, debe ser **una key de T**.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `function getProperty<T, K extends keyof T>(obj: T, key: K) {
+    return obj[key];
+}
+
+const developer = {
+    name: "Denis",
+    language: "TypeScript"
+};
+
+getProperty(developer, "name"); // ✅ TS sabe que esto devuelve string
+getProperty(developer, "age"); // ❌ Error: "age" no es una key de developer`,
+		lang: 'typescript'
+    }
+]} />
+
+## Valores por Defecto (`=`)
+
+Al igual que en las funciones normales (`function suma(a, b = 0)`), los Generics pueden tener valores por defecto.
+
+Esto es muy útil para no obligar al usuario a escribir el tipo siempre.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Si no pasamos T, asumiré que es 'string'
+interface RespuestaAPI<T = string> {
+    data: T;
+    error: boolean;
+}
+
+// Uso sin pasar tipo (usa el default)
+const respuestaSimple: RespuestaAPI = {
+    data: "Todo ok", // T es string
+    error: false
+};
+
+// Uso especificando tipo
+const respuestaCompleja: RespuestaAPI<number> = {
+    data: 200, // T es number
+    error: false
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## ¡Probémoslo!
+
+Creemos una función `fusionar` que tome dos objetos `obj1` y `obj2` y los combine. Tipemos la función usando dos generics `T` y `U`.
+
+<TSEditor
+  client:only="react"
+  showConsole={true}
+  files={{
+    'main.ts': `function fusionar<T extends object, U extends object>(obj1: T, obj2: U) {
+    return { ...obj1, ...obj2 };
+}
+
+const a = { nombre: "Denis" };
+const b = { edad: 39 };
+const c = fusionar(a, b);
+
+console.log(c);`
+  }}
+/>
+
+En la **Parte 8**, abordaremos una de las mayores confusiones: **Generics en Interfaces vs en Tipos**, y cómo pasar tipos de padres a hijos (prop drilling de tipos).
