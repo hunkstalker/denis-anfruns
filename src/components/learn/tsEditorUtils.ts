@@ -11,11 +11,11 @@ interface ConsoleHandler {
 
 /**
  * Genera una URI de Monaco consistente para un archivo dado.
- * Usa `monaco.Uri.file` para asegurar compatibilidad y formato correcto (file:///).
+ * Usa `monaco.Uri.file` y añade un instanceId para aislar contextos.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getFileUri = (monaco: any, filename: string) => {
-	return monaco.Uri.file(filename)
+export const getFileUri = (monaco: any, filename: string, instanceId: string) => {
+	return monaco.Uri.file(`/${instanceId}/${filename}`)
 }
 
 /**
@@ -24,9 +24,9 @@ export const getFileUri = (monaco: any, filename: string) => {
  * Nota: No maneja la eliminación, eso se hace al confirmar borrar/renombrar.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const syncModels = (monaco: any, currentFiles: Record<string, string>) => {
+export const syncModels = (monaco: any, currentFiles: Record<string, string>, instanceId: string) => {
 	Object.entries(currentFiles).forEach(([filename, content]) => {
-		const uri = getFileUri(monaco, filename)
+		const uri = getFileUri(monaco, filename, instanceId)
 		let model = monaco.editor.getModel(uri)
 		if (!model) {
 			model = monaco.editor.createModel(content, 'typescript', uri)
@@ -49,15 +49,15 @@ export const transpileFiles = async (
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	monaco: any,
 	files: Record<string, string>,
-	activeFile: string
+	activeFile: string,
+    instanceId: string
 ): Promise<Record<string, string>> => {
 	const worker = await monaco.languages.typescript.getTypeScriptWorker()
 	const modules: Record<string, string> = {}
 	
 
-
 	for (const [filename, content] of Object.entries(files)) {
-		const originalUri = getFileUri(monaco, filename)
+		const originalUri = getFileUri(monaco, filename, instanceId)
 		const originalModel = monaco.editor.getModel(originalUri)
 		
 		let transpileUri = originalUri
@@ -66,7 +66,7 @@ export const transpileFiles = async (
 		// Si el contenido difiere del modelo (ej. inyección de validación), usamos modelo sombra
 		if (!originalModel || originalModel.getValue() !== content) {
 			const shadowFilename = `__shadow__${filename}`
-			transpileUri = getFileUri(monaco, shadowFilename)
+			transpileUri = getFileUri(monaco, shadowFilename, instanceId)
 			
 			// Si existe un modelo sombra previo, lo reusamos o recreamos
 			const existingShadow = monaco.editor.getModel(transpileUri)

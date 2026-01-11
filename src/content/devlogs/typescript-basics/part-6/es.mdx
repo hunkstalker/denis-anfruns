@@ -110,20 +110,74 @@ const [user, setUser] = useState<Usuario | null>(null);`,
     }
 ]} />
 
-## ¡Probémoslo!
+### Uniones vs Generics
 
-Creemos una función `envolver` que tome un valor de tipo `T` y lo devuelva dentro de un array `[T]`.
+Igual has pensado: *"¿Y si uso `string | number` en vez de `<T>`?"*
+
+```typescript
+function echo(val: string | number): string | number { return val; }
+const res = echo("Hola"); // TS cree que 'res' es 'string | number' ❌
+// Perdiste la precisión: TS ya no sabe que es un string.
+```
+
+Con `<T>`, TS mantiene la conexión: entró string -> sale string.
+
+---
+
+### ¡Probémoslo!
+
+Crea una función `envolver` que **metas lo que metas**, te lo devuelva dentro de un **array**.
+Si metes `10`, sale `[10]`. Si metes `"hola"`, sale `["hola"]`.
 
 <TSEditor
   client:only="react"
+  id="ex-generics-basic"
   showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  height="600px"
   files={{
-    'main.ts': `// function envolver...
+    'main.ts': `// Reto: Crea la función genérica 'envolver'
+// Debe recibir un valor de tipo T y devolver un array de T (T[])
 
-const num = envolver(10);
-console.log(num); // Debería ser [10]
+function envolver... // Implementa aquí tu solución
+
+// 🧪 Pruebas (No toques esto):
+const n = envolver(10);
+const s = envolver("hola");
+
+console.log("Número envuelto:", n);
+console.log("Texto envuelto:", s);
 `
   }}
+  validationCode={`
+     try {
+        // 1. Verificar si existe la función
+        // @ts-ignore
+        if (typeof envolver !== 'function') throw new Error("No has creado la función 'envolver'");
+
+        // 2. Verificar lógica en tiempo de ejecución
+        // @ts-ignore
+        const testNum = envolver(123);
+        // @ts-ignore
+        const testStr = envolver("test");
+
+        if (!Array.isArray(testNum) || testNum[0] !== 123) {
+             throw new Error("envolver(123) debería devolver [123]");
+        }
+        if (!Array.isArray(testStr) || testStr[0] !== "test") {
+             throw new Error("envolver('test') debería devolver ['test']");
+        }
+
+        // 3. Verificaciones extra de trampa (evitar que devuelva el mismo array si se le pasa array)
+        if (testNum.length !== 1) throw new Error("El array devuelto debe tener exactamente 1 elemento");
+
+        if (typeof onSuccess === 'function') onSuccess();
+        console.log("✅ ¡Excelente! Has creado tu primer Generic.");
+    } catch (e) {
+        console.error(e.message);
+    }
+  `}
 />
 
 En la **Parte 7**, subiremos el nivel. Veremos cómo **restringir** esos Generics (para que no valga "cualquier cosa") y cómo darles valores por defecto.

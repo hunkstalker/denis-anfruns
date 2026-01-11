@@ -1,6 +1,6 @@
 ---
 description: 'La parte difícil: combinar Generics, Interfaces y Tipos sin volverse loco.'
-draft: true
+draft: false
 lang: es
 new: false
 pubDate: '2025-12-22T10:00:00Z'
@@ -71,7 +71,7 @@ function fetchUser(): UserResponse {
     return {
         status: 200,
         message: "OK",
-        data: { id: 1, name: "Denis" } // TS sabe que data es User
+        data: { id: 1, name: "BartoloDev" } // TS sabe que data es User
     };
 }`,
 		lang: 'typescript'
@@ -96,10 +96,12 @@ type UsersApi = ApiResponse<PaginatedResponse<User>>;
 
 // Parece complejo, pero TS lo resuelve solo:
 // UsersApi = { 
-//   status: number, 
+//   status: number,
+//   message: string,
 //   data: { 
 //      items: User[], 
-//      total: number 
+//      total: number,
+//      page: number,
 //   } 
 // }`,
 		lang: 'typescript'
@@ -132,12 +134,49 @@ Luego creemos un objeto que use esa interfaz con `number`.
 
 <TSEditor
   client:only="react"
+  id="ex-generics-wrapper"
   showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  height="600px"
   files={{
-    'main.ts': `// Nuestro código aquí
+    'main.ts': `// Reto: 
+// 1. Define una interfaz genérica 'Respuesta' con:
+//    - el campo 'datos' que sea de tipo genérico
+//    - el campo 'error' que sea de tipo string | null
+// 2. Crea un objeto 'acierto' que use nuestra interface genérica con datos=42
+// 3. Crea un objeto 'fallo' que use nuestra interface genérica con datos="Ups"
 
+// Escribe tu código aquí:
+interface Respuesta...
+
+const acierto...
+const fallo...
 `
   }}
+  validationCode={`
+     try {
+        // 1. Comprobar existencia
+        // @ts-ignore
+        if (typeof acierto === 'undefined' || typeof fallo === 'undefined') {
+            throw new Error("Debes crear las variables 'acierto' y 'fallo'.");
+        }
+
+        // 2. Comprobar tipos runtime
+        // @ts-ignore
+        if (acierto.datos !== 42 || typeof fallo.datos !== 'string') {
+             throw new Error("Los valores de 'acierto' o 'fallo' no son los esperados.");
+        }
+
+        if (typeof onSuccess === 'function') onSuccess();
+        console.log("✅ ¡Perfecto! Dominas los interfaces genéricos.");
+        console.log("Objetos creados correctamente:");
+        console.log(JSON.stringify({ acierto, fallo }, null, 2));
+
+    } catch (e) {
+        console.error(e.message);
+    }
+  `}
 />
 
 En la **Parte 9**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacernos la vida más fácil.

@@ -1,5 +1,5 @@
 import Editor, { type OnMount, type BeforeMount } from '@monaco-editor/react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import playIcon from '@icons/play.svg?raw'
 import checkIcon from '@icons/check.svg?raw'
@@ -25,6 +25,8 @@ interface TSEditorProps {
 	validationCode?: string
 	successSound?: string
 	allowAddFile?: boolean
+    defaultMuted?: boolean
+    id?: string
 }
 
 const TSEditor = ({
@@ -37,7 +39,20 @@ const TSEditor = ({
 	validationCode,
 	successSound,
 	allowAddFile = false,
+    defaultMuted = true,
+    id,
 }: TSEditorProps) => {
+
+    // Resolve sound path (DX shortcut)
+    const resolvedSuccessSound = successSound === 'success' 
+        ? '/audio/grunt-birthday-party-sound.mp3' 
+        : successSound
+
+    // Unique ID for this editor instance to prevent Monaco model collisions
+    const generatedId = useId()
+    const instanceId = id || generatedId.replace(/:/g, '')
+
+    console.log(`[TSEditor ${instanceId}] Initialized with keys:`, Object.keys(initialFiles || {}))
 
 	// Default files fallback
 	const actualFiles = initialFiles || { 'main.ts': initialCode || '// Start coding...' }
@@ -80,11 +95,18 @@ const TSEditor = ({
 	const monacoRef = useRef<any>(null)
 
 	// --- Audio Controls State ---
-	const [isMuted, setIsMuted] = useState(true)
+	const [isMuted, setIsMuted] = useState(defaultMuted)
 	const [volume, setVolume] = useState(0.5)
 	const [showVolumeSlider, setShowVolumeSlider] = useState(false)
 	const [isDragging, setIsDragging] = useState(false) // Track dragging state
 	const sliderTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+	const [isMounted, setIsMounted] = useState(false)
+
+	// Fix for View Transitions / Hydration mismatch
+	useEffect(() => {
+		const timer = setTimeout(() => setIsMounted(true), 150)
+		return () => clearTimeout(timer)
+	}, [])
 
 	// --- Ejecución de Código ---
 	const [consoleOutput, setConsoleOutput] = useState<string[]>([])
@@ -117,7 +139,7 @@ const TSEditor = ({
 			showSystemError(result)
 		} else if (result && monacoRef.current) {
 			// Limpieza manual de modelos de Monaco al renombrar
-			const oldModel = monacoRef.current.editor.getModel(getFileUri(monacoRef.current, result.oldName))
+			const oldModel = monacoRef.current.editor.getModel(getFileUri(monacoRef.current, result.oldName, instanceId))
 			oldModel?.dispose()
 		}
 	}
@@ -129,7 +151,7 @@ const TSEditor = ({
 			showSystemError(error)
 		} else if (monacoRef.current) {
 			// Limpieza manual de modelos de Monaco
-			const model = monacoRef.current.editor.getModel(getFileUri(monacoRef.current, filename))
+			const model = monacoRef.current.editor.getModel(getFileUri(monacoRef.current, filename, instanceId))
 			model?.dispose()
 		}
 	}
@@ -178,8 +200,8 @@ const TSEditor = ({
 	useEffect(() => {
 		const monaco = monacoRef.current
 		if (!monaco) return
-		syncModels(monaco, localFiles)
-	}, [localFiles])
+		syncModels(monaco, localFiles, instanceId)
+	}, [localFiles, instanceId])
 
 	// --- Lógica del Editor (Validación y Ejecución) ---
 
@@ -190,7 +212,7 @@ const TSEditor = ({
 		const allErrors: Array<{ file: string; line: number; message: string }> = []
 
 		Object.keys(localFiles).forEach((filename) => {
-			const uri = getFileUri(monaco, filename)
+			const uri = getFileUri(monaco, filename, instanceId)
 			const model = monaco.editor.getModel(uri)
 			if (!model) return
 
@@ -212,7 +234,7 @@ const TSEditor = ({
 			status: allErrors.length === 0 ? 'success' : 'error',
 			errors: allErrors,
 		})
-	}, [localFiles])
+	}, [localFiles, instanceId])
 
 	// Auto-validación reactiva (activada por el hook)
 	useEffect(() => {
@@ -296,7 +318,7 @@ const TSEditor = ({
 			}
 
 			// 1. Transpilar
-			const modules = await transpileFiles(monaco, filesToTranspile, activeFile)
+			const modules = await transpileFiles(monaco, filesToTranspile, activeFile, instanceId)
 
 			// 2. Crear Runtime
 			const runtimeCode = createCommonJSRuntime(modules, activeFile)
@@ -309,8 +331,8 @@ const TSEditor = ({
 					origin: { y: 0.6 }
 				})
 
-				if (successSound && !isMuted) {
-					const audio = new Audio(successSound)
+				if (resolvedSuccessSound && !isMuted) {
+					const audio = new Audio(resolvedSuccessSound)
 					audio.volume = volume
 					audio.play().catch(e => console.error('Error playing sound:', e))
 				}
@@ -343,7 +365,7 @@ const TSEditor = ({
 			paths: { '*': ['*'] }
 		})
 		monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true)
-		syncModels(monaco, localFiles)
+		syncModels(monaco, localFiles, instanceId)
 	}
 
 	const handleEditorDidMount: OnMount = (editor, monaco) => {
@@ -436,7 +458,7 @@ const TSEditor = ({
 
 				<div className="mb-2 flex prose items-center gap-2 pr-2">
 					{/* Audio Controls */}
-					{successSound && (
+					{resolvedSuccessSound && (
 						<div
 							className="relative flex items-center"
 							onMouseLeave={handleSliderMouseLeave}
@@ -556,33 +578,46 @@ const TSEditor = ({
 			</div>
 
 			<div className="relative flex-1 min-h-0">
-				<Editor
-					height="100%"
-					path={`file:///${activeFile}`}
-					defaultLanguage="typescript"
-					defaultValue={localFiles[activeFile]}
-					theme="vs-dark"
-					beforeMount={handleEditorWillMount}
-					onMount={handleEditorDidMount}
-					onChange={(value) => {
-						if (value !== undefined) {
-							updateFileContent(activeFile, value)
-						}
-					}}
-					options={{
-						minimap: { enabled: false },
-						fontSize: 14,
-						scrollBeyondLastLine: false,
-						automaticLayout: true,
-						padding: { top: 16, bottom: 16 },
-						fixedOverflowWidgets: false, // Fix relative positioning bug
-						wordWrap: 'on', // Fixes horizontal scrollbar
-						scrollbar: {
-							vertical: 'auto',
-							horizontal: 'hidden' // Force hide horizontal if wordWrap is on
-						}
-					}}
-				/>
+				{isMounted ? (
+					<Editor
+						height="100%"
+						path={`file:///${instanceId}/${activeFile}`}
+						defaultLanguage="typescript"
+						value={localFiles[activeFile]}
+						theme="vs-dark"
+						beforeMount={handleEditorWillMount}
+						onMount={handleEditorDidMount}
+						onChange={(value) => {
+							if (value !== undefined) {
+								updateFileContent(activeFile, value)
+							}
+						}}
+						options={{
+							minimap: { enabled: false },
+							fontSize: 14,
+							scrollBeyondLastLine: false,
+							automaticLayout: true,
+							padding: { top: 16, bottom: 16 },
+							fixedOverflowWidgets: false,
+							wordWrap: 'on',
+							contextmenu: false,
+							folding: false,
+							hover: {
+								enabled: true,
+								delay: 300
+							},
+							quickSuggestions: false,
+							suggestOnTriggerCharacters: false,
+							snippetSuggestions: 'none',
+							scrollbar: {
+								vertical: 'auto',
+								horizontal: 'hidden'
+							}
+						}}
+					/>
+				) : (
+					<div className="h-full w-full bg-[#1e1e1e] animate-pulse" />
+				)}
 			</div>
 
 			{/* Check Status Bar (Dark Only) */}

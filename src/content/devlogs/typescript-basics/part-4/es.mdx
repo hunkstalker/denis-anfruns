@@ -1,6 +1,6 @@
 ---
 description: Listas de cosas y la magia de las Tuplas (o por qué useState devuelve un array).
-draft: false
+draft: true
 lang: es
 new: true
 pubDate: '2025-12-17T18:00:00Z'
@@ -82,12 +82,30 @@ role = ["guest", 3, "extra"]; // ❌ Mal (Demasiados elementos)`,
     }
 ]} />
 
-### ¿Para qué sirven?
+Para ser más claros, aquí tienes una comparación entre arrays y tuplas:
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// --- ARRAYS  ---
+// Da lo mismo el orden de los datos
+const miArray1: (string | number)[] = ["TextoArray1", 1]; ✅
+const miArray2: (string | number)[] = [5, "TextoArray2"]; ✅
+
+// --- TUPLAS ---
+// Le decimos a TS: "Esto es fijo, el primero es string, el segundo number"
+const miTupla1: [string, number] = ["TextoTupla1", 1]; ✅
+const miTupla2: [string, number] = [5, "TextoTupla2"]; ❌`,
+		lang: 'typescript'
+    }
+]} />
+
+### ¿Para qué sirven las Tuplas?
 Son útiles cuando queremos devolver múltiples valores de una función sin crear un objeto.
 
 *   Coordenadas: `[x, y]` -> `[number, number]`
-*   Rangos: `[inicio, fin]`
-*   Estados: `[loading, error, data]`
+*   Rangos: `[inicio, fin]` -> `[number, number]`
+*   Estados: `[loading, error, data]` -> `[boolean, Error | null, any]`
 
 ## Arrays de Lectura (`ReadonlyArray`)
 
@@ -107,17 +125,89 @@ todoList.push("Leche"); // ❌ Error: Property 'push' does not exist on type 're
 
 ## ¡Probémoslo!
 
-1. Creemos un array de strings.
-2. Intentemos hacer `.push(123)` (veremos el error).
-3. Creemos una tupla `[string, boolean]` (ej: Nombre y si está activo).
+Vamos a ensuciarnos las manos. Tienes dos retos abajo: uno para Arrays y otro para Tuplas. TypeScript te avisará de los errores mientras escribes, y al darle a "Run", validaremos si cumple los requisitos.
+
+### Ejercicio 1: Arrays
+Crea un array llamado `paises` que contenga al menos 3 nombres de países (strings). Intenta añadir un número al array para ver cómo se queja TypeScript.
 
 <TSEditor
   client:only="react"
+  id="ex-arrays"
   showConsole={true}
+  successSound="success"
+  defaultMuted={false}
   files={{
-    'main.ts': `// Nuestro código aquí
+    'main.ts': `// 1. Crea un array de strings llamado 'paises'
+// const paises...
+
+// 2. Añade países (descomenta y completa)
+// paises.push(...);
+
+// 3. Intenta añadir un número (descomenta y dale a RUN para ver el error)
+// paises.push(123);
+
+// 4. Vuelve a comentar el push del punto anterior y dale a RUN
 `
   }}
+  validationCode={`
+    try {
+        if (typeof paises === 'undefined') {
+            console.error("❌ No encuentro la variable 'paises'. asegúrate de declararla con 'const paises = ...'");
+        } else if (!Array.isArray(paises)) {
+            console.error("❌ 'paises' debe ser un Array (usa [])");
+        } else if (paises.some(p => typeof p !== 'string')) {
+            console.error("❌ Todos los elementos de 'paises' deben ser de tipo string (texto).");
+        } else {
+            console.log("✅ ¡Genial! Tienes un array de strings válido.");
+            console.log("🌍 Contenido:", paises);
+            if (typeof onSuccess === 'function') onSuccess();
+        }
+    } catch (e) {
+        console.error("Error validando:", e);
+    }
+  `}
+/>
+
+### Ejercicio 2: Tuplas
+Crea una tupla estricta llamada `usuario`. Debe tener exactamente 3 elementos en este orden:
+1. `nombre` (string)
+2. `edad` (number)
+3. `esAdmin` (boolean)
+
+<TSEditor
+  client:only="react"
+  id="ex-tuples"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  files={{
+    'main.ts': `// Crea la tupla 'usuario' con tipo [string, number, boolean]
+// const usuario...
+`
+  }}
+  validationCode={`
+    try {
+        if (typeof usuario === 'undefined') {
+            console.error("❌ No encuentro la variable 'usuario'.");
+        } else if (!Array.isArray(usuario)) {
+            console.error("❌ 'usuario' debe ser un Array (que actúa como Tupla).");
+        } else if (usuario.length !== 3) {
+            console.error("❌ La tupla 'usuario' debe tener exactamente 3 elementos: [Nombre, Edad, Admin]");
+        } else if (typeof usuario[0] !== 'string') {
+            console.error("❌ El primer elemento (Nombre) debe ser un string.");
+        } else if (typeof usuario[1] !== 'number') {
+            console.error("❌ El segundo elemento (Edad) debe ser un número.");
+        } else if (typeof usuario[2] !== 'boolean') {
+            console.error("❌ El tercer elemento (Admin) debe ser un booleano (true/false).");
+        } else {
+            console.log("✅ ¡Perfecto! Tu tupla cumple las reglas estrictas.");
+            console.log("👤 Usuario:", usuario);
+            if (typeof onSuccess === 'function') onSuccess();
+        }
+    } catch (e) {
+        console.error("Error validando:", e);
+    }
+  `}
 />
 
 En la **Parte 5**, las cosas se ponen serias. Dejamos lo básico y entramos en la magia de TypeScript: aprenderemos a que TS **escriba los tipos por nosotros** usando `typeof` y `keyof`.
