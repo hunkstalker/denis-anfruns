@@ -194,7 +194,8 @@ mark {
 }
 
 /* Note Card icon rotation on hover */
-.note-card:hover .icon-fan {
+.note-card:hover .icon-fan,
+.group:hover .icon-fan {
 	transform: rotate(var(--hover-rotation)) !important;
 }
 
