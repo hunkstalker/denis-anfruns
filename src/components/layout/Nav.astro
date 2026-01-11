@@ -93,7 +93,7 @@ const menuItems = navItems.map(item => {
 ---
 
 <nav
-	class='fixed inset-x-0 top-0 z-50 border-b border-zinc-200/50 bg-[#f8f6f3] shadow-sm backdrop-blur-md dark:border-zinc-700/50 dark:bg-zinc-900/70'>
+	class='fixed inset-x-0 top-0 z-50 border-b border-zinc-200/50 bg-[#f8f6f3] shadow-sm dark:border-zinc-700/50 dark:bg-zinc-900/70'>
 	<div class='container'>
 		<div class='flex items-center justify-between py-4 md:py-6'>
 			<!-- Menú Hamburguesa (Móvil) & Menu Portal -->
@@ -277,8 +277,19 @@ const menuItems = navItems.map(item => {
 		// loadNavPagefind() -> Ahora lo hace UnifiedSearchResults
 	})
 
-	// Cerrar al hacer clic fuera (Overlay)
-	resultsOverlay?.addEventListener('click', hideResults)
+	// Cerrar al hacer clic fuera (Estrategia Global Robust)
+	document.addEventListener('click', (e) => {
+		if (!isOpen) return // Si está cerrado, no hacemos nada
+
+		const target = e.target as Node
+		const isClickInside = 
+			(desktopInput && desktopInput.contains(target)) || 
+			(resultsContainer && resultsContainer.contains(target))
+
+		if (!isClickInside) {
+			hideResults()
+		}
+	})
 
 	// Debounce y Listeners
 	// Event Listeners para el Componente SearchBadges (Desktop UI Logic: Placeholder etc)

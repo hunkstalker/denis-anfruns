@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { RocketIcon, PinIcon, BookmarkIcon } from './SearchIcons'
+import { Rocket, Pin, Bookmark } from 'lucide-react'
 
 interface PagefindResult {
 	id: string
@@ -283,7 +283,7 @@ export default function SearchResultsClient({
 				className={`${!isDesktop ? 'mt-4 border-t border-zinc-100 p-2 pt-4 first:mt-0 first:border-0 first:pt-2 dark:border-zinc-800' : ''}`}
 			>
 				<h3 className="text-xs mb-3 flex items-center gap-2 font-semibold uppercase tracking-wider text-zinc-800 dark:text-zinc-400">
-					<Icon className="mr-2 size-4" />
+					<Icon className="size-4" />
 					{title}
 				</h3>
 				<div className={containerClass}>{items.map(renderItem)}</div>
@@ -336,9 +336,9 @@ export default function SearchResultsClient({
 								<p>{labels['nav.noResults']}</p>
 							</div>
 						)}
-						{renderSection(labels['blog.note'], PinIcon, notes)}
-						{renderSection(labels['nav.projects'], RocketIcon, projects)}
-						{renderSection(labels['blog.series'], BookmarkIcon, blogs)}
+						{renderSection(labels['blog.note'], Pin, notes)}
+						{renderSection(labels['nav.projects'], Rocket, projects)}
+						{renderSection(labels['blog.series'], Bookmark, blogs)}
 					</>
 				) : (
 					<div ref={initialContentRef}>{children}</div>

@@ -44,34 +44,22 @@ if (post.data.series) {
 	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }
+	// Resolve series title for search
+	const getSeriesTitle = () => {
+		const st = post.data.seriesTitle
+		if (!st) return post.data.title
+		if (typeof st === 'object') {
+			return st[lang] || st['es'] || post.data.title
+		}
+		return st
+	}
+	const searchTitle = getSeriesTitle()
 ---
 
 <style>
 	.animate-fade-in-up {
-		opacity: 0;
-		animation: fadeInUp 0.8s ease-out forwards;
-	}
-
-	.delay-100 {
-		animation-delay: 0.1s;
-	}
-	.delay-200 {
-		animation-delay: 0.2s;
-	}
-	.delay-300 {
-		animation-delay: 0.3s;
-	}
-
-	@keyframes fadeInUp {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
+     /* ... styles ... */
+    }
 </style>
 
 <ContentLayout
@@ -88,6 +76,7 @@ if (post.data.series) {
 		data-pagefind-body
 		data-pagefind-filter={`type:${post.data.tags.some((t) => t.toLowerCase() === 'project') ? 'project' : 'devlogs'}`}
 		data-pagefind-meta={`description:${post.data.description}`}
+		data-pagefind-meta={`title:${searchTitle}`}
 	>
 		<div class="mb-8">
 			<BackLink href={`/${lang}/blog`} label={t('blog.back')} />

@@ -3,7 +3,7 @@ import BaseHead from '../components/layout/BaseHead.astro'
 import Footer from '../components/layout/Footer.astro'
 import experiencieYears from '../utils/experiencieYears'
 import type { Lang } from '../i18n/ui'
-import { ClientRouter } from 'astro:transitions'
+import type { Lang } from '../i18n/ui'
 
 interface Props {
 	siteTitle: string
@@ -52,7 +52,6 @@ const formattedTitle = siteTitle.includes(`Denis`)
 			image={image}
 			robots={robots}
 		/>
-		<ClientRouter />
 	</head>
 	<body class="flex min-h-screen flex-col bg-stone-200 dark:bg-zinc-950">
 		<!-- GBackground de puntos -->
