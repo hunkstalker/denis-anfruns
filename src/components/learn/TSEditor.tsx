@@ -376,6 +376,7 @@ const TSEditor = ({
 	return (
 		<div
 			style={{ height }}
+
 			className={`flex flex-col gap-0 rounded-xl border border-zinc-800 bg-zinc-950 ${className}`}
 		>
 			{/* Toolbar (Dark Mode Only) */}
