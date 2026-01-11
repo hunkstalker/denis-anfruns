@@ -23,7 +23,7 @@ Primero, entendamos esto. Es como un `if/else` pero para tipos.
 
 <CodeTabs items={[
     {
-		label: 'TypeScript',
+		label: 'ejemplo.ts',
 		code: `type EsString<T> = T extends string ? "Sí" : "No";
 
 type A = EsString<string>; // "Sí"
@@ -39,7 +39,7 @@ Imaginemos que queremos saber qué devuelve una función, pero no tenemos acceso
 
 <CodeTabs items={[
     {
-		label: 'TypeScript',
+		label: 'ejemplo.ts',
 		code: `type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 
 // ¿Qué hace esto?
@@ -62,7 +62,7 @@ Imaginemos que tenemos una `Promise<User>`, pero queremos obtener el tipo `User`
 
 <CodeTabs items={[
     {
-		label: 'TypeScript',
+		label: 'ejemplo.ts',
 		code: `// Tenemos esto:
 type RespuestaPromesa = Promise<{ id: number; name: string }>;
 
