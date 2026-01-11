@@ -1,5 +1,5 @@
 ---
-pubDate: '2025-12-18T10:00:00Z'
+pubDate: '2025-12-19T10:00:00Z'
 tags: ['typescript', 'narrowing', 'basics']
 draft: true
 new: true
@@ -11,4 +11,139 @@ seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como
 lang: es
 ---
 
-En este capítulo aprenderemos cómo reducir tipos amplios a tipos más específicos de forma segura.
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+TypeScript es muy listo, pero a veces necesita "pistas" para saber exactamente de qué tipo es una variable en un momento dado. Este proceso de refinar un tipo amplio (como `string | number`) a uno más específico (como `string`) se llama **Narrowing**.
+
+Y para lograrlo, usamos **Type Guards** (Guardias de Tipos).
+
+## 1. El problema: La incertidumbre
+
+Imagina que tienes una función que acepta un ID, pero este ID puede ser un número (Base de datos SQL) o un texto (UUID).
+
+<TSEditor
+  client:visible
+  id="narrowing-problem"
+  files={{
+    'main.ts': `function printId(id: string | number) {
+  // Error: Property 'toUpperCase' does not exist on type 'string | number'.
+  // Property 'toUpperCase' does not exist on type 'number'.
+  console.log(id.toUpperCase()); 
+}
+
+printId("abc");`
+  }}
+/>
+
+TypeScript se queja porque **no está seguro** de que `id` sea un string. Si fuera un número, `.toUpperCase()` explotaría en tiempo de ejecución. 💥
+
+## 2. Solución: `typeof` Guards
+
+La forma más común de narrowing es usar el operador `typeof` de JavaScript dentro de un condicional `if`. TypeScript entiende este código y "reduce" el tipo dentro del bloque.
+
+<TSEditor
+  client:visible
+  id="narrowing-typeof"
+  files={{
+    'main.ts': `function printId(id: string | number) {
+  if (typeof id === "string") {
+    // ¡Aquí dentro TypeScript SABE que id es string!
+    console.log("Tu ID es: " + id.toUpperCase());
+  } else {
+    // Y aquí sabe que TIENE que ser number
+    console.log("Tu ID es: " + id.toFixed(2));
+  }
+}
+
+printId("denis");
+printId(123.456);`
+  }}
+/>
+
+<Callout type="check" title="Tipos soportados por typeof">
+Recuerda que `typeof` solo funciona con primitivos básicos: `"string"`, `"number"`, `"boolean"`, `"symbol"`, `"undefined"`, `"object"` y `"function"`.
+¡Ojo! `typeof null` devuelve `"object"`, lo cual es un bug histórico de JS.
+</Callout>
+
+## 3. Truthiness Narrowing
+
+A veces no necesitas saber el tipo exacto, solo si el valor existe (no es `null` ni `undefined`).
+
+```typescript
+function printName(name?: string) {
+  // name es string | undefined
+  if (name) {
+    // Aquí name es string (porque undefined es falsy)
+    console.log(name.toUpperCase());
+  }
+}
+```
+
+## 4. `instanceof` Narrowing
+
+Para objetos construidos con clases, `typeof` no sirve de mucho (todo es "object"). Aquí entra `instanceof`.
+
+<TSEditor
+  client:visible
+  id="narrowing-instanceof"
+  files={{
+    'classes.ts': `class Perro {
+  ladrar() { return "Guau!"; }
+}
+
+class Gato {
+  maullar() { return "Miau!"; }
+}
+
+function comunicar(mascota: Perro | Gato) {
+  if (mascota instanceof Perro) {
+    console.log(mascota.ladrar());
+  } else {
+    console.log(mascota.maullar());
+  }
+}
+
+comunicar(new Perro());`
+  }}
+/>
+
+## 5. Predicados de Tipo (Custom Type Guards)
+
+¿Qué pasa si quieres reutilizar una lógica de comprobación compleja? Puedes crear tus propias funciones de guardia usando el operador `is`.
+
+La sintaxis clave es el tipo de retorno: `param is Type`.
+
+<TSEditor
+  client:visible
+  id="narrowing-predicates"
+  files={{
+    'main.ts': `type Pez = { nadar: () => void };
+type Pajaro = { volar: () => void };
+
+// Función guardia personalizada
+function esPez(mascota: Pez | Pajaro): mascota is Pez {
+  return (mascota as Pez).nadar !== undefined;
+}
+
+function mover(animal: Pez | Pajaro) {
+  if (esPez(animal)) {
+    // TypeScript confía en tu función: aquí es Pez
+    animal.nadar();
+  } else {
+    // Aquí debe ser Pajaro
+    animal.volar();
+  }
+}
+
+const nemo = { nadar: () => console.log("Nadando...") };
+mover(nemo);`
+  }}
+/>
+
+<Callout type="warning" title="Poder y Responsabilidad">
+Cuando usas `is`, le dices al compilador "confía en mí". Si tu lógica dentro de la función `esPez` está mal, TypeScript se lo creerá y podrías tener errores en tiempo de ejecución.
+</Callout>
+
+El Narrowing es esencial para escribir código que sea flexible (acepte varios tipos) pero seguro (trate cada uno como corresponde). En el **siguiente capítulo**, veremos qué pasa cuando *realmente* no sabemos qué tipo nos llega... `unknown` vs `any`.

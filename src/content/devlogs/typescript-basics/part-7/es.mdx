@@ -1,5 +1,5 @@
 ---
-pubDate: '2025-12-19T10:00:00Z'
+pubDate: '2025-12-20T10:00:00Z'
 tags: ['typescript', 'unknown', 'safety']
 draft: true
 new: true
@@ -11,4 +11,102 @@ seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como
 lang: es
 ---
 
-Exploraremos los tipos top y bottom de TypeScript para garantizar la seguridad en tiempo de ejecución.
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+En TypeScript existen dos "Tipos Superiores" (Top Types) que pueden contener **cualquier valor**: `any` y `unknown`. Aunque parecen similares, son opuestos en filosofía.
+
+Y luego está `never`, el tipo que no contiene **nada**. Vamos a verlos.
+
+## 1. `any`: El enemigo silencioso 😈
+
+`any` es básicamente "desactivar TypeScript". Cuando asignas algo a `any`, el compilador deja de comprobar nada. Puedes acceder a propiedades que no existen, llamar a la variable como una función, etc.
+
+<TSEditor
+  client:visible
+  id="types-any"
+  files={{
+    'main.ts': `let peligro: any = "Hola mundo";
+
+// TypeScript NO se queja de nada de esto:
+peligro.foo.bar.baz(); 
+peligro();
+const x: number = peligro;
+
+// ...pero todo fallará en ejecución 💥`
+  }}
+/>
+
+<Callout type="error" title="Evita any a toda costa">
+Usar `any` contagia tu código. Si una función devuelve `any`, esa falta de seguridad se propaga. Úsalo solo cuando estés migrando código JS antiguo o sea 100% imposible saber el tipo (y aun así, prefiere `unknown`).
+</Callout>
+
+## 2. `unknown`: La alternativa segura 🛡️
+
+`unknown` es como `any`: acepta cualquier valor. PERO (y es un gran pero) **no te deja hacer nada con él** hasta que compruebes qué es.
+
+Te obliga a usar **Narrowing** (lo que vimos en el Cap. #6) antes de usarlo.
+
+<TSEditor
+  client:visible
+  id="types-unknown"
+  files={{
+    'main.ts': `let seguro: unknown = "Hola mundo";
+
+// Error: Object is of type 'unknown'.
+// seguro.toUpperCase(); 
+
+// La forma correcta: Comprobar primero
+if (typeof seguro === "string") {
+  // Ahora TS sabe que es string
+  console.log(seguro.toUpperCase());
+}`
+  }}
+/>
+
+Esto es ideal para respuestas de APIs externas o `JSON.parse()`, donde *realmente* no sabes qué vendrá, pero quieres manejarlo de forma segura.
+
+## 3. `never`: Lo imposible 🚫
+
+`never` es el tipo para valores que **nunca pueden ocurrir**. Es el tipo de retorno de una función que lanza un error siempre (y por tanto nunca retorna) o un bucle infinito.
+
+```typescript
+function error(mensaje: string): never {
+  throw new Error(mensaje);
+}
+// Esta función nunca devuelve "undefined" ni nada, su ejecución nunca termina exitosamente.
+```
+
+### Exhaustiveness Checking (El truco pro)
+
+El uso más potente de `never` es asegurarte de que has cubierto todos los casos posibles en un `switch` o `ion`.
+
+<TSEditor
+  client:visible
+  id="types-never-check"
+  files={{
+    'main.ts': `type Estado = "Cargando" | "Exito" | "Error";
+
+function getMensaje(s: Estado) {
+  switch (s) {
+    case "Cargando": return "⏳";
+    case "Exito": return "✅";
+    case "Error": return "❌";
+    default:
+      // Si mañana añades "Inactivo" a Estado, 
+      // TS marcará error aquí porque "s" no sería never.
+      const _exhaustiveCheck: never = s;
+      return _exhaustiveCheck;
+  }
+}`
+  }}
+/>
+
+Si en el futuro alguien añade `| "Inactivo"` al tipo `Estado` y olvida actualizar el `switch`, TypeScript lanzará un error en tiempo de compilación diciendo que `Type 'string' is not assignable to type 'never'`. ¡Magia! ✨
+
+## Resumen
+
+*   **`any`**: "Me da igual todo, déjame en paz". (Inseguro, evítalo).
+*   **`unknown`**: "No sé qué es esto, así que te obligaré a comprobarlo". (Seguro).
+*   **`never`**: "Esto no debería pasar nunca". (Útil para asegurar lógica exhaustiva).
