@@ -74,7 +74,7 @@ if (post.data.series) {
 	<div
 		class="col-span-1 pl-4 lg:col-span-8 xl:col-span-8"
 		data-pagefind-body
-		data-pagefind-filter={`type:${post.data.tags.some((t) => t.toLowerCase() === 'project') ? 'project' : 'devlogs'}`}
+		data-pagefind-filter={`type:${post.data.tags.some((t) => t.toLowerCase() === 'project') ? 'project' : 'devlog'}`}
 		data-pagefind-meta={`description:${post.data.description}`}
 		data-pagefind-meta={`title:${searchTitle}`}
 	>

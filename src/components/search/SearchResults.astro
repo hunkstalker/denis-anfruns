@@ -97,12 +97,25 @@ const devlogItems = allDevlog
 		},
 		[] as typeof allDevlog,
 	)
-	.map((item) => ({
-		href: buildHref('devlog', item.slug),
-		title: item.data.title || '',
-		description: item.data.description || '',
-		date: item.data.pubDate,
-	}))
+	.map((item) => {
+		// Resolve series title if available
+		let displayTitle = item.data.title
+		const st = item.data.seriesTitle
+		if (st) {
+			if (typeof st === 'object') {
+				displayTitle = st[lang] || st['es'] || item.data.title
+			} else {
+				displayTitle = st
+			}
+		}
+
+		return {
+			href: buildHref('devlog', item.slug),
+			title: displayTitle || '',
+			description: item.data.description || '',
+			date: item.data.pubDate,
+		}
+	})
 
 const hasContent = noteItems.length > 0 || projectItems.length > 0 || devlogItems.length > 0
 ---

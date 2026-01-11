@@ -42,6 +42,16 @@ if (post.data.series) {
 	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }
+	// Resolve series title for search
+	const getSeriesTitle = () => {
+		const st = post.data.seriesTitle
+		if (!st) return post.data.title
+		if (typeof st === 'object') {
+			return st[lang] || st['es'] || post.data.title
+		}
+		return st
+	}
+	const searchTitle = getSeriesTitle()
 ---
 
 <style>
@@ -84,8 +94,9 @@ if (post.data.series) {
 	<div
 		class="col-span-1 pl-4 lg:col-span-8"
 		data-pagefind-body
-		data-pagefind-filter={`type:${post.data.tags.some((t) => t.toLowerCase() === 'project') ? 'project' : 'devlogs'}`}
+		data-pagefind-filter={`type:${post.data.tags.some((t) => t.toLowerCase() === 'project') ? 'project' : 'devlog'}`}
 		data-pagefind-meta={`description:${post.data.description}`}
+		data-pagefind-meta={`title:${searchTitle}`}
 	>
 		<div class="mb-8">
 			<BackLink href={`/blog`} label={t('blog.back')} />
