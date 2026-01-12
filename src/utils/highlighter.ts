@@ -21,6 +21,7 @@ export const getHighlighterInstance = async () => {
 				'markdown',
 				'diff',
 				'shell',
+				'gdscript',
 			],
 		})
 	}
