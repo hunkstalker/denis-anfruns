@@ -12,7 +12,7 @@ interface Props {
 	icon?: boolean
 }
 
-const { type = 'info', title, filled = false, icon = true } = Astro.props
+const { type = 'tip', title, filled = false, icon = true } = Astro.props
 const isFilled = filled === true || filled === '' || filled === 'true'
 
 const icons = {
@@ -55,11 +55,9 @@ const styles = {
 	},
 	tip: {
 		container: isFilled
-			? 'bg-teal-100 dark:bg-teal-500/30 border-2 border-teal-500 text-teal-900 dark:text-teal-100'
-			: 'bg-teal-50 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 text-teal-900 dark:text-teal-200',
-		iconColor: isFilled
-			? 'text-teal-700 dark:text-teal-300'
-			: 'text-teal-600 dark:text-teal-400',
+			? 'bg-blue-100 dark:bg-blue-500/30 border-2 border-blue-500 text-blue-900 dark:text-blue-100'
+			: 'bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 text-blue-900 dark:text-blue-200',
+		iconColor: isFilled ? 'text-blue-700 dark:text-blue-300' : 'text-blue-600 dark:text-blue-400',
 	},
 	party: {
 		container: isFilled
@@ -76,7 +74,7 @@ const colors = {
 	warning: '#f59e0b',
 	error: '#ef4444',
 	success: '#22c55e',
-	tip: '#14b8a6',
+	tip: '#3b82f6',
 	party: '#d946ef',
 }
 const baseColor = colors[type]
