@@ -1,0 +1,154 @@
+---
+pubDate: '2025-12-18T10:00:00Z'
+tags: ['typescript', 'typeof', 'keyof']
+draft: true
+new: true
+title: 'TypeScript #5: The Magic of typeof and keyof'
+description: How to create types from values and forget about manually keeping types in sync.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Here is where TypeScript stops being "JavaScript with types" and becomes a superpower.
+Until now we have defined types manually. But what if we could **automatically generate types** from our code?
+
+## `typeof`: Extracting the DNA
+
+In JS, `typeof` returns a string ("string", "number", "object").
+In TS, if we use it in a type context, it returns **the full type**.
+
+<CodeTabs
+  items={[
+    {
+		label: 'TypeScript',
+		code: `const settings = {
+    theme: "dark",
+    notifications: true,
+    version: 1.0
+};
+
+// Instead of writing the interface manually...
+// type Settings = { theme: string; notifications: boolean; version: number }; 😴
+
+type Settings = typeof settings; 
+// 🪄 Boom! TS just wrote the interface for you.`,
+		lang: 'typescript'
+    }
+]} />
+
+This is brutal for APIs or third-party libraries (or our own configuration constants). We have a "Single Source of Truth": the value. The type adapts itself.
+
+<Callout type="tip" title="API Trick">
+    Imagine you have a JSON response from an API. Instead of writing the interface by hand, you can paste the JSON as a constant (mock) and extract the type from there. Thus, the example serves as documentation and type generator at the same time.
+</Callout>
+
+## `keyof`: Give me the keys
+
+`keyof` takes a **Type** and returns a Union of its keys.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface User {
+    name: string;
+    age: number;
+    email: string;
+}
+
+type UserKeys = keyof User;
+// It is equivalent to: "name" | "age" | "email"`,
+		lang: 'typescript'
+    }
+]} />
+
+What is it for? So that we cannot ask for properties that do not exist.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `function getProperty(user: User, key: keyof User) {
+    return user[key];
+}
+
+const me: User = { name: "Alice", age: 39, email: "..." };
+
+getProperty(me, "name"); // ✅
+getProperty(me, "password"); // ❌ Error: Argument of type '"password"' is not assignable...`,
+		lang: 'typescript'
+    }
+]} />
+
+## The Ultimate Combo: `keyof typeof`
+
+This is one of the most used combinations in real TypeScript.
+It is used when we want to get the keys of an **object/value** that already exists (not an interface).
+
+1. `typeof object` -> Gives us the Type of the object.
+2. `keyof (Type)` -> Gives us the keys of that Type.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const COLORS = {
+    red: "#FF0000",
+    green: "#00FF00",
+    blue: "#0000FF"
+};
+
+type ColorName = keyof typeof COLORS;
+// "red" | "green" | "blue"
+
+function paint(color: ColorName) { ... }
+
+paint("red"); // ✅
+paint("yellow"); // ❌ Error`,
+		lang: 'typescript'
+    }
+]} />
+
+## Let's try it!
+
+Let's use the editor. Let's create a `config` object with various options. Let's use `typeof` to extract its type and create a function that receives that type.
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-typeof-keyof"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  height="700px"
+  files={{
+    'main.ts': `const config = {
+    theme: "dark",
+    version: 2,
+    debug: true
+} as const; // 👈 Watch out for 'as const'
+
+// 1. Create the type 'Config' using the typeof operator
+type Config = any; 
+
+// 2. Create the type 'ConfigKey' using the keyof operator
+type ConfigKey = any;
+
+// 3. Complete the function so that 'key' is safe (use ConfigKey)
+function getSetting(key: any) {
+    return config[key];
+}
+
+// Tests (Do not touch this):
+getSetting("theme"); // ✅ Should work
+// getSetting("password"); // ❌ Should give error if uncommented
+`
+  }}
+  validationCode={validationCode}
+/>
+
+In **Part 6** we will see **Generics**, the tool that allows us to create reusable components and functions that work with any type (the famous `<T>`).

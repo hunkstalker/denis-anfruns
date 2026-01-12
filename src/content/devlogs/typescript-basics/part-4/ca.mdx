@@ -1,0 +1,156 @@
+---
+pubDate: '2025-12-17T18:00:00Z'
+tags: ['typescript', 'arrays', 'tuples']
+draft: true
+new: true
+title: 'TypeScript #4: Arrays i Tuples'
+description: Llistes de coses i la màgia de les Tuples (o per què useState retorna un array).
+series: typescript-basics
+seriesTitle: Fonaments de TypeScript
+seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com inferència i tipus.
+lang: ca
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+A la part anterior vam veure Objectes. Ara, què passa si tenim **molts** objectes? Necessitem una llista.
+
+## Arrays `[]`
+
+Hi ha dues formes de definir un array a TypeScript. Ambdues són idèntiques, és qüestió de gustos.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Opción A: Tipus[] (La més comuna)
+const skills: string[] = ["React", "Astro", "TypeScript"];
+
+// Opción B: Array<Tipus> (Sintaxis Genèrica)
+const years: Array<number> = [2020, 2021, 2022];
+
+// Array d'Objectes (usant la interfície de la part anterior)
+interface Usuari {
+    name: string;
+    age: number;
+}
+
+const users: Usuari[] = [
+    { name: "Alice", age: 30 },
+    { name: "Pepe", age: 25 }
+];`,
+		lang: 'typescript'
+    }
+]} />
+
+Si intentem ficar un número en el nostre array de `skills` (que és de strings), TS cridarà.
+
+## Tuples: Arrays amb regles estrictes
+
+A vegades sabem **exactament** quants elements té un array i de quin tipus són a cada posició.
+Això és una **Tuple**.
+
+L'exemple més famós és el hook `useState` de React:
+
+<CodeTabs items={[
+    {
+		label: 'React (Exemple)',
+		code: `// useState retorna una tuple: [valor, funcio]
+// posició 0 sempre és l'estat (string)
+// posició 1 sempre és el setter (funció)
+const [name, setName] = useState("Alice");`,
+		lang: 'tsx'
+    }
+]} />
+
+A TypeScript es defineix així:
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Tuple: [string, number]
+// El primer HA DE SER string, el segon HA DE SER number.
+let role: [string, number] = ["admin", 1];
+
+role = ["user", 2]; // ✅ Bé
+role = [1, "admin"]; // ❌ Malament (Ordre incorrecte)
+role = ["guest", 3, "extra"]; // ❌ Malament (Massa elements)`,
+		lang: 'typescript'
+    }
+]} />
+
+Per ser més clars, aquí tens una comparació entre arrays i tuples:
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// --- ARRAYS  ---
+// Tant li fa l'ordre de les dades
+const miArray1: (string | number)[] = ["TextArray1", 1]; ✅
+const miArray2: (string | number)[] = [5, "TextArray2"]; ✅
+
+// --- TUPLES ---
+// Li diem a TS: "Això és fix, el primer és string, el segon number"
+const miTupla1: [string, number] = ["TextTupla1", 1]; ✅
+const miTupla2: [string, number] = [5, "TextTupla2"]; ❌`,
+		lang: 'typescript'
+    }
+]} />
+
+## Provem-ho!
+
+Embrutem-nos les mans. Tens dos reptes a sota: un per Arrays i un altre per Tuples. TypeScript t'avisarà dels errors mentre escrius, i en donar-li a "Run", validarem si compleix els requisits.
+
+### Exercici 1: Arrays
+Crea un array anomenat `paises` que contingui almenys 3 noms de països (strings). Intenta afegir un número a l'array per veure com es queixa TypeScript.
+
+import validationArrays from './validation-arrays.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-arrays"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  files={{
+    'main.ts': `// 1. Crea un array de strings anomenat 'paises'
+// const paises...
+
+// 2. Afegeix països (descomenta i completa)
+// paises.push(...);
+
+// 3. Intenta afegir un número (descomenta i dóna-li a RUN per veure l'error)
+// paises.push(123);
+
+// 4. Torna a comentar el push del punt anterior i dóna-li a RUN
+`
+  }}
+  validationCode={validationArrays}
+/>
+
+### Exercici 2: Tuples
+Crea una tuple estricta anomenada `usuario`. Ha de tenir exactament 3 elements en aquest ordre:
+1. `nom` (string)
+2. `edat` (number)
+3. `esAdmin` (boolean)
+
+import validationTuples from './validation-tuples.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-tuples"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  files={{
+    'main.ts': `// Crea la tuple 'usuario' amb tipus [string, number, boolean]
+// const usuario...
+`
+  }}
+  validationCode={validationTuples}
+/>
+
+A la **Part 5**, les coses es posen series. Deixem el bàsic i entrem en la màgia de TypeScript: aprendrem a que TS **escrigui els tipus per nosaltres** usant `typeof` i `keyof`.

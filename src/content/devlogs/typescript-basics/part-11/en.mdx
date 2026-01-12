@@ -1,0 +1,150 @@
+---
+pubDate: '2025-12-24T10:00:00Z'
+tags: ['typescript', 'utility-types', 'advanced']
+draft: true
+new: true
+title: 'TypeScript #11: Utility Types (Your Best Friends)'
+description: Partial, Pick, Omit... Tools that TS gifts you to transform types without having to rewrite them.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+TypeScript comes with a "Swiss Army Knife" of predefined types called **Utility Types**.
+They are Generics that take a type and return a modified version.
+
+## `Partial<T>` (Everything optional)
+
+Imagine we have a complete user, but for an update (PATCH), we only send the fields that changed.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+function updateUser(id: number, changes: Partial<User>) {
+    // 'changes' is now as if all props had '?'
+    // { id?: number; name?: string; email?: string; }
+    ...
+}
+
+updateUser(1, { name: "Alice" }); // ✅ Valid`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Required<T>` (Everything required)
+
+The opposite of Partial. Removes all `?` from an interface.
+
+## `Pick<T, Keys>` (Pick what you want)
+
+Sometimes we have a huge interface and only need a couple of fields for a small component.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    stock: number;
+    ...
+}
+
+// We create a new type only with name and price
+type ProductLabel = Pick<Product, "name" | "price">;
+// { name: string; price: number; }`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Omit<T, Keys>` (Remove what you DON'T want)
+
+The opposite of Pick. Removes specific fields.
+Very useful to remove sensitive or unnecessary data.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// A User without the password
+type PublicUser = Omit<User, "password">;`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Record<Keys, Type>` (Dictionaries)
+
+This one is a bit special. It serves to create objects where **we don't know the name of the properties**, but we know what values they will have.
+
+Think of a **Phone Book**:
+- The **Keys** are names (Strings).
+- The **Values** (Type) are numbers (Numbers).
+
+We don't know if you will save "Pepe" or "Maria", but we know the structure will always be `Name -> Number`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// A normal object requires knowing the keys beforehand
+// interface Agenda { pepe: number } // ❌ Impractical
+
+// With Record:
+const agenda: Record<string, number> = {};
+
+agenda["Pepe"] = 123456;
+agenda["Maria"] = 987654;`,
+		lang: 'typescript'
+    }
+]} />
+
+### Hands on!
+
+1. Create `TodoUpdate` using `Partial` of `Todo`.
+2. Create `TodoPreview` using `Pick` of `Todo` (only `title` and `completed`).
+3. Create `TodoDictionary` which is a `Record` where the key is `string` and the value is `Todo`.
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-utility-types"
+  showConsole={true}
+  defaultMuted={false}
+  height="600px"
+  files={{
+    'main.ts': `interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+// 1. Partial
+// type TodoUpdate = ...
+
+// 2. Pick (Only title and completed)
+// type TodoPreview = ...
+
+// 3. Record (Dictionary ID -> Todo)
+// type TodoDictionary = ...
+
+// 🧪 Test (Create an object using Record)
+const testDiccionario: TodoDictionary = {
+    "task-1": { title: "Learn TS", description: "Basics", completed: true }
+};
+
+console.log("Dictionary created successfully:", testDiccionario);
+`
+  }}
+  validationCode={validationCode}
+/>

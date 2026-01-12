@@ -1,0 +1,149 @@
+---
+pubDate: '2025-12-22T10:00:00Z'
+tags: ['typescript', 'generics', 'constraints']
+draft: true
+new: true
+title: 'TypeScript #9: Intermediate Generics (Constraints)'
+description: How to tame Generics so they don't accept "anything". Constraints, default values and the keyof trick.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+In the previous part we saw that `<T>` can be anything. Sometimes, that is **too flexible**.
+What if we want `T` to have a `.length` property yes or yes?
+
+## Constraints (`extends`)
+
+Imagine this function:
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function getLength<T>(item: T) {
+    return item.length; // ❌ Error: Property 'length' does not exist on type 'T'.
+}
+
+// TS complains because T could be a number (which doesn't have .length), 
+// or a boolean...`,
+		lang: 'typescript'
+    }
+]} />
+
+To fix it, we use `extends` to put a **restriction** (Constraint).
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// We say: "T can be whatever you want, BUT it must extend (fulfill) this shape"
+interface HasLength {
+    length: number;
+}
+
+function getLength<T extends HasLength>(item: T) {
+    return item.length; // ✅ Now TS knows it exists
+}
+
+getLength("Hello"); // ✅ string has .length
+getLength([1, 2, 3]); // ✅ array has .length
+getLength(123); // ❌ Error: number does not have .length`,
+		lang: 'typescript'
+    }
+]} />
+
+## Generics with `keyof` (The master trick)
+
+We will see this pattern everywhere. We want a function that gets a property from an object safely.
+
+We need to define two Generics:
+1. `T`: The object.
+2. `K`: The key. But `K` cannot be any string, it must be **a key of T**.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `function getProperty<T, K extends keyof T>(obj: T, key: K) {
+    return obj[key];
+}
+
+const developer = {
+    name: "AliceDev",
+    language: "TypeScript"
+};
+
+getProperty(developer, "name"); // ✅ TS knows this returns string
+getProperty(developer, "age"); // ❌ Error: "age" is not a key of developer`,
+		lang: 'typescript'
+    }
+]} />
+
+## Default Values (`=`)
+
+Just like in normal functions (`function sum(a, b = 0)`), Generics can have default values.
+
+This is very useful to not force the user to write the type always.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// If we don't pass T, I'll assume it's 'string'
+interface ApiResponse<T = string> {
+    data: T;
+    status: number;
+}
+
+// Usage without arguments:
+const simple: ApiResponse = { data: "Hello", status: 200 }; // T is string
+
+// Usage with arguments:
+const complex: ApiResponse<number> = { data: 123, status: 200 }; // T is number`,
+		lang: 'typescript'
+    }
+]} />
+
+### Let's try it!
+
+Let's create a function `merge` that takes two objects `obj1` and `obj2` and combines them. Let's type the function using two generics `T` and `U`.
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-generics-constraints"
+  showConsole={false}
+  defaultMuted={true}
+  height="500px"
+  files={{
+    'main.ts': `// Challenge: Modify 'merge' to ONLY accept real objects.
+// 1. Add generics <T, U> to the function.
+// 2. Use 'extends object' (lowercase) to restrict them. 
+//      -> This will block numbers, strings and booleans.
+//      -> If you use 'Object' (uppercase), primitives would slip through.
+
+function merge(obj1: any, obj2: any) {
+    return { ...obj1, ...obj2 };
+}
+
+const user = { name: "AliceDev" };
+const settings = { theme: "dark" };
+
+// ✅ Success case (this will always work):
+const result = merge(user, settings); 
+console.log("Result:", result);
+
+// 🧪 Check. This is what we want to avoid, letting a number slip through.
+// If uncommenting the line below causes an error, you passed the challenge!
+// merge(user, 123);
+`
+  }}
+  validationCode={validationCode}
+/>

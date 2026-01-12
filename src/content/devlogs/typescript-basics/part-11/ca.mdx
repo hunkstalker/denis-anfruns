@@ -1,0 +1,150 @@
+---
+pubDate: '2025-12-24T10:00:00Z'
+tags: ['typescript', 'utility-types', 'advanced']
+draft: true
+new: true
+title: 'TypeScript #11: Utility Types (Els teus millors amics)'
+description: Partial, Pick, Omit... Eines que TS et regala per transformar tipus sense haver de reescriure'ls.
+series: typescript-basics
+seriesTitle: Fonaments de TypeScript
+seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com inferència i tipus.
+lang: ca
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+TypeScript ve amb una "navalla suïssa" de tipus predefinits anomenats **Utility Types**.
+Són Generics que prenen un tipus i ens retornen una versió modificada.
+
+## `Partial<T>` (Tot opcional)
+
+Imaginem que tenim un usuari complet, però per a una actualització (PATCH), només enviem els camps que han canviat.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Usuari {
+    id: number;
+    nom: string;
+    email: string;
+}
+
+function actualitzarUsuari(id: number, canvis: Partial<Usuari>) {
+    // 'canvis' ara és com si totes les props tinguessin '?'
+    // { id?: number; nom?: string; email?: string; }
+    ...
+}
+
+actualitzarUsuari(1, { nom: "Alice" }); // ✅ Vàlid`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Required<T>` (Tot obligatori)
+
+El contrari a Partial. Treu tots els `?` d'una interfície.
+
+## `Pick<T, Keys>` (Tria el que vols)
+
+A vegades tenim una interfície gegant i només necessitem un parell de camps per a un component petit.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Producte {
+    id: number;
+    nom: string;
+    preu: number;
+    descripcio: string;
+    stock: number;
+    ...
+}
+
+// Creem un nou tipus només amb nom i preu
+type EtiquetaProducte = Pick<Producte, "nom" | "preu">;
+// { nom: string; preu: number; }`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Omit<T, Keys>` (Treu el que NO vols)
+
+El contrari a Pick. Elimina camps específics.
+Molt útil per treure dades sensibles o innecessàries.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Un Usuari sense la contrasenya
+type UsuariPublic = Omit<Usuari, "password">;`,
+		lang: 'typescript'
+    }
+]} />
+
+## `Record<Keys, Type>` (Diccionaris)
+
+Aquest és un mica especial. Serveix per crear objectes on **no sabem el nom de les propietats**, però sabem quins valors tindran.
+
+Pensa en una **Agenda Telefònica**:
+- Les **Claus** (Keys) són noms (Strings).
+- Els **Valors** (Type) són números (Numbers).
+
+No sabem si guardaràs a "Pepe" o "Maria", però sabem que l'estructura sempre serà `Nom -> Numero`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Un objecte normal requereix saber les claus per endavant
+// interface Agenda { pepe: number } // ❌ Poc pràctic
+
+// Amb Record:
+const agenda: Record<string, number> = {};
+
+agenda["Pepe"] = 123456;
+agenda["Maria"] = 987654;`,
+		lang: 'typescript'
+    }
+]} />
+
+### Som-hi!
+
+1. Crea `TodoUpdate` usant `Partial` de `Todo`.
+2. Crea `TodoPreview` usant `Pick` de `Todo` (només `title` i `completed`).
+3. Crea `TodoDictionary` que sigui un `Record` on la clau és `string` i el valor és `Todo`.
+
+import validationCode from './validation.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-utility-types"
+  showConsole={true}
+  defaultMuted={false}
+  height="600px"
+  files={{
+    'main.ts': `interface Todo {
+    title: string;
+    description: string;
+    completed: boolean;
+}
+
+// 1. Partial
+// type TodoUpdate = ...
+
+// 2. Pick (Només title i completed)
+// type TodoPreview = ...
+
+// 3. Record (Diccionari ID -> Todo)
+// type TodoDictionary = ...
+
+// 🧪 Prova (Crea un objecte usant Record)
+const testDiccionario: TodoDictionary = {
+    "tasca-1": { title: "Aprendre TS", description: "Bàsic", completed: true }
+};
+
+console.log("Diccionari creat amb èxit:", testDiccionario);
+`
+  }}
+  validationCode={validationCode}
+/>

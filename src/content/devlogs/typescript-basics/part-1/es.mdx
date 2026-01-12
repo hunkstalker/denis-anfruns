@@ -1,7 +1,6 @@
 ---
 pubDate: '2025-12-14T20:00:00Z'
 tags: ['typescript', 'inference', 'basics']
-heroImage: /assets/typescript-basics/hero-ts-basics.webp
 draft: false
 new: false
 title: 'TypeScript #1: La Inferencia trabaja por ti'
@@ -18,29 +17,8 @@ import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 export const age = new Date().getFullYear() - 1985
 
-## ¡Bienvenido! 🚀
 
-Esta es la primera parte de una serie que intentará que entendamos TypeScript _**de verdad**_, no solo para que copiemos y 
-peguemos "any" cuando el compilador se queja.
-
-El objetivo de la serie completa es terminar comprendiendo que TypeScript no 
-es solo JavaScript con tipado, sino que TypeScript es un protolenguaje de tipados para crear toda estructura de 
-tipos que necesitemos para nuestros proyectos y hacer que aunque sí, todo sea más lento y pesado con las malditas 👹 advertencias, 
-al final ganemos en seguridad y robustez de código.
-
-Yo no soy ningún experto, pero siempre he pensado que para aprender lo mejor es tratar de enseñar a otros. 
-Esto nos obliga a abordar cada tema de forma que cualquiera pueda entenderlos y verlo desde muchas perspectivas.
-
-Por eso, en esta serie voy a intentar explicar cada concepto desde cero, sin usar términos técnicos complejos, 
-sin usar lenguaje técnico que solo los que ya saben TypeScript entiendan.
-
-Lo primero por lo que empezaremos es entender que **TypeScript es listo. No hay que explicarle lo obvio.**
-
-<Callout type="info" title="Info" filled>
-    Nota: Esta es la primera entrada de una serie de TIL sobre aprendizaje. Aunque es distinto al resto de TIL que son notas 
-cortas he pensado en reutilizarlo porque al fin y al cabo sigue la misma idea de algo que aprendemos día a día.
-Por ahora esto es un experimento.
-</Callout>
+Lo primero por lo que empezaremos es entender que **TypeScript es "listo", no hay que explicarle lo obvio.**
 
 ## La Inferencia de Tipos
 
@@ -53,14 +31,14 @@ acostumbrados a la idea de tiparlo todo.
     {
 		label: 'example.ts',
 		code: `// ❌ Redundante (Boilerplate innecesario)
-const userName: string = "Denis";
+const userName: string = "BartoloDev";
 const userAge: number = ${age};
 const isAdmin: boolean = true;`,
 		lang: 'typescript'
     }
 ]} />
 
-TypeScript ya sabe que "Denis" es un string. No hace falta que se lo jures.
+TypeScript ya sabe que "BartoloDev" es un string. No hace falta que se lo jures.
 
 
 
@@ -70,7 +48,7 @@ TypeScript ya sabe que "Denis" es un string. No hace falta que se lo jures.
   {
     label: 'example.ts',
     code: `// ✅ Perfecto (Limpio y legible)
-const userName = "Denis"; // TS infiere: string (o literal "Denis", veremos esto luego)
+const userName = "BartoloDev"; // TS infiere: string (o literal "BartoloDev", veremos esto luego)
 const userAge = ${age};       // TS infiere: number
 const isAdmin = true;     // TS infiere: boolean`,
     lang: 'typescript'

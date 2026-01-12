@@ -23,19 +23,22 @@ Y luego está `never`, el tipo que no contiene **nada**. Vamos a verlos.
 
 `any` es básicamente "desactivar TypeScript". Cuando asignas algo a `any`, el compilador deja de comprobar nada. Puedes acceder a propiedades que no existen, llamar a la variable como una función, etc.
 
-<TSEditor
-  client:visible
-  id="types-any"
-  files={{
-    'main.ts': `let peligro: any = "Hola mundo";
+<CodeTabs
+  status="error"
+  items={[
+    {
+      label: 'any.ts',
+      code: `let peligro: any = "Hola mundo";
 
 // TypeScript NO se queja de nada de esto:
 peligro.foo.bar.baz(); 
 peligro();
 const x: number = peligro;
 
-// ...pero todo fallará en ejecución 💥`
-  }}
+// ...pero todo fallará en ejecución 💥`,
+      lang: 'typescript'
+    }
+  ]}
 />
 
 <Callout type="error" title="Evita any a toda costa">
@@ -48,11 +51,12 @@ Usar `any` contagia tu código. Si una función devuelve `any`, esa falta de seg
 
 Te obliga a usar **Narrowing** (lo que vimos en el Cap. #6) antes de usarlo.
 
-<TSEditor
-  client:visible
-  id="types-unknown"
-  files={{
-    'main.ts': `let seguro: unknown = "Hola mundo";
+<CodeTabs
+  status="success"
+  items={[
+    {
+      label: 'unknown.ts',
+      code: `let seguro: unknown = "Hola mundo";
 
 // Error: Object is of type 'unknown'.
 // seguro.toUpperCase(); 
@@ -61,8 +65,10 @@ Te obliga a usar **Narrowing** (lo que vimos en el Cap. #6) antes de usarlo.
 if (typeof seguro === "string") {
   // Ahora TS sabe que es string
   console.log(seguro.toUpperCase());
-}`
-  }}
+}`,
+      lang: 'typescript'
+    }
+  ]}
 />
 
 Esto es ideal para respuestas de APIs externas o `JSON.parse()`, donde *realmente* no sabes qué vendrá, pero quieres manejarlo de forma segura.
@@ -71,22 +77,29 @@ Esto es ideal para respuestas de APIs externas o `JSON.parse()`, donde *realment
 
 `never` es el tipo para valores que **nunca pueden ocurrir**. Es el tipo de retorno de una función que lanza un error siempre (y por tanto nunca retorna) o un bucle infinito.
 
-```typescript
-function error(mensaje: string): never {
+<CodeTabs
+  items={[
+    {
+      label: 'never.ts',
+      code: `function error(mensaje: string): never {
   throw new Error(mensaje);
 }
-// Esta función nunca devuelve "undefined" ni nada, su ejecución nunca termina exitosamente.
-```
+// Esta función nunca devuelve "undefined" ni nada, 
+// su ejecución nunca termina exitosamente.`,
+      lang: 'typescript'
+    }
+  ]}
+/>
 
 ### Exhaustiveness Checking (El truco pro)
 
 El uso más potente de `never` es asegurarte de que has cubierto todos los casos posibles en un `switch` o `ion`.
 
-<TSEditor
-  client:visible
-  id="types-never-check"
-  files={{
-    'main.ts': `type Estado = "Cargando" | "Exito" | "Error";
+<CodeTabs
+  items={[
+    {
+      label: 'main.ts',
+      code: `type Estado = "Cargando" | "Exito" | "Error";
 
 function getMensaje(s: Estado) {
   switch (s) {
@@ -99,11 +112,48 @@ function getMensaje(s: Estado) {
       const _exhaustiveCheck: never = s;
       return _exhaustiveCheck;
   }
+}`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+Si en el futuro alguien añade `| "Inactivo"` al tipo `Estado` y olvida actualizar el `switch`, TypeScript lanzará un error en tiempo de compilación diciendo que `Type 'string' is not assignable to type 'never'`. ¡Magia! ✨
+
+## 4. Ejercicio: Domando lo Desconocido
+
+Vamos a poner en práctica `unknown`. Tienes una función que recibe un dato desconocido. Para usarlo de forma segura, **necesitarás aplicar lo aprendido en el capítulo anterior (Type Guards)**.
+
+Tu misión:
+1.  Comprobar si es un `string`.
+2.  Si lo es, devolverlo en MAYÚSCULAS.
+3.  Si NO lo es, lanzar un error diciendo exactamente: `"No es texto"`.
+
+import validationCode from './validation.ts?raw';
+
+<TSEditor
+  client:only="react"
+  validationCode={validationCode}
+  showConsole={true}
+  successSound="success"
+  files={{
+    'exercise.ts': `// 1. Añade el type unknown
+
+    function safeUpperCase(value: ...): string {
+
+  // TODO: Implementa la lógica aquí...
+
+
+  // Recuerda: unknown te obliga a comprobar el tipo antes de usarlo
+  // value.toUpperCase() provocará un error si no aplicas Type Guard (capítulo #6)
+  // JS TIP: para lanzar un error, usa 'throw new Error();'
+
+  return "ups"; 
 }`
   }}
 />
 
-Si en el futuro alguien añade `| "Inactivo"` al tipo `Estado` y olvida actualizar el `switch`, TypeScript lanzará un error en tiempo de compilación diciendo que `Type 'string' is not assignable to type 'never'`. ¡Magia! ✨
+¡Con esto cerramos el bloque de tipos avanzados de seguridad! Ahora tu código será mucho más robusto. 🛡️
 
 ## Resumen
 

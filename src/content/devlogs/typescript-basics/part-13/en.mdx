@@ -1,0 +1,103 @@
+---
+pubDate: '2025-12-26T10:00:00Z'
+tags: ['typescript', 'patterns', 'advanced']
+draft: true
+new: true
+end: true
+title: 'TypeScript #13: Real Patterns'
+description: The grand finale. Function Overloading, Builders and how to create your own type-safe mini-library.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+We have reached the end. If we have followed everything up to here, we already know more TypeScript than 80% of developers.
+To finish, let's see some patterns that will make us look like wizards.
+
+## Function Overloads
+
+Sometimes a function can do very different things depending on what we pass to it.
+
+If we pass a `string`, it returns an `array of characters` (`string[]`).
+If we pass a `number`, it returns `boolean`.
+
+How do we type that? With "Overloads". We write the signature multiple times before the real implementation.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Overload 1 (Public signature)
+function convert(input: string): string[];
+// Overload 2 (Public signature)
+function convert(input: number): boolean;
+
+// Implementation (Private - must be broad enough to cover everything)
+function convert(input: string | number): any {
+    if (typeof input === "string") {
+        return input.split("");
+    } else {
+        return input > 10;
+    }
+}
+
+const a = convert("Hello"); // TS knows 'a' is string[]
+const b = convert(50);     // TS knows 'b' is boolean`,
+		lang: 'typescript'
+    }
+]} />
+
+## Creating a Mini-Store (Zustand/Redux Style)
+
+Let's combine **Generics**, **Constraints**, and **Partial** to create a state manager.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `class Store<T extends object> {
+    private state: T;
+
+    constructor(initialState: T) {
+        this.state = initialState;
+    }
+
+    getState(): T {
+        return this.state;
+    }
+
+    // We use Partial<T> to allow updating only chunks
+    setState(newState: Partial<T>) {
+        this.state = { ...this.state, ...newState };
+    }
+}
+
+interface AppState {
+    user: string;
+    darkMode: boolean;
+}
+
+const myStore = new Store<AppState>({ 
+    user: "Alice", 
+    darkMode: false 
+});
+
+myStore.setState({ darkMode: true }); // ✅
+myStore.setState({ user: 123 });      // ❌ Type Error`,
+		lang: 'typescript'
+    }
+]} />
+
+## Farewell
+
+TypeScript has a learning curve. At first, it seems that it only puts obstacles in our way and forces us to write more.
+But there comes a day when we refactor 20 files, TypeScript yells 5 errors at us, we fix them, and when executing... **everything works on the first try**.
+
+Surely you already know that rush when solving an error that has cost you days. And even better when you solve it because you already know the answer beforehand without banging your head against the wall.
+
+Theory is very good, but mastery is forged by writing code. I strongly encourage you not to just stick with reading: take the examples from each chapter, break things, try to replicate them from scratch even while looking, it doesn't matter, test yourself. Only by using all this and struggling to fix errors will you internalize how TypeScript works.
+
+Go for it! 💪 Thanks for reading! 🚀

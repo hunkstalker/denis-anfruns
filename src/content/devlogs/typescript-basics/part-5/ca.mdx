@@ -1,0 +1,154 @@
+---
+pubDate: '2025-12-18T10:00:00Z'
+tags: ['typescript', 'typeof', 'keyof']
+draft: true
+new: true
+title: 'TypeScript #5: La Màgia de typeof i keyof'
+description: Com crear tipus a partir de valors i oblidar-se de mantenir tipus sincronitzats manualment.
+series: typescript-basics
+seriesTitle: Fonaments de TypeScript
+seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com inferència i tipus.
+lang: ca
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Aquí és on TypeScript deixa de ser "JavaScript amb tipus" i es converteix en un superpoder.
+Fins ara hem definit tipus manualment. Però, i si poguéssim **generar els tipus automàticament** des del nostre codi?
+
+## `typeof`: Extraient l'ADN
+
+A JS, `typeof` retorna un string ("string", "number", "object").
+A TS, si l'usem en un context de tipus, retorna **el tipus complet**.
+
+<CodeTabs
+  items={[
+    {
+		label: 'TypeScript',
+		code: `const settings = {
+    theme: "dark",
+    notifications: true,
+    version: 1.0
+};
+
+// En lloc d'escriure la interfície manualment...
+// type Settings = { theme: string; notifications: boolean; version: number }; 😴
+
+type Settings = typeof settings; 
+// 🪄 Boom! TS acaba d'escriure la interfície per tu.`,
+		lang: 'typescript'
+    }
+]} />
+
+Això és brutal per a APIs o llibreries de tercers (o les nostres pròpies constants de configuració). Tenim una "Single Source of Truth" (Font Única de Veritat): el valor. El tipus s'adapta sol.
+
+<Callout type="tip" title="Truc per a APIs">
+    Imagina que tens la resposta JSON d'una API. En lloc d'escriure la interfície a mà, pots enganxar el JSON com una constant (mock) i treure el tipus d'allà. Així, l'exemple serveix de documentació i de generador de tipus a la vegada.
+</Callout>
+
+## `keyof`: Dona'm les claus
+
+`keyof` pren un **Tipus** i ens retorna una Unió de les seves claus (keys).
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface Usuari {
+    name: string;
+    age: number;
+    email: string;
+}
+
+type UsuariKeys = keyof Usuari;
+// És equivalent a: "name" | "age" | "email"`,
+		lang: 'typescript'
+    }
+]} />
+
+Per a què serveix? Perquè no puguem demanar propietats que no existeixen.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `function getProperty(user: Usuari, key: keyof Usuari) {
+    return user[key];
+}
+
+const me: Usuari = { name: "Alice", age: 39, email: "..." };
+
+getProperty(me, "name"); // ✅
+getProperty(me, "password"); // ❌ Error: Argument of type '"password"' is not assignable...`,
+		lang: 'typescript'
+    }
+]} />
+
+## El Combo Definitiu: `keyof typeof`
+
+Aquesta és una de les combinacions més usades en TypeScript real.
+S'usa quan volem treure les keys d'un **objecte/valor** que ja existeix (no d'una interfície).
+
+1. `typeof objecte` -> Ens dona el Tipus de l'objecte.
+2. `keyof (Tipus)` -> Ens dona les keys d'aquest Tipus.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const COLORS = {
+    vermell: "#FF0000",
+    verd: "#00FF00",
+    blau: "#0000FF"
+};
+
+type ColorName = keyof typeof COLORS;
+// "vermell" | "verd" | "blau"
+
+function paint(color: ColorName) { ... }
+
+paint("vermell"); // ✅
+paint("groc"); // ❌ Error`,
+		lang: 'typescript'
+    }
+]} />
+
+## Provem-ho!
+
+Usem l'editor. Creem un objecte `config` amb diverses opcions. Usem `typeof` per treure el seu tipus i creem una funció que rebi aquest tipus.
+
+import validationCode from './validation.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-typeof-keyof"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  height="700px"
+  files={{
+    'main.ts': `const config = {
+    theme: "dark",
+    version: 2,
+    debug: true
+} as const; // 👈 Ull al 'as const'
+
+// 1. Crea el tipus 'Config' usant l'operador typeof
+type Config = any; 
+
+// 2. Crea el tipus 'ConfigKey' usant l'operador keyof
+type ConfigKey = any;
+
+// 3. Completa la funció perquè 'key' sigui segura (usa ConfigKey)
+function getSetting(key: any) {
+    return config[key];
+}
+
+// Proves (No toquis això):
+getSetting("theme"); // ✅ Hauria de funcionar
+// getSetting("password"); // ❌ Hauria de donar error si descomentes
+`
+  }}
+  validationCode={validationCode}
+/>
+
+A la **Part 6** veurem els **Generics**, l'eina que ens permet crear components i funcions reutilitzables que funcionen amb qualsevol tipus (el famós `<T>`).

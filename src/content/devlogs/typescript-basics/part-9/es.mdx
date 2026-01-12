@@ -120,6 +120,8 @@ const respuestaCompleja: RespuestaAPI<number> = {
 
 Creemos una función `fusionar` que tome dos objetos `obj1` y `obj2` y los combine. Tipemos la función usando dos generics `T` y `U`.
 
+import validationCode from './validation.ts?raw';
+
 <TSEditor
   client:only="react"
   id="ex-generics-constraints"
@@ -137,7 +139,7 @@ function fusionar(obj1: any, obj2: any) {
     return { ...obj1, ...obj2 };
 }
 
-const user = { nombre: "BartoloDev" };
+const user = { nombre: "AliceDev" };
 const settings = { theme: "dark" };
 
 // ✅ Caso de éxito (esto funcionará siempre):
@@ -149,25 +151,7 @@ console.log("Resultado:", resultado);
 // fusionar(user, 123);
 `
   }}
-  validationCode={`
-     try {
-        if (!/extends\s+object/.test(code)) {
-             throw new Error("⚠️ Debes usar 'extends object' (minúscula) para bloquear primitivos.");
-        }
-
-        // Check if returns intersection (roughly)
-        // @ts-ignore
-        const res = fusionar({a:1}, {b:2});
-        if (res.a !== 1 || res.b !== 2) throw new Error("La lógica de fusión se ha roto.");
-
-        if (typeof onSuccess === 'function') onSuccess();
-        console.log("✅ ¡Ejercicio Superado! Has creado una función robusta.");
-        console.log("🔒 Has bloqueado exitosamente el paso de tipos primitivos.");
-
-    } catch (e) {
-        console.error(e.message);
-    }
-  `}
+  validationCode={validationCode}
 />
 
 En la **Parte 8**, abordaremos una de las mayores confusiones: **Generics en Interfaces vs en Tipos**, y cómo pasar tipos de padres a hijos (prop drilling de tipos).

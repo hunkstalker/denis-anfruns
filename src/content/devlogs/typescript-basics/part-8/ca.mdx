@@ -1,0 +1,143 @@
+---
+pubDate: '2025-12-21T10:00:00Z'
+tags: ['typescript', 'generics', 'basics']
+draft: true
+new: true
+title: 'TypeScript #8: Generics (El bàsic)'
+description: L'eina més potent de TS. Aprèn a escriure codi reutilitzable i flexible amb <T>.
+series: typescript-basics
+seriesTitle: Fonaments de TypeScript
+seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com inferència i tipus.
+lang: ca
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Fins ara, els nostres tipus eren fixos. `string` és sempre `string`.
+Però, i si volem crear una funció o un component que funcioni amb **qualsevol tipus**, però sense perdre la seguretat?
+
+Aquí entren els **Generics**. Són com "paràmetres" però per a Tipus.
+
+## El Problema: Duplicació o `any`
+
+Imaginem una funció que retorna el que li passes (clàssica funció `identity`).
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Opció 1: Duplicar codi per a cada tipus
+function returnString(val: string): string { return val; }
+function returnNumber(val: number): number { return val; }
+
+// Opció 2: Usar 'any' (Perdem el tipus)
+function returnAny(val: any): any { return val; }
+
+const resultat = returnAny("Hola"); 
+// TS no sap que 'resultat' és string, creu que és 'any'.
+// resultat.toUpperCase(); // ❌ No autocompleta`,
+		lang: 'typescript'
+    }
+]} />
+
+## La Solució: Generics `<T>`
+
+Podem dir-li a la funció: *"Escolta, et passarem un tipus al qual direm `T`. Usa'l per tipar l'argument i el retorn"*.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function identity<T>(val: T): T {
+    return val;
+}
+
+// Ús explícit (li passem el tipus)
+const num = identity<number>(123); // num és number
+
+// Inferència (TS és llest i ho endevina)
+const str = identity("Hola"); // str és "Hola" (literal) o string`,
+		lang: 'typescript'
+    }
+]} />
+
+La `T` és una convenció (ve de *Type*), però podem dir-li com vulguem: `<Data>`, `<Response>`, `<Props>`.
+
+## Interfícies Genèriques
+
+Això és súper comú en React o respostes d'API.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Una caixa que pot contenir qualsevol COSA
+interface Caixa<T> {
+    contingut: T;
+    etiqueta: string;
+}
+
+const caixaDeSabates: Caixa<string> = {
+    contingut: "Nike Air",
+    etiqueta: "Esports"
+};
+
+const caixaDeRegal: Caixa<number> = {
+    contingut: 1000,
+    etiqueta: "Diners"
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## Exemple Real: `useState`
+
+Si hem usat React, ja hem usat Generics sense saber-ho.
+
+<CodeTabs items={[
+    {
+		label: 'tsx',
+		code: `// useState és una funció Genèrica: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]
+
+// Inferència:
+const [name, setName] = useState("Alice"); // TS infereix que T és string
+
+// Explícit (útil quan el valor inicial és null):
+const [user, setUser] = useState<Usuari | null>(null);`,
+		lang: 'tsx'
+    }
+]} />
+
+### Provem-ho!
+
+Crea una funció `envolver` que **posis el que posis**, t'ho retorni dins d'un **array**.
+Si poses `10`, surt `[10]`. Si poses `"hola"`, surt `["hola"]`.
+
+import validationCode from './validation.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-generics-basic"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  height="600px"
+  files={{
+    'main.ts': `// Repte: Crea la funció genèrica 'envolver'
+// Ha de rebre un valor de tipus T i retornar un array de T (T[])
+
+function envolver... // Implementa aquí la teva solució
+
+// 🧪 Proves (No toquis això):
+const n = envolver(10);
+const s = envolver("hola");
+
+console.log("Número embolicat:", n);
+console.log("Text embolicat:", s);
+`
+  }}
+  validationCode={validationCode}
+/>

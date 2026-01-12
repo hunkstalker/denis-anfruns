@@ -23,18 +23,21 @@ Y para lograrlo, usamos **Type Guards** (Guardias de Tipos).
 
 Imagina que tienes una función que acepta un ID, pero este ID puede ser un número (Base de datos SQL) o un texto (UUID).
 
-<TSEditor
-  client:visible
-  id="narrowing-problem"
-  files={{
-    'main.ts': `function printId(id: string | number) {
+<CodeTabs
+  status="error"
+  items={[
+    {
+      label: 'main.ts',
+      code: `function printId(id: string | number) {
   // Error: Property 'toUpperCase' does not exist on type 'string | number'.
   // Property 'toUpperCase' does not exist on type 'number'.
   console.log(id.toUpperCase()); 
 }
 
-printId("abc");`
-  }}
+printId("abc");`,
+      lang: 'typescript'
+    }
+  ]}
 />
 
 TypeScript se queja porque **no está seguro** de que `id` sea un string. Si fuera un número, `.toUpperCase()` explotaría en tiempo de ejecución. 💥
@@ -43,11 +46,12 @@ TypeScript se queja porque **no está seguro** de que `id` sea un string. Si fue
 
 La forma más común de narrowing es usar el operador `typeof` de JavaScript dentro de un condicional `if`. TypeScript entiende este código y "reduce" el tipo dentro del bloque.
 
-<TSEditor
-  client:visible
-  id="narrowing-typeof"
-  files={{
-    'main.ts': `function printId(id: string | number) {
+<CodeTabs
+  status="success"
+  items={[
+    {
+      label: 'main.ts',
+      code: `function printId(id: string | number) {
   if (typeof id === "string") {
     // ¡Aquí dentro TypeScript SABE que id es string!
     console.log("Tu ID es: " + id.toUpperCase());
@@ -57,12 +61,14 @@ La forma más común de narrowing es usar el operador `typeof` de JavaScript den
   }
 }
 
-printId("denis");
-printId(123.456);`
-  }}
+printId("Pizza!");
+printId(123.456);`,
+      lang: 'typescript'
+    }
+  ]}
 />
 
-<Callout type="check" title="Tipos soportados por typeof">
+<Callout type="tip" title="Tipos soportados por typeof">
 Recuerda que `typeof` solo funciona con primitivos básicos: `"string"`, `"number"`, `"boolean"`, `"symbol"`, `"undefined"`, `"object"` y `"function"`.
 ¡Ojo! `typeof null` devuelve `"object"`, lo cual es un bug histórico de JS.
 </Callout>
@@ -71,25 +77,31 @@ Recuerda que `typeof` solo funciona con primitivos básicos: `"string"`, `"numbe
 
 A veces no necesitas saber el tipo exacto, solo si el valor existe (no es `null` ni `undefined`).
 
-```typescript
-function printName(name?: string) {
+<CodeTabs
+  items={[
+    {
+      label: 'truthiness.ts',
+      code: `function printName(name?: string) {
   // name es string | undefined
   if (name) {
     // Aquí name es string (porque undefined es falsy)
     console.log(name.toUpperCase());
   }
-}
-```
+}`,
+      lang: 'typescript'
+    }
+  ]}
+/>
 
 ## 4. `instanceof` Narrowing
 
 Para objetos construidos con clases, `typeof` no sirve de mucho (todo es "object"). Aquí entra `instanceof`.
 
-<TSEditor
-  client:visible
-  id="narrowing-instanceof"
-  files={{
-    'classes.ts': `class Perro {
+<CodeTabs
+  items={[
+    {
+      label: 'classes.ts',
+      code: `class Perro {
   ladrar() { return "Guau!"; }
 }
 
@@ -105,8 +117,10 @@ function comunicar(mascota: Perro | Gato) {
   }
 }
 
-comunicar(new Perro());`
-  }}
+comunicar(new Perro());`,
+      lang: 'typescript'
+    }
+  ]}
 />
 
 ## 5. Predicados de Tipo (Custom Type Guards)
@@ -115,11 +129,11 @@ comunicar(new Perro());`
 
 La sintaxis clave es el tipo de retorno: `param is Type`.
 
-<TSEditor
-  client:visible
-  id="narrowing-predicates"
-  files={{
-    'main.ts': `type Pez = { nadar: () => void };
+<CodeTabs
+  items={[
+    {
+      label: 'main.ts',
+      code: `type Pez = { nadar: () => void };
 type Pajaro = { volar: () => void };
 
 // Función guardia personalizada
@@ -138,12 +152,42 @@ function mover(animal: Pez | Pajaro) {
 }
 
 const nemo = { nadar: () => console.log("Nadando...") };
-mover(nemo);`
-  }}
+mover(nemo);`,
+      lang: 'typescript'
+    }
+  ]}
 />
 
 <Callout type="warning" title="Poder y Responsabilidad">
 Cuando usas `is`, le dices al compilador "confía en mí". Si tu lógica dentro de la función `esPez` está mal, TypeScript se lo creerá y podrías tener errores en tiempo de ejecución.
 </Callout>
+
+## 6. Ejercicio: El Formateador Universal
+
+¡Te toca! Tengo una función que recibe un `input`. Puede ser un `string` o un `number`.
+
+*   Si es `string`: Devuélvelo en MAYÚSCULAS.
+*   Si es `number`: Devuélvelo con 2 decimales (usa `.toFixed(2)`).
+
+import validationCode from './validation.ts?raw';
+
+<TSEditor
+  client:only="react"
+  validationCode={validationCode}
+  successSound="success"
+  defaultMuted={false}
+  showConsole={true}
+  files={{
+    'exercise.ts': `function procesarInput(input: string | number) {
+  // TODO: Usa un Type Guard (typeof) aquí
+  // 1. procesarInput debe devolver strings (MAYÚSCULAS)
+  // 2. procesarInput debe devolver números (2 decimales)
+  
+  return input; // ❌ Error: toUpperCase no existe en number
+
+  // JS TIP: para devolver mayúsculas toUpperCase() y para devolver 2 decimales toFixed(2)
+}`
+  }}
+/>
 
 El Narrowing es esencial para escribir código que sea flexible (acepte varios tipos) pero seguro (trate cada uno como corresponde). En el **siguiente capítulo**, veremos qué pasa cuando *realmente* no sabemos qué tipo nos llega... `unknown` vs `any`.

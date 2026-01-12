@@ -1,0 +1,162 @@
+---
+pubDate: '2025-12-20T10:00:00Z'
+tags: ['typescript', 'unknown', 'safety']
+draft: true
+new: true
+title: 'TypeScript #7: Unknown vs Any & Never'
+description: Why 'any' is the devil and 'unknown' is your best friend. Learning to write safe, bomb-proof code.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+In TypeScript there are two "Top Types" that can contain **any value**: `any` and `unknown`. Although they look similar, they are philosophically opposite.
+
+And then there is `never`, the type that contains **nothing**. Let's see them.
+
+## 1. `any`: The silent enemy 😈
+
+`any` is basically "turn off TypeScript". When you assign something to `any`, the compiler stops checking anything. You can access properties that don't exist, call the variable as a function, etc.
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+      label: 'any.ts',
+      code: `let danger: any = "Hello world";
+
+// TypeScript does NOT complain about any of this:
+danger.foo.bar.baz(); 
+danger();
+const x: number = danger;
+
+// ...but everything will fail at runtime 💥`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+<Callout type="error" title="Avoid any at all costs">
+Using `any` infects your code. If a function returns `any`, that lack of safety propagates. Use it only when you are migrating old JS code or it is 100% impossible to know the type (and even then, prefer `unknown`).
+</Callout>
+
+## 2. `unknown`: The safe alternative 🛡️
+
+`unknown` is like `any`: it accepts any value. BUT (and it's a big but) **it lets you do nothing with it** until you verify what it is.
+
+It forces you to use **Narrowing** (what we saw in Ch. #6) before using it.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+      label: 'unknown.ts',
+      code: `let safe: unknown = "Hello world";
+
+// Error: Object is of type 'unknown'.
+// safe.toUpperCase(); 
+
+// The correct way: Check first
+if (typeof safe === "string") {
+  // Now TS knows it is string
+  console.log(safe.toUpperCase());
+}`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+This is ideal for external API responses or `JSON.parse()`, where you *really* don't know what will come, but you want to handle it safely.
+
+## 3. `never`: The impossible 🚫
+
+`never` is the type for values that **can never happen**. It is the return type of a function that always throws an error (and thus never returns) or an infinite loop.
+
+<CodeTabs
+  items={[
+    {
+      label: 'never.ts',
+      code: `function error(message: string): never {
+  throw new Error(message);
+}
+// This function never returns "undefined" or anything, 
+// its execution never ends successfully.`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+### Exhaustiveness Checking (The pro trick)
+
+The most powerful use of `never` is ensuring you have covered all possible cases in a `switch` or `union`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'main.ts',
+      code: `type Status = "Loading" | "Success" | "Error";
+
+function getMessage(s: Status) {
+  switch (s) {
+    case "Loading": return "⏳";
+    case "Success": return "✅";
+    case "Error": return "❌";
+    default:
+      // If tomorrow you add "Inactive" to Status, 
+      // TS will mark error here because "s" would not be never.
+      const _exhaustiveCheck: never = s;
+      return _exhaustiveCheck;
+  }
+}`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+If in the future someone adds `| "Inactive"` to the `Status` type and forgets to update the `switch`, TypeScript will throw a compile-time error saying `Type 'string' is not assignable to type 'never'`. Magic! ✨
+
+## 4. Exercise: Taming the Unknown
+
+Let's put `unknown` into practice. You have a function that receives unknown data. To use it safely, **you will need to apply what you learned in the previous chapter (Type Guards)**.
+
+Your mission:
+1. Check if it is a `string`.
+2. If it is, return it in UPPERCASE.
+3. If it is NOT, throw an error saying exactly: `"Not text"`.
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  validationCode={validationCode}
+  showConsole={true}
+  successSound="success"
+  files={{
+    'exercise.ts': `// 1. Add type unknown
+
+    function safeUpperCase(value: ...): string {
+
+  // TODO: Implement logic here...
+
+
+  // Remember: unknown forces you to check the type before using it
+  // value.toUpperCase() will cause error if you don't apply Type Guard (chapter #6)
+  // JS TIP: to throw an error, use 'throw new Error();'
+
+  return "ups"; 
+}`
+  }}
+/>
+
+With this we close the advanced safety types block! Now your code will be much more robust. 🛡️
+
+## Summary
+
+*   **`any`**: "I don't care, leave me alone". (Unsafe, avoid it).
+*   **`unknown`**: "I don't trust you, show me your ID". (Safe, forces verification).
+*   **`never`**: "This should not happen". (Used for unreachable code).

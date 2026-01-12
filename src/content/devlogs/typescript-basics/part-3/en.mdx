@@ -34,7 +34,7 @@ In pure JavaScript, we often pass objects around trusting our memory.
 }
 
 // A month later, someone calls the function like this:
-printUser({ nombre: "Denis", edad: 40 }); 
+printUser({ nombre: "Alice", edad: 30 }); 
 // 💥 CRASH: Cannot read properties of undefined (reading 'toUpperCase')
 // Why? Because we passed "nombre" (Spanish) but the function expected "name" (English).`,
 		lang: 'javascript'
@@ -58,8 +58,8 @@ An `interface` is like a contract. If an object claims to be a `User`, it **MUST
     isDeveloper: boolean;
 }
 
-const denis: User = {
-    name: "Denis",
+const alice: User = {
+    name: "Alice",
     age: 39,
     isDeveloper: true
 }; // ✅ Fulfills the contract

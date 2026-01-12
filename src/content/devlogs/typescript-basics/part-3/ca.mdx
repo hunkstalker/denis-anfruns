@@ -34,7 +34,7 @@ En JavaScript pur, solem passar objectes d'un costat a l'altre confiant en la no
 }
 
 // Un mes després, algú crida la funció així:
-imprimirUsuari({ nom: "Denis", edat: 40 }); 
+imprimirUsuari({ nom: "Alice", edat: 30 }); 
 // 💥 CRASH: Cannot read properties of undefined (reading 'toUpperCase')
 // Per què? Perquè passem "nom" en català però la funció esperava "name" en anglès.`,
 		lang: 'javascript'
@@ -58,8 +58,8 @@ Una `interface` és com un contracte. Si un objecte diu ser un `Usuari`, **HA_DE
     isDeveloper: boolean;
 }
 
-const denis: Usuari = {
-    name: "Denis",
+const alice: Usuari = {
+    name: "Alice",
     age: 39,
     isDeveloper: true
 }; // ✅ Compleix el contracte

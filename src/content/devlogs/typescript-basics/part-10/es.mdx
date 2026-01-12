@@ -133,6 +133,8 @@ const hookEnReact = <T,>(arg: T) => { ... };`,
 Creemos una interfaz `Respuesta<T>` con `datos: T` y `error: string | null`.
 Luego creemos un objeto que use esa interfaz con `number`.
 
+import validationCode from './validation.ts?raw';
+
 <TSEditor
   client:only="react"
   id="ex-generics-wrapper"
@@ -155,29 +157,7 @@ const acierto...
 const fallo...
 `
   }}
-  validationCode={`
-     try {
-        // 1. Comprobar existencia
-        // @ts-ignore
-        if (typeof acierto === 'undefined' || typeof fallo === 'undefined') {
-            throw new Error("Debes crear las variables 'acierto' y 'fallo'.");
-        }
-
-        // 2. Comprobar tipos runtime
-        // @ts-ignore
-        if (acierto.datos !== 42 || typeof fallo.datos !== 'string') {
-             throw new Error("Los valores de 'acierto' o 'fallo' no son los esperados.");
-        }
-
-        if (typeof onSuccess === 'function') onSuccess();
-        console.log("✅ ¡Perfecto! Dominas los interfaces genéricos.");
-        console.log("Objetos creados correctamente:");
-        console.log(JSON.stringify({ acierto, fallo }, null, 2));
-
-    } catch (e) {
-        console.error(e.message);
-    }
-  `}
+  validationCode={validationCode}
 />
 
 En la **Parte 9**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacernos la vida más fácil.

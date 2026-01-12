@@ -39,7 +39,7 @@ interface Usuario {
 }
 
 const users: Usuario[] = [
-    { name: "Denis", age: 39 },
+    { name: "Alice", age: 30 },
     { name: "Pepe", age: 25 }
 ];`,
 		lang: 'typescript'
@@ -61,7 +61,7 @@ El ejemplo más famoso es el hook `useState` de React:
 		code: `// useState devuelve una tupla: [valor, funcion]
 // posición 0 siempre es el estado (string)
 // posición 1 siempre es el setter (función)
-const [name, setName] = useState("Denis");`,
+const [name, setName] = useState("Alice");`,
 		lang: 'tsx'
     }
 ]} />
@@ -130,6 +130,8 @@ Vamos a ensuciarnos las manos. Tienes dos retos abajo: uno para Arrays y otro pa
 ### Ejercicio 1: Arrays
 Crea un array llamado `paises` que contenga al menos 3 nombres de países (strings). Intenta añadir un número al array para ver cómo se queja TypeScript.
 
+import validationArrays from './validation-arrays.ts?raw';
+
 <TSEditor
   client:only="react"
   id="ex-arrays"
@@ -149,23 +151,7 @@ Crea un array llamado `paises` que contenga al menos 3 nombres de países (strin
 // 4. Vuelve a comentar el push del punto anterior y dale a RUN
 `
   }}
-  validationCode={`
-    try {
-        if (typeof paises === 'undefined') {
-            console.error("❌ No encuentro la variable 'paises'. asegúrate de declararla con 'const paises = ...'");
-        } else if (!Array.isArray(paises)) {
-            console.error("❌ 'paises' debe ser un Array (usa [])");
-        } else if (paises.some(p => typeof p !== 'string')) {
-            console.error("❌ Todos los elementos de 'paises' deben ser de tipo string (texto).");
-        } else {
-            console.log("✅ ¡Genial! Tienes un array de strings válido.");
-            console.log("🌍 Contenido:", paises);
-            if (typeof onSuccess === 'function') onSuccess();
-        }
-    } catch (e) {
-        console.error("Error validando:", e);
-    }
-  `}
+  validationCode={validationArrays}
 />
 
 ### Ejercicio 2: Tuplas
@@ -173,6 +159,8 @@ Crea una tupla estricta llamada `usuario`. Debe tener exactamente 3 elementos en
 1. `nombre` (string)
 2. `edad` (number)
 3. `esAdmin` (boolean)
+
+import validationTuples from './validation-tuples.ts?raw';
 
 <TSEditor
   client:only="react"
@@ -185,29 +173,7 @@ Crea una tupla estricta llamada `usuario`. Debe tener exactamente 3 elementos en
 // const usuario...
 `
   }}
-  validationCode={`
-    try {
-        if (typeof usuario === 'undefined') {
-            console.error("❌ No encuentro la variable 'usuario'.");
-        } else if (!Array.isArray(usuario)) {
-            console.error("❌ 'usuario' debe ser un Array (que actúa como Tupla).");
-        } else if (usuario.length !== 3) {
-            console.error("❌ La tupla 'usuario' debe tener exactamente 3 elementos: [Nombre, Edad, Admin]");
-        } else if (typeof usuario[0] !== 'string') {
-            console.error("❌ El primer elemento (Nombre) debe ser un string.");
-        } else if (typeof usuario[1] !== 'number') {
-            console.error("❌ El segundo elemento (Edad) debe ser un número.");
-        } else if (typeof usuario[2] !== 'boolean') {
-            console.error("❌ El tercer elemento (Admin) debe ser un booleano (true/false).");
-        } else {
-            console.log("✅ ¡Perfecto! Tu tupla cumple las reglas estrictas.");
-            console.log("👤 Usuario:", usuario);
-            if (typeof onSuccess === 'function') onSuccess();
-        }
-    } catch (e) {
-        console.error("Error validando:", e);
-    }
-  `}
+  validationCode={validationTuples}
 />
 
 En la **Parte 5**, las cosas se ponen serias. Dejamos lo básico y entramos en la magia de TypeScript: aprenderemos a que TS **escriba los tipos por nosotros** usando `typeof` y `keyof`.

@@ -1,0 +1,143 @@
+---
+pubDate: '2025-12-21T10:00:00Z'
+tags: ['typescript', 'generics', 'basics']
+draft: true
+new: true
+title: 'TypeScript #8: Generics (The Basics)'
+description: TS most powerful tool. Learn to write reusable and flexible code with <T>.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Until now, our types were fixed. `string` is always `string`.
+But, what if we want to create a function or component that works with **any type**, but without losing safety?
+
+Here enter **Generics**. They are like "parameters" but for Types.
+
+## The Problem: Duplication or `any`
+
+Imagine a function that returns what you pass to it (classic `identity` function).
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Option 1: Duplicate code for each type
+function returnString(val: string): string { return val; }
+function returnNumber(val: number): number { return val; }
+
+// Option 2: Use 'any' (We lose the type)
+function returnAny(val: any): any { return val; }
+
+const result = returnAny("Hello"); 
+// TS doesn't know 'result' is string, thinks it's 'any'.
+// result.toUpperCase(); // ❌ No autocomplete`,
+		lang: 'typescript'
+    }
+]} />
+
+## The Solution: Generics `<T>`
+
+We can tell the function: *"Hey, we are going to pass a type to you that we will call `T`. Use it to type the argument and the return"*.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function identity<T>(val: T): T {
+    return val;
+}
+
+// Explicit usage (we pass the type)
+const num = identity<number>(123); // num is number
+
+// Inference (TS is smart and guesses it)
+const str = identity("Hello"); // str is "Hello" (literal) or string`,
+		lang: 'typescript'
+    }
+]} />
+
+The `T` is a convention (comes from *Type*), but we can call it whatever we want: `<Data>`, `<Response>`, `<Props>`.
+
+## Generic Interfaces
+
+This is super common in React or API responses.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// A box that can contain anything
+interface Box<T> {
+    content: T;
+    label: string;
+}
+
+const shoeBox: Box<string> = {
+    content: "Nike Air",
+    label: "Sports"
+};
+
+const giftBox: Box<number> = {
+    content: 1000,
+    label: "Money"
+};`,
+		lang: 'typescript'
+    }
+]} />
+
+## Real Example: `useState`
+
+If we have used React, we have already used Generics without knowing it.
+
+<CodeTabs items={[
+    {
+		label: 'tsx',
+		code: `// useState is a Generic function: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]
+
+// Inference:
+const [name, setName] = useState("Alice"); // TS infers that T is string
+
+// Explicit (useful when initial value is null):
+const [user, setUser] = useState<User | null>(null);`,
+		lang: 'tsx'
+    }
+]} />
+
+### Let's try it!
+
+Create a function `envolver` (wrap) that **whatever you put in**, returns it inside an **array**.
+If you put `10`, `[10]` comes out. If you put `"hello"`, `["hello"]` comes out.
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-generics-basic"
+  showConsole={true}
+  successSound="success"
+  defaultMuted={false}
+  height="600px"
+  files={{
+    'main.ts': `// Challenge: Create the generic function 'envolver'
+// It must receive a value of type T and return an array of T (T[])
+
+function envolver... // Implement your solution here
+
+// 🧪 Tests (Do not touch this):
+const n = envolver(10);
+const s = envolver("hello");
+
+console.log("Wrapped number:", n);
+console.log("Wrapped text:", s);
+`
+  }}
+  validationCode={validationCode}
+/>

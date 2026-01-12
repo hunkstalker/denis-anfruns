@@ -2,7 +2,7 @@
 pubDate: '2025-12-26T10:00:00Z'
 tags: ['typescript', 'patterns', 'advanced']
 draft: true
-new: false
+new: true
 end: true
 title: 'TypeScript #13: Patrones Reales'
 description: La traca final. Sobrecarga de funciones, Builders y cómo crear tu propia mini-librería type-safe.
@@ -81,7 +81,7 @@ interface AppState {
 }
 
 const myStore = new Store<AppState>({ 
-    user: "Denis", 
+    user: "Alice", 
     darkMode: false 
 });
 
@@ -96,6 +96,8 @@ myStore.setState({ user: 123 });      // ❌ Error de tipo`,
 TypeScript tiene una curva de aprendizaje. Al principio parece que solo nos pone trabas y nos obliga a escribir más.
 Pero llega un día en que refactorizamos 20 archivos, TypeScript nos grita 5 errores, los corregimos, y al ejecutar... **todo funciona a la primera**.
 
-Ese es el momento en que nos enamoramos.
+Seguro que ya conoces ese subidón al solucionar un error que te ha costado días. Y el mucho mejor cuando lo solucionas porque ya sabes la respuesta de antemano sin darte cabezazos.
 
-¡Gracias por leer! 🚀
+La teoría está muy bien, pero la maestría se forja picando código. Te animo encarecidamente a que no te quedes solo con la lectura: coge los ejemplos de cada capítulo, rompe cosas, intenta replicarlos desde cero incluso mirando, da igual, ponte a prueba. Solo usando todo esto y peleándote arreglando errores interiorizarás cómo funciona TypeScript.
+
+¡Dale a tope! 💪 ¡Gracias por leer! 🚀

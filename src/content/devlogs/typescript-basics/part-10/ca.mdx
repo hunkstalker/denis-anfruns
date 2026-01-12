@@ -1,0 +1,179 @@
+---
+pubDate: '2025-12-23T10:00:00Z'
+tags: ['typescript', 'generics', 'interfaces']
+draft: true
+new: true
+title: 'TypeScript #10: Barrejant Conceptes (Generics + Interfaces)'
+description: 'La part difícil: combinar Generics, Interfaces i Tipus sense tornar-se boig.'
+series: typescript-basics
+seriesTitle: Fonaments de TypeScript
+seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com inferència i tipus.
+lang: ca
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Aquí és on molta gent es perd. Comencem a veure `<T>`, `interface`, `type`, `return T`... tot barrejat i sembla jeroglífic.
+
+Anem a desenredar-ho pas a pas.
+
+## Generics en Interfaces vs Tipus
+
+Quan usar un o l'altre? La sintaxi és gairebé idèntica.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Opció A: Interface Genèrica
+interface CaixaInterface<T> {
+    valor: T;
+}
+
+// Opció B: Type Genèric
+type CaixaType<T> = {
+    valor: T;
+}
+
+// S'usen IGUAL
+const a: CaixaInterface<string> = { valor: "Hola" };
+const b: CaixaType<string> = { valor: "Hola" };`,
+		lang: 'typescript'
+    }
+]} />
+
+No hi ha diferència funcional real per a dades simples. Usem la que preferim (solem usar `interface` per a objectes i `type` per a funcions/unions).
+
+## El Patró "Wrapper" (Datawrapper)
+
+Aquest és el cas d'ús #1 en el món real: Respostes d'API.
+Tenim una estructura fixa (`data`, `status`, `error`) però el contingut de `data` canvia segons la crida.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Definim la "closca" genèrica
+interface ApiResponse<Data> {
+    status: number;
+    message: string;
+    data: Data; // 👈 Aquí va la màgia
+}
+
+// Definim els nostres models concrets
+interface Usuari { id: number; name: string; }
+interface Producte { sku: string; price: number; }
+
+// Combinem-los!
+type UserResponse = ApiResponse<Usuari>;
+type ProductResponse = ApiResponse<Producte>;
+
+function fetchUser(): UserResponse {
+    return {
+        status: 200,
+        message: "OK",
+        data: { id: 1, name: "AliceDev" } // TS sap que data és Usuari
+    };
+}`,
+		lang: 'typescript'
+    }
+]} />
+
+## "Prop Drilling" de Tipus
+
+A vegades tenim Generics dins de Generics. És com passar una variable d'un avi a un net.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface PaginatedResponse<T> {
+    items: T[];       // Array de T
+    total: number;
+    page: number;
+}
+
+// ApiResponse conté PaginatedResponse, que conté Usuari
+type UsersApi = ApiResponse<PaginatedResponse<Usuari>>;
+
+// Sembla complex, però TS ho resol sol:
+// UsersApi = { 
+//   status: number,
+//   data: {
+//      items: Usuari[],
+//      total: number
+//   }
+// }`,
+		lang: 'typescript'
+    }
+]} />
+
+## Avançat: `infer` (Funcions de Tipus)
+
+Això ja és nivell cinturó negre, però només perquè sàpigues que existeix.
+Pots crear un Tipus que "extregui" tipus d'altres tipus usant `infer`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Un tipus que extreu el tipus de dins d'un Array
+type UnpackArray<T> = T extends (infer U)[] ? U : T;
+
+type StringArray = string[];
+type JustString = UnpackArray<StringArray>; 
+// Resultat: string`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="warning" title="Insight: Funcions de Tipus">
+T'adones del que acabem de fer? `UnpackArray<T>` és literalment una funció.
+Rep un argument (`T`).
+Fa un `if` (`extends`).
+Retorna un resultat (`U` o `T`).
+
+El sistema de tipus de TypeScript ÉS un llenguatge de programació en si mateix. 🤯
+</Callout>
+
+<Callout type="info" title="Per què UnpackArray retorna string">
+**Explicació detallada de `infer U`**:
+Quan escrivim `T extends (infer U)[]`, estem preguntant a TS: *"El tipus T s'assembla a un Array d'alguna cosa? Si és així, captura aquesta 'cosa' i digues-li U"*.
+
+1. Passem `string[]` com a `T`.
+2. TS compara `string[]` contra `(infer U)[]`.
+3. Dedueix que `U` ha de ser `string`.
+4. Retorna `U` (`string`).
+</Callout>
+
+### Et toca!
+
+Defineix dues variables usant la interfície `ApiResponse` que acabem de veure a dalt.
+1. `acierto`: Ha de ser una resposta correcta amb `data` sent un `number` (ex: 42).
+2. `fallo`: Ha de ser una resposta amb `data` sent `string` (ex: "Error greu").
+
+import validationCode from './validation.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-generics-interfaces"
+  showConsole={true}
+  defaultMuted={false}
+  height="500px"
+  files={{
+    'main.ts': `interface ApiResponse<Data> {
+    status: number;
+    message: string;
+    data: Data;
+}
+
+// 1. Crea 'acierto' aquí (data és number)
+// const acierto...
+
+// 2. Crea 'fallo' aquí (data és string)
+// const fallo...
+
+// 🧪 Comprova
+// console.log(acierto, fallo);
+`
+  }}
+  validationCode={validationCode}
+/>

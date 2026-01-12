@@ -1,7 +1,6 @@
 ---
 pubDate: '2025-12-14T20:00:00Z'
 tags: ['typescript', 'inference', 'basics']
-heroImage: /assets/typescript-basics/hero-ts-basics.webp
 draft: false
 new: false
 title: 'TypeScript #1: Inference works for you'
@@ -18,21 +17,7 @@ import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 export const age = new Date().getFullYear() - 1985
 
-## Welcome! 🚀
-
-This is the first part of a series that will try to make you understand TypeScript _**for real**_, not just so you can copy and paste "any" when the compiler complains.
-
-The goal of the full series is to end up understanding that TypeScript is not just JavaScript with types, but that TypeScript is a typing proto-language to create any type structure you need for your projects and making it so that, although yes, everything is slower and heavier with the damn 👹 warnings, in the end you gain in code safety and robustness.
-
-I am no expert, but I have always thought that the best way to learn is to try to teach others. This forces you to approach each topic in a way that anyone can understand and see it from many perspectives.
-
-That's why, in this series, I will try to explain each concept from scratch, without using complex technical terms, without using technical language that only those who already know TypeScript understand.
-
 The first thing we will start with is understanding that **TypeScript is smart. You don't have to explain the obvious to it.**
-
-<Callout type="info" title="Info" filled>
-    Note: This is the first entry in a series of TILs about learning. Although it is different from the rest of the TILs which are short notes, I thought about reusing it because, after all, it follows the same idea of something you learn day by day. For now, this is an experiment.
-</Callout>
 
 ## Type Inference
 
@@ -44,14 +29,14 @@ Many devs (like me) coming from strongly typed languages (like older C, Java, or
     {
 		label: 'example.ts',
 		code: `// ❌ Redundant (Unnecessary Boilerplate)
-const userName: string = "Denis";
+const userName: string = "Alice";
 const userAge: number = ${age};
 const isAdmin: boolean = true;`,
 		lang: 'typescript'
     }
 ]} />
 
-TypeScript already knows that "Denis" is a string. You don't have to swear it.
+TypeScript already knows that "Alice" is a string. You don't have to swear it.
 
 <CodeTabs
   status="success"
@@ -59,7 +44,7 @@ TypeScript already knows that "Denis" is a string. You don't have to swear it.
   {
     label: 'example.ts',
     code: `// ✅ Perfect (Clean and readable)
-const userName = "Denis"; // TS infers: string (or literal "Denis", we'll see this later)
+const userName = "Alice"; // TS infers: string (or literal "Alice", we'll see this later)
 const userAge = ${age};       // TS infers: number
 const isAdmin = true;     // TS infers: boolean`,
     lang: 'typescript'

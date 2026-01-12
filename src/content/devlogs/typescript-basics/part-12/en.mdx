@@ -1,0 +1,106 @@
+---
+pubDate: '2025-12-25T10:00:00Z'
+tags: ['typescript', 'infer', 'advanced']
+draft: true
+new: true
+title: 'TypeScript #12: Advanced Inference (infer)'
+description: The most mysterious keyword in TypeScript. Learn to extract types from inside other types.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+If Generics is expert level, `infer` is **Jedi Master** level.
+It is used inside **Conditional Types** to "extract" a type that is locked inside another.
+
+## Conditional Types
+
+First, let's understand this. It's like an `if/else` but for types.
+
+In this context, the `extends` keyword **does not mean class inheritance**. Think of it rather as a **compatibility question**:
+
+> Is the type on the left (`T`) assignable to the type on the right (`string`)?
+If the answer is **Yes**, the result is the **Literal Type** `"Yes"`. If it is **No**, the result is the **Literal Type** `"No"`.
+*(Remember that in TypeScript, a specific string can be its own type)*.
+
+<CodeTabs items={[
+    {
+		label: 'example.ts',
+		code: `type IsString<T> = T extends string ? "Yes" : "No";
+
+type A = IsString<string>; // "Yes"
+type B = IsString<number>; // "No"`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="info" title='"Type Functions"'>
+	If you thought about it, you are right: **You are programming with types.**
+
+	*   `TypeName<T>` is the **function** (and `T` the parameter).
+	*   `extends ? :` is the **logic** (the `if/else`).
+	*   The resulting type is the **return**.
+</Callout>
+
+## The `infer` keyword
+
+It serves to create a **temporary variable** inside that condition.
+Imagine that we want to know **what type** a function returns.
+
+To do this, first we need to know how to describe "any function" in TypeScript.
+A generic function type looks like this: `(...args: any[]) => any`.
+*   `...args`: This is JS syntax (Rest Parameter). Collects **all** arguments in an array.
+*   `: any[]`: Says that array can contain **any amount** of things of **any type**.
+*   `=> any`: Returns anything.
+
+If we do `T extends (...args: any[]) => any`, we are asking: **"Is T a function?"**.
+
+Now comes the magic: If instead of `=> any` we put `=> infer R`, we are telling TS:
+*"If T is a function, **infer** (find out) its **return type** and save it in the variable `R`"*.
+
+<CodeTabs items={[
+    {
+		label: 'example.ts',
+		code: `type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+// Breakdown:
+// 1. T extends (...args: any[]) => ...  -> Is T a function?
+// 2. ... => infer R                     -> If so, capture its return in 'R'.
+// 3. ? R                                -> Return that 'R'.
+// 4. : never                            -> If it is not a function, return 'never'.
+
+function giveMeNumber() { return 42; }
+
+type Result = GetReturnType<typeof giveMeNumber>; 
+// TS looks at the function, sees it returns number, and infers R = number.
+// Result is 'number'.`,
+		lang: 'typescript'
+    }
+]} />
+
+## Useful Example: Unpack Promise
+
+Imagine we have a `Promise<User>`, but we want to get the `User` type directly.
+
+<CodeTabs items={[
+    {
+		label: 'example.ts',
+		code: `// We have this:
+type PromiseResponse = Promise<{ id: number; name: string }>;
+
+// We want this:
+// { id: number; name: string }
+
+// Solution with infer:
+type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
+
+// Magic:
+type ResponseType = UnpackPromise<PromiseResponse>;`,
+		lang: 'typescript'
+    }
+]} />

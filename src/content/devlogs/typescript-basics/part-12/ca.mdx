@@ -1,0 +1,106 @@
+---
+pubDate: '2025-12-25T10:00:00Z'
+tags: ['typescript', 'infer', 'advanced']
+draft: true
+new: true
+title: 'TypeScript #12: Inferència Avançada (infer)'
+description: La paraula clau més misteriosa de TypeScript. Aprèn a extreure tipus des de dins d'altres tipus.
+series: typescript-basics
+seriesTitle: Fonaments de TypeScript
+seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com inferència i tipus.
+lang: ca
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Si Generics és el nivell expert, `infer` és nivell **Mestre Jedi**.
+S'usa dins dels **Conditional Types** per "treure" un tipus que està tancat dins d'un altre.
+
+## Tipus Condicionals
+
+Primer, entenguem això. És com un `if/else` però per a tipus.
+
+En aquest context, la paraula clau `extends` **no significa herència de classes**. Pensa-ho més aviat com una **pregunta de compatibilitat**:
+
+> És el tipus de l'esquerra (`T`) assignable al tipus de la dreta (`string`)?
+Si la resposta és **Sí**, el resultat és el **Tipus Literal** `"Sí"`. Si és **No**, el resultat és el **Tipus Literal** `"No"`.
+*(Recorda que a TypeScript, una cadena específica pot ser el seu propi tipus)*.
+
+<CodeTabs items={[
+    {
+		label: 'exemple.ts',
+		code: `type EsString<T> = T extends string ? "Sí" : "No";
+
+type A = EsString<string>; // "Sí"
+type B = EsString<number>; // "No"`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="info" title='"Funcions de Tipus"'>
+	Si ho has pensat, tens raó: **Estàs programant amb tipus.**
+
+	*   `TypeName<T>` és la **funció** (i `T` el paràmetre).
+	*   `extends ? :` és la **lògica** (l'`if/else`).
+	*   El tipus resultant és el **return**.
+</Callout>
+
+## La paraula clau `infer`
+
+Serveix per crear una **variable temporal** dins d'aquesta condició.
+Imaginem que volem saber **quin tipus** retorna una funció.
+
+Per a fer-ho, primer necessitem saber com descriure "qualsevol funció" a TypeScript.
+Un tipus de funció genèrica es veu així: `(...args: any[]) => any`.
+*   `...args`: Això és sintaxi JS (Rest Parameter). Recull **tots** els arguments en un array.
+*   `: any[]`: Diu que aquest array pot contenir **qualsevol quantitat** de coses de **qualsevol tipus**.
+*   `=> any`: Retorna qualsevol cosa.
+
+Si fem `T extends (...args: any[]) => any`, estem preguntant: **"És T una funció?"**.
+
+Ara ve la màgia: Si en lloc de `=> any` posem `=> infer R`, li estem dient a TS:
+*"Si T és una funció, **infereix** (esbrina) el seu **tipus de retorn** i guarda'l a la variable `R`"*.
+
+<CodeTabs items={[
+    {
+		label: 'exemple.ts',
+		code: `type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+
+// Desglossament:
+// 1. T extends (...args: any[]) => ...  -> És T una funció?
+// 2. ... => infer R                     -> Si ho és, captura el seu retorn en 'R'.
+// 3. ? R                                -> Retorna'm aquest 'R'.
+// 4. : never                            -> Si no és funció, retorna 'never'.
+
+function donaNumero() { return 42; }
+
+type Resultat = GetReturnType<typeof donaNumero>; 
+// TS mira la funció, veu que retorna number, i infereix que R = number.
+// Resultat és 'number'.`,
+		lang: 'typescript'
+    }
+]} />
+
+## Exemple Útil: Unpack Promise
+
+Imaginem que tenim una `Promise<Usuari>`, però volem obtenir el tipus `Usuari` directament.
+
+<CodeTabs items={[
+    {
+		label: 'exemple.ts',
+		code: `// Tenim això:
+type RespostaPromesa = Promise<{ id: number; nom: string }>;
+
+// Volem això:
+// { id: number; nom: string }
+
+// Solució amb infer:
+type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
+
+// Màgia:
+type TipusResposta = UnpackPromise<RespostaPromesa>;`,
+		lang: 'typescript'
+    }
+]} />

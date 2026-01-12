@@ -103,7 +103,7 @@ Si hemos usado React, ya hemos usado Generics sin saberlo.
 		code: `// useState es una función Genérica: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]
 
 // Inferencia:
-const [name, setName] = useState("Denis"); // TS infiere que T es string
+const [name, setName] = useState("Alice"); // TS infiere que T es string
 
 // Explícito (útil cuando el valor inicial es null):
 const [user, setUser] = useState<Usuario | null>(null);`,
@@ -130,6 +130,8 @@ Con `<T>`, TS mantiene la conexión: entró string -> sale string.
 Crea una función `envolver` que **metas lo que metas**, te lo devuelva dentro de un **array**.
 Si metes `10`, sale `[10]`. Si metes `"hola"`, sale `["hola"]`.
 
+import validationCode from './validation.ts?raw';
+
 <TSEditor
   client:only="react"
   id="ex-generics-basic"
@@ -151,34 +153,7 @@ console.log("Número envuelto:", n);
 console.log("Texto envuelto:", s);
 `
   }}
-  validationCode={`
-     try {
-        // 1. Verificar si existe la función
-        // @ts-ignore
-        if (typeof envolver !== 'function') throw new Error("No has creado la función 'envolver'");
-
-        // 2. Verificar lógica en tiempo de ejecución
-        // @ts-ignore
-        const testNum = envolver(123);
-        // @ts-ignore
-        const testStr = envolver("test");
-
-        if (!Array.isArray(testNum) || testNum[0] !== 123) {
-             throw new Error("envolver(123) debería devolver [123]");
-        }
-        if (!Array.isArray(testStr) || testStr[0] !== "test") {
-             throw new Error("envolver('test') debería devolver ['test']");
-        }
-
-        // 3. Verificaciones extra de trampa (evitar que devuelva el mismo array si se le pasa array)
-        if (testNum.length !== 1) throw new Error("El array devuelto debe tener exactamente 1 elemento");
-
-        if (typeof onSuccess === 'function') onSuccess();
-        console.log("✅ ¡Excelente! Has creado tu primer Generic.");
-    } catch (e) {
-        console.error(e.message);
-    }
-  `}
+  validationCode={validationCode}
 />
 
 En la **Parte 7**, subiremos el nivel. Veremos cómo **restringir** esos Generics (para que no valga "cualquier cosa") y cómo darles valores por defecto.

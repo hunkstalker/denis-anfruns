@@ -1,0 +1,179 @@
+---
+pubDate: '2025-12-23T10:00:00Z'
+tags: ['typescript', 'generics', 'interfaces']
+draft: true
+new: true
+title: 'TypeScript #10: Mixing Concepts (Generics + Interfaces)'
+description: 'The hard part: combining Generics, Interfaces and Types without going crazy.'
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+Other people get lost here. We start seeing `<T>`, `interface`, `type`, `return T`... everything mixed up and it looks like hieroglyphics.
+
+Let's untangle it step by step.
+
+## Generics in Interfaces vs Types
+
+When to use one or the other? The syntax is almost identical.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Option A: Generic Interface
+interface BoxInterface<T> {
+    value: T;
+}
+
+// Option B: Generic Type
+type BoxType<T> = {
+    value: T;
+};
+
+// They are used EQUALLY
+const a: BoxInterface<string> = { value: "Hello" };
+const b: BoxType<string> = { value: "Hello" };`,
+		lang: 'typescript'
+    }
+]} />
+
+There is no real functional difference for simple data. Use whatever you prefer (we usually use `interface` for objects and `type` for functions/unions).
+
+## The "Wrapper" Pattern (Datawrapper)
+
+This is the real world use case #1: API Responses.
+We have a fixed structure (`data`, `status`, `error`) but the content of `data` changes according to the call.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Let's define the generic "shell"
+interface ApiResponse<Data> {
+    status: number;
+    message: string;
+    data: Data; // 👈 Here goes the magic
+}
+
+// Let's define our concrete models
+interface User { id: number; name: string; }
+interface Product { sku: string; price: number; }
+
+// Let's combine them!
+type UserResponse = ApiResponse<User>;
+type ProductResponse = ApiResponse<Product>;
+
+function fetchUser(): UserResponse {
+    return {
+        status: 200,
+        message: "OK",
+        data: { id: 1, name: "AliceDev" } // TS knows that data is User
+    };
+}`,
+		lang: 'typescript'
+    }
+]} />
+
+## Type "Prop Drilling"
+
+Sometimes we have Generics inside Generics. It's like passing a variable from a grandparent to a grandchild.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `interface PaginatedResponse<T> {
+    items: T[];       // Array of T
+    total: number;
+    page: number;
+}
+
+// ApiResponse contains PaginatedResponse, which contains User
+type UsersApi = ApiResponse<PaginatedResponse<User>>;
+
+// It seems complex, but TS resolves it alone:
+// UsersApi = { 
+//   status: number,
+//   data: {
+//      items: User[],
+//      total: number
+//   }
+// }`,
+		lang: 'typescript'
+    }
+]} />
+
+## Advanced: `infer` (Type Functions)
+
+This is already black belt level, but just so you know it exists.
+You can create a Type that "extracts" types from other types using `infer`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// A type that extracts the type from inside an Array
+type UnpackArray<T> = T extends (infer U)[] ? U : T;
+
+type StringArray = string[];
+type JustString = UnpackArray<StringArray>; 
+// Result: string`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="warning" title="Insight: Type Functions">
+Do you realize what we just did? `UnpackArray<T>` is literally a function.
+It receives an argument (`T`).
+It does an `if` (`extends`).
+It returns a result (`U` or `T`).
+
+TypeScript's type system IS a programming language in itself. 🤯
+</Callout>
+
+<Callout type="info" title="Why UnpackArray returns string">
+**Detailed explanation of `infer U`**:
+When we write `T extends (infer U)[]`, we are asking TS: *"Does the type T look like an Array of something? If so, capture that 'something' and call it U"*.
+
+1. We pass `string[]` as `T`.
+2. TS matches `string[]` against `(infer U)[]`.
+3. It deduces that `U` must be `string`.
+4. It returns `U` (`string`).
+</Callout>
+
+### Your turn!
+
+Define two variables using the `ApiResponse` interface we just saw above.
+1. `acierto` (success): Must be a correct response with `data` being a `number` (e.g., 42).
+2. `fallo` (failure): Must be a response with `data` being a `string` (e.g., "Critical error").
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-generics-interfaces"
+  showConsole={true}
+  defaultMuted={false}
+  height="500px"
+  files={{
+    'main.ts': `interface ApiResponse<Data> {
+    status: number;
+    message: string;
+    data: Data;
+}
+
+// 1. Create 'acierto' here (data is number)
+// const acierto...
+
+// 2. Create 'fallo' here (data is string)
+// const fallo...
+
+// 🧪 Check
+// console.log(acierto, fallo);
+`
+  }}
+  validationCode={validationCode}
+/>

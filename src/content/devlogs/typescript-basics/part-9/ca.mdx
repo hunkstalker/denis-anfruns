@@ -1,0 +1,149 @@
+---
+pubDate: '2025-12-22T10:00:00Z'
+tags: ['typescript', 'generics', 'constraints']
+draft: true
+new: true
+title: 'TypeScript #9: Generics Intermedis (Constraints)'
+description: Com domar els Generics perquè no acceptin "qualsevol cosa". Constraints, valors per defecte i el truc de keyof.
+series: typescript-basics
+seriesTitle: Fonaments de TypeScript
+seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com inferència i tipus.
+lang: ca
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+A la part anterior vam veure que `<T>` pot ser qualsevol cosa. A vegades, això és **massa flexible**.
+Què passa si volem que `T` tingui sí o sí una propietat `.length`?
+
+## Restriccions (`extends`)
+
+Imaginem aquesta funció:
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `function getLength<T>(item: T) {
+    return item.length; // ❌ Error: Property 'length' does not exist on type 'T'.
+}
+
+// TS es queixa perquè T podria ser un número (que no té .length), 
+// o un boolean...`,
+		lang: 'typescript'
+    }
+]} />
+
+Per arreglar-ho, usem `extends` per posar una **restricció** (Constraint).
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+		label: 'TypeScript',
+		code: `// Li diem: "T pot ser el que vulguis, PERÒ ha d'estendre (complir) aquesta forma"
+interface TeLongitud {
+    length: number;
+}
+
+function getLength<T extends TeLongitud>(item: T) {
+    return item.length; // ✅ Ara TS sap que existeix
+}
+
+getLength("Hola"); // ✅ string té .length
+getLength([1, 2, 3]); // ✅ array té .length
+getLength(123); // ❌ Error: number no té .length`,
+		lang: 'typescript'
+    }
+]} />
+
+## Generics amb `keyof` (El truc mestre)
+
+Aquest patró el veurem a tot arreu. Volem una funció que obtingui una propietat d'un objecte de forma segura.
+
+Necessitem definir dos Generics:
+1. `T`: L'objecte.
+2. `K`: La clau (key). Però `K` no pot ser qualsevol string, ha de ser **una key de T**.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `function getProperty<T, K extends keyof T>(obj: T, key: K) {
+    return obj[key];
+}
+
+const developer = {
+    name: "AliceDev",
+    language: "TypeScript"
+};
+
+getProperty(developer, "name"); // ✅ TS sap que això retorna string
+getProperty(developer, "age"); // ❌ Error: "age" no és una key de developer`,
+		lang: 'typescript'
+    }
+]} />
+
+## Valors per Defecte (`=`)
+
+Igual que en les funcions normals (`function suma(a, b = 0)`), els Generics poden tenir valors per defecte.
+
+Això és molt útil per no obligar l'usuari a escriure el tipus sempre.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Si no passem T, assumiré que és 'string'
+interface RespostaAPI<T = string> {
+    data: T;
+    status: number;
+}
+
+// Ús sense arguments:
+const simple: RespostaAPI = { data: "Hola", status: 200 }; // T és string
+
+// Ús amb arguments:
+const complex: RespostaAPI<number> = { data: 123, status: 200 }; // T és number`,
+		lang: 'typescript'
+    }
+]} />
+
+### Provem-ho!
+
+Creem una funció `fusionar` que prengui dos objectes `obj1` i `obj2` i els combini. Tipem la funció usant dos generics `T` i `U`.
+
+import validationCode from './validation.ca.ts?raw';
+
+<TSEditor
+  client:only="react"
+  id="ex-generics-constraints"
+  showConsole={false}
+  defaultMuted={true}
+  height="500px"
+  files={{
+    'main.ts': `// Repte: Modifica 'fusionar' perquè NOMÉS accepti objectes reals.
+// 1. Afegeix generics <T, U> a la funció.
+// 2. Usa 'extends object' (en minúscula) per restringir-los. 
+//      -> Això bloquejarà números, strings i booleans.
+//      -> Si uses 'Object' (majúscula), els primitius es colarien.
+
+function fusionar(obj1: any, obj2: any) {
+    return { ...obj1, ...obj2 };
+}
+
+const user = { nombre: "AliceDev" };
+const settings = { theme: "dark" };
+
+// ✅ Cas d'èxit (això funcionarà sempre):
+const resultat = fusionar(user, settings); 
+console.log("Resultat:", resultat);
+
+// 🧪 Comprovació. Això és el que volem evitar, que es pugui colar un número.
+// Si en descomentar la línia de sota surt un error, has superat el repte!
+// fusionar(user, 123);
+`
+  }}
+  validationCode={validationCode}
+/>

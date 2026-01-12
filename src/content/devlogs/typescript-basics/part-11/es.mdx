@@ -98,7 +98,6 @@ No sabemos si guardarás a "Pepe" o "María", pero sabemos que la estructura sie
 		label: 'TypeScript',
 		code: `// Un objeto normal requiere saber las claves de antemano
 // interface Agenda { pepe: number } // ❌ Poco práctico
-
 // Con Record, definimos el "molde" de la clave y el valor
 type Agenda = Record<string, number>;
 
@@ -112,9 +111,9 @@ const misContactos: Agenda = {
 ]} />
 
 <Callout type="tip" title="¿Por qué no usar Map?">
-En JavaScript moderno existe `Map`, que es un diccionario real. En TypeScript sería `Map<string, number>`.
+    En JavaScript moderno existe `Map`, que es un diccionario real. En TypeScript sería `Map<string, number>`.
 
-Sin embargo, usamos `Record` (Objetos) el 90% del tiempo porque **los Objetos se convierten a JSON automáticamente**, mientras que los `Map` se pierden al enviarlos a una API.
+    Sin embargo, usamos `Record` (Objetos) el 90% del tiempo porque **los Objetos se convierten a JSON automáticamente**, mientras que los `Map` se pierden al enviarlos a una API.
 </Callout>
 
 <CodeTabs items={[
@@ -146,8 +145,11 @@ Tenemos una interfaz `Todo`. Usemos:
 2. `Pick` para definir una variable `preview` que solo tenga el título.
 3. `Record` para crear un `Catalogo` donde guardemos Todo por su ID (string).
 
+import validationCode from './validation.ts?raw';
+
 <TSEditor
   client:only="react"
+  id="ex-utility-types"
   showConsole={true}
   successSound="success"
   defaultMuted={false}
@@ -161,14 +163,14 @@ Tenemos una interfaz `Todo`. Usemos:
 }
 
 // 1. Definimos 'TodoUpdate' usando Partial (Todo opcional)
-type TodoUpdate = any; 
+// type TodoUpdate = ...
 
 // 2. Definimos 'TodoPreview' usando Pick (solo title y completed)
-type TodoPreview = any;
+// type TodoPreview = ...
 
 // 3. Definimos 'TodoDictionary' usando Record
 // Clave: string (el ID), Valor: Todo
-type TodoDictionary = any;
+// type TodoDictionary = ...
 
 // Pruebas (No tocar)
 const testUpdate: TodoUpdate = { title: "Solo titulo" }; // ✅
@@ -181,24 +183,7 @@ const testDiccionario: TodoDictionary = {
 };
 `
   }}
-  validationCode={`
-     // Verificación de Tipos (Anti-Trampas)
-     type IsAny<T> = 0 extends (1 & T) ? true : false;
-     
-     // Chequeos de tipo estricto
-     const _checkUpdate: IsAny<TodoUpdate> = false;
-     const _checkPreview: IsAny<TodoPreview> = false;
-     const _checkRecord: IsAny<TodoDictionary> = false;
-
-     // Chequeo runtime adicional para Record (asegurar que es un objeto)
-     if (typeof testDiccionario !== 'object') {
-         throw new Error("testDiccionario debe ser un objeto.");
-     }
-
-     if (typeof onSuccess === 'function') onSuccess();
-     console.log("✅ ¡Genial! Has dominado los Utility Types (incluido Record).");
-     console.log("Diccionario creado:", Object.keys(testDiccionario).length, "elementos.");
-  `}
+  validationCode={validationCode}
 />
 
 En la **Parte 10**, entraremos en territorio avanzado. Usaremos `infer` para que TypeScript "extraiga" tipos de lugares imposibles, como el tipo de retorno de una función.

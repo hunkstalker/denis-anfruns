@@ -1,7 +1,6 @@
 ---
 pubDate: '2025-12-14T20:00:00Z'
 tags: ['typescript', 'inference', 'basics']
-heroImage: /assets/typescript-basics/hero-ts-basics.webp
 draft: false
 new: false
 title: 'TypeScript #1: La Inferencia treballa per tu'
@@ -18,21 +17,7 @@ import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 export const age = new Date().getFullYear() - 1985
 
-## Benvingut! 🚀
-
-Aquesta és la primera part d'una sèrie que intentarà que entenguis TypeScript _**de veritat**_, no només perquè copiïs i enganxis "any" quan el compilador es queixa.
-
-L'objectiu de la sèrie completa és acabar comprenent que TypeScript no és només JavaScript amb tipus, sinó que TypeScript és un protolenguatge de tipat per crear tota estructura de tipus que necessitis per als teus projectes i fer que, encara que sí, tot sigui més lent i pesat amb les maleïdes 👹 advertències, al final guanyis en seguretat i robustesa de codi.
-
-Jo no soc cap expert, però sempre he pensat que per aprendre el millor és tractar d'ensenyar als altres. Això t'obliga a abordar cada tema de manera que qualsevol pugui entendre'ls i veure-ho des de moltes perspectives.
-
-Per això, en aquesta sèrie intentaré explicar cada concepte des de zero, sense utilitzar termes tècnics complexos, sense utilitzar llenguatge tècnic que només els que ja saben TypeScript entenguin.
-
 El primer pel que començarem és entendre que **TypeScript és llest. No cal explicar-li l'obvi.**
-
-<Callout type="info" title="Info" filled>
-    Nota: Aquesta és la primera entrada d'una sèrie de TIL sobre aprenentatge. Encara que és diferent de la resta de TIL que són notes curtes, he pensat a reutilitzar-lo perquè al cap i a la fi segueix la mateixa idea d'alguna cosa que aprens dia a dia. Per ara això és un experiment.
-</Callout>
 
 ## La Inferència de Tipus
 
@@ -44,14 +29,14 @@ Molts devs (com jo) que venen de llenguatges fortament tipats (com C, Java o C# 
     {
 		label: 'example.ts',
 		code: `// ❌ Redundant (Boilerplate innecessari)
-const userName: string = "Denis";
+const userName: string = "Arnau";
 const userAge: number = ${age};
 const isAdmin: boolean = true;`,
 		lang: 'typescript'
     }
 ]} />
 
-TypeScript ja sap que "Denis" és un string. No cal que l'hi juris.
+TypeScript ja sap que "Arnau" és un string. No cal que l'hi juris.
 
 <CodeTabs
   status="success"
@@ -59,7 +44,7 @@ TypeScript ja sap que "Denis" és un string. No cal que l'hi juris.
   {
     label: 'example.ts',
     code: `// ✅ Perfecte (Net i llegible)
-const userName = "Denis"; // TS infereix: string (o literal "Denis", veurem això després)
+const userName = "Arnau"; // TS infereix: string (o literal "Arnau", veurem això després)
 const userAge = ${age};       // TS infereix: number
 const isAdmin = true;     // TS infereix: boolean`,
     lang: 'typescript'

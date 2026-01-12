@@ -1,0 +1,168 @@
+---
+pubDate: '2025-12-19T10:00:00Z'
+tags: ['typescript', 'narrowing', 'basics']
+draft: true
+new: true
+title: 'TypeScript #6: Type Guards & Narrowing'
+description: Learn to tell TypeScript "trust me, I know what I'm doing". Type Guards, 'is' operator and narrowing.
+series: typescript-basics
+seriesTitle: TypeScript Fundamentals
+seriesDescription: Learn TypeScript from scratch, diving deep into concepts like inference and types.
+lang: en
+---
+
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import Callout from '../../../../components/mdx/Callout.astro';
+import TSEditor from '../../../../components/learn/TSEditor.tsx';
+
+TypeScript is very smart, but sometimes it needs "clues" to know exactly what type a variable is at a given moment. This process of refining a broad type (like `string | number`) to a more specific one (like `string`) is called **Narrowing**.
+
+And to achieve this, we use **Type Guards**.
+
+## 1. The problem: Uncertainty
+
+Imagine you have a function that accepts an ID, but this ID can be a number (SQL Database) or a text (UUID).
+
+<CodeTabs
+  status="error"
+  items={[
+    {
+      label: 'main.ts',
+      code: `function printId(id: string | number) {
+  // Error: Property 'toUpperCase' does not exist on type 'string | number'.
+  // Property 'toUpperCase' does not exist on type 'number'.
+  console.log(id.toUpperCase()); 
+}
+
+printId("abc");`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+TypeScript complains because it **is not sure** that `id` is a string. If it were a number, `.toUpperCase()` would crash at runtime. 💥
+
+## 2. Solution: `typeof` Guards
+
+The most common form of narrowing is using the JavaScript `typeof` operator inside an `if` conditional. TypeScript understands this code and "reduces" the type inside the block.
+
+<CodeTabs
+  status="success"
+  items={[
+    {
+      label: 'main.ts',
+      code: `function printId(id: string | number) {
+  if (typeof id === "string") {
+    // Inside here TypeScript KNOWS that id is string!
+    console.log("Your ID is: " + id.toUpperCase());
+  } else {
+    // And here it knows it HAS to be number
+    console.log("Your ID is: " + id.toFixed(2));
+  }
+}
+
+printId("Pizza!");
+printId(123.456);`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Types supported by typeof">
+Remember that `typeof` only works with basic primitives: `"string"`, `"number"`, `"boolean"`, `"symbol"`, `"undefined"`, `"object"`, and `"function"`.
+Watch out! `typeof null` returns `"object"`, which is a historical JS bug.
+</Callout>
+
+## 3. Truthiness Narrowing
+
+Sometimes you don't need to know the exact type, only if the value exists (is not `null` or `undefined`).
+
+<CodeTabs
+  items={[
+    {
+      label: 'truthiness.ts',
+      code: `function printName(name?: string) {
+  // name is string | undefined
+  if (name) {
+    // Here name is string (because undefined is falsy)
+    console.log(name.toUpperCase());
+  }
+}`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+## 4. `instanceof` Narrowing
+
+For objects built with classes, `typeof` is not very useful (everything is "object"). Here `instanceof` comes in using `new`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'main.ts',
+      code: `function logValue(x: Date | string) {
+  if (x instanceof Date) {
+    console.log(x.toUTCString()); // x is Date
+  } else {
+    console.log(x.toUpperCase()); // x is string
+  }
+}`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+## 5. Type Predicates (`is`)
+
+This is the most "Pro" part. What if we have a custom verification logic?
+We can create a function that returns a **Type Predicate**: `param is Type`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'main.ts',
+      code: `interface Fish { swim: () => void }
+interface Bird { fly: () => void }
+
+// Narrowing Function
+function isFish(pet: Fish | Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
+}
+
+// Usage
+function move(pet: Fish | Bird) {
+  if (isFish(pet)) {
+    pet.swim(); // TS knows it is Fish
+  } else {
+    pet.fly(); // TS knows it HAS to be Bird
+  }
+}`,
+      lang: 'typescript'
+    }
+  ]}
+/>
+
+## 6. Exercise: The Universal Formatter
+
+You have a function that receives safe inputs, but you don't know if they will come as `string` or `number`. Your job is to format them correctly without TypeScript complaining.
+
+Ideally make use of `typeof`
+
+import validationCode from './validation.en.ts?raw';
+
+<TSEditor
+  client:only="react"
+  validationCode={validationCode}
+  showConsole={true}
+  successSound="success"
+  files={{
+    'exercise.ts': `function procesarInput(input: string | number) {
+  // TODO: Use a Type Guard (typeof) here
+  // 1. If it is string -> return string.toUpperCase()
+  // 2. If it is number -> return number.toFixed(2)
+  
+  return input; // ❌ Error: toUpperCase does not exist on number
+}`
+  }}
+/>
