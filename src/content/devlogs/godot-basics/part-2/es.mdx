@@ -1,0 +1,26 @@
+---
+pubDate: '2026-01-26T10:00:00Z'
+tags: ['godot', 'gdscript', 'instances', 'pooling']
+draft: true
+new: true
+title: 'Godot #2: Instanciación y Balas'
+description: "Aprende a crear objetos dinámicamente: instanciar balas, rotaciones y el concepto de Object Pooling para optimizar tu juego."
+series: godot-basics
+seriesTitle: Godot & Game Dev Science
+seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+lang: es
+---
+
+## Instanciación: El arte de crear cosas de la nada
+
+En la parte anterior movimos nuestra nave. Ahora toca que la nave haga algo más que pasear: **Disparar**.
+
+## ¿Qué vamos a aprender?
+1.  **Instanciar Escenas**: Usar `preload` y `instantiate` para crear balas.
+2.  **Scene Tree**: Entender dónde poner esas balas (`add_child`) para que no se muevan con la nave.
+3.  **Local vs Global**: Coordenadas para que la bala salga del cañón, no del origen del mundo.
+4.  **Limpieza**: Usar `VisibleOnScreenNotifier2D` para borrar balas y no fundir la RAM.
+5.  **Bonus: Object Pooling**: Introducción a cómo reciclar balas para un rendimiento extremo.
+
+## 1. Todo es una Escena
+...
