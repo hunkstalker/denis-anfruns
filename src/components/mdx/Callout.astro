@@ -12,7 +12,7 @@ interface Props {
 	icon?: boolean
 }
 
-const { type = 'tip', title, filled = false, icon = true } = Astro.props
+const { type = 'tip', title, filled = true, icon = true } = Astro.props
 const isFilled = filled === true || filled === '' || filled === 'true'
 
 const icons = {
