@@ -1,0 +1,55 @@
+---
+pubDate: '2026-01-17T10:00:00Z'
+tags: ['godot', 'gamedev', 'basics']
+heroImage: /assets/godot-basics/hero-gdscript.webp
+draft: true
+new: true
+title: 'Godot #0: Setup & Filosofía'
+description: Instalación, Nodos como piezas de Lego y por qué tu sistema de archivos es tu mejor amigo.
+series: godot-basics
+seriesTitle: Godot y la ciencia del desarrollo de juegos
+seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+lang: es
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+
+## ¡Bienvenidos a la Ciencia del Game Dev! 🧪
+
+Si estás aquí, es porque quieres hacer videojuegos. Pero no quieres simplemente copiar código de un tutorial de YouTube y rezar para que funcione. Quieres **entender** qué está pasando bajo el capó.
+
+En esta serie, no vamos a crear experimentos sueltos. Vamos a construir **UN juego completo de principio a fin**: **"Space Survivor"** 🚀.
+
+### ¿Qué vamos a aprender?
+Este no es el típico curso de "Arrastra este nodo aquí". Aquí vamos a mezclar **Godot** con **Fundamentos Reales**:
+
+1.  **Matemáticas Sin Miedo**: ¿Por qué tu nave se mueve raro en diagonal? La respuesta está en los **Vectores Unitarios**. ¿Cómo hacemos que los enemigos nos rodeen? **Trigonometría (Sin/Cos)**.
+2.  **Shaders (The Juice)**: Haremos que las cosas brillen, parpadeen y exploten manipulando píxeles directamente.
+3.  **Arquitectura Sólida**: Señales, Nodos y Recursos para que tu código no sea un plato de espaguetis.
+
+### La Filosofía de Godot: Todo es una Escena 🎬
+
+Antes de escribir una sola línea de código, necesitas entender esto: En Godot, **TODO** es una escena.
+
+*   Tu personaje es una escena (`Player.tscn`).
+*   Tu bala es una escena (`Bullet.tscn`).
+*   Tu nivel es una escena que contiene al Player y a las Balas.
+
+Y lo mejor: **Una escena no es magia negra.** Si abres el archivo `.tscn` con un editor de texto (sí, el Bloc de Notas vale), verás que es texto plano. Tu sistema de archivos (`res://`) es la estructura real de tu juego.
+
+<Callout type="tip" title="Filosofía de Archivos">
+  Si ordenas tus archivos (carpetas, nombres consistentes), ordenas tu juego. Godot no te obliga, pero tu "yo del futuro" te lo agradecerá cuando el proyecto crezca.
+</Callout>
+
+### Preparación
+
+1.  Godot incluye todo lo que necesitas para comenzar. Podrías escribir código desde cualquier editor, pero Godot también incluye un editor de código integrado (IDE) que te ayudará a escribir y depurar tu código.
+2.  Por lo tanto, por favor, ve a [godotengine.org](https://godotengine.org) y descarga la última versión estable (Godot 4.x). O también simplemente puedes descargarlo de Steam, es útil para mantener actualiazdo el motor a la última versión.
+3.  Si te lo has descargado, una vez descomprimido,¡ejecútalo! Godot no necesita instalación ¡Y ya está! Puedes llevarlo en un USB. Y si lo has descargado de Steam ejecútalo como cualquier juego.
+
+### Tu Primera Misión 📝
+
+1.  Crea un nuevo proyecto llamado `SpaceSurvivor`.
+2.  Explora la interfaz. No te agobies, solo mira las cuatro pantallas principales: 2D, 3D, Script y AssetLib en la parte superior central.
+
+En el próximo capítulo, dejaremos la teoría y escribiremos nuestro primer script para dar vida a nuestra nave. ¡Prepara tus vectores!

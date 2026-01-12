@@ -10,6 +10,7 @@ import powerappsSvg from '@icons/tech/power-apps.svg?raw'
 import astroSvg from '@icons/tech/astro-logo.svg?raw'
 import javascriptSvg from '@icons/tech/javascript.svg?raw'
 import viteSvg from '@icons/tech/vite.svg?raw'
+import godotSvg from '@icons/tech/godot.svg?raw'
 
 interface Props {
 	post: DevlogPost
@@ -29,6 +30,8 @@ const iconSvgs: Record<string, string> = {
 	astro: astroSvg,
 	javascript: javascriptSvg,
 	vite: viteSvg,
+	godot: godotSvg,
+	'godot-basics': godotSvg,
 }
 
 // Get decorative icons for a Devlog

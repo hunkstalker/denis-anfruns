@@ -34,7 +34,7 @@ let nextPost: DevlogPost | null = null
 if (post.data.series) {
 	const allPosts = await getDevlogs()
 	const seriesPosts = allPosts
-		.filter((p) => p.data.series === post.data.series && getLangFromSlug(p.slug) === 'es')
+		.filter((p) => p.data.series === post.data.series && getLangFromSlug(p.slug) === lang)
 		.sort((a, b) => {
 			if (!a.data.pubDate || !b.data.pubDate) return 0
 			return a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
@@ -217,7 +217,7 @@ if (post.data.series) {
 				{
 					nextPost && (
 						<a
-							href={`/${lang}/devlogs/${getBaseSlug(nextPost.slug)}/`}
+							href={lang === 'es' ? `/devlogs/${getBaseSlug(nextPost.slug)}/` : `/${lang}/devlogs/${getBaseSlug(nextPost.slug)}/`}
 							class="group flex items-center gap-2 text-sm font-medium text-zinc-500 no-underline transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
 						>
 							{t('blog.nextPost')}

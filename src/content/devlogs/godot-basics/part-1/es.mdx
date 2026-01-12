@@ -1,0 +1,129 @@
+---
+pubDate: '2026-01-19T10:00:00Z'
+tags: ['godot', 'gdscript', 'math', 'vectors']
+draft: true
+new: true
+title: 'Godot #1: Vectores y Movimiento'
+description: Entendiendo las matemáticas detrás del movimiento. ¿Por qué normalizamos? ¿Qué es Delta? Explicado para humanos.
+series: godot-basics
+seriesTitle: Godot & Game Dev Science
+seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+lang: es
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+
+## La Nave y las Matemáticas
+
+En este capítulo vamos a crear nuestra nave y a hacer que se mueva. Pero no vamos a copiar un script. Vamos a entender **por qué** se mueve. Y para eso, tenemos que hablar de nuestra amiga (o enemiga): **La Fecha (El Vector)**.
+
+### 1. El Escenario (Plano Cartesiano)
+
+Tu monitor es una cuadrícula de píxeles.
+*   **X (Horizontal)**: Crece hacia la derecha.
+*   **Y (Vertical)**: Crece hacia **ABAJO**.
+
+<Callout type="warning" title="¡Cuidado con la Y!">
+  En matemáticas del colegio, la Y crece hacia arriba. En Game Dev, la Y crece hacia abajo (porque empezamos a dibujar desde la esquina superior izquierda). No lo olvides o tu nave volará al revés.
+</Callout>
+
+### 2. Creando la Nave (Player)
+
+1.  Crea una **Nueva Escena**.
+2.  El nodo raíz será un `CharacterBody2D`. Este nodo es especial: sabe chocarse con cosas. Cámbiale el nombre a `Player`.
+3.  Añade un nodo hijo `Sprite2D` y ponle la textura de la nave.
+4.  Añade un nodo hijo `CollisionShape2D` y dale forma (un círculo o cápsula que cubra la nave).
+5.  Guarda la escena como `Player.tscn`.
+
+### 3. El Problema de "Moverse"
+
+Para mover la nave, necesitamos decirle hacia dónde ir. Aquí entran los **Vectores**.
+
+Imagina una flecha que sale del centro de tu nave.
+*   Si tocas **Derecha**, la flecha apunta a `(1, 0)`.
+*   Si tocas **Abajo**, la flecha apunta a `(0, 1)`.
+
+En Godot, esto se llama `Input.get_vector()`.
+
+```gdscript
+# Main.gd (o Player.gd)
+extends CharacterBody2D
+
+func _physics_process(delta):
+    # Pedimos al Input que nos construya la flecha basada en las teclas
+    # "ui_left", "ui_right", "ui_up", "ui_down" son acciones por defecto en Godot
+    var direccion = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    velocity = direccion * 300
+    move_and_slide()
+```
+
+### 4. ¿Por qué corres más en diagonal? (Pitágoras)
+
+Si presionas **Derecha** `(1, 0)` y **Abajo** `(0, 1)` a la vez, Godot suma las flechas. El resultado es `(1, 1)`.
+
+¿Cuánto mide esa flecha `(1, 1)`?
+Según Pitágoras (hipotenusa): $\sqrt{1^2 + 1^2} = \sqrt{2} \approx 1.41$
+
+¡Tu flecha diagonal mide **1.41**! O sea, **corres un 41% más rápido en diagonal** que en línea recta (que mide 1).
+
+Esto es un error de novato clásico. En un juego competitivo, todos irían en diagonal para llegar antes.
+
+#### La Solución: Normalizar
+
+Normalizar un vector significa: **"No me importa lo larga que sea la flecha, córtala para que mida exactamente 1, pero mantén la dirección".**
+
+Godot es listo. `Input.get_vector()` **YA normaliza** el resultado por defecto. Si usas la forma antigua manual (`input.x = ...`, `input.y = ...`), tendrías este problema. Pero con `get_vector`, Godot aplica las matemáticas por ti para que la diagonal mida 1, no 1.41.
+
+Es importante saberlo porque en matemáticas de shaders o IA, tendrás que usar `.normalized()` manualmente muchas veces cuando solo te importe la **dirección** y no la fuerza.
+
+### 5. ¿Qué demonios es `delta`?
+
+Verás `delta` en todos los tutoriales.
+```gdscript
+position += velocity * delta
+```
+
+Imagina que tu juego va a **60 FPS** (imágenes por segundo). Tu código se ejecuta 60 veces.
+Ahora imagina que a tu amigo le va a **144 FPS**. Su código se ejecuta 144 veces.
+
+Si sumas `position += 1` en cada frame:
+*   Tú avanzas 60 píxeles cada segundo.
+*   Tu amigo avanza 144 píxeles cada segundo.
+
+¡Tu amigo es más rápido solo por tener mejor PC! Eso es injusto (y rompe la física).
+
+**Delta** es el **tiempo que ha pasado desde el último frame**.
+*   Si vas a 60 FPS, delta es `1/60` (aprox 0.016s).
+*   Si vas a 144 FPS, delta es `1/144` (aprox 0.006s).
+
+Si multiplicas por delta:
+*   Tú: `1 * 60 veces * 0.016 = 1` metro por segundo.
+*   Amigo: `1 * 144 veces * 0.006 = 1` metro por segundo.
+
+**Conclusión**: Multiplicar por Delta convierte "Píxeles por Frame" en "Píxeles por Segundo". Hace que el juego vaya igual en una tostadora que en un PC de la NASA.
+
+<Callout type="tip" title="Nota de Godot">
+  `move_and_slide()` usa `delta` automáticamente dentro, por eso en el código de arriba no lo ves multiplicando. Pero si mueves cosas manualmente cambiando `position`, SIEMPRE usa delta.
+</Callout>
+
+### 6. Script Final (Por ahora)
+
+```gdscript
+extends CharacterBody2D
+
+# Export var nos permite cambiar el valor desde el Inspector sin tocar código
+@export var speed = 400 
+
+func _physics_process(delta):
+    # 1. Obtenemos la dirección (Flecha normalizada de longitud 1)
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    # 2. Aplicamos velocidad (Longitud 1 * 400 = 400 píxeles/segundo)
+    velocity = direction * speed
+    
+    # 3. Godot mueve el cuerpo respetando colisiones y delta interno
+    move_and_slide()
+```
+
+¡Felicidades! Tienes una nave que se mueve consistentemente en todas direcciones y en todos los ordenadores.
