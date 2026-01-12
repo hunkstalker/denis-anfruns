@@ -1,0 +1,257 @@
+---
+pubDate: '2026-01-12T10:00:00Z'
+tags: ['godot', 'gdscript', 'instances', 'pooling']
+draft: false
+new: true
+title: 'Godot #2: Instantiation and Bullets'
+description: 'Learn how to create objects dynamically: instantiating bullets, rotations and the concept of Object Pooling to optimize your game.'
+series: godot-basics
+seriesTitle: Game Dev with Godot
+seriesDescription: Learn Godot by creating a Space Shooter from scratch, with an emphasis on Math and Shaders.
+lang: en
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import VectorDemo from '../../../../components/mdx/interactive/VectorDemo.tsx';
+
+## Instantiation: The art of creating things from nothing
+
+In the previous part we moved our ship. Now it's time for the ship to do something more than just walk around: **Shoot**.
+
+## What will we learn?
+1.  **Instantiate Scenes**: Using `preload` and `instantiate` to create bullets.
+2.  **Scene Tree**: Understanding where to put those bullets (`add_child`) so they don't move with the ship.
+3.  **Local vs Global**: Coordinates so the bullet comes out of the cannon, not the origin of the world.
+4.  **Cleaning**: Using `VisibleOnScreenNotifier2D` to delete bullets and not melt the RAM.
+5.  **Bonus: Object Pooling**: Introduction to how to recycle bullets for extreme performance.
+
+## 1. Recipe: The Bullet (`bullet.tscn`)
+
+Before shooting anything, we need something to shoot.
+We are going to create a bullet that knows how to move and die when it leaves the screen.
+
+Just like we did with the ship, if you want you can download this image for the bullet:
+
+![Bullet Sprite](/assets/godot-basics/shot.png)
+
+> [Download asset](/assets/godot-basics/shot.png) (Right click -> Save image)
+> *Credits: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> by **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
+
+
+1.  Create a **New Scene**.
+2.  Root Node: **`Area2D`** (Attention! We don't want complex physics like colliding and bouncing, just detecting if we *touch* something). Call it `Bullet`.
+3.  Child: **`CollisionShape2D`** (shaped like a small rectangle or capsule).
+4.  Child: **`Sprite2D`** (use a small rectangle or your bullet image, and put it in the sprites folder).
+5.  Child: **`VisibleOnScreenNotifier2D`**: This node is magical. It warns us when the object leaves the screen.
+    *   *Make sure the pink rectangle of this node covers the sprite.*
+
+
+#### 1.1 Automatic Cleaning (Signals)
+
+Before programming the movement, let's make sure the bullet deletes itself when leaving the screen.
+For this we will use a **Signal**.
+
+Imagine your `VisibleOnScreenNotifier2D` node is a **Watchman**. Their job is to shout **"I've left the screen!"**.
+We (the script) will connect a "cable" to that shout to react.
+
+**Steps to connect the cable:**
+1.  Add a script to the bullet (`bullet.gd`) if you haven't done so.
+2.  Select the `VisibleOnScreenNotifier2D` node.
+3.  Go to the **Node** tab (on the right, next to the Inspector).
+4.  Double click on the `screen_exited` signal.
+5.  Click on **Connect**.
+6.  Godot will automatically write a function called `_on_visible_on_screen_notifier_2d_screen_exited` in your script.
+
+Now that we have the connection, let's complete the code:
+
+<CodeTabs
+  items={[
+    {
+      label: 'bullet.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+var speed = 600
+
+func _process(delta):
+    position.x += speed * delta # Move to the RIGHT (positive X is right in Godot)
+
+# Godot created this function automatically when connecting the signal.
+# We only write what's inside.
+func _on_visible_on_screen_notifier_2d_screen_exited():
+    queue_free() # If we leave the screen, we self-destruct`
+    }
+  ]}
+/>
+
+What does queue_free() mean?
+
+Translated literally: **"Queue to free"**.
+
+In video game programming, deleting something while it is being used is dangerous (it can crash the game suddenly).
+`queue_free()` is the safe way to do it:
+
+1.  You mark the object for deletion.
+2.  Godot waits to finish drawing the current frame.
+3.  At the safe moment ("Idle time"), it deletes the object from memory.
+
+Always use `queue_free()` instead of `free()` to avoid errors.
+
+## 2. The Blueprint and the Object (PackedScene)
+
+In Godot, there is a fundamental distinction:
+*   **`.tscn` (The Scene)**: It is the original blueprint. It defines what nodes compose it and how they work.
+*   **The Instance**: It is a **living copy** of that scene. The game creates these copies to use them (one copy for the player, 10 copies for bullets, etc.).
+
+When you play, you interact with these copies.
+To shoot, we need to create a **new copy** of the `bullet.tscn` scene every time you press space.
+
+### The construction process
+In GDScript, creating something new has 3 steps:
+1.  **Load the Blueprint**: `preload("res://bullet.tscn")`.
+2.  **Instantiate**: `blueprint.instantiate()`. You build the object in RAM, but **it doesn't exist in the visible world yet**.
+3.  **Add to the Tree**: `add_child(bullet)`. Here you place the object in the game universe.
+
+## 3. Implementing the Shot
+
+### How do we ask the game?
+To shoot, we need the script to make decisions. We use two new tools:
+1.  **`if` (Conditional)**: Means **"IF"**. "IF this happens... do this other thing".
+2.  **`Input` (The Ear)**: It is who listens to your keyboard. `is_action_just_pressed` returns `true` (true) only at the exact instant you press down. Ideal for shot-by-shot shooting.
+
+Let's see an example (which has a problem):
+
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `extends CharacterBody2D
+
+@export var speed = 400
+# We load the "Blueprint" of the bullet
+var bullet_scene = preload("res://scenes/bullet.tscn")
+
+func _physics_process(delta):
+    # 1. Movement (What you already had)
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    velocity = direction * speed
+    move_and_slide()
+
+    # 2. Shot (The NEW part)
+    if Input.is_action_just_pressed("ui_accept"): # Spacebar
+        var bullet = bullet_scene.instantiate()
+        add_child(bullet) # <--- THE ERROR (Kangaroo)`
+    }
+  ]}
+/>
+
+### The Kangaroo Problem
+
+**Test the game now (F5)!**
+Move with the ship while shooting bursts. Notice anything weird?
+The bullets move with you. If you turn or advance, the bullets follow you as if they were attached with an invisible rope.
+
+This happens because the bullet is a **child of the ship**. It inherits its movement.
+It's like a baby kangaroo in its mother's pouch: if the mother jumps, the baby jumps with her.
+
+The bullet will be **ship's child**.
+*   If the ship advances, the bullet advances with it (plus its own speed).
+*   If the ship rotates, the bullet will rotate orbiting around the ship.
+
+We want the bullet to be independent! Once fired, it shouldn't matter what the ship does.
+
+### The Solution: Coordinate Divorce
+The bullet must be born in the **World**, not in the Ship. But we need it to be born *where the ship is*.
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `# Correct: Using the parent (The World Scene)
+    if Input.is_action_just_pressed("ui_accept"):
+        var bullet = bullet_scene.instantiate()
+        
+        # 1. Add to the "Parent" (the World) FIRST
+        # We need the bullet to have a parent so it can calculate its global coordinates
+        get_parent().add_child(bullet)
+         
+        # 2. PLACE
+        # Now that it is in the world, we tell it "put yourself where I am"
+        bullet.global_position = global_position`
+    }
+  ]}
+/>
+In the line `bullet.global_position = global_position`:
+*   The `global_position` on the left is the **Bullet's**.
+*   The `global_position` on the right is the **Ship's** (the script where we are writing).
+
+We are saying: *"Bullet, place yourself in the world EXACTLY where I (the Ship) am right now"*.
+
+If we used `bullet.position = position`, we would be telling it *"Bullet, put yourself in relation to the World (bullet's parent) just like I am in relation to the World"*. If the ship is at (100, 100), the bullet would appear at (100, 100). This seems correct!
+
+Using **Global** always avoids headaches: we equate universal coordinates.
+
+### Pro Tip: Shooting from the Cannon (`Marker2D`)
+Right now the bullet comes out of the center of the ship (its belly). It looks ugly.
+You could try adding magic numbers (`global_position + Vector2(50, 0)`), but if you change the ship sprite, you will have to change the code.
+
+The elegant solution:
+1.  Add a child node **`Marker2D`** to your Player.
+2.  Move it visually to the tip of the cannon. Call it `Muzzle` (Nozzle).
+3.  In the code, use the position of that marker:
+
+#### Marker Position
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `# Instead of using my position, I use the marker's
+bullet.global_position = $Muzzle.global_position `
+    }
+  ]}
+/>
+<Callout type="info" title="What is that Dollar sign?">
+  Writing `$Muzzle` is the short and fast way to say `get_node("Muzzle")`.
+  You are telling Godot: *"Search among my direct children for the one called Muzzle"*.
+</Callout>
+
+Now the bullet will always come out of the right place, even if you change the ship!
+
+## 4. Optimization: The myth of `queue_free()`
+
+When a bullet leaves the screen, we usually do:
+
+<CodeTabs
+  items={[
+    {
+      label: 'bullet.gd',
+      lang: 'gdscript',
+      code: `func _on_visible_on_screen_notifier_2d_screen_exited():
+    queue_free() # Goodbye, bullet.`
+    }
+  ]}
+/>
+
+*(Note: The name of the function may vary depending on what you call your Notifier/Enabler node. Godot generates it automatically when connecting the signal).*
+
+This tells the RAM: *"Delete these data and free the space"*. And when you shoot again: *"Search for free space and assign new memory"*.
+
+In a normal game, nothing happens.
+In a **Bullet Hell** with 5,000 bullets per minute, this is suicide.
+The CPU "Garbage Collector" will get saturated cleaning and creating memory, causing stutters (micro-stuttering).
+
+Let's review what we learned:
+1.  **Scenes (`.tscn`)**: The blueprints of your objects.
+2.  **Instantiate**: Converting those blueprints into living objects in the game.
+3.  **Signals**: Invisible cables for objects to talk (`screen_exited`).
+4.  **`queue_free()`**: The safe way to delete trash.
+
+Congratulations! You have created your first semi-functional weapon. For now we can shoot it, but it damages nothing.
+
+In the **next chapter**, we will give them something to shoot at.
+We will create **Enemies** that will fly towards you and learn to detect when a bullet hits them.

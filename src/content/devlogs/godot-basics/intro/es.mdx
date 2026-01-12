@@ -1,20 +1,20 @@
 ---
-pubDate: '2026-01-17T10:00:00Z'
+pubDate: '2026-01-10T10:00:00Z'
 tags: ['godot', 'gamedev', 'basics']
 heroImage: /assets/godot-basics/hero-gdscript.webp
-draft: true
+draft: false
 new: true
-title: 'Godot Intro: Setup & Filosofía'
+title: 'Introducción: Setup'
 description: Instalación, Nodos como piezas de Lego y por qué tu sistema de archivos es tu mejor amigo.
 series: godot-basics
-seriesTitle: Godot y la ciencia del desarrollo de juegos
+seriesTitle: Game Dev con Godot
 seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
 lang: es
 ---
 
 import Callout from '../../../../components/mdx/Callout.astro';
 
-## ¡Bienvenidos a la Ciencia del Game Dev! 🧪
+## ¡Bienvenidos a la Ciencia del Game Dev!
 
 Si estás aquí, es porque quieres hacer videojuegos. Pero no quieres simplemente copiar código de un tutorial de YouTube y rezar para que funcione. Quieres **entender** qué está pasando bajo el capó.
 
@@ -25,21 +25,6 @@ Este no es el típico curso de "Arrastra este nodo aquí". Aquí vamos a mezclar
 
 1.  **Matemáticas Sin Miedo**: ¿Por qué tu nave se mueve raro en diagonal? La respuesta está en los **Vectores Unitarios**. ¿Cómo hacemos que los enemigos nos rodeen? **Trigonometría (Sin/Cos)**.
 2.  **Shaders (The Juice)**: Haremos que las cosas brillen, parpadeen y exploten manipulando píxeles directamente.
-3.  **Arquitectura Sólida**: Señales, Nodos y Recursos para que tu código no sea un plato de espaguetis.
-
-### La Filosofía de Godot: Todo es una Escena 🎬
-
-Antes de escribir una sola línea de código, necesitas entender esto: En Godot, **TODO** es una escena.
-
-*   Tu personaje es una escena (`Player.tscn`).
-*   Tu bala es una escena (`Bullet.tscn`).
-*   Tu nivel es una escena que contiene al Player y a las Balas.
-
-Y lo mejor: **Una escena no es magia negra.** Si abres el archivo `.tscn` con un editor de texto (sí, el Bloc de Notas vale), verás que es texto plano. Tu sistema de archivos (`res://`) es la estructura real de tu juego.
-
-<Callout type="tip" title="Filosofía de Archivos">
-  Si ordenas tus archivos (carpetas, nombres consistentes), ordenas tu juego. Godot no te obliga, pero tu "yo del futuro" te lo agradecerá cuando el proyecto crezca.
-</Callout>
 
 ### Preparación
 

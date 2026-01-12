@@ -1,20 +1,9 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import ViewModeFilter from './ViewModeFilter'
 import TagFilter from './TagFilter'
 import type { Tag } from '@data/tags'
 
 interface Props {
-	// ViewMode Props
-	viewMode: 'all' | 'singles' | 'series'
-	setViewMode: (mode: 'all' | 'singles' | 'series') => void
-	viewLabels: {
-		all: string
-		singles: string
-		series: string
-	}
-	viewLabel: string
-
 	// TagFilter Props
 	tags: Tag[]
 	filter: Tag | 'all'
@@ -27,10 +16,6 @@ interface Props {
 }
 
 export default function MobileFilters({
-	viewMode,
-	setViewMode,
-	viewLabels,
-	viewLabel,
 	tags,
 	filter,
 	setFilter,
@@ -41,7 +26,7 @@ export default function MobileFilters({
 	const [isOpen, setIsOpen] = useState(false)
 
 	// Calculate active filters count for badge
-	const activeCount = (viewMode !== 'all' ? 1 : 0) + (filter !== 'all' ? 1 : 0)
+	const activeCount = filter !== 'all' ? 1 : 0
 
 	return (
 		<div className="mb-8 w-full md:hidden">
@@ -105,16 +90,6 @@ export default function MobileFilters({
 						className="overflow-hidden"
 					>
 						<div className="flex flex-col gap-6 rounded-b-xl border-x border-b border-zinc-200 bg-white/50 p-4 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/50">
-							<ViewModeFilter
-								viewMode={viewMode}
-								setViewMode={setViewMode}
-								mounted={mounted}
-								label={viewLabel}
-								labels={viewLabels}
-							/>
-
-							<div className="h-px w-full bg-zinc-200 dark:bg-zinc-800"></div>
-
 							<TagFilter
 								tags={tags}
 								filter={filter}

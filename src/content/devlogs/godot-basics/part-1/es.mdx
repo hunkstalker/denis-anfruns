@@ -1,12 +1,12 @@
 ---
-pubDate: '2026-01-19T10:00:00Z'
+pubDate: '2026-01-11T10:00:00Z'
 tags: ['godot', 'gdscript', 'math', 'vectors']
-draft: true
+draft: false
 new: true
 title: 'Godot #1: Vectores y Movimiento'
 description: Entendiendo las matemáticas detrás del movimiento. ¿Por qué normalizamos? ¿Qué es Delta? Explicado para humanos.
 series: godot-basics
-seriesTitle: Godot & Game Dev Science
+seriesTitle: Game Dev con Godot
 seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
 lang: es
 ---
@@ -44,15 +44,74 @@ Si la Escena es la casa, los Nodos son los ladrillos. Y hay muchos tipos de ladr
 2.  **RigidBody2D**: Tiene física real (gravedad, rebotes). Si le das una patada, sale volando. Difícil de controlar para un personaje principal.
 3.  **CharacterBody2D**: El término medio perfecto. Tiene posición (como Node2D) y sabe chocarse (como RigidBody), pero **no se mueve solo**. TÚ eres el motor. Es el estándar para personajes en juegos 2D.
 
-**Pasos:**
-1.  Crea una **Nueva Escena**.
-2.  El nodo raíz será un `CharacterBody2D` (por lo que acabamos de explicar: queremos control total). Llámalo `Player`.
-3.  El nodo se quejará con una alerta ⚠️. Te está diciendo: *"¡Oye, tengo cuerpo físico pero no tengo forma! ¿Soy un círculo? ¿Un cuadrado?"*.
-4.  Añade un hijo `CollisionShape2D` y en el inspector dale forma de `Capsule` o `Circle`.
-5.  Añade un hijo `Sprite2D` para que se vea bonito (arrastra tu imagen de la nave a la propiedad Texture).
-6.  Guarda como `Player.tscn`.
+### Prepara tus Assets
+Antes de empezar, necesitas una nave. Puedes dibujar una o usar esta de prueba:
 
-### 3. El Problema de "Moverse"
+![Nave del Jugador](/assets/godot-basics/plane_128.png)
+> Click derecho -> Guardar imagen.
+> Créditos: <a href="https://puszke.itch.io/psx-plane" target="_blank" rel="noopener noreferrer">PSX Plane</a> por **Puck**.
+
+1.  Crea una carpeta llamada `sprites` en tu FileSystem.
+2.  Arrastra esta imagen dentro.
+
+**Pasos:**
+1.  En la escena vacía que aparece por defecto:
+2.  En el panel de "Create Root Node", selecciona **Other Node**.
+3.  Escribe `CharacterBody2D` en el buscador y dale doble clic. Esto creará una nueva escena con este nodo como raíz. Llámalo `Player`.
+4.  El nodo se quejará con una alerta ⚠️. Te está diciendo: *"¡Oye, tengo cuerpo físico pero no tengo forma! ¿Soy un círculo? ¿Un cuadrado?"*.
+5.  Añade como hijo de `CharacterBody2D` un nodo llamado `CollisionShape2D`.
+    *   En el Inspector, donde dice **Shape**, selecciona `New CircleShape2D`.
+    *   **Importante**: Haz clic sobre el recuadro que pone "CircleShape2D" (se expandirá).
+    *   En **Radius**, escribe `40 px`. Esto ajustará el tamaño exacto sin escalar el nodo.
+6.  Añade otro nodo hijo `Sprite2D` para que se vea bonito (arrastra tu imagen de la nave a la propiedad Texture).
+7.  Crea una carpeta llamada `scenes` en la raíz del proyecto y guarda dentro la escena como `player.tscn`.
+
+<Callout type="info" title="Regla de oro: Hitbox vs Sprite">
+  En Game Design, hay una regla no escrita: **"Mejor que sobre a que falte"**.
+  
+  *   Si tu colisión es **más grande** que la nave, el jugador gritará *"¡Pero si no me ha tocado!"* cuando muera por el aire. Eso se siente **injusto**.
+  *   Si tu colisión es **un poco más pequeña**, permites que las balas "rocen" la nave sin matarla. Eso genera momentos de *"¡Uff, casi!"* que se sienten **épicos**.
+  
+  Dale siempre un poco de ventaja al jugador. Haz el `CollisionShape` un 10-20% más pequeño que el dibujo visible.
+</Callout>
+
+### 3. Glosario de Supervivencia
+
+Antes de escribir código, necesitas saber leer el mapa. Si nunca has programado, esto es todo lo que necesitas saber por ahora. Imagina que el script es una receta de cocina:
+
+1.  **`extends` (ADN)**:
+    Es la primera línea. Le dice a Godot: *"Oye, soy una copia mejorada de..."*.
+    *   `extends CharacterBody2D`: Significa "Tengo todos los superpoderes de un CharacterBody2D (chocar, moverse) y, además, lo que yo añada aquí".
+2.  **`func` (Acción/Verbo)**:
+    Es una orden o tarea. Agrupa una lista de pasos.
+    *   `func _physics_process(delta)`: Es una función especial que Godot llama a un ritmo fijo (por defecto **60 veces por segundo**). Todo lo que escribas dentro, se repetirá en bucle para mover cosas.
+3.  **`var` (Caja)**:
+    Es un lugar donde guardamos información **en la memoria RAM** del ordenador.
+    *   `var velocidad = 300`: Hemos reservado un hueco en la memoria, le hemos puesto la etiqueta "velocidad" y hemos guardado el número 300 dentro.
+
+<Callout type="warning" title="Peligro: Tabs vs Espacios">
+  GODOT NO PERDONA.
+  La "sangría" (esos espacios a la izquierda) define qué código está dentro de qué función.
+  *   Usa siempre **Tabulaciones** (Tecla Tab ↹), no espacios.
+  *   **Nunca mezcles** tabs y espacios en el mismo archivo o tendrás errores invisibles.
+  *   *Nota: El botón de copiar de esta web intenta convertir espacios a Tabs automáticamente, pero si ves errores rojos, revisa esto primero.*
+</Callout>
+
+### 4. Creando el Cerebro (Script)
+
+Nuestra nave es bonita, pero tonta. No sabe qué hacer. Necesitamos un **Script**.
+
+1.  Crea una carpeta en la raíz llamada `scripts`.
+2.  Selecciona el nodo raíz `Player`.
+3.  Haz clic en el icono del **Pergamino con un `+` verde** (arriba del panel de escena). O dale click derecho -> **Attach Script**.
+4.  Aparecerá una ventana.
+5.  **Template**: Déjalo en `CharacterBody2D: Basic Movement` si quieres ver mucho código complejo, o pon `Empty` para empezar limpio. Nosotros borraremos todo, así que da igual.
+6.  **Path**: Aquí está la clave. No lo tires en la raíz. Escribe `res://scripts/player.gd`.
+7.  Dale a **Create**.
+
+Ahora verás un editor de texto. ¡Bienvenido a tu primer programa!
+
+### 5. El Problema de "Moverse"
 
 Para mover la nave, necesitamos decirle hacia dónde ir. Aquí entran los **Vectores**.
 
@@ -75,16 +134,16 @@ Aquí tienes el código completo. **Te recomiendo escribirlo a mano** para memor
 <CodeTabs
   items={[
     {
-      label: 'Player.gd',
+      label: 'player.gd',
       lang: 'gdscript',
       code: `extends CharacterBody2D
 
 func _physics_process(delta):
     # Pedimos al Input que nos construya el Vector de Dirección basado en las teclas
     # "ui_left", "ui_right", "ui_up", "ui_down" son acciones por defecto en Godot
-    var direccion = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
     
-    velocity = direccion * 300
+    velocity = direction * 300
     move_and_slide()`
     }
   ]}
@@ -157,12 +216,11 @@ Verás `delta` en todos los tutoriales.
 <CodeTabs
   items={[
     {
-      label: 'Física Básica',
+      label: 'ejemplo.gd',
       lang: 'gdscript',
       code: `position += velocity * delta`
     }
   ]}
-  hideTabs={true}
 />
 
 Imagina que tu juego va a **60 FPS** (imágenes por segundo). Tu código se ejecuta 60 veces por segundo.
@@ -188,7 +246,7 @@ Si multiplicas por delta:
   `move_and_slide()` usa `delta` automáticamente dentro, por eso en el código de arriba no lo ves multiplicando. Pero si mueves cosas manualmente cambiando `position`, SIEMPRE usa delta.
 </Callout>
 
-### 6. Script Final 🏆 (Por ahora)
+### 6. Script Final (Por ahora)
 
 Antes de copiar, mira dos detalles nuevos:
 1.  **`@export`**: Esta palabra mágica hace que la variable `speed` aparezca en el **Inspector** de Godot. Así puedes ajustar la velocidad escribiendo un número en la cajita sin volver a abrir el script.
@@ -198,19 +256,66 @@ Antes de copiar, mira dos detalles nuevos:
 <CodeTabs
   items={[
     {
-      label: 'Player.gd',
+      label: 'player.gd',
       lang: 'gdscript',
       code: `extends CharacterBody2D
-
+    
 @export var speed = 400
 
 func _physics_process(delta):
-	var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	
-	velocity = direction * speed
-	move_and_slide()`
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    velocity = direction * speed
+    move_and_slide()`
     }
   ]}
 />
 
-¡Felicidades! Tienes una nave que se mueve consistentemente en todas direcciones y en todos los ordenadores.
+¡Felicidades! Tienes una nave que se mueve consistentemente en todas direcciones.
+
+### 7. Probando todo: Tu Primer Nivel (Sandbox)
+
+Hasta ahora hemos trabajado en el "taller" (la escena del `Player`). Pero una nave necesita un universo.
+Si le das al botón de **Play (F5)** ahora, te pedirá una escena principal. Vamos a crearla:
+
+1.  Crea una **Nueva Escena**.
+2.  Elige **2D Scene** (Node2D). Esta vez no queremos físicas, solo un contenedor para el mundo. Llámalo `World` (PascalCase, porque es un Nodo).
+3.  Guárdala en `scenes/world.tscn` (snake_case, porque es un archivo).
+
+#### Instanciando al Jugador (El "Link")
+Aquí ocurre la magia de Godot. No vamos a "copiar y pegar" al jugador. Vamos a **referenciarlo**.
+1.  Busca tu archivo `player.tscn` en la carpeta `scenes` (abajo a la izquierda).
+2.  **Arrástralo** desde el explorador de archivos y suéltalo dentro del panel de **Escena** (arriba a la izquierda, bajo donde dice `World`). Esto lo colocará automáticamente en la posición `(0, 0)`, perfectamente centrado.
+3.  Verás que aparece con un icono de claqueta de cine 🎬 al lado. Eso significa que es una **Instancia**. Si cambias el `player.tscn` original (ej: lo pintas de rojo), ¡este también cambiará!
+
+#### Luz, Cámara... ¡Coordenadas!
+Para facilitarnos las matemáticas (donde 0 es arriba y el máximo es abajo):
+
+1.  En la escena `World`, añade un nodo hijo **`Camera2D`**.
+2.  En el Inspector, busca **Anchor Mode** y cámbialo a **`Fixed Top Left`**.
+    *   *Esto hace que la esquina superior izquierda sea el (0,0), como en las pantallas de píxeles clásicas.*
+
+#### Centrando la Nave
+Ahora que el (0,0) es la esquina, tu nave (que está en 0,0) se verá cortada arriba a la izquierda.
+Vamos a colocarla en el centro exacto usando lógica:
+
+1.  La resolución por defecto de Godot es **1152 x 648**.
+2.  El centro es la mitad: `1152 / 2 = 576` (X) y `648 / 2 = 324` (Y).
+3.  Selecciona el nodo `player` (la instancia).
+4.  En Inspector > Transform > Position, escribe:
+    *   **X**: `1152/2`
+    *   **Y**: `648/2`
+
+<Callout type="tip" title="Truco: ¡Godot sabe matemáticas!">
+  Puedes escribir literalmente `1152/2` en la casilla y él hará la cuenta.
+</Callout>
+
+#### ¡A Jugar!
+1.  Pulsa **F5** (o el botón de Play arriba a la derecha).
+2.  Te preguntará: *"No Main Scene defined. Select one?"*. Dile que **Select Current**.
+3.  ¡Ahí lo tienes! Tu nave moviéndose en tu nuevo mundo.
+
+<Callout type="tip" title="¿Mi nave se va de la pantalla?">
+  ¡Es normal! Aún no hemos puesto límites (paredes). Tu nave viaja felizmente hacia el infinito de coordenadas matemáticas.
+  En próximos capítulos le pondremos muros a este universo.
+</Callout>

@@ -96,7 +96,7 @@ export default function DevLogCard({ post, lang, labels, layout = 'grid' }: Prop
 							return (
 								<div
 									key={index}
-									className="icon-fan absolute size-44 opacity-[0.12] transition-all duration-500 ease-out group-hover:scale-110 group-hover:opacity-[0.35] dark:opacity-[0.20] dark:group-hover:opacity-[0.45] [&_svg]:size-full"
+									className="icon-fan absolute size-44 opacity-[0.30] transition-all duration-500 ease-out group-hover:scale-110 group-hover:opacity-[0.50] dark:opacity-[0.30] dark:group-hover:opacity-[0.50] [&_svg]:size-full"
 									style={
 										{
 											'--base-rotation': `${baseRotation}deg`,

@@ -1,0 +1,257 @@
+---
+pubDate: '2026-01-12T10:00:00Z'
+tags: ['godot', 'gdscript', 'instances', 'pooling']
+draft: false
+new: true
+title: 'Godot #2: Instanciació i Bales'
+description: 'Aprèn a crear objectes dinàmicament: instanciar bales, rotacions i el concepte de Object Pooling per optimitzar el teu joc.'
+series: godot-basics
+seriesTitle: Game Dev amb Godot
+seriesDescription: Aprèn Godot creant un Space Shooter des de zero, amb èmfasi en Matemàtiques i Shaders.
+lang: ca
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import VectorDemo from '../../../../components/mdx/interactive/VectorDemo.tsx';
+
+## Instanciació: L'art de crear coses del no-res
+
+A la part anterior vam moure la nostra nau. Ara toca que la nau faci alguna cosa més que passejar: **Disparar**.
+
+## Què aprendrem?
+1.  **Instanciar Escenes**: Utilitzar `preload` i `instantiate` per crear bales.
+2.  **Scene Tree**: Entendre on posar aquestes bales (`add_child`) perquè no es moguin amb la nau.
+3.  **Local vs Global**: Coordenades perquè la bala surti del canó, no de l'origen del món.
+4.  **Neteja**: Utilitzar `VisibleOnScreenNotifier2D` per esborrar bales i no fondre la RAM.
+5.  **Bonus: Object Pooling**: Introducció a com reciclar bales per a un rendiment extrem.
+
+## 1. Recepta: La Bala (`bullet.tscn`)
+
+Abans de disparar res, necessitem alguna cosa per disparar.
+Anem a crear una bala que sàpiga moure's i morir quan surti de la pantalla.
+
+Igual que vam fer amb la nau, si vols pots descarregar aquesta imatge per a la bala:
+
+![Sprite de la Bala](/assets/godot-basics/shot.png)
+
+> [Descarregar asset](/assets/godot-basics/shot.png) (Clic dret -> Desa la imatge)
+> *Crèdits: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> per **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
+
+
+1.  Crea una **Nova Escena**.
+2.  Node arrel: **`Area2D`** (Ull! No volem físiques complexes com xocar i rebotar, només detectar si *toquem* alguna cosa). Anomena'l `Bullet`.
+3.  Fill: **`CollisionShape2D`** (amb forma de rectangle o càpsula petita).
+4.  Fill: **`Sprite2D`** (utilitza un rectangle petit o la teva imatge de bala, i posa-la a la carpeta sprites).
+5.  Fill: **`VisibleOnScreenNotifier2D`**: Aquest node és màgic. Ens avisa quan l'objecte surt de la pantalla.
+    *   *Assegura't que el rectangle rosa d'aquest node cobreixi l'sprite.*
+
+
+#### 1.1 Neteja Automàtica (Senyals)
+
+Abans de programar el moviment, assegurem-nos que la bala s'esborri en sortir de pantalla.
+Per això usarem una **Senyal**.
+
+Imagina que el teu node `VisibleOnScreenNotifier2D` és un **Guaita**. La seva feina és cridar **"He sortit de la pantalla!"**.
+Nosaltres (l'script) connectarem un "cable" a aquest crit per reaccionar.
+
+**Passos per connectar el cable:**
+1.  Afegeix un script a la bala (`bullet.gd`) si no ho has fet.
+2.  Selecciona el node `VisibleOnScreenNotifier2D`.
+3.  Ves a la pestanya **Node** (a la dreta, al costat de l'Inspector).
+4.  Fes doble clic a la senyal `screen_exited`.
+5.  Dóna-li a **Connect**.
+6.  Godot escriurà automàticament una funció anomenada `_on_visible_on_screen_notifier_2d_screen_exited` al teu script.
+
+Ara que tenim la connexió, completem el codi:
+
+<CodeTabs
+  items={[
+    {
+      label: 'bullet.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+var speed = 600
+
+func _process(delta):
+    position.x += speed * delta # Moure cap a la DRETA (X positiu és dreta a Godot)
+
+# Aquesta funció l'ha creat Godot automàticament en connectar la senyal.
+# Nosaltres només escrivim el de dins.
+func _on_visible_on_screen_notifier_2d_screen_exited():
+    queue_free() # Si sortim de pantalla, ens autodestruïm`
+    }
+  ]}
+/>
+
+Què significa queue_free()?
+
+Traduït literal: **"Posar a la cua per alliberar"**.
+
+En programació de videojocs, esborrar alguna cosa mentre s'està utilitzant és perillós (pot tancar el joc de cop).
+`queue_free()` és la forma segura de fer-ho:
+
+1.  Marques l'objecte per esborrar.
+2.  Godot espera a acabar de dibuixar el fotograma actual (Frame).
+3.  En el moment segur ("Idle time"), esborra l'objecte de la memòria.
+
+Utilitza sempre `queue_free()` en lloc de `free()` per evitar errors.
+
+## 2. El Plànol i l'Objecte (PackedScene)
+
+A Godot, hi ha una distinció fonamental:
+*   **`.tscn` (L'Escena)**: És el muntatge original. Defineix quins nodes el componen i com funcionen.
+*   **La Instància**: És una **còpia viva** d'aquesta escena. El joc crea aquestes còpies per utilitzar-les (una còpia per al jugador, 10 còpies per a bales, etc.).
+
+Quan jugues, interactues amb aquestes còpies.
+Per disparar, necessitem crear una **nova còpia** de l'escena `bullet.tscn` cada cop que prems espai.
+
+### El procés de construcció
+En GDScript, crear alguna cosa nova té 3 passos:
+1.  **Carregar el Plànol**: `preload("res://bullet.tscn")`.
+2.  **Instanciar**: `plano.instantiate()`. Construeixes l'objecte a la memòria RAM, però **encara no existeix al món visible**.
+3.  **Afegir a l'Arbre**: `add_child(bala)`. Aquí col·loques l'objecte a l'univers del joc.
+
+## 3. Implementant el Tret
+
+### Com preguntem al joc?
+Per disparar, necessitem que l'script prengui decisions. Utilitzem dues eines noves:
+1.  **`if` (Condicional)**: Significa **"SI"**. "SI passa això... fes això altre".
+2.  **`Input` (L'Oïda)**: És qui escolta el teu teclat. `is_action_just_pressed` retorna `true` (veritat) només a l'instant exacte que baixes el dit. Ideal per a trets tret a tret.
+
+Vegem un exemple (que té un problema):
+
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `extends CharacterBody2D
+
+@export var speed = 400
+# Carreguem el "Plànol" de la bala
+var bullet_scene = preload("res://scenes/bullet.tscn")
+
+func _physics_process(delta):
+    # 1. Moviment (El que ja tenies)
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    velocity = direction * speed
+    move_and_slide()
+
+    # 2. Tret (El NOU)
+    if Input.is_action_just_pressed("ui_accept"): # Barra espaiadora
+        var bullet = bullet_scene.instantiate()
+        add_child(bullet) # <--- L'ERROR (Cangur)`
+    }
+  ]}
+/>
+
+### El Problema del Cangur
+
+**Prova el joc ara (F5)!**
+Mou-te amb la nau mentre dispares ràfegues. Notes alguna cosa rara?
+Les bales es mouen amb tu. Si gires o avances, les bales et segueixen com si estiguessin enganxades amb una corda invisible.
+
+Això passa perquè la bala és **filla de la nau**. Hereta el seu moviment.
+És com un nadó cangur a la bossa de la seva mare: si la mare salta, el nadó salta amb ella.
+
+La bala serà **filla de la nau**.
+*   Si la nau avança, la bala avança amb ella (més la seva pròpia velocitat).
+*   Si la nau rota, la bala rotarà orbitant al voltant de la nau.
+
+Volem que la bala sigui independent! Un cop disparada, no li hauria d'importar què fa la nau.
+
+### La Solució: Divorci de Coordenades
+La bala ha de néixer al **Món**, no a la Nau. Però necessitem que neixi *on està la nau*.
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `# Correcte: Utilitzant el pare (L'Escena World)
+    if Input.is_action_just_pressed("ui_accept"):
+        var bullet = bullet_scene.instantiate()
+        
+        # 1. Afegir al "Pare" (el Món) PRIMER
+        # Necessitem que la bala tingui un pare perquè pugui calcular les seves coordenades globals
+        get_parent().add_child(bullet)
+         
+        # 2. COL·LOCAR
+        # Ara que està al món, li diem "posa't on sóc jo"
+        bullet.global_position = global_position`
+    }
+  ]}
+/>
+A la línia `bullet.global_position = global_position`:
+*   El `global_position` de l'esquerra és el de la **Bala**.
+*   El `global_position` de la dreta és el de **la Nau** (l'script on estem escrivint).
+
+Estem dient: *"Bala, col·loca't al món EXACTAMENT on sóc jo (la Nau) ara mateix"*.
+
+Si utilitzéssim `bullet.position = position`, li estaríem dient *"Bala, posa't en relació al Món (pare de la bala) igual que jo estic en relació al Món"*. Si la nau està a (100, 100), la bala apareixeria a (100, 100). Això sembla correcte!
+
+Utilitzar sempre **Global** evita mals de cap: igualem coordenades universals.
+
+### Pro Tip: Disparant des del Canó (`Marker2D`)
+Ara mateix la bala surt del centre de la nau (la seva panxa). Queda lleig.
+Podries intentar sumar números màgics (`global_position + Vector2(50, 0)`), però si canvies l'sprite de la nau, hauràs de canviar el codi.
+
+La solució elegant:
+1.  Afegeix un node fill **`Marker2D`** al teu Player.
+2.  Mou-lo visualment fins a la punta del canó. Anomena'l `Muzzle` (Boc).
+3.  Al codi, utilitza la posició d'aquest marcador:
+
+#### Posició del marcador
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `# En lloc d'utilitzar la meva posició, uso la del marcador
+bullet.global_position = $Muzzle.global_position `
+    }
+  ]}
+/>
+<Callout type="info" title="Què és aquest signe de Dòlar?">
+  Escriure `$Muzzle` és la forma curta i ràpida de dir `get_node("Muzzle")`.
+  Li estàs dient a Godot: *"Busca entre els meus fills directes al que es digui Muzzle"*.
+</Callout>
+
+Ara la bala sortirà sempre del lloc correcte, encara que canvies la nau!
+
+## 4. Optimització: El mite de `queue_free()`
+
+Quan una bala surt de la pantalla, normalment fem:
+
+<CodeTabs
+  items={[
+    {
+      label: 'bullet.gd',
+      lang: 'gdscript',
+      code: `func _on_visible_on_screen_notifier_2d_screen_exited():
+    queue_free() # Adéu, bala.`
+    }
+  ]}
+/>
+
+*(Nota: El nom de la funció pot variar segons com anomenis al teu node Notifier/Enabler. Godot ho genera automàticament en connectar la senyal).*
+
+Això li diu a la RAM: *"Esborra aquestes dades i allibera l'espai"*. I quan disparas una altra vegada: *"Busca espai lliure i assigna memòria nova"*.
+
+En un joc normal, no passa res.
+En un **Bullet Hell** amb 5.000 bales per minut, això és un suïcidi.
+El "Recolector d'Escombraries" (Garbage Collector) de la CPU se saturarà netejant i creant memòria, causant estrebades (micro-stuttering).
+
+Repassem el que hem après:
+1.  **Escenes (`.tscn`)**: Són els plànols dels teus objectes.
+2.  **Instanciar**: Convertir aquests plànols en objectes vius al joc.
+3.  **Senyals**: Cables invisibles perquè els objectes parlin (`screen_exited`).
+4.  **`queue_free()`**: La forma segura d'esborrar escombraries.
+
+Felicitats! Has creat la teva primera arma semi-funcional. Per ara ho podem disparar, però no danya res.
+
+En el **proper capítol**, anemma donar-los alguna cosa a la que disparar.
+Crearem **Enemics** que volaran cap a tu i aprendrem a detectar quan una bala els colpeja.

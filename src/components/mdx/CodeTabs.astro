@@ -45,6 +45,54 @@ const highlightedItems = await Promise.all(
 					theme,
 					transformers: [
 						{
+							// Transformer to forcefully colorize specific GDScript tokens that the grammar misses
+							pre(node) {
+								// Start recursive traversal from the root <pre> node
+								const visit = (n: any) => {
+									if (!n || typeof n !== 'object') return
+
+									// If it's a <span> (token) and has a text child
+									if (
+										n.tagName === 'span' &&
+										n.children &&
+										n.children.length === 1 &&
+										n.children[0].type === 'text'
+									) {
+										const text = n.children[0].value
+										let color = ''
+
+										// Force colors based on exact text content
+										if (text.includes('@export')) color = '#ffb96a' // Orange
+										else if (text.trim() === 'preload') color = '#d6acff' // Violet
+										else if (text.trim() === 'true' || text.trim() === 'false' || text.trim() === 'null') color = '#d6acff' // Violet for constants
+                                        else if (text.trim() === '$') color = '#a1f5b5' // Green for $ symbol specifically
+                                        else if (text.startsWith('$')) color = '#a1f5b5' // Green for NodePaths ($Node)
+
+										if (color) {
+											// Ensure properties exist
+											if (!n.properties) n.properties = {}
+											
+											// Overwrite the inline style color
+											// We must parse existing style to replace only color, or just append distinct style
+                                            // Shiki usually puts color in style="color:..."
+											const existingStyle = (n.properties.style as string) || ''
+                                            // Simple replacement of color if exists, or append
+                                            // This regex removes existing color:...;
+                                            const styleWithoutColor = existingStyle.replace(/color:[^;]+;?/g, '')
+											n.properties.style = styleWithoutColor + `color:${color};`
+										}
+									}
+
+									// Continue recursion
+									if (n.children && Array.isArray(n.children)) {
+										n.children.forEach(visit)
+									}
+								}
+
+								visit(node)
+							},
+						},
+						{
 							pre(node) {
 								if (
 									typeof node === 'object' &&
@@ -87,6 +135,15 @@ const highlightedItems = await Promise.all(
 			}
 		}
 
+		// Select theme based on language
+		if (lang === 'gdscript') {
+			return {
+				...item,
+				htmlLight: generateHtml('godot-theme'), // Use Godot theme for both steps (it's a dark theme)
+				htmlDark: generateHtml('godot-theme'),
+			}
+		}
+
 		return {
 			...item,
 			htmlLight: generateHtml('github-light'),
@@ -95,20 +152,41 @@ const highlightedItems = await Promise.all(
 	})
 )
 
+const isGodot = items.length > 0 && items[0].lang === 'gdscript'
+
 const statusClasses = {
-	default: 'border-zinc-200 dark:border-zinc-800',
-	success: 'border-green-300 dark:border-green-900',
-	error: 'border-red-300 dark:border-red-900',
+	default: isGodot ? 'border-[#3E4553] bg-[#2C3138]' : 'border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900',
+	success: 'border-green-300 dark:border-green-900 bg-zinc-100 dark:bg-zinc-900',
+	error: 'border-red-300 dark:border-red-900 bg-zinc-100 dark:bg-zinc-900',
+}
+
+// Colores específicos de Godot definidos por el usuario
+const GODOT_COLORS = {
+    codeBg: '#2C3138',
+    tabsBg: '#3E4553', // Color de la barra de pestañas
+    inactiveTab: '#3E4553',
+    activeTab: '#2C3138', // Mismo que el código para continuidad
+    secondary: '#3C4248',
+    borderColor: '#454D5C' // Azul Godot solicitado
 }
 ---
 
 <div
 	id={uniqueId}
-	class={`code-tabs-container my-6 overflow-hidden rounded-lg border-2 bg-zinc-100 dark:bg-zinc-900 ${statusClasses[status]}`}>
+    data-theme={isGodot ? 'godot' : 'default'}
+	class={`code-tabs-container my-6 overflow-hidden rounded-lg border-2 ${statusClasses[status]}`}
+    style={isGodot ? `background-color: ${GODOT_COLORS.codeBg}; border-color: ${GODOT_COLORS.borderColor};` : ''}
+>
 	<!-- Pestañas de código (solo si hay más de un item o showTabs=true) -->
 	{displayTabs && (
 		<div
-			class='flex items-center justify-between rounded-t-lg border-b border-zinc-200 bg-zinc-50 px-2 pt-2 dark:border-zinc-800 dark:bg-zinc-900/50'>
+			class={`flex items-center justify-between rounded-t-lg border-b px-2 pt-2 ${
+                isGodot 
+                ? `border-[#2C3138] text-gray-200` 
+                : 'border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/50'
+            }`}
+            style={isGodot ? `background-color: ${GODOT_COLORS.tabsBg}; border-color: ${GODOT_COLORS.borderColor}; border-bottom-color: ${GODOT_COLORS.codeBg};` : ''}
+        >
 			<div class='scrollbar-none flex flex-1 items-center overflow-x-auto' role='tablist'>
 				{
 					items.map((item, index) => (
@@ -119,18 +197,24 @@ const statusClasses = {
 							data-index={index}
 							data-lang={item.lang}
 							class:list={[
-								'tab-button mr-1 whitespace-nowrap rounded-t-lg border-x border-t px-4 py-2 text-sm font-medium',
+								'tab-button mr-1 whitespace-nowrap rounded-t-lg border-x border-t px-4 py-2 text-sm font-medium transition-colors',
 								index === 0
-									? 'active border-zinc-200 border-b-white bg-white text-zinc-900 dark:border-zinc-800 dark:border-b-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
-									: 'border-transparent bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200',
-							]}>
+									? isGodot 
+                                        ? 'active border-[#2C3138] border-b-[#2C3138] text-white' 
+                                        : 'active border-zinc-200 border-b-white bg-white text-zinc-900 dark:border-zinc-800 dark:border-b-zinc-900 dark:bg-zinc-900 dark:text-zinc-100'
+									: isGodot
+                                        ? 'border-transparent text-gray-400 hover:bg-[#2C3138]/50 hover:text-white'
+                                        : 'border-transparent bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200',
+							]}
+                            style={index === 0 && isGodot ? `background-color: ${GODOT_COLORS.activeTab}; border-color: ${GODOT_COLORS.borderColor}; border-bottom-color: ${GODOT_COLORS.codeBg};` : ''}
+                        >
 							{item.label}
 						</button>
 					))
 				}
 			</div>
 			<div class='shrink-0 pb-2 pl-4 pr-2'>
-				<span class='text-xs lang-label select-none font-mono text-zinc-400 dark:text-zinc-500'>
+				<span class={`text-xs lang-label select-none font-mono ${isGodot ? 'text-[#8da5f5]' : 'text-zinc-400 dark:text-zinc-500'}`}>
 					{items[0].lang}
 				</span>
 			</div>
@@ -141,7 +225,11 @@ const statusClasses = {
 	<div class='group relative'>
 		<div class='absolute right-2 top-2 z-10 opacity-0 transition-opacity group-hover:opacity-100'>
 			<button
-				class='copy-button cursor-pointer rounded-md bg-zinc-200/50 p-1.5 text-zinc-500 backdrop-blur-sm transition-all hover:bg-zinc-200 hover:text-zinc-700 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20 dark:hover:text-white'
+				class={`copy-button cursor-pointer rounded-md p-1.5 backdrop-blur-sm transition-all ${
+                    isGodot 
+                    ? 'bg-[#3E4553] text-gray-300 hover:bg-[#4b5563] hover:text-white'
+                    : 'bg-zinc-200/50 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700 dark:bg-white/10 dark:text-white/70 dark:hover:bg-white/20 dark:hover:text-white'
+                }`}
 				title={copyLabel}
 				aria-label={copyLabel}
 				data-label-copy={copyLabel}
@@ -160,7 +248,14 @@ const statusClasses = {
 				<div
 					id={`${uniqueId}-panel-${index}`}
 					role='tabpanel'
-					class:list={['tab-panel bg-white dark:bg-zinc-900', { hidden: index !== 0 }]}>
+					class:list={['tab-panel', { hidden: index !== 0 }]}
+                    style={isGodot ? `background-color: ${GODOT_COLORS.codeBg};` : ''}
+                    class:list={[
+                        'tab-panel', 
+                         { hidden: index !== 0 },
+                         isGodot ? '' : 'bg-white dark:bg-zinc-900'
+                    ]}
+                >
 					<div class='block dark:hidden' set:html={item.htmlLight} />
 					<div class='hidden dark:block' set:html={item.htmlDark} />
 				</div>
@@ -181,8 +276,23 @@ const statusClasses = {
 		const tabs = container.querySelectorAll('.tab-button')
 		const panels = container.querySelectorAll('.tab-panel')
 		const copyBtn = container.querySelector('.copy-button')
-
 		const langLabel = container.querySelector('.lang-label')
+        
+        const theme = container.getAttribute('data-theme')
+        const isGodot = theme === 'godot'
+
+        // Clases para el estado por defecto (Default Theme)
+        const defaultInactiveClasses = ['bg-transparent', 'text-zinc-500', 'hover:text-zinc-700', 'dark:text-zinc-400', 'dark:hover:text-zinc-200', 'border-transparent', 'hover:bg-zinc-100', 'dark:hover:bg-zinc-800']
+        const defaultActiveClasses = ['active', 'bg-white', 'dark:bg-zinc-900', 'text-zinc-900', 'dark:text-zinc-100', 'border-zinc-200', 'dark:border-zinc-800', 'border-b-white', 'dark:border-b-zinc-900']
+
+        // Clases para Godot Theme
+        // Usamos estilos inline para colores específicos, pero manejamos clases para estructura/texto
+        const godotInactiveClasses = ['border-transparent', 'text-gray-400', 'hover:bg-[#2C3138]/50', 'hover:text-white']
+        const godotActiveClasses = ['active', 'text-white'] 
+        
+        // Helper para Godot Styles
+        const godotActiveStyle = "background-color: #2C3138; border-color: #64A1D7; border-bottom-color: #2C3138;"
+        const godotInactiveStyle = ""
 
 		// TAB SWITCHING
 		tabs.forEach(tab => {
@@ -193,51 +303,28 @@ const statusClasses = {
 				// Actualización de pestañas
 				tabs.forEach(t => {
 					t.setAttribute('aria-selected', 'false')
-					t.classList.remove(
-						'active',
-						'bg-white',
-						'dark:bg-zinc-900',
-						'text-zinc-900',
-						'dark:text-zinc-100',
-						'border-zinc-200',
-						'dark:border-zinc-800',
-						'border-b-white',
-						'dark:border-b-zinc-900'
-					)
-					t.classList.add(
-						'bg-transparent',
-						'text-zinc-500',
-						'hover:text-zinc-700',
-						'dark:text-zinc-400',
-						'dark:hover:text-zinc-200',
-						'border-transparent',
-						'hover:bg-zinc-100',
-						'dark:hover:bg-zinc-800'
-					)
+                    
+                    if (isGodot) {
+                        t.classList.remove(...godotActiveClasses)
+                        t.classList.add(...godotInactiveClasses)
+                        // Limpiar estilos inline forzados
+                        t.removeAttribute('style')
+                    } else {
+					    t.classList.remove(...defaultActiveClasses)
+					    t.classList.add(...defaultInactiveClasses)
+                    }
 				})
 
 				tab.setAttribute('aria-selected', 'true')
-				tab.classList.remove(
-					'bg-transparent',
-					'text-zinc-500',
-					'hover:text-zinc-700',
-					'dark:text-zinc-400',
-					'dark:hover:text-zinc-200',
-					'border-transparent',
-					'hover:bg-zinc-100',
-					'dark:hover:bg-zinc-800'
-				)
-				tab.classList.add(
-					'active',
-					'bg-white',
-					'dark:bg-zinc-900',
-					'text-zinc-900',
-					'dark:text-zinc-100',
-					'border-zinc-200',
-					'dark:border-zinc-800',
-					'border-b-white',
-					'dark:border-b-zinc-900'
-				)
+                
+                if (isGodot) {
+                    tab.classList.remove(...godotInactiveClasses)
+                    tab.classList.add(...godotActiveClasses)
+                    tab.setAttribute('style', godotActiveStyle)
+                } else {
+				    tab.classList.remove(...defaultInactiveClasses)
+				    tab.classList.add(...defaultActiveClasses)
+                }
 
 				// Actualización de etiqueta de idioma
 				if (langLabel && lang) {
@@ -275,6 +362,28 @@ const statusClasses = {
 
 			if (!code) return
 
+			// FIX: Godot usa Tabs por defecto, pero la web usa Espacios.
+			// Si copiamos espacios a Godot, se rompe la indentación mixta.
+			// Detectamos si es GDScript y convertimos 4 espacios a 1 Tab.
+			const activeTab = container.querySelector('.tab-button[aria-selected="true"]')
+			const lang = activeTab?.getAttribute('data-lang')
+
+			if (lang === 'gdscript') {
+				// Reemplaza grupos de 4 espacios al inicio de cada línea por tabs
+				// Usamos un regex que busca espacios al principio de la línea
+				code = code.split('\n').map(line => {
+					let newLine = line
+					// Reemplazar todos los grupos de 4 espacios iniciales por tabs
+					// Ejemplo: "        func" -> "\t\tfunc"
+					const leadingSpaces = line.match(/^ */)?.[0].length || 0
+					if (leadingSpaces > 0 && leadingSpaces % 4 === 0) {
+						const tabs = '\t'.repeat(leadingSpaces / 4)
+						newLine = tabs + line.trimStart()
+					}
+					return newLine
+				}).join('\n')
+			}
+
 			try {
 				await navigator.clipboard.writeText(code)
 
@@ -289,6 +398,7 @@ const statusClasses = {
 				if (checkIcon instanceof HTMLElement) {
 					checkIcon.style.display = 'flex'
 					checkIcon.classList.add('text-green-500')
+					if (isGodot) checkIcon.classList.replace('text-green-500', 'text-[#a1f5b5]')
 				}
 
 				copyBtn.setAttribute('title', labelCopied)
@@ -298,7 +408,7 @@ const statusClasses = {
 					if (copyIcon instanceof HTMLElement) copyIcon.style.display = 'flex'
 					if (checkIcon instanceof HTMLElement) {
 						checkIcon.style.display = 'none'
-						checkIcon.classList.remove('text-green-500')
+						checkIcon.classList.remove('text-green-500', 'text-[#a1f5b5]')
 					}
 
 					copyBtn.setAttribute('title', labelCopy)

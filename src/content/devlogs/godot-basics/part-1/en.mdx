@@ -1,0 +1,321 @@
+---
+pubDate: '2026-01-11T10:00:00Z'
+tags: ['godot', 'gdscript', 'math', 'vectors']
+draft: false
+new: true
+title: 'Godot #1: Vectors and Movement'
+description: Understanding the math behind movement. Why do we normalize? What is Delta? Explained for humans.
+series: godot-basics
+seriesTitle: Game Dev with Godot
+seriesDescription: Learn Godot by creating a Space Shooter from scratch, with an emphasis on Math and Shaders.
+lang: en
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import VectorDemo from '../../../../components/mdx/interactive/VectorDemo.tsx';
+
+## The Ship and the Math
+
+In this chapter we are going to create our ship and make it move. But we are not going to copy a script. We are going to understand **why** it moves. And for that, we have to talk about our friend (or enemy): **The Arrow (The Vector)**.
+
+<Callout type="tip" title="Need graphics?">
+  To follow this course, you will need a ship. If you don't have one handy, we strongly recommend the free pack from **[Kenney Space Shooter Extension](https://kenney.nl/assets/space-shooter-extension)**. It's clean, beautiful, and perfect for learning.
+  
+  Need to edit the images? No need to pirate anything. You have the **[Affinity Studio](https://www.affinity.studio/)** suite available for free on the web.
+</Callout>
+
+### 1. The Stage (Cartesian Plane)
+
+Your monitor is a grid of pixels.
+*   **X (Horizontal)**: Grows to the right.
+*   **Y (Vertical)**: Grows **DOWN**.
+
+<Callout type="warning" title="Beware of Y!">
+  In school math, Y grows upwards. In Game Dev, Y grows downwards (because we start drawing from the top left corner). Don't forget this or your ship will fly upside down.
+</Callout>
+
+### 2. Choosing the Node (Your Ship)
+
+In the intro we said that "Everything is a Scene". True, but... what is a scene made of? **Nodes**.
+If the Scene is the house, the Nodes are the bricks. And there are many types of bricks:
+
+1.  **Node2D**: It is the base **for the 2D world**. It has position `(x, y)`, rotation, and scale. (If we were in 3D it would be `Node3D`, and for interfaces `Control`, but here we live in the plane).
+2.  **RigidBody2D**: It has real physics (gravity, bounces). If you kick it, it flies away. Difficult to control for a main character.
+3.  **CharacterBody2D**: The perfect middle ground. It has position (like Node2D) and knows how to collide (like RigidBody), but **it doesn't move by itself**. YOU are the engine. It is the standard for characters in 2D games.
+
+### Prepare your Assets
+Before starting, you need a ship. You can draw one or use this test one:
+
+![Player Ship](/assets/godot-basics/plane_128.png)
+> Right click -> Save image.
+> Credits: <a href="https://puszke.itch.io/psx-plane" target="_blank" rel="noopener noreferrer">PSX Plane</a> by **Puck**.
+
+1.  Create a folder called `sprites` in your FileSystem.
+2.  Drag this image inside.
+
+**Steps:**
+1.  In the empty scene that appears by default:
+2.  In the "Create Root Node" panel, select **Other Node**.
+3.  Type `CharacterBody2D` in the search bar and double click. This will create a new scene with this node as root. Call it `Player`.
+4.  The node will complain with an alert ⚠️. It's telling you: *"Hey, I have a physical body but I don't have a shape! Am I a circle? A square?"*.
+5.  Add as a child of `CharacterBody2D` a node called `CollisionShape2D`.
+    *   In the Inspector, where it says **Shape**, select `New CircleShape2D`.
+    *   **Important**: Click on the box that says "CircleShape2D" (it will expand).
+    *   In **Radius**, write `40 px`. This will adjust the exact size without scaling the node.
+6.  Add another child node `Sprite2D` to make it look nice (drag your ship image to the Texture property).
+7.  Create a folder called `scenes` in the root of the project and save the scene inside as `player.tscn`.
+
+<Callout type="info" title="Golden Rule: Hitbox vs Sprite">
+  In Game Design, there is an unwritten rule: **"Better to have too much than too little"**.
+  
+  *   If your collision is **bigger** than the ship, the player will scream *"But it didn't touch me!"* when they die in mid-air. That feels **unfair**.
+  *   If your collision is **a little smaller**, you allow bullets to "graze" the ship without killing it. That generates moments of *"Phew, close one!"* that feel **epic**.
+  
+  Always give the player a little advantage. Make the `CollisionShape` 10-20% smaller than the visible drawing.
+</Callout>
+
+### 3. Survival Glossary
+
+Before writing code, you need to know how to read the map. If you have never programmed, this is all you need to know for now. Imagine the script is a cooking recipe:
+
+1.  **`extends` (DNA)**:
+    It's the first line. Tells Godot: *"Hey, I'm an improved copy of..."*.
+    *   `extends CharacterBody2D`: Means "I have all the superpowers of a CharacterBody2D (collide, move) and, also, whatever I add here".
+2.  **`func` (Action/Verb)**:
+    It is an order or task. Groups a list of steps.
+    *   `func _physics_process(delta)`: It is a special function that Godot calls at a fixed rate (by default **60 times per second**). Everything you write inside will repeat in a loop to move things.
+3.  **`var` (Box)**:
+    It is a place where we store information **in the computer's RAM**.
+    *   `var speed = 300`: We have reserved a slot in memory, put the label "speed" on it, and stored the number 300 inside.
+
+<Callout type="warning" title="Danger: Tabs vs Spaces">
+  GODOT DOES NOT FORGIVE.
+  Indentation (those spaces on the left) defines which code is inside which function.
+  *   Always use **Tabs** (Tab Key ↹), not spaces.
+  *   **Never mix** tabs and spaces in the same file or you will have invisible errors.
+  *   *Note: Given that this is the web, copying code might introduce spaces. Godot will warn you. Use Tabs.*
+</Callout>
+
+### 4. Creating the Brain (Script)
+
+Our ship is pretty, but dumb. It doesn't know what to do. We need a **Script**.
+
+1.  Create a folder in the root called `scripts`.
+2.  Select the root node `Player`.
+3.  Click on the **Scroll with a green `+`** icon (above the scene panel). Or right click -> **Attach Script**.
+4.  A window will appear.
+5.  **Template**: Leave it in `CharacterBody2D: Basic Movement` if you want to see a lot of complex code, or put `Empty` to start clean. We will delete everything, so it doesn't matter.
+6.  **Path**: Here is the key. Don't throw it in the root. Write `res://scripts/player.gd`.
+7.  Click **Create**.
+
+Now you will see a text editor. Welcome to your first program!
+
+### 5. The "Moving" Problem
+
+To move the ship, we need to tell it where to go. Here enter the **Vectors**.
+
+A vector is just an arrow. In video games, when that arrow tells us "where to", we call it **Direction Vector**.
+*   If you touch **Right**, the vector points to `(1, 0)`.
+*   If you touch **Down**, the vector points to `(0, 1)`.
+
+In Godot, this is called `Input.get_vector()`.
+
+But getting the vector doesn't move the ship. It only tells us "where the player wants to go".
+To move it, we need two magical things that live inside `CharacterBody2D`:
+
+1.  **`velocity` (Speed)**: It is an internal variable. Imagine it as the ship's speedometer. You tell it "Go at 300 km/h following this vector".
+2.  **`move_and_slide()`**: This function is the engine. You tell it "Start!". and it searches for the `velocity` variable and moves the ship that amount, colliding if necessary.
+
+**You don't have to pass `velocity` to `move_and_slide()`. It does it alone.**
+
+Here is the full code. **I recommend writing it by hand** to memorize the commands, but if you are in a hurry, you can copy it.
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `extends CharacterBody2D
+
+func _physics_process(delta):
+    # We ask Input to build us the Direction Vector based on keys
+    # "ui_left", "ui_right", "ui_up", "ui_down" are default actions in Godot
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    velocity = direction * 300
+    move_and_slide()`
+    }
+  ]}
+/>
+
+### 4. Why do you run faster diagonally? (Pythagoras)
+
+If you press **Right** `(1, 0)` and **Down** `(0, 1)` at the same time, Godot adds the vectors. The result is `(1, 1)`.
+
+How long is that vector `(1, 1)`? Here is where our Greek friend comes in.
+
+Imagine you are in a grid city (like Barcelona's Eixample or Manhattan):
+*   Walking 1 block East takes **1 minute**.
+*   Walking 1 block South takes **1 minute**.
+*   If you walk East and then South, it takes **2 minutes** in total.
+
+But, **what if you cross the street diagonally?**
+Here enters Mr. Pythagoras with his famous **Theorem**. Don't panic, let's dissect it piece by piece:
+
+$$
+h = \sqrt{a^2 + b^2}
+$$
+
+**What does each letter mean?**
+*   **$h$ (Hypotenuse)**: It is the long distance, the **length (magnitude)** of the vector.
+*   **$a$ and $b$ (Legs)**: They are the straight sides. In our case, movement in **X** (1 step) and in **Y** (1 step).
+
+**Get the calculator out! Seriously, do it.**
+Let's substitute the letters with our numbers (1 right, 1 down):
+
+1.  **Square them**: $1^2$ means $1 \times 1$. It's still $1$.
+    
+    Result:
+    $$ h = \sqrt{1 + 1} $$
+2.  **Add**: $1 + 1 = 2$.
+
+    Result:
+    $$ h = \sqrt{2} $$
+3.  **Square Root**: Look for the $\sqrt{}$ button on your mobile calculator and put $2$.
+
+    Result:
+    $$ h \approx 1.41421356... $$
+
+<Callout type="info" title="Gamer Dictionary 🤓">
+  In video games and math, we call this length $h$ the **Magnitude** or **Module** of the vector.
+  It is also known as **Euclidean Distance** (the straight line between two points).
+  
+  When we do `input_vector.length()` in Godot, the engine does this Pythagoras calculation for you.
+</Callout>
+
+There you have it!
+If we do nothing, your direction has a force of **1.41**.
+Compared to the force of **1.0** when you go straight, **you are running 41% faster!**
+
+<VectorDemo client:visible />
+
+This is a classic problem ("Speedrunning hack"). In a competitive game, everyone would go diagonally to arrive sooner.
+
+#### The Solution: Normalize
+
+Normalizing a vector means: **"I don't care how long the vector (the arrow) is, cut it so it measures exactly 1, but keep the direction".**
+
+Godot is smart. `Input.get_vector()` **ALREADY normalizes** the result by default.
+It is important to know this because in shader math or AI, you will have to use `.normalized()` manually many times when you only care about the **direction** ($ \hat{v} $) and not the force.
+
+### 5. What the hell is `delta`?
+
+You will see `delta` in all tutorials.
+
+<CodeTabs
+  items={[
+    {
+      label: 'example.gd',
+      lang: 'gdscript',
+      code: `position += velocity * delta`
+    }
+  ]}
+/>
+
+Imagine your game runs at **60 FPS** (frames per second). Your code runs 60 times per second.
+Now imagine your friend runs at **144 FPS**. Their code runs 144 times per second.
+
+If you add `position += 1` in each frame:
+*   You advance 60 pixels every second.
+*   Your friend advances 144 pixels every second.
+
+Your friend is faster just by having a better PC! That is unfair (and breaks physics).
+
+**Delta** is the **time passed since the last frame**.
+*   If you run at 60 FPS, delta is `1/60` (approx 0.016s).
+*   If you run at 144 FPS, delta is `1/144` (approx 0.006s).
+
+If you multiply by delta:
+*   You: `1 * 60 times * 0.016 = 1` meter per second.
+*   Friend: `1 * 144 times * 0.006 = 1` meter per second.
+
+**Conclusion**: Multiplying by Delta converts "Pixels per Frame" into "Pixels per Second". It makes the game run the same on a toaster as on a NASA PC.
+
+<Callout type="tip" title="Godot Note">
+  `move_and_slide()` uses `delta` automatically inside, that's why in the code above you don't see it multiplying. But if you move things manually changing `position`, ALWAYS use delta.
+</Callout>
+
+### 6. Final Script (For now)
+
+Before copying, look at two new details:
+1.  **`@export`**: This magic word makes the `speed` variable appear in the Godot **Inspector**. So you can adjust the speed by writing a number in the box without opening the script again.
+2.  **`direction * speed`**: Remember that `direction` is worth **1** (it is a Unit Vector). It is just the pure direction. By multiplying it by **400**, we convert that 1 into 400 pixels per second.
+    *   This means: **"Move 400 pixels per second in that direction"**.
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `extends CharacterBody2D
+    
+@export var speed = 400
+
+func _physics_process(delta):
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    velocity = direction * speed
+    move_and_slide()`
+    }
+  ]}
+/>
+
+Congratulations! You have a ship that moves consistently in all directions.
+
+### 7. Testing everything: Your First Level (Sandbox)
+
+Until now we have worked in the "workshop" (the `Player` scene). But a ship needs a universe.
+If you hit the **Play (F5)** button now, it will ask for a main scene. Let's create it:
+
+1.  Create a **New Scene**.
+2.  Choose **2D Scene** (Node2D). This time we don't want physics, just a container for the world. Call it `World` (PascalCase, because it is a Node).
+3.  Save it in `scenes/world.tscn` (snake_case, because it is a file).
+
+#### Instantiating the Player (The "Link")
+Here lies Godot's magic. We are not going to "copy and paste" the player. We are going to **reference** it.
+1.  Look for your `player.tscn` file in the `scenes` folder (bottom left).
+2.  **Drag it** from the file explorer and drop it inside the **Scene** panel (top left, under where it says `World`). This will place it automatically at position `(0, 0)`, perfectly centered.
+3.  You will see that it appears with a clapperboard icon 🎬 next to it. That means it is an **Instance**. If you change the original `player.tscn` (e.g., paint it red), this one will also change!
+
+#### Lights, Camera... Coordinates!
+To make math easier for us (where 0 is top and max is bottom):
+
+1.  In the `World` scene, add a child node **`Camera2D`**.
+2.  In the Inspector, look for **Anchor Mode** and change it to **`Fixed Top Left`**.
+    *   *This makes the top left corner the (0,0), like in classic pixel screens.*
+
+#### Centering the Ship
+Now that (0,0) is the corner, your ship (which is at 0,0) will be cut off at the top left.
+Let's place it in the exact center using logic:
+
+1.  Godot's default resolution is **1152 x 648**.
+2.  The center is half: `1152 / 2 = 576` (X) and `648 / 2 = 324` (Y).
+3.  Select the `player` node (the instance).
+4.  In Inspector > Transform > Position, write:
+    *   **X**: `1152/2`
+    *   **Y**: `648/2`
+
+<Callout type="tip" title="Trick: Godot knows math!">
+  You can literally write `1152/2` in the box and it will do the math.
+</Callout>
+
+#### Let's Play!
+1.  Press **F5** (or the Play button at the top right).
+2.  It will ask you: *"No Main Scene defined. Select one?"*. Say **Select Current**.
+3.  There you have it! Your ship moving in your new world.
+
+<Callout type="tip" title="Is my ship leaving the screen?">
+  It's normal! We haven't set limits (walls) yet. Your ship travels happily towards the infinity of mathematical coordinates.
+  In future chapters we will put walls to this universe.
+</Callout>

@@ -4,22 +4,181 @@ tags: ['godot', 'gdscript', 'signals', 'shaders', 'area2d']
 draft: true
 new: true
 title: 'Godot #3: Señales y Enemigos'
-description: "Damos vida al juego con enemigos. Aprende sobre Area2D, colisiones, señales y efectos visuales básicos con Shaders."
+description: Damos vida al juego con enemigos. Aprende sobre Area2D, colisiones, señales y efectos visuales básicos con Shaders.
 series: godot-basics
-seriesTitle: Godot & Game Dev Science
+seriesTitle: Game Dev con Godot
 seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
 lang: es
 ---
 
-# Enemigos y Señales: ¡Contacto!
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 
-Ya disparamos, pero... ¿a qué? Es hora de crear dianas voladoras.
+## Enemigos y Señales: ¡Contacto!
 
-## ¿Qué vamos a aprender?
-1.  **Area2D al rescate**: Por qué usamos Areas y no cuerpos físicos complejos para balística simple.
-2.  **Señales (Signals)**: El sistema nervioso de Godot. `area_entered` es tu mejor amigo.
-3.  **Física FX**: Hacer que los enemigos caigan con gravedad (`RigidBody`) al morir, estilo *U.N. Squadron*.
-4.  **Shader 101**: Crear un "Hit Flash" blanco para dar feedback de daño instantáneo.
+Ya disparamos, pero nuestras balas viajan hacia el infinito sin golpear nada. Es hora de crear dianas voladoras.
+Pero antes, una decisión arquitectónica vital.
 
-## 1. Creando al Enemigo
-...
+## 1. La Piel del Enemigo (`Area2D`)
+
+Para el jugador usamos `CharacterBody2D` porque queríamos física de movimiento precisa (chocar con paredes y deslizarse).
+Para las balas y enemigos simples, usaremos **`Area2D`**.
+
+**¿Por qué?**
+*   **Es más barato**: Consume menos CPU que un cuerpo físico completo.
+*   **Permite atravesar**: En un *Space Shooter*, no quieres que los enemigos reboten contra ti como bolas de billar. Quieres que *detecten* que te han tocado y exploten. `Area2D` es perfecta para eso: detecta solapamientos ("overlap") sin empujar.
+
+### Preparando la Escena Enemiga
+1.  Crea nueva Escena. Nodo raíz: `Area2D`. Nombre: `Enemy`.
+2.  Añade `Sprite2D` (tu nave alienígena).
+3.  Añade `CollisionShape2D` (círculo o rectángulo que cubra la nave).
+
+## 2. El Sistema Nervioso (Señales)
+
+Godot funciona con **Señales**. Imagínalo como una notificación de móvil.
+*   Cuando la bala toca el área del enemigo, el Área grita: *"¡Me han tocado!"*.
+*   Nosotros (el script) nos suscribimos a ese grito para reaccionar (restar vida, explotar).
+
+La señal clave se llama **`area_entered`**.
+Se activa cuando *otra Area2D* (como nuestra bala) entra dentro de esta.
+
+## 3. Feedback Visual (Hit Flash Shader)
+
+Antes de programar la muerte, vamos a hacer que el enemigo parpadee en blanco al recibir daño.
+Esto es vital para que el jugador sepa que le ha dado. Usaremos un **Shader**.
+
+Un Shader es un mini-programa que corre en la tarjeta gráfica (GPU) y cambia el color de cada píxel.
+
+1.  Selecciona el `Sprite2D` del enemigo.
+2.  En **Inspector > CanvasItem > Material**, crea un `New ShaderMaterial`.
+3.  Haz clic en el material y luego en `Shader`, crea un `New Shader`.
+4.  Pega esto en el editor de Shader que aparecerá abajo:
+
+<CodeTabs
+  items={[
+    {
+      label: 'hit_flash.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;
+
+// Uniforms: Variables que podemos cambiar desde el Script de la nave (CPU)
+uniform bool active = false;
+
+func fragment() {
+    // Leemos el color original del píxel (Textura)
+    vec4 color_original = texture(TEXTURE, UV);
+    
+    // Si 'active' es verdadero, pintamos blanco puro (1, 1, 1, 1)
+    if (active) {
+        COLOR = vec4(1.0, 1.0, 1.0, color_original.a); // Mantenemos transparencia 'a'
+    } else {
+        COLOR = color_original; // Si no, color normal
+    }
+}`
+    }
+  ]}
+/>
+
+<Callout type="info" title="Uniforms">
+    Las variables `uniform` son el puente entre tu código GDScript y el Shader.
+    Desde GDScript podremos hacer: `material.set_shader_parameter("active", true)` para activar el flash.
+</Callout>
+
+## 4. El Script del Enemigo
+
+Ahora vamos a juntarlo todo.
+Queremos que el enemigo:
+1.  Avance hacia la izquierda (hacia la nave del jugador).
+2.  Si le toca una bala: Parpadee y pierda vida.
+3.  Si la vida llega a cero: **Caiga con física (FX)** y luego desaparezca.
+
+### La Muerte Dramática (Físicas Fake)
+Como referencia a clásicos como *U.N. Squadron*, no queremos que la nave simplemente haga "puf" y desaparezca.
+Queremos que pierda el control y caiga hacia abajo con gravedad falsa, rotando mientras cae, antes de explotar.
+
+#### Glosario de Supervivencia:
+Antes de ver el script, entiende estas 3 nuevas herramientas:
+
+1.  **`area_entered.connect` (El Enchufe)**:
+    Conecta el "cable" de la señal. Le decimos: "Cuando alguien entre en mi área, llama a la función `_on_area_entered`".
+2.  **`is_dying` (Bandera de Estado)**:
+    Es un interruptor (`true`/`false`).
+    *   Si es `false`: La nave avanza recto y ataca.
+    *   Si es `true`: La nave ignora todo y cae dando vueltas.
+3.  **`await` (Pausa)**:
+    Congela la ejecución de esa función un momento. Lo usaremos para que el flash blanco se quede fijo 0.1 segundos antes de apagarse.
+
+Ahora sí, veamos la receta completa:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+# 1. INGREDIENTES
+@export var speed = 150
+@export var hp = 3
+
+# Variables de estado (para saber si estamos cayendo)
+var is_dying = false
+var fall_speed = 0.0
+
+func _ready():
+    # Nos conectamos a NOSOTROS MISMOS.
+    # Cuando "algo" entre en mi área, ejecuta la funcion '_on_area_entered'
+    area_entered.connect(_on_area_entered)
+
+func _process(delta):
+    # Si estamos muriendo, aplicamos gravedad falsa
+    if is_dying:
+        fall_speed += 500 * delta # Aceleración de gravedad
+        position.y += fall_speed * delta
+        position.x -= speed * 0.5 * delta # Sigue conservando un poco de inercia lateral
+        rotation += 5 * delta # Girar a lo loco
+        
+        # Si salimos de la pantalla por abajo, adiós definitivo
+        if position.y > 720: # O el alto de tu pantalla
+            queue_free()
+    else:
+        # Comportamiento normal: Moverse a la izquierda
+        position.x -= speed * delta
+
+func _on_area_entered(area):
+    # 'area' es quien nos ha chocado (la Bala)
+    
+    # Si ya estoy muriendo, ignoro más disparos
+    if is_dying:
+        return
+        
+    hp -= 1
+    hit_flash() # Activar el shader
+    
+    # Destruir la bala (opcional, si no usas Object Pool aún)
+    # area.queue_free() 
+    
+    if hp <= 0:
+        die()
+
+func hit_flash():
+    # Accedemos al Material del Sprite y activamos el "active"
+    var sprite = $Sprite2D
+    sprite.material.set_shader_parameter("active", true)
+    
+    # Esperamos 0.1 segundos (una fracción de instante)
+    await get_tree().create_timer(0.1).timeout
+    
+    # Lo apagamos
+    sprite.material.set_shader_parameter("active", false)
+
+func die():
+    is_dying = true
+    # Aquí podríamos poner una explosión o sonido
+    # Desactivamos colisiones para que no nos sigan disparando mientras caemos
+    $CollisionShape2D.set_deferred("disabled", true)`
+    }
+  ]}
+/>
+
+Con esto, tus enemigos no son simples dianas. Reaccionan, brillan y tienen una muerte dramática y satisfactoria.

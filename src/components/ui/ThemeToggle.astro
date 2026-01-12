@@ -51,20 +51,22 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 </script>
 
 <style>
-	#themeToggle:hover path {
+	.theme-toggle {
+		z-index: 60;
+	}
+	.theme-toggle:hover path {
 		transition: fill 0.2s ease;
 	}
 </style>
 
 <button
-	id="themeToggle"
-	data-disable-hover-on-touch="true"
-	data-title-light={titleLight}
-	data-title-dark={titleDark}
-	class="group relative flex size-10 items-center justify-center rounded-lg border-none p-2 transition-[background-color] duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+	class="theme-toggle group relative flex size-10 items-center justify-center rounded-lg border-none p-2 transition-[background-color] duration-200 hover:bg-zinc-100 data-[disable-hover-on-touch=true]:hover:bg-transparent dark:hover:bg-zinc-800"
 	type="button"
 	aria-label={t('theme.toggle')}
 	aria-pressed="true"
+	data-title-light={titleLight}
+	data-title-dark={titleDark}
+	data-disable-hover-on-touch="true"
 >
 	<!-- Sun icon (visible in light mode) -->
 	<span
@@ -82,87 +84,99 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 </button>
 
 <script is:inline>
-	function initThemeToggle() {
-		const btn = document.getElementById('themeToggle')
-		if (!btn) return
+	(function() {
+		// Encapsulamos para evitar colisiones globales
+		function initThemeToggle() {
+			const buttons = document.querySelectorAll('.theme-toggle')
+			if (!buttons.length) return
 
-		const el = document.documentElement
+			const el = document.documentElement
 
-		const safeSet = (k, v) => {
-			try {
-				localStorage.setItem(k, v)
-			} catch {}
-		}
+			const safeSet = (k, v) => {
+				try {
+					localStorage.setItem(k, v)
+				} catch {}
+			}
 
-		const updateUI = () => {
-			const isDark = el.classList.contains('dark')
-			const titleLight = btn.getAttribute('data-title-light')
-			const titleDark = btn.getAttribute('data-title-dark')
+			// Función para actualizar el estado visual de TODOS los botones
+			const updateUI = (isDark) => {
+				document.querySelectorAll('.theme-toggle').forEach((btn) => {
+					const titleLight = btn.getAttribute('data-title-light') || ''
+					const titleDark = btn.getAttribute('data-title-dark') || ''
 
-			btn.setAttribute('aria-pressed', String(isDark))
-			btn.setAttribute('title', isDark ? titleLight : titleDark)
-		}
+					btn.setAttribute('aria-pressed', String(isDark))
+					btn.setAttribute('title', isDark ? titleLight : titleDark)
+				})
+			}
 
-		// Detectar si es móvil (ancho < 768px, breakpoint md de Tailwind)
-		const isMobile = () => window.innerWidth < 768
+			// Detectar si es móvil (ancho < 768px, breakpoint md de Tailwind)
+			const isMobile = () => window.innerWidth < 768
 
-		// Añadir animación de feedback en móvil con efecto de pulsación
-		const addTapFeedback = () => {
-			if (!isMobile()) return
-
-			// Añadir clase para animación de feedback
-			btn.style.transform = 'scale(0.5)'
-			btn.style.transition = 'transform 0.15s ease-out'
-
-			setTimeout(() => {
-				btn.style.transform = 'scale(1)'
+			// Añadir animación de feedback
+			const triggerAnimation = (btn) => {
+				if (!isMobile()) return
+				btn.style.transform = 'scale(0.5)'
+				btn.style.transition = 'transform 0.15s ease-out'
 				setTimeout(() => {
-					btn.style.transition = ''
-					btn.style.transform = ''
-				}, 150)
-			}, 100)
+					btn.style.transform = 'scale(1)'
+					setTimeout(() => {
+						btn.style.transition = ''
+						btn.style.transform = ''
+					}, 150)
+				}, 100)
+			}
+
+			// Inicializar cada botón
+			buttons.forEach((b) => {
+				const btn = b
+				// Evitar múltiples listeners si el elemento persiste
+				if (btn.hasAttribute('data-initialized')) return
+				btn.setAttribute('data-initialized', 'true')
+
+				btn.addEventListener(
+					'click',
+					(e) => {
+						console.log('ThemeToggle clicked', btn);
+						// Forzar layout para asegurar que el click se procesa antes de cambios
+						void btn.offsetWidth;
+
+						triggerAnimation(btn)
+
+						// Deshabilitar transiciones temporalmente para evitar flashes
+						el.classList.add('disable-transitions')
+
+						const isDark = el.classList.toggle('dark')
+
+						// Sincronizar estilos
+						if (isDark) {
+							el.style.colorScheme = 'dark'
+						} else {
+							el.style.colorScheme = 'light'
+						}
+
+						safeSet('theme', isDark ? 'dark' : 'light')
+						
+						// Actualizar UI de toso los botones
+						updateUI(isDark)
+
+						// Reactivar transiciones
+						window.setTimeout(() => {
+							el.classList.remove('disable-transitions')
+						}, 20)
+					},
+					{ passive: true },
+				)
+			})
+
+			// Sincronizar estado inicial
+			const isDark = el.classList.contains('dark')
+			updateUI(isDark)
 		}
 
-		// Remove existing listeners to avoid duplicates (optional but safe)
-		const existingClone = btn.cloneNode(true)
-		btn.parentNode.replaceChild(existingClone, btn)
-		const newBtn = document.getElementById('themeToggle')
-
-		newBtn.addEventListener(
-			'click',
-			() => {
-				addTapFeedback()
-
-				// Deshabilitar transiciones temporalmente
-				el.classList.add('disable-transitions')
-
-				const isDark = el.classList.toggle('dark')
-
-				// Sincronizar estilos inline críticos para evitar flash/inconsistencias
-				if (isDark) {
-					// el.style.backgroundColor = '#131313'
-					el.style.colorScheme = 'dark'
-				} else {
-					// el.style.backgroundColor = '#ffffff'
-					el.style.colorScheme = 'light'
-				}
-
-				safeSet('theme', isDark ? 'dark' : 'light')
-				updateUI()
-
-				// Reactivar transiciones después de un breve delay
-				// setTimeout(0) no es suficiente a veces, 2 frames suele ser más seguro o un timeout pequeño
-				window.setTimeout(() => {
-					el.classList.remove('disable-transitions')
-				}, 20)
-			},
-			{ passive: true },
-		)
-
-		// Sincronizar UI con el estado actual (ya aplicado por el script inicial)
-		updateUI()
-	}
-
-	// Run on initial load and after every navigation
-	document.addEventListener('astro:page-load', initThemeToggle)
+		// Ejecutar inmediatamente
+		initThemeToggle();
+		
+		// Y también en navigation (ClientRouter support)
+		document.addEventListener('astro:page-load', initThemeToggle);
+	})();
 </script>

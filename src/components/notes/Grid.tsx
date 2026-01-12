@@ -13,15 +13,11 @@ interface Props {
 		all: string
 		noResults: string
 		readNote: string
-		view: string
-		viewAll: string
-		viewSingles: string
-		viewSeries: string
+		// Removed view labels
 		filters: string
 	}
 }
 
-import ViewModeFilter from './ViewModeFilter'
 import TagFilter from './TagFilter'
 import MobileFilters from './MobileFilters'
 
@@ -30,15 +26,6 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 		if (typeof window !== 'undefined') {
 			const params = new URLSearchParams(window.location.search)
 			return (params.get('tag') as Tag) || 'all'
-		}
-		return 'all'
-	})
-
-	const [viewMode, setViewMode] = useState<'all' | 'singles' | 'series'>(() => {
-		if (typeof window !== 'undefined') {
-			const params = new URLSearchParams(window.location.search)
-			const mode = params.get('view')
-			if (mode === 'singles' || mode === 'series') return mode
 		}
 		return 'all'
 	})
@@ -56,13 +43,13 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 			const url = new URL(window.location.href)
 			if (filter === 'all') url.searchParams.delete('tag')
 			else url.searchParams.set('tag', filter)
-
-			if (viewMode === 'all') url.searchParams.delete('view')
-			else url.searchParams.set('view', viewMode)
+            
+            // Cleanup view param if present from old URL
+            url.searchParams.delete('view')
 
 			window.history.replaceState(null, '', url.toString())
 		}
-	}, [filter, viewMode, mounted])
+	}, [filter, mounted])
 
 	// Extract unique tags (Only first 2 tags per post are used for filtering)
 	const tags = useMemo(() => {
@@ -74,19 +61,12 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 	const filteredPosts = useMemo(() => {
 		let result = posts
 
-		// 1. Filter by View Mode
-		if (viewMode === 'singles') {
-			result = result.filter((post) => !post.data.seriesCount)
-		} else if (viewMode === 'series') {
-			result = result.filter((post) => !!post.data.seriesCount)
-		}
-
-		// 2. Filter by Tag
+		// Filter by Tag
 		if (filter !== 'all') {
 			result = result.filter((post) => post.data.tags?.includes(filter))
 		}
 		return result
-	}, [posts, filter, viewMode])
+	}, [posts, filter])
 
 	// Infinite Scroll state
 	const INITIAL_COUNT = 24
@@ -117,14 +97,6 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 		<div className="w-full">
 			{/* Mobile Filters (Dropdown) */}
 			<MobileFilters
-				viewMode={viewMode}
-				setViewMode={setViewMode}
-				viewLabels={{
-					all: labels.viewAll,
-					singles: labels.viewSingles,
-					series: labels.viewSeries,
-				}}
-				viewLabel={labels.view}
 				tags={tags}
 				filter={filter}
 				setFilter={setFilter}
@@ -135,18 +107,6 @@ export default function TilGrid({ posts, lang, labels }: Props) {
 
 			{/* Desktop Filters (Sidebar-like / Top Stack) */}
 			<div className="mb-10 hidden flex-col items-start gap-6 md:flex">
-				<ViewModeFilter
-					viewMode={viewMode}
-					setViewMode={setViewMode}
-					mounted={mounted}
-					label={labels.view}
-					labels={{
-						all: labels.viewAll,
-						singles: labels.viewSingles,
-						series: labels.viewSeries,
-					}}
-				/>
-
 				<TagFilter
 					tags={tags}
 					filter={filter}

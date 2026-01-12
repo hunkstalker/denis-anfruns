@@ -4,9 +4,9 @@ tags: ['godot', 'gdscript', 'ui', 'game-loop', 'shaders']
 draft: true
 new: true
 title: 'Godot #4: UI, Game Loop y el Mundo'
-description: "Cierra el ciclo de juego: Puntos, Game Over, Reinicio y un fondo espacial en movimiento con Shaders."
+description: 'Cierra el ciclo de juego: Puntos, Game Over, Reinicio y un fondo espacial en movimiento con Shaders.'
 series: godot-basics
-seriesTitle: Godot & Game Dev Science
+seriesTitle: Game Dev con Godot
 seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
 lang: es
 ---
@@ -15,11 +15,112 @@ lang: es
 
 Tenemos naves, balas y explosiones. Pero, ¿dónde están mis puntos? ¿Cómo pierdo?
 
-## ¿Qué vamos a aprender?
-1.  **UI Básica**: CanvasLayer, Labels y cómo hacer que la UI no se mueva con la cámara.
-2.  **EventBus**: Un patrón simple para sumar puntos desde cualquier lugar.
-3.  **Game Over**: Detectar la muerte y reiniciar la escena (`reload_current_scene`).
-4.  **Shader 102**: Crear una nebulosa con *Infinite Scrolling* para que parezca que viajamos por el espacio.
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 
-## 1. La Interfaz de Usuario (UI)
-...
+## Un Juego Sin Fin
+
+Ya tenemos nave, balas y enemigos. Pero si te matan, el juego se rompe o se queda congelado.
+Necesitamos un **Ciclo de Juego** (Game Loop): Jugar -> Morir -> Reiniciar.
+Y de paso, haremos que el fondo se mueva para dar sensación de velocidad.
+
+## 1. La Interfaz (UI) y el CanvasLayer
+
+Si pones un texto ("GAME OVER") como hijo de tu nave o en el mundo, cuando la cámara se mueva (o la nave explote), el texto se moverá o desaparecerá.
+La UI debe vivir en un plano superior, pegada a la pantalla, como si fuera una pegatina en el cristal de tu monitor.
+
+Para esto existe el nodo **`CanvasLayer`**.
+Todo lo que pongas dentro de un `CanvasLayer` ignorará la cámara y se quedará fijo en la pantalla.
+
+### Creando la UI de Muerte
+1.  En tu escena principal (`main.tscn` o `world.tscn`), añade un nodo hijo `CanvasLayer` y llámalo `ui_layer`.
+2.  Dentro, añade un nodo `Label` (Etiqueta de texto).
+3.  Escribe "PRESS R TO RESTART" en el texto.
+4.  En *Layout* (arriba), céntralo.
+5.  (Opcional) Ocultalo por defecto (el ojito), porque solo queremos verlo al morir.
+
+## 2. El Ciclo de la Vida: Reiniciar Escena
+
+Cuando el jugador muere, queremos mostrar el mensaje y esperar a que pulse 'R'.
+Vamos a necesitar un **Game Manager** o simplemente controlar esto desde el script principal. Para mantenerlo simple, lo haremos en un script global o en el del `World`.
+
+#### Glosario de Supervivencia:
+*   **`get_tree().reload_current_scene()`**: El botón de "Reset" universal. Cierra la escena actual y la vuelve a cargar desde cero. Todo se resetea.
+*   **`OS.get_name()`**: Nos dice si estamos en Windows, Android o Web (por si queremos controles distintos).
+
+### Implementando el Reinicio
+
+Vamos a crear un pequeño script para controlar el flujo global.
+Crea un script nuevo ligado al nodo raíz de tu mundo (`world.gd`).
+
+<CodeTabs
+  items={[
+    {
+      label: 'world.gd',
+      lang: 'gdscript',
+      code: `extends Node2D
+
+@onready var game_over_label = $ui_layer/Label
+var game_over = false
+
+func _process(delta):
+    # Si estamos en modo Game Over y pulsan R...
+    if game_over and Input.is_action_just_pressed("ui_accept"): # O tecla R mapeada
+        get_tree().reload_current_scene() # ¡REINICIO!
+
+# Función que llamaremos cuando la nave explote
+func _on_player_died():
+    game_over = true
+    game_over_label.show() # Mostrar el texto`
+    }
+  ]}
+/>
+
+<Callout type="warning" title="Conexión de Señales">
+  Recuerda conectar la señal de muerte de tu Player (`tree_exited` o una señal personalizada `died`) con esta función `_on_player_died` del mundo.
+</Callout>
+
+## 3. El Universo en Movimiento (Scrolling Shader)
+
+Para que parezca que viajamos por el espacio, no moveremos la nave. Moveremos el fondo.
+Lo haremos con un **Shader**, que es infinitamente más eficiente que mover un objeto gigante.
+
+### Preparación de la Textura (¡CRUCIAL!)
+Para que una imagen se repita infinitamente, debes cambiar su configuración de importación:
+1.  Selecciona tu imagen de fondo en el explorador de archivos (`FileSystem`).
+2.  Ve a la pestaña **Import** (arriba a la izquierda, junto a Scene).
+3.  Busca **Repeat** y cámbialo a **Enabled**.
+4.  Dale a **Reimport**.
+
+Si no haces esto, el shader estirará los píxeles del borde y quedará horrible.
+
+### El Shader de Scroll Infinito
+
+1.  Crea un nodo `Sprite2D` para el fondo. Asignale tu textura de estrellas.
+2.  Activa la propiedad `Region` y haz el rectángulo enorme (ej: 2000x2000) para cubrir toda la pantalla.
+3.  Crea un `New ShaderMaterial` -> `New Shader`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'scrolling_bg.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;
+
+// Velocidad del scroll (podemos cambiarla desde el editor)
+uniform float speed = 0.5;
+
+func fragment() {
+    // Calculamos la nueva coordenada UV basándonos en el tiempo
+    // TIME es una variable automática que cuenta segundos desde que inició el juego
+    vec2 new_uv = UV;
+    new_uv.y -= TIME * speed; # Movemos la 'cámara' de la textura hacia arriba
+    
+    COLOR = texture(TEXTURE, new_uv);
+}`
+    }
+  ]}
+/>
+
+¡Listo! Tienes un fondo que nunca termina, enemigos que caen y un ciclo de reinicio.
+Tu prototipo ya es un **Juego Completo**. En el siguiente capítulo, puliremos el movimiento de los enemigos con matemáticas avanzadas.
