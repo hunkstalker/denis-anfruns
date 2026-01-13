@@ -1,126 +1,136 @@
 ---
 pubDate: '2026-02-09T10:00:00Z'
-tags: ['godot', 'gdscript', 'ui', 'game-loop', 'shaders']
+tags: ['godot', 'shaders', 'gpu', 'game-juice']
 draft: true
 new: true
-title: 'Godot #4: UI, Game Loop y el Mundo'
-description: 'Cierra el ciclo de juego: Puntos, Game Over, Reinicio y un fondo espacial en movimiento con Shaders.'
+title: 'Godot #4: Game Juice con Shaders'
+description: Introducción al mundo de los Shaders. Arquitectura CPU vs GPU, Uniforms y creación de un efecto de Hit Flash.
 series: godot-basics
 seriesTitle: Game Dev con Godot
 seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
 lang: es
 ---
 
-# El Ciclo de Juego (Game Loop)
-
-Tenemos naves, balas y explosiones. Pero, ¿dónde están mis puntos? ¿Cómo pierdo?
-
 import Callout from '../../../../components/mdx/Callout.astro';
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 
-## Un Juego Sin Fin
+## Buscando el "Game Juice"
 
-Ya tenemos nave, balas y enemigos. Pero si te matan, el juego se rompe o se queda congelado.
-Necesitamos un **Ciclo de Juego** (Game Loop): Jugar -> Morir -> Reiniciar.
-Y de paso, haremos que el fondo se mueva para dar sensación de velocidad.
+En el capítulo anterior logramos que los enemigos murieran y cayeran. Funciona, sí. Pero no *mola*.
+Para que un juego se sienta profesional, necesitamos **Feedback Visual**. Necesitamos "Jugo" (Game Juice).
 
-## 1. La Interfaz (UI) y el CanvasLayer
+Y la herramienta más potente para ello son los **Shaders**.
 
-Si pones un texto ("GAME OVER") como hijo de tu nave o en el mundo, cuando la cámara se mueva (o la nave explote), el texto se moverá o desaparecerá.
-La UI debe vivir en un plano superior, pegada a la pantalla, como si fuera una pegatina en el cristal de tu monitor.
+## 1. Arquitectura: Serial vs Paralelo
 
-Para esto existe el nodo **`CanvasLayer`**.
-Todo lo que pongas dentro de un `CanvasLayer` ignorará la cámara y se quedará fijo en la pantalla.
+Hasta ahora hemos programado en GDScript (CPU). Pero para pintar píxeles, vamos a usar el otro cerebro de tu ordenador: la GPU.
 
-### Creando la UI de Muerte
-1.  En tu escena principal (`main.tscn` o `world.tscn`), añade un nodo hijo `CanvasLayer` y llámalo `ui_layer`.
-2.  Dentro, añade un nodo `Label` (Etiqueta de texto).
-3.  Escribe "PRESS R TO RESTART" en el texto.
-4.  En *Layout* (arriba), céntralo.
-5.  (Opcional) Ocultalo por defecto (el ojito), porque solo queremos verlo al morir.
+*   **CPU (Serial)**: Tiene pocos núcleos (4-16) pero muy potentes. Procesa las tareas una detrás de otra (en fila). Es ideal para la lógica del juego.
+*   **GPU (Paralelo)**: Tiene miles de núcleos, más simples. Puede procesar miles de tareas a la vez. Es ideal para modificar píxeles masivamente.
 
-## 2. El Ciclo de la Vida: Reiniciar Escena
+Si tu nave mide 100x100 píxeles, la GPU lanzará **10.000 hilos** de ejecución al mismo tiempo (uno para cada píxel).
 
-Cuando el jugador muere, queremos mostrar el mensaje y esperar a que pulse 'R'.
-Vamos a necesitar un **Game Manager** o simplemente controlar esto desde el script principal. Para mantenerlo simple, lo haremos en un script global o en el del `World`.
+## 2. Las Herramientas del Shader
 
-#### Glosario de Supervivencia:
-*   **`get_tree().reload_current_scene()`**: El botón de "Reset" universal. Cierra la escena actual y la vuelve a cargar desde cero. Todo se resetea.
-*   **`OS.get_name()`**: Nos dice si estamos en Windows, Android o Web (por si queremos controles distintos).
+Para controlar esos 10.000 hilos, usamos un lenguaje llamado GLSL (similar a C). Vamos a explicar las 4 piezas clave:
 
-### Implementando el Reinicio
+### A. La Función Principal
+*   **`fragment()`**: Es el código que ejecutará cada uno de los 10.000 hilos.
+    *   Tu misión aquí es calcular el color final del píxel y guardarlo en la variable de salida `COLOR`.
 
-Vamos a crear un pequeño script para controlar el flujo global.
-Crea un script nuevo ligado al nodo raíz de tu mundo (`world.gd`).
+### B. Los Datos (Scope)
+*   **`vec4`**: Un color son 4 números del 0.0 al 1.0 (Rojo, Verde, Azul, Transparencia).
+*   **`uniform` (Global)**: Una variable que es IGUAL para todos los hilos.
+    *   La enviamos desde la CPU (GDScript).
+    *   Ejemplo: `uniform bool active`. Si activamos esto, los 10.000 hilos reciben `true` a la vez.
+*   **`UV` (Local)**: La coordenada específica de *ese* hilo.
+    *   **NO** son todos los píxeles. Es la coordenada **individual** de *este* píxel concreto.
+    *   **Analogía**: Es como un `self.coordenada`. Cada hilo sabe "dónde está él mismo".
+    *   El hilo de la esquina izquierda valdrá `(0,0)`, el del centro `(0.5, 0.5)`.
 
-<CodeTabs
-  items={[
-    {
-      label: 'world.gd',
-      lang: 'gdscript',
-      code: `extends Node2D
+### C. La Lectura
+*   **`texture(imagen, coordenada)`**: Busca el color de un píxel en una imagen.
+    *   Le pasamos `TEXTURE` (la imagen de la nave) y `UV` (la coordenada de este hilo).
+    *   Así, cada hilo recupera el color exacto que le corresponde, reconstruyendo la imagen completa.
 
-@onready var game_over_label = $ui_layer/Label
-var game_over = false
+---
 
-func _process(delta):
-    # Si estamos en modo Game Over y pulsan R...
-    if game_over and Input.is_action_just_pressed("ui_accept"): # O tecla R mapeada
-        get_tree().reload_current_scene() # ¡REINICIO!
+## 3. La Misión: Flash Blanco
 
-# Función que llamaremos cuando la nave explote
-func _on_player_died():
-    game_over = true
-    game_over_label.show() # Mostrar el texto`
-    }
-  ]}
-/>
+Queremos que, cuando activemos el `uniform active`, todos los hilos ignoren el color de la textura original y pinten BLANCO PURO.
 
-<Callout type="warning" title="Conexión de Señales">
-  Recuerda conectar la señal de muerte de tu Player (`tree_exited` o una señal personalizada `died`) con esta función `_on_player_died` del mundo.
-</Callout>
-
-## 3. El Universo en Movimiento (Scrolling Shader)
-
-Para que parezca que viajamos por el espacio, no moveremos la nave. Moveremos el fondo.
-Lo haremos con un **Shader**, que es infinitamente más eficiente que mover un objeto gigante.
-
-### Preparación de la Textura (¡CRUCIAL!)
-Para que una imagen se repita infinitamente, debes cambiar su configuración de importación:
-1.  Selecciona tu imagen de fondo en el explorador de archivos (`FileSystem`).
-2.  Ve a la pestaña **Import** (arriba a la izquierda, junto a Scene).
-3.  Busca **Repeat** y cámbialo a **Enabled**.
-4.  Dale a **Reimport**.
-
-Si no haces esto, el shader estirará los píxeles del borde y quedará horrible.
-
-### El Shader de Scroll Infinito
-
-1.  Crea un nodo `Sprite2D` para el fondo. Asignale tu textura de estrellas.
-2.  Activa la propiedad `Region` y haz el rectángulo enorme (ej: 2000x2000) para cubrir toda la pantalla.
-3.  Crea un `New ShaderMaterial` -> `New Shader`.
+1.  Selecciona el `Sprite2D` del enemigo.
+2.  **Inspector > CanvasItem > Material** -> `New ShaderMaterial`.
+3.  Click en el material -> `Shader` -> `New Shader`. Crea la carpeta `shaders` y guárdalo como `shaders/hit_flash.gdshader`.
+4.  Copia este código y analízalo con lo que acabas de aprender:
 
 <CodeTabs
   items={[
     {
-      label: 'scrolling_bg.gdshader',
+      label: 'hit_flash.gdshader',
       lang: 'glsl',
       code: `shader_type canvas_item;
 
-// Velocidad del scroll (podemos cambiarla desde el editor)
-uniform float speed = 0.5;
+// 1. VARIABLE GLOBAL (Uniforme)
+// Desde el script del enemigo activaremos esto.
+uniform bool active = false;
 
-func fragment() {
-    // Calculamos la nueva coordenada UV basándonos en el tiempo
-    // TIME es una variable automática que cuenta segundos desde que inició el juego
-    vec2 new_uv = UV;
-    new_uv.y -= TIME * speed; # Movemos la 'cámara' de la textura hacia arriba
+void fragment() {
+    // 2. LEER COLOR (Lookup)
+    // Usamos 'self.coordenada' (UV) para leer nuestro trocito de imagen.
+    vec4 color_original = texture(TEXTURE, UV);
     
-    COLOR = texture(TEXTURE, new_uv);
+    // 3. LA LÓGICA
+    if (active) {
+        // Si la variable global es 'true', pintamos BLANCO
+        // (1, 1, 1) es blanco. Usamos la transparencia original (.a) para no pintar el cuadrado entero.
+        COLOR = vec4(1.0, 1.0, 1.0, color_original.a); 
+    } else {
+        // Si no, pintamos el color normal de la foto
+        COLOR = color_original;
+    }
 }`
     }
   ]}
 />
 
-¡Listo! Tienes un fondo que nunca termina, enemigos que caen y un ciclo de reinicio.
-Tu prototipo ya es un **Juego Completo**. En el siguiente capítulo, puliremos el movimiento de los enemigos con matemáticas avanzadas.
+## 4. Conectando CPU y GPU
+
+Ahora volvemos al codigo de GDScript (`enemy.gd`). Vamos a cambiar ese cutre `modulate` que pusimos en el capítulo anterior por algo profesional.
+
+Necesitamos una función que "hable" con la GPU y le active ese `uniform bool active`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy.gd',
+      lang: 'gdscript',
+      code: `func _on_area_entered(area):
+    hp -= 1
+    hit_flash() # Llamamos a la nueva función
+    
+    if hp <= 0:
+        die()
+
+func hit_flash():
+    # 1. Accedemos al Material del Sprite
+    var sprite = $Sprite2D
+    var material = sprite.material as ShaderMaterial
+    
+    # 2. Enviamos el dato a la GPU
+    material.set_shader_parameter("active", true)
+    
+    # 3. Esperamos 0.1 segundos (una fracción de instante)
+    await get_tree().create_timer(0.1).timeout
+    
+    # 4. Lo apagamos
+    material.set_shader_parameter("active", false)`
+    }
+  ]}
+/>
+
+<Callout type="tip" title="¿Por qué as ShaderMaterial?">
+  GDScript necesita saber que `sprite.material` es un `ShaderMaterial` para sugerirte la función `set_shader_parameter`. Sin ese `as ShaderMaterial`, funcionaría igual, pero no tendrías autocompletado.
+</Callout>
+
+¡Hecho! Ahora tienes un sistema de daño con feedback visual profesional, y lo más importante: entiendes lo que ocurre "bajo el capó" de la tarjeta gráfica.

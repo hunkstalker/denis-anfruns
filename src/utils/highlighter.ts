@@ -107,6 +107,7 @@ export const getHighlighterInstance = async () => {
 				'diff',
 				'shell',
 				'gdscript',
+				'glsl',
 			],
 		})
 	}

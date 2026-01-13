@@ -35,7 +35,7 @@ Igual que hicimos con la nave, si quieres puedes descargar esta imagen para la b
 
 ![Sprite de la Bala](/assets/godot-basics/shot.png)
 
-> [Descargar asset](/assets/godot-basics/shot.png) (Click derecho -> Guardar imagen)
+> Clic derecho -> Guardar imagen.
 > *Créditos: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> por **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
 
 
@@ -62,6 +62,11 @@ Nosotros (el script) conectaremos un "cable" a ese grito para reaccionar.
 4.  Haz doble clic en la señal `screen_exited`.
 5.  Dale a **Connect**.
 6.  Godot escribirá automáticamente una función llamada `_on_visible_on_screen_notifier_2d_screen_exited` en tu script.
+
+Usar el panel **Node** es la "vía rápida" o de prototipado. Es visual y excelente para empezar.
+Sin embargo, en proyectos serios o para lógicas complejas, solemos conectar las señales por **Código** para tener mayor control y que nada dependa de clicks en el editor.
+
+Para esta bala sencilla, el método visual es perfecto. En el **próximo capítulo** aprenderemos la forma por código ("La forma Profesional") cuando creemos a los enemigos.
 
 Ahora que tenemos la conexión, completemos el código:
 
