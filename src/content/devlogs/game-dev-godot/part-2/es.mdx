@@ -52,8 +52,8 @@ Igual que hicimos con la nave, si quieres puedes descargar esta imagen para la b
 Antes de programar el movimiento, vamos a asegurarnos de que la bala se borre al salir de pantalla.
 Para esto usaremos una **Señal**.
 
-Imagina que tu nodo `VisibleOnScreenNotifier2D` es un **Vigía**. Su trabajo es gritar **"¡He salido de la pantalla!"**.
-Nosotros (el script) conectaremos un "cable" a ese grito para reaccionar.
+El nodo `VisibleOnScreenNotifier2D` emite la señal `screen_exited` cuando sale de la pantalla.
+Nosotros (el script) conectaremos esa señal a una función para reaccionar.
 
 **Pasos para conectar el cable:**
 1.  Añade un script a la bala (`bullet.gd`) si no lo has hecho.
@@ -123,7 +123,7 @@ En GDScript, crear algo nuevo tiene 3 pasos:
 ### ¿Cómo preguntamos al juego?
 Para disparar, necesitamos que el script tome decisiones. Usamos dos herramientas nuevas:
 1.  **`if` (Condicional)**: Significa **"SI"**. "SI pasa esto... haz esto otro".
-2.  **`Input` (El Oído)**: Es quien escucha tu teclado. `is_action_just_pressed` devuelve `true` (verdad) solo en el instante exacto que bajas el dedo. Ideal para disparos tiro a tiro.
+2.  **`Input`**: Es la clase que escucha tu teclado. `is_action_just_pressed` devuelve `true` solo en el instante exacto que pulsas la tecla. Ideal para disparos individuales.
 
 Veamos un ejemplo (que tiene un problema):
 
@@ -153,14 +153,13 @@ func _physics_process(delta):
   ]}
 />
 
-### El Problema del Canguro
+### El Problema de la Jerarquía
 
 **¡Prueba el juego ahora (F5)!**
 Muévete con la nave mientras disparas ráfagas. ¿Notas algo raro?
-Las balas se mueven contigo. Si giras o avanzas, las balas te siguen como si estuvieran pegadas con una cuerda invisible.
+Las balas se mueven contigo. Si avanzas, las balas te siguen.
 
 Esto ocurre porque la bala es **hija de la nave**. Hereda su movimiento.
-Es como un bebé canguro en la bolsa de su madre: si la madre salta, el bebé salta con ella.
 
 La bala será **hija de la nave**.
 *   Si la nave avanza, la bala avanza con ella (más su propia velocidad).

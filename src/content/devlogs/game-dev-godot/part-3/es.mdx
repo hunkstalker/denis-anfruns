@@ -1,7 +1,7 @@
 ---
-pubDate: '2026-02-02T10:00:00Z'
+pubDate: '2026-01-13T10:00:00Z'
 tags: ['godot', 'gdscript', 'signals', 'area2d']
-draft: true
+draft: false
 new: true
 title: 'Godot #3: Señales y Enemigos'
 description: Damos vida al juego con enemigos. Aprende sobre Area2D, colisiones y señales por código.
@@ -196,7 +196,7 @@ Cuando `hp` llega a 0, llamamos a `die()`. Esta función:
 
 ---
 
-## Script Completo
+## 4. Script Completo
 
 Ahora junta todas las piezas. Así queda tu archivo `enemy.gd` final:
 
@@ -245,3 +245,17 @@ func die():
 />
 
 ¡Hecho! Has creado un enemigo autónomo que gestiona su propio movimiento, sus colisiones y su muerte, todo encapsulado en un script robusto.
+
+---
+
+## Repasemos lo aprendido
+
+1.  **`Area2D`**: Nodo para detectar solapamientos sin física de empuje.
+2.  **Señales por código**: Usar `signal.connect(función)` en `_ready()` para encapsular la lógica.
+3.  **Estado (`is_dying`)**: Usar variables "bandera" para controlar el comportamiento.
+4.  **Físicas simuladas**: Modificar `position` manualmente para crear efectos de caída.
+5.  **`set_deferred()`**: Desactivar colisiones de forma segura durante callbacks de física.
+6.  **`await` + Timer**: Esperar un tiempo antes de ejecutar código (ej: destruir tras 1 segundo).
+
+En el **próximo capítulo**, aprenderemos a dar feedback visual con **Shaders** (el famoso "Hit Flash").
+

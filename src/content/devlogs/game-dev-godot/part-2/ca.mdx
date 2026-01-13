@@ -52,8 +52,8 @@ Igual que vam fer amb la nau, si vols pots descarregar aquesta imatge per a la b
 Abans de programar el moviment, ens assegurarem que la bala s'esborri en sortir de pantalla.
 Per fer això farem servir un **Senyal**.
 
-Imagina que el teu node `VisibleOnScreenNotifier2D` és un **Vigía**. La seva feina és cridar **"He sortit de la pantalla!"**.
-Nosaltres (l'script) connectarem un "cable" a aquest crit per reaccionar.
+El node `VisibleOnScreenNotifier2D` emet el senyal `screen_exited` quan surt de la pantalla.
+Nosaltres (l'script) connectarem aquest senyal a una funció per reaccionar.
 
 **Passos per connectar el cable:**
 1.  Afegeix un script a la bala (`bullet.gd`) si no ho has fet.
@@ -153,14 +153,13 @@ func _physics_process(delta):
   ]}
 />
 
-### El Problema del Cangur
+### El Problema de la Jerarquia
 
 **Prova el joc ara (F5)!**
 Mou-te amb la nau mentre dispares ràfegues. Notes alguna cosa rara?
-Les bales es mouen amb tu. Si gires o avances, les bales et segueixen com si estiguessin enganxades amb una corda invisible.
+Les bales es mouen amb tu. Si avances, les bales et segueixen.
 
 Això passa perquè la bala és **filla de la nau**. Hereta el seu moviment.
-És com un nadó cangur a la bossa de la seva mare: si la mare salta, el nadó salta amb ella.
 
 La bala serà **filla de la nau**.
 *   Si la nau avança, la bala avança amb ella (més la seva pròpia velocitat).

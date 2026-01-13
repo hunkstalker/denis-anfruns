@@ -52,8 +52,8 @@ Just like we did with the ship, if you want you can download this image for the 
 Before programming the movement, let's make sure the bullet is deleted when leaving the screen.
 For this, we'll use a **Signal**.
 
-Imagine your `VisibleOnScreenNotifier2D` node is a **Watchman**. Their job is to shout **"I've left the screen!"**.
-We (the script) will connect a "cable" to that shout to react.
+The `VisibleOnScreenNotifier2D` node emits the `screen_exited` signal when it leaves the screen.
+We (the script) will connect that signal to a function to react.
 
 **Steps to connect the cable:**
 1.  Add a script to the bullet (`bullet.gd`) if you haven't done so.
@@ -153,14 +153,13 @@ func _physics_process(delta):
   ]}
 />
 
-### The Kangaroo Problem
+### The Hierarchy Problem
 
 **Test the game now (F5)!**
 Move with the ship while firing bursts. Notice anything weird?
-The bullets move with you. If you turn or advance, the bullets follow you as if attached by an invisible string.
+The bullets move with you. If you advance, the bullets follow you.
 
 This happens because the bullet is a **child of the ship**. It inherits its movement.
-It's like a baby kangaroo in its mother's pouch: if the mother jumps, the baby jumps with her.
 
 The bullet will be a **child of the ship**.
 *   If the ship advances, the bullet advances with it (plus its own speed).
