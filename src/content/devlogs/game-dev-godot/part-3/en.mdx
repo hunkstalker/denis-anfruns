@@ -248,6 +248,23 @@ Done! You have created an autonomous enemy that manages its own movement, collis
 
 ---
 
+## Testing in your World
+
+Before moving on to the next chapter, verify everything works:
+
+1.  Open `world.tscn` (your main scene).
+2.  Drag `Enemy.tscn` from the **FileSystem** panel to the viewport.
+3.  Position the enemy on the right side of the screen (so it flies toward the player).
+4.  Run the game (**F5**).
+5.  Shoot the enemy and verify:
+    *   Bullets disappear on impact.
+    *   The enemy loses HP and eventually falls spinning.
+    *   After 1 second of falling, it disappears.
+
+If everything works, congratulations! Your combat system is operational.
+
+---
+
 ## Let's Review What We Learned
 
 1.  **`Area2D`**: Node for detecting overlaps without push physics.
