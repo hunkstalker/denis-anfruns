@@ -1,7 +1,17 @@
 export default function experiencieYears(): number {
-	const startWorkingDual: number = 1
-	const startWorkingYear: number = 2022
-	const currentYear: number = new Date().getFullYear()
+	const startMonth = 9 // Septiembre
+	const startYear = 2021
 
-	return currentYear - startWorkingYear + startWorkingDual
+	const now = new Date()
+	const currentYear = now.getFullYear()
+	const currentMonth = now.getMonth() + 1 // getMonth() devuelve 0-11
+
+	let years = currentYear - startYear
+
+	// Si aún no hemos llegado al mes de aniversario, restamos un año
+	if (currentMonth < startMonth) {
+		years--
+	}
+
+	return years
 }
