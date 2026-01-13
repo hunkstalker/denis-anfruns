@@ -1,112 +1,121 @@
 # GDScript Course Implementation Plan
 
-NORMA: No usar analogías en exceso.
+NORMA: No usar analogías. Explicar la ciencia primero, la herramienta después.
+ENFOQUE: Matemáticas y fundamentos del Game Dev clásico.
 
 ## El Proyecto: "Cosmic Defender" (Space Shooter)
 
-Vamos a crear un **Horizontal Side-Scrolling Shooter** (como *Gradius* o *U.N. Squadron*).
-El jugador controla una nave que se mueve libremente por la pantalla, dispara proyectiles y esquiva enemigos en un entorno de scroll lateral.
+Un **Horizontal Side-Scrolling Shooter** (como *Gradius* o *R-Type*).
+El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigos.
 
-### ¿Por qué este proyecto? (Motivación Educativa)
-He elegido este género porque es el **"Hello World"** perfecto del desarrollo de videojuegos, pero escalable hasta nivel profesional. Toca todos los pilares fundamentales sin la complejidad del Platformer (físicas de salto) o el RPG (inventarios complejos).
-
-**Puntos Clave de Aprendizaje:**
-1.  **Matemáticas Vectoriales**: El movimiento en el espacio 2D es pura trigonometría y vectores. Entender esto es la base de todo.
-2.  **Arquitectura de Nodos**: Aprenderemos a separar lógica (Script), física (CollisionShape) y visuales (Sprite).
-3.  **Ciclo de Vida**: Crear objetos (Instanciar balas) y destruirlos (Queue Free) nos enseña gestión de memoria.
-4.  **Game Juice (Shaders)**: Un shooter funcional es aburrido. Un shooter con *feedback* visual (flashes, partículas) es adictivo. Aquí brilla la GPU.
-
-### Conceptos Fundamentales del Curso
-*   **Vectores y Normalización**
-*   **Señales y Event Bus** (Comunicación desacoplada)
-*   **Instanciación y Object Pooling** (Optimización)
-*   **Shaders** (Programación gráfica básica)
-*   **Game Loop** (Input -> Update -> Render)
+### Filosofía del Curso
+1. **Matemáticas primero**: Entender sin, cos, vectores, delta antes de usar nodos.
+2. **Shaders como ciencia**: No son "efectos mágicos", son programas de GPU.
+3. **Sin atajos prematuros**: Evitar herramientas de conveniencia (Path2D, Tweens) hasta entender la base.
 
 ---
 
-#### Roadmap: Godot & Game Dev Science
+## Roadmap
 
-### Part 1: Vectores y Movimiento
-**Focus**: Entender las matemáticas del movimiento.
-- **Teoría**: Vectores, Normalización y Delta.
-- **Nodos**: `CharacterBody2D` vs `Node2D`.
-- **Scripting**: `Input` y `move_and_slide()`.
+### Part 1: Vectores y Movimiento ✅
+- Teoría: Vectores, Normalización, Delta.
+- Nodos: `CharacterBody2D`.
+- Scripting: `Input`, `move_and_slide()`.
 
-### Part 2: Instanciación y Balas
-**Focus**: Crear cosas de la nada.
-- **Teoría**: Diferencia entre `PackedScene` (Plano) y `Node` (Instancia).
-- **Matemáticas**: Coordenadas Locales vs Globales.
-- **Señales (Iteración 1)**: Conexión vía **UI (Editor)**.
-    - *Contexto*: Conectar un nodo hijo auxiliar (`VisibleOnScreenNotifier`) al script del padre. Ideal para prototipado rápido y estructuras simples.
-- `queue_free()` básico.
+### Part 2: Instanciación y Balas ✅
+- `PackedScene` vs `Node`.
+- Coordenadas Locales vs Globales.
+- Señales vía UI (Editor).
+- `queue_free()`.
 
-### Part 3: Señales y Enemigos (Lógica Pura)
-**Focus**: Que los objetos hablen entre sí.
+### Part 3: Señales y Enemigos ✅
 - `Area2D` vs `Body2D`.
-- **Señales (Iteración 2)**: Conexión vía **Código (`connect`)**.
-    - *Contexto*: El objeto se conecta a sí mismo.
-    - *Why*: **Encapsulamiento**. Queremos que el Enemigo funcione por sí solo, sin depender de que alguien haya hecho click en el editor. Es más robusto para trabajar en equipo.
-- Script del Enemigo: Movimiento y Vida.
-- Física Fake: Muerte con gravedad.
+- Señales por código (`connect`).
+- Script del Enemigo: Movimiento, HP.
+- Físicas simuladas (caída sin RigidBody).
 
-### Part 4: Shaders 101 (Game Juice)
-**Focus**: Introducción visual y arquitectura.
-- **Arquitectura**: CPU (Serial) vs GPU (Paralelo).
-- **Glosario**: `fragment`, `vec4`, `uniform`, `UV`.
-- **Ejercicio**: Hit Flash (Brillo al recibir daño).
+### Part 4: Shaders 101 ✅
+- Arquitectura CPU (serial) vs GPU (paralelo).
+- GLSL: `fragment`, `vec4`, `uniform`, `UV`, `texture()`.
+- Ejercicio: Hit Flash.
 
-### Part 5: UI & Game Loop Básico
-**Focus**: Feedback y Ciclo de vida.
-- CanvasLayer y Control Nodes (Score, Vidas).
-- Señales Globales (EventBus).
-- Reiniciar escena (`reload_current_scene`).
+---
 
-### Part 6: Fondos Infinitos (Shaders 102)
-**Focus**: Movimiento visual avanzado.
-- Manipulación de UVs.
-- Shader de Nebulosa con *Infinite Scrolling*.
-- Diferencia entre mover la cámara y mover las UVs.
+### Part 5: Trigonometría de Combate 🔜
+**Focus**: Movimiento matemático clásico.
+- **El Seno**: Movimiento ondulatorio (`sin(time)`).
+- **El Coseno**: Desfase y combinación.
+- **Círculos y Elipses**: `cos` + `sin` para órbitas.
+- **Práctica**: Enemigo que ondula, enemigo orbital.
 
-### Part 7: La Evolución del Movimiento (Math vs Tools)
-**Focus**: Entender la base para usar la herramienta.
-- **Old School**: Trigonometría (`sin`/`cos`) para movimiento sinusoidal.
-- **Godot Way**: `Path2D` y `PathFollow2D`.
+### Part 6: Formaciones y Coreografías
+**Focus**: Orquestación de grupos.
+- Variables compartidas entre instancias.
+- Offsets de fase para formaciones.
+- Patrón de "V" y "Escalera".
 
-### Part 8: Formaciones de Combate
-**Focus**: Orquestación de enemigos.
-- Patrones de movimiento complejos.
-- `RemoteTransform2D` para coreografías.
+### Part 7: El Motor de Nivel (Level Engine)
+**Focus**: Infraestructura del "Scroll" infinito.
+- **Virtual Scroll**: Separar la posición de la cámara del avance del nivel.
+- **Scroll Table**: Implementar la estructura de datos (Coordinate-based triggering).
+- **Prototipo**: Lograr que *un* solo enemigo aparezca en la coordenada X=5000.
 
-### Part 9: Spawners y Ritmo (Arrays vs Timers) 
-**Focus**: Diseño de niveles procedural.
-- **Old School**: Frame Counters y Arrays.
-- **Godot Way**: `Timer` nodes y `await`.
+### Part 8: Diseño de Nivel y Oleadas (Grayboxing)
+**Focus**: Diseñar la EXPERIENCIA usando cajas prototipo.
+- **Grayboxing**: Crear obstáculos (muros, asteroides) usando `StaticBody2D` y formas simples.
+- **Level Flow**: Combinar topografía (obstáculos) con enemigos.
+- **Editor de Oleadas**: Crear arrays de datos complejos (JSON/Dictionaries).
+- **Pacing**: Curva de dificultad básica.
 
-### Part 10: Audio y Atmósfera
-**Focus**: El "feel" invisible.
-- `AudioStreamPlayer`.
-- AudioBus Layout (Master, SFX, Music).
+### Part 9: Arsenal y Sistema de Daño (Refactor) 🆕
+**Focus**: Expandir combate y arquitectura.
+- **Armas del Player**:
+  - *Main Alternativo*: Disparo Doble (Frontal + Diagonal-Abajo). Menos daño, mayor cobertura (2 zonas).
+  - *Sub-Weapons*: Misiles Guiados (Homing Missiles) automáticos.
+  - *Special*: "Cluster Shield" (Ref. U.N. Squadron). Proyectiles orbitando en elipse (sin/cos) que se expanden y contraen.
+- **Refactor**: Grupos de Godot para detección de daño (`is_in_group` vs `class_name`).
+- Estrategia de armas escalable.
+
+### Part 10: Audio Espacial
+**Focus**: Feedback sonoro.
+- `AudioStreamPlayer` y `AudioStreamPlayer2D`.
+- AudioBus (Master, SFX, Music).
 - Pitch randomizer para variedad.
 
-### Part 11: Optimización (Object Pooling)
-**Focus**: Rendimiento profesional.
-- Por qué `instantiate` es lento.
-- Implementar un Pool Manager genérico.
+### Part 11: Fondos Infinitos (Shader)
+**Focus**: Scroll visual sin mover objetos.
+- Manipulación de UVs en el shader.
+- Capas de paralax con velocidades diferentes.
+- Shader de estrellas/nebulosa.
+
+### Part 12: UI y Game Loop
+**Focus**: Retroalimentación al jugador.
+- `CanvasLayer` y `Control` nodes.
+- Score, Vidas, Game Over.
+- EventBus (Autoload con señales globales).
+- `reload_current_scene()`.
+
+### Part 13: Object Pooling
+**Focus**: Optimización profesional.
+- Por qué `instantiate()` es costoso.
+- Pool Manager genérico.
 - Reutilizar balas y enemigos.
 
-### Part 12: Polish y FX
-**Focus**: Detalles finales.
-- Partículas (`CPUParticles2D`).
-- Screen Shake (Cámara).
+### Part 14: Polish Final
+**Focus**: Detalles de juego profesional.
+- `CPUParticles2D` para explosiones.
+- Screen Shake (cámara).
 - Transiciones de escena.
 
-### Part 13: Exportación y Web
-**Focus**: Compartir el juego.
-- Configuración de exportación HTML5.
+### Part 15: Exportación
+**Focus**: Publicar el juego.
+- Export HTML5.
 - PWA y Fullscreen.
-- Debugging en build final.
+- Debugging en build.
 
-## Verification Plan
-*   **Visual**: Check that keywords like `extends`, `func`, `var` are colored correctly.
-*   **Functional**: Run the exercises and verify the game mechanics match the explanations.
+---
+
+## Cursos Futuros (No incluidos aquí)
+- **Godot Avanzado**: Path2D, PathFollow2D, Tweens, AnimationPlayer.
+- **IA para Juegos**: State Machines, Behavior Trees.
+- **Multijugador**: Networking básico.

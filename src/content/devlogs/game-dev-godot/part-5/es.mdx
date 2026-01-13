@@ -1,26 +1,366 @@
 ---
-pubDate: '2026-02-16T10:00:00Z'
-tags: ['godot', 'gdscript', 'math', 'trigonometry', 'path2d']
-draft: true
+pubDate: '2026-01-14T15:00:00Z'
+tags: ['godot', 'gdscript', 'math', 'trigonometry', 'gamedev']
+draft: false
 new: true
-title: 'Godot #5: Matemáticas de Combate'
-description: ¡Basta de líneas rectas! Aprende Trigonometría básica (Senos y Cosenos) y Path2D para crear enemigos con movimientos curvos y circulares.
+title: 'Godot #5: Trigonometría de Combate'
+description: Enemigos que ondulan, orbitan y ejecutan patrones matemáticos. Aprende a usar Seno y Coseno para movimientos clásicos de arcade.
 series: godot-basics
 seriesTitle: Game Dev con Godot
 seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
 lang: es
 ---
 
-# Matemáticas para matar marcianos
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+import SineWaveDemo from '../../../../components/mdx/interactive/SineWaveDemo.tsx';
 
-Hasta ahora, todo se movía en línea recta. Pero las naves enemigas molonas no hacen eso. Hacen elipses, "ochos" y picados.
-Para eso necesitamos dos amigos: **El Seno y el Coseno**.
+## Enemigos Predecibles son Enemigos Aburridos
 
-## ¿Qué vamos a aprender?
-1.  **Trigonometría de Supervivencia**: Cómo usar `sin(time)` para hacer que los enemigos "floten" u ondulen.
-2.  **Círculos**: Cómo usar `cos` y `sin` juntos para movimiento orbital.
-3.  **Path2D**: La forma fácil. Dibujar curvas con el ratón (`PathFollow2D`) para rutas complejas.
-4.  **Tweens**: Programar secuencias de movimiento (entrar, parar, salir).
+Hasta ahora, nuestros enemigos solo se mueven en línea recta. Funciona, pero no impresiona.
+Los shooters clásicos como *Galaga*, *Gradius* o *R-Type* tienen enemigos que **ondulan**, **orbitan** y ejecutan **patrones coreografiados**.
 
-## 1. El poder del Seno (`sin`)
-...
+La clave de estos movimientos son dos funciones matemáticas: **Seno** y **Coseno**.
+
+## 1. El Seno: La Onda
+
+El **Seno** (`sin`) es una función que devuelve valores entre **-1** y **1** de forma cíclica.
+
+Si graficamos `sin(x)` donde `x` va de 0 a 2π (una vuelta completa), obtenemos una **onda**:
+
+| Valor de x | sin(x) |
+|------------|--------|
+| 0 | 0 |
+| π/2 (90°) | 1 (máximo) |
+| π (180°) | 0 |
+| 3π/2 (270°) | -1 (mínimo) |
+| 2π (360°) | 0 |
+
+Después de 2π, el ciclo se repite infinitamente.
+
+<SineWaveDemo client:load />
+
+### ¿Para qué sirve en un juego?
+
+Si usamos el **tiempo** como entrada del seno, obtenemos un valor que oscila suavemente:
+
+<CodeTabs
+  items={[
+    {
+      label: 'ejemplo.gd',
+      lang: 'gdscript',
+      code: `var offset_y = sin(tiempo) # Oscila entre -1 y 1`
+    }
+  ]}
+/>
+
+Multiplicando por una **amplitud**, controlamos cuánto se mueve:
+
+<CodeTabs
+  items={[
+    {
+      label: 'ejemplo.gd',
+      lang: 'gdscript',
+      code: `var offset_y = sin(tiempo) * 50 # Oscila entre -50 y 50 píxeles`
+    }
+  ]}
+/>
+
+---
+
+## 2. Un Nuevo Enemigo: El Helicóptero
+
+Vamos a dejar nuestro avión básico (`enemy.gd`) como está, moviéndose recto. Para estos nuevos patrones, crearemos un nuevo enemigo, el **Helicóptero**, del cual haremos **3 versiones**:
+1.  **Onda**: Se mueve haciendo olas.
+2.  **Órbita**: Gira en círculos perfectos.
+3.  **Elipse**: Gira en óvalos.
+
+![Sprite del Helicóptero](/assets/godot-basics/chopper_128.png)
+
+> Clic derecho -> Guardar imagen.  
+> *Créditos: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> por **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
+
+### Paso 1: El Helicóptero de Onda
+
+1.  Crea una nueva escena heredada de `Area2D` (o duplica tu enemigo y cambia el sprite).
+2.  Ponle el sprite del helicóptero.
+3.  Crea un nuevo script llamado `enemy_wave.gd`.
+
+### El Script de la Onda
+
+Queremos que este enemigo ondule verticalmente mientras avanza. Reutilizaremos la lógica básica de movimiento y daño, añadiendo la magia del `sin`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_wave.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+@export var speed = 200
+@export var hp = 3
+@export var wave_amplitude = 100.0  # (nuevo) Cuánto sube/baja (en píxeles)
+@export var wave_frequency = 3.0    # (nuevo) Qué tan rápido ondula
+
+var is_dying = false
+var fall_speed = 0.0
+var time = 0.0                      # (nuevo) Acumulador de tiempo
+var start_y = 0.0                   # (nuevo) Posición Y inicial
+
+func _ready():
+    start_y = position.y              # (nuevo) Guardamos la Y inicial
+    area_entered.connect(_on_area_entered)
+
+func _process(delta):
+    if is_dying:
+      fall_speed += 500 * delta
+      position.y += fall_speed * delta
+      position.x -= speed * 0.5 * delta 
+    else:
+      time += delta                   # (nuevo) Acumulamos tiempo
+
+      # Movimiento horizontal
+      position.x -= speed * delta
+          
+      # (nuevo) Movimiento vertical ondulatorio
+      position.y = start_y + sin(time * wave_frequency) * wave_amplitude
+
+func _on_area_entered(area):
+    if is_dying:
+      return
+    
+    # Lógica de daño estándar
+    hp -= 1
+    area.queue_free()   # Elimina el proyectil/bala
+    hit_flash()         # Flash-shader de impacto
+
+    if hp <= 0:
+      die()
+
+  func hit_flash():
+    # El mismo código de flash-shader de impacto ...
+    
+  func die():
+    # El mismo código de muerte ...`
+    }
+  ]}
+/>
+
+**Desglose de la fórmula:**
+*   `time * wave_frequency`: Cuanto mayor sea la frecuencia, más rápido completa el ciclo.
+*   `sin(...)`: Devuelve un valor entre -1 y 1.
+*   `* wave_amplitude`: Convierte ese rango a píxeles reales.
+*   `start_y + ...`: Centramos la oscilación en la posición inicial.
+
+---
+
+## 3. El Coseno: El Hermano Desfasado
+
+El **Coseno** (`cos`) es idéntico al Seno, pero **desfasado 90°** (π/2 radianes).
+
+| Valor de x | sin(x) | cos(x) |
+|------------|--------|--------|
+| 0 | 0 | 1 |
+| π/2 | 1 | 0 |
+| π | 0 | -1 |
+| 3π/2 | -1 | 0 |
+| 2π | 0 | 1 |
+
+Cuando `sin` está en 0, `cos` está en su máximo (o mínimo), y viceversa.
+
+### ¿Para qué sirve?
+
+Si usamos `cos` para el **eje X** y `sin` para el **eje Y**, obtenemos movimiento **circular**.
+
+---
+
+## 4. Movimiento Circular (Órbita)
+
+Un enemigo que orbita alrededor de un punto usa las dos funciones: `cos` para X y `sin` para Y.
+
+### Implementación Práctica
+
+Para estos enemigos orbitales, seguiremos usando nuestro **Helicóptero**.
+
+> Puedes duplicar la escena del helicóptero de la sección anterior (llámala `EnemyOrbital.tscn`) y cambiarle el script, o simplemente cambiar el script en la misma escena para probar.
+
+Crea un script llamado `enemy_orbital.gd`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_orbital.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+@export var speed = 200
+@export var hp = 3
+@export var orbit_radius = 100.0   # (nuevo) Radio del círculo
+@export var orbit_speed = 2.0      # (nuevo) Velocidad angular
+
+var is_dying = false
+var time = 0.0
+var velocity = Vector2.ZERO        # (nuevo) Para calcular inercia
+var center = Vector2.ZERO          # (nuevo) Centro de la órbita
+
+func _ready():
+    center = position                # (nuevo) Guardamos dónde empezamos
+    area_entered.connect(_on_area_entered)
+
+func _process(delta):
+    if is_dying:
+      # (nuevo) Gravedad sobre la velocidad acumulada
+      velocity.y += 1000 * delta
+      position += velocity * delta
+    else:
+      var prev_pos = position          # (nuevo) Guardamos posición previa
+      time += delta
+  
+      # (nuevo) Fórmula del Círculo
+      position.x = center.x + cos(time * orbit_speed) * orbit_radius
+      position.y = center.y + sin(time * orbit_speed) * orbit_radius
+      
+      # (nuevo) Calculamos velocidad real (Inercia)
+      velocity = (position - prev_pos) / delta
+
+func _on_area_entered(area):
+    if is_dying:
+      # el mismo código de muerte ...
+
+    if hp <= 0:
+      die()                        # El mismo código de daño ...
+
+    func hit_flash():
+      # El mismo código de flash-shader de impacto ...
+
+    func die():
+      # El mismo código de muerte ...`
+    }
+  ]}
+/>
+
+### Entendiendo el Código
+
+1.  **Lógica Base**: Mantenemos `hp`, `_ready` con la conexión de señal, y las funciones de daño. ¡Un enemigo que no muere no sirve!
+2.  **`orbit_radius`**: Define cuán grande es el círculo.
+3.  **`orbit_speed`**: Controla qué tan rápido da vueltas.
+4.  **`center`**: Necesitamos un punto fijo alrededor del cual girar.
+5.  **`time += delta`**: Nuestro "reloj" interno.
+6.  **La Fórmula Mágica**:
+    *   `cos(time)` nos da la coordenada X.
+    *   `sin(time)` nos da la coordenada Y.
+    *   Multiplicamos por el radio para hacerlo más grande que 1 píxel.
+    *   Sumamos `center` para que gire alrededor de ese punto, no del origen (0,0) del juego.
+
+Este enemigo se queda girando en el sitio. En el futuro, usaremos esto para crear escuadrones que entran y se quedan orbitando en formación.
+
+---
+
+## 5. Elipses: Círculos Estirados
+
+Un círculo tiene el mismo radio en X e Y. Una **elipse** tiene radios diferentes.
+
+> **Tip:** No necesitas buscar otro sprite. Puedes duplicar tu escena del helicóptero (`EnemyOrbital.tscn`) y reemplazar su script por este nuevo.
+
+Crea un script llamado `enemy_ellipse.gd`:
+
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_ellipse.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+@export var speed = 200
+@export var hp = 3
+@export var radius_x = 150.0  # Radio horizontal (más ancho)
+@export var radius_y = 50.0   # Radio vertical (más estrecho)
+@export var orbit_speed = 1.5
+
+var is_dying = false
+var time = 0.0
+var velocity = Vector2.ZERO
+var center = Vector2.ZERO
+
+func _ready():
+    center = position
+    area_entered.connect(_on_area_entered)
+
+func _process(delta):
+    if is_dying:
+      # Aplicamos gravedad sobre la velocidad que traíamos
+      velocity.y += 1000 * delta
+      position += velocity * delta
+    else:
+      var prev_pos = position # Guardamos posición antes de mover
+      time += delta
+      
+      # (nuevo) Fórmula de la Elipse
+      position.x = center.x + cos(time * orbit_speed) * radius_x
+      position.y = center.y + sin(time * orbit_speed) * radius_y
+      
+      # (nuevo) Calculamos la velocidad real instantánea (Derivada)
+      # Esto nos da la dirección exacta en la que se movía
+      velocity = (position - prev_pos) / delta
+
+func _on_area_entered(area):
+    hp -= 1
+    area.queue_free()
+    
+    if hp <= 0:
+        die()
+
+func die():
+    queue_free()`
+    }
+  ]}
+/>
+
+### ¿Qué cambia aquí?
+
+1.  **Radios Separados**: En lugar de `orbit_radius`, tenemos `radius_x` y `radius_y`.
+    *   Si `radius_x > radius_y`, la elipse es **horizontal** (aplastada).
+    *   Si `radius_y > radius_x`, la elipse es **vertical** (alta y delgada).
+
+---
+
+## 6. Tabla de Referencia
+
+| Patrón | Fórmula X | Fórmula Y |
+|--------|-----------|-----------|
+| **Onda vertical** | `x -= speed * delta` | `start_y + sin(t * freq) * amp` |
+| **Onda horizontal** | `start_x + sin(t * freq) * amp` | `y -= speed * delta` |
+| **Círculo** | `centro_x + cos(t) * radio` | `centro_y + sin(t) * radio` |
+| **Elipse** | `centro_x + cos(t) * radio_x` | `centro_y + sin(t) * radio_y` |
+| **Espiral** | `centro_x + cos(t) * (radio + t*k)` | `centro_y + sin(t) * (radio + t*k)` |
+
+---
+
+## Probando en tu Mundo
+
+1.  Abre `world.tscn`.
+2.  Duplica tu escena `Enemy.tscn` como `EnemyWave.tscn`.
+3.  Modifica el script con el código de ondulación.
+4.  Arrastra `EnemyWave.tscn` al viewport.
+5.  Ajusta `wave_amplitude` y `wave_frequency` en el Inspector.
+6.  Ejecuta (**F5**) y observa cómo ondula.
+
+Experimenta con diferentes valores:
+*   `wave_amplitude = 100`, `wave_frequency = 2` → Ondulación lenta y amplia.
+*   `wave_amplitude = 30`, `wave_frequency = 8` → Vibración rápida y corta.
+
+---
+
+## Repasemos lo aprendido
+
+1.  **`sin(x)`**: Función que oscila entre -1 y 1. Ideal para movimiento ondulatorio.
+2.  **`cos(x)`**: Igual que sin, pero desfasado 90°.
+3.  **Tiempo como entrada**: Usar `time += delta` para alimentar las funciones.
+4.  **Amplitud**: Multiplicador que define el rango del movimiento.
+5.  **Frecuencia**: Multiplicador que define la velocidad del ciclo.
+6.  **Círculo**: `cos` para X, `sin` para Y, mismo radio.
+7.  **Elipse**: `cos` para X, `sin` para Y, radios diferentes.
+8.  **Estados**: Combinar patrones con `match` y temporizadores.
+
+En el **próximo capítulo**, aprenderemos a crear **Formaciones de Combate**: grupos de enemigos que se mueven coordinadamente.
