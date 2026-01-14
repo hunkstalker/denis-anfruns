@@ -1,0 +1,339 @@
+---
+pubDate: '2026-01-15T15:00:00Z'
+tags: ['godot', 'gdscript', 'math', 'patterns', 'gamedev']
+draft: true
+new: true
+title: 'Godot #6: Formaciones de Combate'
+description: Crea escuadrones de enemigos que se mueven coordinadamente. Aprende a usar desfases de tiempo para crear patrones clásicos.
+series: godot-basics
+seriesTitle: Game Dev con Godot
+seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+lang: es
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+
+## El Problema: Enemigos Idénticos
+
+En el capítulo anterior, creamos helicópteros que ondulan y orbitan. Pero si ponemos 5 helicópteros en fila, todos se mueven **exactamente igual**. Están sincronizados al milisegundo, lo cual es aburrido y predecible.
+
+Los shooters clásicos tienen enemigos que entran en **formación**: líneas, serpientes, V's. ¿Cómo lo logran?
+
+La respuesta es sorprendentemente simple: **Desfase de Tiempo (Phase Offset)**.
+
+## 1. El Concepto: Desfase de Fase
+
+Imagina 5 enemigos que usan `sin(time)` para moverse. Si todos empiezan con `time = 0`, todos están en el mismo punto de la onda.
+
+Pero si el segundo empieza con `time = 0.5`, el tercero con `time = 1.0`, etc., **cada uno está en un punto diferente de la onda**.
+
+El resultado visual: una **serpiente**.
+
+<CodeTabs
+  items={[
+    {
+      label: 'Concepto',
+      lang: 'gdscript',
+      code: `# Enemigo 1: sin(0) = 0
+# Enemigo 2: sin(0.5) = 0.48
+# Enemigo 3: sin(1.0) = 0.84
+# Enemigo 4: sin(1.5) = 0.99
+# Enemigo 5: sin(2.0) = 0.91`
+    }
+  ]}
+/>
+
+Cada uno empieza en un **momento diferente** de la misma animación.
+
+---
+
+## 2. Implementación: El Index
+
+La forma más simple de crear un desfase es asignar un **índice** a cada enemigo cuando lo instanciamos.
+
+### Paso 1: Modificar el Script del Enemigo
+
+Partimos del `enemy_wave.gd` que creamos en el capítulo anterior. Solo necesitamos **2 cambios**:
+
+**Cambio 1: Añadir una variable `@export` para el desfase**
+
+<CodeTabs
+  items={[
+    {
+      label: 'Añadir variable',
+      lang: 'gdscript',
+      code: `# Junto a las demás variables @export:
+@export var phase_offset = 0.0   # Desfase inicial (segundos)`
+    }
+  ]}
+/>
+
+**Cambio 2: Inicializar `time` con ese desfase**
+
+En la función `_ready()`, en lugar de dejar `time = 0`, lo inicializamos con el valor del desfase:
+
+<CodeTabs
+  items={[
+    {
+      label: 'Modificar _ready()',
+      lang: 'gdscript',
+      code: `func _ready():
+    start_y = position.y
+    time = phase_offset   # ← ESTA ES LA LÍNEA CLAVE
+    area_entered.connect(_on_area_entered)`
+    }
+  ]}
+/>
+
+**¿Por qué funciona?**
+
+Normalmente todos los enemigos empiezan con `time = 0`, así que todos están en la misma posición de la onda.
+Al inicializar con `phase_offset`, cada enemigo "empieza" en un punto diferente del ciclo de `sin()`.
+
+> El resto del script (movimiento, daño, muerte) se mantiene exactamente igual.
+
+### Paso 2: El Spawner de Formación
+
+Ahora necesitamos un script que instancie varios enemigos y les asigne un `phase_offset` diferente a cada uno.
+Crea un script `formation_spawner.gd`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'formation_spawner.gd',
+      lang: 'gdscript',
+      code: `extends Node2D
+
+@export var enemy_scene: PackedScene   # Arrastra EnemyFormation.tscn aquí
+@export var formation_size = 5         # Número de enemigos
+@export var phase_increment = 0.3      # Desfase entre cada enemigo
+@export var vertical_spacing = 50.0    # Separación vertical inicial
+
+func spawn_formation():
+    for i in range(formation_size):
+        var enemy = enemy_scene.instantiate()
+        
+        # Posición inicial: apilados verticalmente
+        enemy.position = Vector2(
+            position.x,
+            position.y + (i * vertical_spacing)
+        )
+        
+        # Asignamos el desfase de fase
+        enemy.phase_offset = i * phase_increment
+        
+        # Añadimos al árbol de escena
+        get_parent().add_child(enemy)`
+    }
+  ]}
+/>
+
+**Explicación:**
+*   `i` es el índice del enemigo (0, 1, 2, 3, 4...).
+*   `phase_increment` es cuánto desfase añadimos por cada enemigo.
+*   `i * phase_increment` da: 0.0, 0.3, 0.6, 0.9, 1.2...
+
+---
+
+## 3. Patrones Clásicos
+
+Con el sistema de `phase_increment` y `vertical_spacing`, podemos crear múltiples patrones solo cambiando valores:
+
+### Serpiente (Wave)
+
+Los enemigos ondean verticalmente, pero desfasados entre sí.
+
+<CodeTabs
+  items={[
+    {
+      label: 'Parámetros',
+      lang: 'gdscript',
+      code: `# FormationSpawner
+formation_size = 6
+phase_increment = 0.4    # Desfase notable
+vertical_spacing = 0     # Todos en la misma Y inicial
+
+# EnemyFormation
+wave_amplitude = 100
+wave_frequency = 3`
+    }
+  ]}
+/>
+
+**Resultado**: Una serpiente que se desliza por la pantalla.
+
+### Línea Recta
+
+Sin desfase, todos se mueven igual. Útil para formaciones que disparan al unísono.
+
+<CodeTabs
+  items={[
+    {
+      label: 'Parámetros',
+      lang: 'gdscript',
+      code: `# FormationSpawner
+formation_size = 5
+phase_increment = 0.0    # Sin desfase
+vertical_spacing = 60    # Separados verticalmente
+
+# EnemyFormation
+wave_amplitude = 0       # Sin ondulación
+wave_frequency = 0`
+    }
+  ]}
+/>
+
+**Resultado**: Una pared de enemigos avanzando.
+
+### Formación en V
+
+Los enemigos del centro salen primero, los de los lados después. Se logra con posiciones iniciales en V y el mismo desfase.
+
+<CodeTabs
+  items={[
+    {
+      label: 'v_formation_spawner.gd',
+      lang: 'gdscript',
+      code: `extends Node2D
+
+@export var enemy_scene: PackedScene
+@export var formation_size = 5
+@export var phase_increment = 0.2
+@export var v_spread = 40.0           # Separación horizontal de la V
+@export var v_depth = 30.0            # Separación vertical de la V
+
+func spawn_v_formation():
+    var center_index = formation_size / 2
+    
+    for i in range(formation_size):
+        var enemy = enemy_scene.instantiate()
+        
+        # Distancia desde el centro
+        var distance_from_center = abs(i - center_index)
+        
+        # Posición en V: más atrás cuanto más lejos del centro
+        enemy.position = Vector2(
+            position.x - (distance_from_center * v_spread),
+            position.y + ((i - center_index) * v_depth)
+        )
+        
+        # Desfase: los del borde empiezan después
+        enemy.phase_offset = distance_from_center * phase_increment
+        
+        get_parent().add_child(enemy)`
+    }
+  ]}
+/>
+
+**Resultado**: Formación en punta de flecha.
+
+---
+
+## 4. Formaciones Orbitales
+
+¿Recuerdas los helicópteros que orbitan? Podemos aplicar el mismo principio de desfase:
+
+<CodeTabs
+  items={[
+    {
+      label: 'orbital_formation.gd',
+      lang: 'gdscript',
+      code: `extends Node2D
+
+@export var enemy_scene: PackedScene
+@export var formation_size = 4
+
+func spawn_orbital_squad():
+    for i in range(formation_size):
+        var enemy = enemy_scene.instantiate()
+        enemy.position = position
+        
+        # Desfase angular: dividimos el círculo en partes iguales
+        # 2π (círculo completo) / número de enemigos = ángulo entre cada uno
+        enemy.phase_offset = (2 * PI / formation_size) * i
+        
+        get_parent().add_child(enemy)`
+    }
+  ]}
+/>
+
+**Resultado**: 4 enemigos girando equidistantes en un círculo (como los puntos de un reloj a las 12, 3, 6 y 9).
+
+---
+
+## 5. Combinando Movimientos
+
+El verdadero poder viene al **apilar** movimientos. Un enemigo puede orbitar **Y** además ondular sobre esa órbita.
+
+### La Idea
+
+En el `_process()` del `enemy_orbital.gd` ya calculamos la posición con círculos:
+
+```gdscript
+position.x = center.x + cos(time * orbit_speed) * orbit_radius
+position.y = center.y + sin(time * orbit_speed) * orbit_radius
+```
+
+Para añadir ondulación encima, simplemente **sumamos** un offset extra a `position.y`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'Modificar _process()',
+      lang: 'gdscript',
+      code: `# Después de calcular la órbita base:
+var orbit_x = center.x + cos(time * orbit_speed) * orbit_radius
+var orbit_y = center.y + sin(time * orbit_speed) * orbit_radius
+
+# Añadimos una segunda capa de movimiento
+var wave_offset = sin(time * wave_frequency) * wave_amplitude
+
+position.x = orbit_x
+position.y = orbit_y + wave_offset   # ← Órbita + Ondulación`
+    }
+  ]}
+/>
+
+**Resultado**: Cada enemigo describe un círculo *mientras* vibra verticalmente. Añade `phase_offset` al Spawner y tienes un escuadrón haciendo coreografías complejas con apenas unas líneas extra. ¡Caos hermoso!
+
+---
+
+## 6. Tabla de Referencia de Formaciones
+
+| Formación | phase_increment | vertical_spacing | wave_amplitude | Notas |
+|-----------|-----------------|------------------|----------------|-------|
+| **Serpiente** | 0.3 - 0.5 | 0 | 80 - 120 | Todos en la misma Y inicial |
+| **Línea** | 0 | 50 - 80 | 0 | Sin ondulación |
+| **V** | Variable (por distancia al centro) | Variable | 0 - 50 | Requiere spawner especial |
+| **Círculo** | `2π / n` | 0 | 0 | Para enemigos orbitales |
+| **Escalera** | 0.2 | 40 | 40 | Ondulación suave |
+
+---
+
+## 7. Probando en tu Mundo
+
+1.  Crea un nuevo nodo `Node2D` llamado `FormationSpawner`.
+2.  Añádele el script `formation_spawner.gd`.
+3.  Asigna `EnemyFormation.tscn` al campo `enemy_scene`.
+4.  Crea un botón o timer que llame a `spawn_formation()`.
+5.  Ejecuta y observa la magia.
+
+Experimenta con los valores:
+*   `phase_increment = 0.1` → Serpiente muy apretada.
+*   `phase_increment = 1.0` → Enemigos muy separados en la onda.
+*   `vertical_spacing = 0` + `wave_amplitude = 100` → Serpiente perfecta.
+
+---
+
+## Repasemos lo aprendido
+
+1.  **Desfase de Fase**: Iniciar cada enemigo en un punto diferente del tiempo (`time = phase_offset`).
+2.  **Index del Bucle**: Usar `i` del `for` para calcular desfases incrementales.
+3.  **Serpiente**: Mismo Y inicial, desfase de fase creciente.
+4.  **Línea**: Sin desfase, separación vertical.
+5.  **V**: Posiciones y desfases basados en distancia al centro.
+6.  **Círculo**: Desfase = `2π / número_de_enemigos * índice`.
+7.  **Combinación**: Apilar múltiples movimientos (órbita + onda).
+
+En el **próximo capítulo**, crearemos el **Motor de Nivel**: el sistema que decide *cuándo* y *dónde* aparecen estas formaciones basándose en la posición del scroll.

@@ -7,7 +7,7 @@ title: 'Godot #5: Trigonometría de Combate'
 description: Enemigos que ondulan, orbitan y ejecutan patrones matemáticos. Aprende a usar Seno y Coseno para movimientos clásicos de arcade.
 series: godot-basics
 seriesTitle: Game Dev con Godot
-seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+seriesDescription: Aprendemos los fundamentos del desarrollo de videojuegos (vectores, trigonometría, shaders) usando Godot y un Shoot 'em Up como excusa práctica.
 lang: es
 ---
 
@@ -137,11 +137,19 @@ func _on_area_entered(area):
     if hp <= 0:
       die()
 
-  func hit_flash():
-    # El mismo código de flash-shader de impacto ...
+func hit_flash():
+    var sprite = $Sprite2D
+    var shader_material = sprite.material
+    if shader_material is ShaderMaterial:
+        shader_material.set_shader_parameter("flash_active", true)
+        await get_tree().create_timer(0.1).timeout
+        shader_material.set_shader_parameter("flash_active", false)
     
-  func die():
-    # El mismo código de muerte ...`
+func die():
+    is_dying = true
+    $CollisionShape2D.set_deferred("disabled", true)
+    await get_tree().create_timer(1.0).timeout
+    queue_free()`
     }
   ]}
 />
@@ -225,16 +233,28 @@ func _process(delta):
 
 func _on_area_entered(area):
     if is_dying:
-      # el mismo código de muerte ...
+      return
+      
+    hp -= 1
+    area.queue_free()
+    hit_flash()
 
     if hp <= 0:
-      die()                        # El mismo código de daño ...
+      die()
 
-    func hit_flash():
-      # El mismo código de flash-shader de impacto ...
+func hit_flash():
+    var sprite = $Sprite2D
+    var shader_material = sprite.material
+    if shader_material is ShaderMaterial:
+        shader_material.set_shader_parameter("flash_active", true)
+        await get_tree().create_timer(0.1).timeout
+        shader_material.set_shader_parameter("flash_active", false)
 
-    func die():
-      # El mismo código de muerte ...`
+func die():
+    is_dying = true
+    $CollisionShape2D.set_deferred("disabled", true)
+    await get_tree().create_timer(1.0).timeout
+    queue_free()`
     }
   ]}
 />
@@ -274,44 +294,58 @@ Crea un script llamado `enemy_ellipse.gd`:
 
 @export var speed = 200
 @export var hp = 3
-@export var radius_x = 150.0  # Radio horizontal (más ancho)
-@export var radius_y = 50.0   # Radio vertical (más estrecho)
-@export var orbit_speed = 1.5
+@export var radius_x = 150.0  # (nuevo) Radio horizontal (más ancho)
+@export var radius_y = 50.0   # (nuevo) Radio vertical (más estrecho)
+@export var orbit_speed = 1.5 # (nuevo) Velocidad angular
 
 var is_dying = false
 var time = 0.0
-var velocity = Vector2.ZERO
-var center = Vector2.ZERO
+var velocity = Vector2.ZERO   # (nuevo) Para calcular inercia
+var center = Vector2.ZERO     # (nuevo) Centro de la órbita
 
 func _ready():
-    center = position
+    center = position         # (nuevo) Guardamos dónde empezamos
     area_entered.connect(_on_area_entered)
 
 func _process(delta):
     if is_dying:
-      # Aplicamos gravedad sobre la velocidad que traíamos
+      # (nuevo) Usamos la velocidad acumulada para la caída
       velocity.y += 1000 * delta
       position += velocity * delta
     else:
-      var prev_pos = position # Guardamos posición antes de mover
+      var prev_pos = position # (nuevo) Guardamos posición previa
       time += delta
       
       # (nuevo) Fórmula de la Elipse
       position.x = center.x + cos(time * orbit_speed) * radius_x
       position.y = center.y + sin(time * orbit_speed) * radius_y
       
-      # (nuevo) Calculamos la velocidad real instantánea (Derivada)
-      # Esto nos da la dirección exacta en la que se movía
+      # (nuevo) Calculamos la velocidad real instantánea
       velocity = (position - prev_pos) / delta
 
 func _on_area_entered(area):
+    if is_dying:
+      return
+      
     hp -= 1
     area.queue_free()
+    hit_flash()
     
     if hp <= 0:
         die()
 
+func hit_flash():
+    var sprite = $Sprite2D
+    var shader_material = sprite.material
+    if shader_material is ShaderMaterial:
+        shader_material.set_shader_parameter("flash_active", true)
+        await get_tree().create_timer(0.1).timeout
+        shader_material.set_shader_parameter("flash_active", false)
+
 func die():
+    is_dying = true
+    $CollisionShape2D.set_deferred("disabled", true)
+    await get_tree().create_timer(1.0).timeout
     queue_free()`
     }
   ]}

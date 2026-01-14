@@ -7,7 +7,7 @@ title: 'Godot #1: Vectores y Movimiento'
 description: Entendiendo las matemáticas detrás del movimiento. ¿Por qué normalizamos? ¿Qué es Delta? Explicado para humanos.
 series: godot-basics
 seriesTitle: Game Dev con Godot
-seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+seriesDescription: Aprendemos los fundamentos del desarrollo de videojuegos (vectores, trigonometría, shaders) usando Godot y un Shoot 'em Up como excusa práctica.
 lang: es
 ---
 
@@ -83,6 +83,8 @@ Antes de escribir código, necesitas saber leer el mapa. Si nunca has programado
 1.  **`extends` (Herencia)**:
     Es la primera línea. Le dice a Godot: *"Soy una extensión de..."*.
     *   `extends CharacterBody2D`: Significa "Tengo todos los métodos y propiedades de un CharacterBody2D, más lo que yo añada aquí".
+    
+    Esto se llama **Herencia de Clases**. Es un concepto fundamental de programación orientada a objetos. Tu script no empieza de cero: hereda un "vehículo" ya funcional con ruedas, motor y volante (`CharacterBody2D`), y tú solo añades la personalización (tu lógica de movimiento).
 2.  **`func` (Acción/Verbo)**:
     Es una orden o tarea. Agrupa una lista de pasos.
     *   `func _physics_process(delta)`: Es una función especial que Godot llama a un ritmo fijo (por defecto **60 veces por segundo**). Todo lo que escribas dentro, se repetirá en bucle para mover cosas.

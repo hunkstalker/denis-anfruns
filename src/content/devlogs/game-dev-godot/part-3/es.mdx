@@ -7,7 +7,7 @@ title: 'Godot #3: Señales y Enemigos'
 description: Damos vida al juego con enemigos. Aprende sobre Area2D, colisiones y señales por código.
 series: godot-basics
 seriesTitle: Game Dev con Godot
-seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+seriesDescription: Aprendemos los fundamentos del desarrollo de videojuegos (vectores, trigonometría, shaders) usando Godot y un Shoot 'em Up como excusa práctica.
 lang: es
 ---
 
@@ -112,6 +112,12 @@ func _on_area_entered(area):
     }
   ]}
 />
+
+**¿De dónde sale el parámetro `area`?**
+
+La señal `area_entered` no solo avisa de la colisión, también pasa información: el **otro** `Area2D` que ha colisionado contigo. En nuestro caso, ese "otro" es la bala disparada por el jugador.
+
+Por eso, dentro de `_on_area_entered(area)`, la variable `area` contiene una referencia directa al nodo bala. Esto nos permite hacer cosas como `area.queue_free()` para destruirla.
 
 ### Fase 3: Vida y Muerte
 Añadimos vida (`hp`) y la lógica de recibir daño.

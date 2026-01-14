@@ -7,7 +7,7 @@ title: 'Godot #2: Instanciación y Balas'
 description: 'Aprende a crear objetos dinámicamente: instanciar balas, rotaciones y el concepto de Object Pooling para optimizar tu juego.'
 series: godot-basics
 seriesTitle: Game Dev con Godot
-seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+seriesDescription: Aprendemos los fundamentos del desarrollo de videojuegos (vectores, trigonometría, shaders) usando Godot y un Shoot 'em Up como excusa práctica.
 lang: es
 ---
 
@@ -117,6 +117,14 @@ En GDScript, crear algo nuevo tiene 3 pasos:
 1.  **Cargar el Plano**: `preload("res://bullet.tscn")`.
 2.  **Instanciar**: `plano.instantiate()`. Construyes el objeto en la memoria RAM, pero **aún no existe en el mundo visible**.
 3.  **Añadir al Árbol**: `add_child(bala)`. Aquí colocas el objeto en el universo del juego.
+
+**¿Por qué `preload` y no `load`?**
+
+Godot tiene dos formas de cargar recursos:
+*   **`preload("ruta")`**: Carga la escena **cuando el juego arranca**. Es más rápido en ejecución porque ya está en memoria, pero consume RAM desde el inicio.
+*   **`load("ruta")`**: Carga la escena **bajo demanda**, en el momento exacto que se ejecuta esa línea. Ahorra RAM inicial, pero puede causar tirones (micro-parones) si el recurso es pesado.
+
+Para balas (archivos pequeños que usaremos constantemente), `preload` es la elección correcta.
 
 ## 3. Implementando el Disparo
 
