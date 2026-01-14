@@ -381,6 +381,19 @@ Si dejamos el flash activo para siempre, el enemigo se queda blanco. Necesitamos
   ]}
 />
 
+**¿Qué hace `await`?**
+
+`await` es una palabra clave que **pausa la ejecución de esta función específica** hasta que ocurra algo (en este caso, que pase el tiempo del timer).
+
+**Importante**: `await` NO congela el juego. El resto del motor sigue funcionando:
+*   El enemigo sigue moviéndose.
+*   Otras balas siguen volando.
+*   El jugador puede disparar.
+
+Solo ESTA función (`hit_flash`) está "dormida" esperando. Cuando el timer termina, la función se "despierta" y continúa desde donde se quedó (desactivar el flash).
+
+Es como poner un recordatorio en tu móvil: "En 0.1 segundos, apaga el flash". Mientras tanto, sigues con tu vida.
+
 **Fase 4: Llamar al Flash al Recibir Daño**
 
 Finalmente, integramos la función en `_on_area_entered`:

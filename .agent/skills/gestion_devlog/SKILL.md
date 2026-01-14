@@ -30,6 +30,17 @@ El trabajo se realiza iterativamente capítulo a capítulo.
    - **Explicación Previa**: NUNCA muestres un bloque de código sin antes haberlo desglosado.
    - **Línea a Línea**: Explica la lógica, sintaxis y por qué se hace así (línea a línea si es complejo) **antes** de presentar el bloque de código final.
    - **Ejemplos**: Usa ejemplos aislados si es necesario para clarificar conceptos difíciles.
+3. **Profundidad sobre Brevedad**:
+   - El usuario ya tiene conocimientos generales. Busca entender en PROFUNDIDAD.
+   - **Nuevos métodos de GDScript**: Si aparece un método nuevo (`abs()`, `clamp()`, `lerp()`, etc.), explícalo con detalle: qué hace, parámetros, casos de uso.
+   - **Matemáticas**: Desarrolla las fórmulas paso a paso. No asumas que el lector sabe trigonometría o álgebra lineal.
+   - **Shaders**: Explica cada línea de GLSL. La GPU es un mundo nuevo para el usuario.
+   - **No hay límite de longitud**: Si un capítulo necesita 500-600 líneas para explicar bien un tema, hazlo. Mejor un capítulo denso que uno superficial.
+4. **Aprendizaje en Espiral (Repetición Progresiva)**:
+   - Los conceptos se introducen de forma ligera la primera vez ("esto hace X").
+   - Cuando vuelven a aparecer en capítulos posteriores, se profundiza ("¿recuerdas X? Ahora veamos POR QUÉ funciona así").
+   - Es válido y deseable repetir explicaciones si aportan nuevo contexto o profundidad.
+   - Ejemplo: `sin()` se introduce en Part 5 como "oscila de -1 a 1". En Part 6 se puede profundizar en "2π = ciclo completo, relación con grados".
 
 ## 3. Traducción y Cierre (Fase B)
 La traducción es un proceso destructivo (sobrescribe archivos destino basándose en el origen).

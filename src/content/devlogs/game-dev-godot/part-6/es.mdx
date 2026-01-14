@@ -7,7 +7,7 @@ title: 'Godot #6: Formaciones de Combate'
 description: Crea escuadrones de enemigos que se mueven coordinadamente. Aprende a usar desfases de tiempo para crear patrones clásicos.
 series: godot-basics
 seriesTitle: Game Dev con Godot
-seriesDescription: Aprende Godot creando un Space Shooter desde cero, con énfasis en Matemáticas y Shaders.
+seriesDescription: Aprendemos los fundamentos del desarrollo de videojuegos (vectores, trigonometría, shaders) usando Godot y un Shoot 'em Up como excusa práctica.
 lang: es
 ---
 
@@ -56,6 +56,8 @@ La forma más simple de crear un desfase es asignar un **índice** a cada enemig
 
 Partimos del `enemy_wave.gd` que creamos en el capítulo anterior. Solo necesitamos **2 cambios**:
 
+> **Preparación**: Duplica tu escena `EnemyWave.tscn` y renómbrala a `EnemyFormation.tscn`. El script que modificaremos será `enemy_formation.gd` (una copia de `enemy_wave.gd`).
+
 **Cambio 1: Añadir una variable `@export` para el desfase**
 
 <CodeTabs
@@ -93,6 +95,69 @@ Al inicializar con `phase_offset`, cada enemigo "empieza" en un punto diferente 
 
 > El resto del script (movimiento, daño, muerte) se mantiene exactamente igual.
 
+### Script Modificado Completo
+
+Aquí tienes el script `enemy_formation.gd` completo con los cambios integrados:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_formation.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+@export var speed = 200
+@export var hp = 3
+@export var wave_amplitude = 100.0
+@export var wave_frequency = 3.0
+@export var phase_offset = 0.0      # (nuevo) Desfase inicial
+
+var is_dying = false
+var fall_speed = 0.0
+var time = 0.0
+var start_y = 0.0
+
+func _ready():
+    start_y = position.y
+    time = phase_offset               # (nuevo) Inicializamos con el desfase
+    area_entered.connect(_on_area_entered)
+
+func _process(delta):
+    if is_dying:
+      fall_speed += 500 * delta
+      position.y += fall_speed * delta
+      position.x -= speed * 0.5 * delta 
+    else:
+      time += delta
+      position.x -= speed * delta
+      position.y = start_y + sin(time * wave_frequency) * wave_amplitude
+
+func _on_area_entered(area):
+    if is_dying:
+      return
+    hp -= 1
+    area.queue_free()
+    hit_flash()
+    if hp <= 0:
+      die()
+
+func hit_flash():
+    var sprite = $Sprite2D
+    var shader_material = sprite.material
+    if shader_material is ShaderMaterial:
+        shader_material.set_shader_parameter("flash_active", true)
+        await get_tree().create_timer(0.1).timeout
+        shader_material.set_shader_parameter("flash_active", false)
+    
+func die():
+    is_dying = true
+    $CollisionShape2D.set_deferred("disabled", true)
+    await get_tree().create_timer(1.0).timeout
+    queue_free()`
+    }
+  ]}
+/>
+
 ### Paso 2: El Spawner de Formación
 
 Ahora necesitamos un script que instancie varios enemigos y les asigne un `phase_offset` diferente a cada uno.
@@ -107,7 +172,7 @@ Crea un script `formation_spawner.gd`.
 
 @export var enemy_scene: PackedScene   # Arrastra EnemyFormation.tscn aquí
 @export var formation_size = 5         # Número de enemigos
-@export var phase_increment = 0.3      # Desfase entre cada enemigo
+@export var phase_increment = 0.3      # (nuevo) Desfase entre cada enemigo
 @export var vertical_spacing = 50.0    # Separación vertical inicial
 
 func spawn_formation():
@@ -120,7 +185,7 @@ func spawn_formation():
             position.y + (i * vertical_spacing)
         )
         
-        # Asignamos el desfase de fase
+        # (nuevo) Asignamos el desfase de fase
         enemy.phase_offset = i * phase_increment
         
         # Añadimos al árbol de escena
@@ -200,31 +265,53 @@ Los enemigos del centro salen primero, los de los lados después. Se logra con p
 @export var enemy_scene: PackedScene
 @export var formation_size = 5
 @export var phase_increment = 0.2
-@export var v_spread = 40.0           # Separación horizontal de la V
-@export var v_depth = 30.0            # Separación vertical de la V
+@export var v_spread = 40.0           # (nuevo) Separación horizontal de la V
+@export var v_depth = 30.0            # (nuevo) Separación vertical de la V
 
 func spawn_v_formation():
-    var center_index = formation_size / 2
+    var center_index = formation_size / 2  # (nuevo) Índice del enemigo central
     
     for i in range(formation_size):
         var enemy = enemy_scene.instantiate()
         
-        # Distancia desde el centro
+        # (nuevo) Distancia desde el centro
         var distance_from_center = abs(i - center_index)
         
-        # Posición en V: más atrás cuanto más lejos del centro
+        # (nuevo) Posición en V: más atrás cuanto más lejos del centro
         enemy.position = Vector2(
             position.x - (distance_from_center * v_spread),
             position.y + ((i - center_index) * v_depth)
         )
         
-        # Desfase: los del borde empiezan después
+        # (nuevo) Desfase: los del borde empiezan después
         enemy.phase_offset = distance_from_center * phase_increment
         
         get_parent().add_child(enemy)`
     }
   ]}
 />
+
+**¿Qué hace `abs()`?**
+
+`abs()` es la función de **valor absoluto**. Elimina el signo negativo de un número, dejando siempre un valor positivo (o cero).
+
+| Entrada | `abs(entrada)` |
+|---------|----------------|
+| `abs(3)` | 3 |
+| `abs(-3)` | 3 |
+| `abs(0)` | 0 |
+| `abs(-7.5)` | 7.5 |
+
+**¿Por qué la usamos aquí?**
+
+En nuestra formación, si tenemos 5 enemigos (índices 0, 1, 2, 3, 4), el centro es el índice 2.
+*   Enemigo 0: `i - center = 0 - 2 = -2` → `abs(-2) = 2` (está a 2 posiciones del centro)
+*   Enemigo 1: `i - center = 1 - 2 = -1` → `abs(-1) = 1`
+*   Enemigo 2: `i - center = 2 - 2 = 0` → `abs(0) = 0` (es el centro)
+*   Enemigo 3: `i - center = 3 - 2 = 1` → `abs(1) = 1`
+*   Enemigo 4: `i - center = 4 - 2 = 2` → `abs(2) = 2`
+
+Sin `abs()`, los enemigos a la izquierda del centro tendrían distancias negativas, lo cual rompería la simetría de la V.
 
 **Resultado**: Formación en punta de flecha.
 
@@ -249,14 +336,21 @@ func spawn_orbital_squad():
         var enemy = enemy_scene.instantiate()
         enemy.position = position
         
-        # Desfase angular: dividimos el círculo en partes iguales
-        # 2π (círculo completo) / número de enemigos = ángulo entre cada uno
+        # (nuevo) Desfase angular: dividimos el círculo en partes iguales
         enemy.phase_offset = (2 * PI / formation_size) * i
         
         get_parent().add_child(enemy)`
     }
   ]}
 />
+
+**¿Qué es `PI`?**
+
+En GDScript, `PI` es una constante global que vale aproximadamente **3.14159**. Representa la relación entre la circunferencia y el diámetro de un círculo.
+
+*   Un círculo completo son **2π radianes** (equivalente a 360°).
+*   Si queremos 4 enemigos equidistantes, dividimos el círculo: `2 * PI / 4 = π/2` radianes entre cada uno (90°).
+*   Multiplicamos por el índice `i` para que cada enemigo empiece en un punto diferente.
 
 **Resultado**: 4 enemigos girando equidistantes en un círculo (como los puntos de un reloj a las 12, 3, 6 y 9).
 
@@ -270,10 +364,16 @@ El verdadero poder viene al **apilar** movimientos. Un enemigo puede orbitar **Y
 
 En el `_process()` del `enemy_orbital.gd` ya calculamos la posición con círculos:
 
-```gdscript
-position.x = center.x + cos(time * orbit_speed) * orbit_radius
-position.y = center.y + sin(time * orbit_speed) * orbit_radius
-```
+<CodeTabs
+  items={[
+    {
+      label: 'Órbita base',
+      lang: 'gdscript',
+      code: `position.x = center.x + cos(time * orbit_speed) * orbit_radius
+position.y = center.y + sin(time * orbit_speed) * orbit_radius`
+    }
+  ]}
+/>
 
 Para añadir ondulación encima, simplemente **sumamos** un offset extra a `position.y`:
 

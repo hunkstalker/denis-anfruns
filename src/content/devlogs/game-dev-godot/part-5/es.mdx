@@ -155,6 +155,7 @@ func die():
 />
 
 **Desglose de la fórmula:**
+*   `time += delta`: Acumulamos el tiempo transcurrido. Como `delta` representa los segundos desde el último frame, `time` se convierte en un **reloj en segundos reales**. Esto es crucial: si usáramos `time += 1`, el enemigo ondularía más rápido en PCs potentes (más FPS = más incrementos por segundo).
 *   `time * wave_frequency`: Cuanto mayor sea la frecuencia, más rápido completa el ciclo.
 *   `sin(...)`: Devuelve un valor entre -1 y 1.
 *   `* wave_amplitude`: Convierte ese rango a píxeles reales.

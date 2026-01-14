@@ -92,6 +92,14 @@ func _process(delta):
   ]}
 />
 
+**Profundizando en `@export`:**
+
+En Part 1 vimos que `@export` hace que la variable aparezca en el Inspector. Pero hay más:
+
+1.  **Balanceo sin recompilar**: Puedes cambiar `speed` en el Inspector mientras el juego está PAUSADO (F7) y ver el efecto inmediatamente. Esto es invaluable para ajustar la dificultad.
+2.  **Valores por instancia**: Si tienes 3 enemigos en la escena, cada uno puede tener un `speed` diferente SIN modificar el script. Simple: selecciona uno y cambia su valor en el Inspector.
+3.  **Documentación implícita**: El nombre de la variable aparece en el editor, haciendo que otros (o tú del futuro) entiendan qué se puede ajustar.
+
 ### Fase 2: Conexión de Señales
 Ahora añadimos la conexión. Recuerda: `connect(quien_responde)`.
 

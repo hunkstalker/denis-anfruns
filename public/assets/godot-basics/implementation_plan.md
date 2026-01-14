@@ -60,6 +60,7 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - **Transiciones por Posición**: `move_toward()` para llegar a un punto, luego cambiar estado.
 - **Transiciones por Tiempo**: Usar Timer para cambiar de fase.
 - **Práctica**: Enemigo que entra → orbita 3s → huye.
+- **🔄 Espiral**: Profundizar en `lerp()`, `clamp()`, `move_toward()` (interpolación y límites).
 
 ### Part 8: El Motor de Nivel (Level Engine)
 **Focus**: Infraestructura del "Scroll" infinito.
@@ -94,6 +95,7 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - Manipulación de UVs en el shader.
 - Capas de paralax con velocidades diferentes.
 - Shader de estrellas/nebulosa.
+- **🔄 Espiral**: Profundizar en shaders (UVs avanzados, TIME, efectos visuales complejos).
 
 ### Part 13: UI y Game Loop
 **Focus**: Retroalimentación al jugador.
@@ -101,6 +103,7 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - Score, Vidas, Game Over.
 - EventBus (Autoload con señales globales).
 - `reload_current_scene()`.
+- **🔄 Espiral**: Profundizar en señales personalizadas (`signal`, `emit_signal()`).
 
 ### Part 14: Object Pooling
 **Focus**: Optimización profesional.
