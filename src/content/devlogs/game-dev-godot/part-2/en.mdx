@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #2: Instancing & Bullets'
 description: 'Learn to create objects dynamically: instancing bullets, rotations, and the concept of Object Pooling to optimize your game.'
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev with Godot
-seriesDescription: Learn Godot by creating a Space Shooter from scratch, with emphasis on Math and Shaders.
+seriesDescription: We learn the fundamentals of game development (vectors, trigonometry, shaders) using Godot and a Shoot 'em Up as a practical excuse.
 lang: en
 ---
 
@@ -33,7 +33,7 @@ We're going to create a bullet that knows how to move and die when it leaves the
 
 Just like we did with the ship, if you want you can download this image for the bullet:
 
-![Bullet Sprite](/assets/godot-basics/shot.png)
+![Bullet Sprite](/assets/gamedev-godot-basics/shot.png)
 
 > Right click -> Save image.  
 > *Credits: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> by **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
@@ -117,6 +117,14 @@ In GDScript, creating something new has 3 steps:
 1.  **Load the Blueprint**: `preload("res://bullet.tscn")`.
 2.  **Instantiate**: `blueprint.instantiate()`. You build the object in RAM memory, but **it doesn't exist in the visible world yet**.
 3.  **Add to Tree**: `add_child(bullet)`. Here you place the object in the game universe.
+
+**Why `preload` and not `load`?**
+
+Godot has two ways to load resources:
+*   **`preload("path")`**: Loads the scene **when the game starts**. It's faster in execution because it's already in memory, but consumes RAM from the start.
+*   **`load("path")`**: Loads the scene **on demand**, at the exact moment that line executes. Saves initial RAM, but can cause stutters (micro-freezes) if the resource is heavy.
+
+For bullets (small files we'll use constantly), `preload` is the right choice.
 
 ## 3. Implementing the Shot
 

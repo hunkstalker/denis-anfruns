@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #1: Vectors i Moviment'
 description: Entenent les matemàtiques darrere del moviment. Per què normalitzem? Què és Delta? Explicat per a humans.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev amb Godot
-seriesDescription: Aprèn Godot creant un Space Shooter des de zero, amb èmfasi en Matemàtiques i Shaders.
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
 lang: ca
 ---
 
@@ -47,7 +47,7 @@ Si l'Escena és la casa, els Nodes són els maons. I hi ha molts tipus de maons:
 ### Prepara els teus Assets
 Abans de començar, necessites una nau. Pots dibuixar-ne una o utilitzar aquesta de prova:
 
-![Nau del Jugador](/assets/godot-basics/plane_128.png)
+![Nau del Jugador](/assets/gamedev-godot-basics/plane_128.png)
 
 > Clic dret -> Desa la imatge.  
 > Crèdits: <a href="https://puszke.itch.io/psx-plane" target="_blank" rel="noopener noreferrer">PSX Plane</a> per **Puck**.
@@ -80,13 +80,15 @@ Abans de començar, necessites una nau. Pots dibuixar-ne una o utilitzar aquesta
 
 Abans d'escriure codi, necessites saber llegir el mapa. Si mai has programat, això és tot el que necessites saber per ara. Imagina que l'script és una recepta de cuina:
 
-1.  **`extends` (ADN)**:
-    És la primera línia. Li diu a Godot: *"Ei, sóc una còpia millorada de..."*.
-    *   `extends CharacterBody2D`: Significa "Tinc tots els superpoders d'un CharacterBody2D (xocar, moure's) i, a més, el que jo afegeixi aquí".
+1.  **`extends` (Herència)**:
+    És la primera línia. Li diu a Godot: *"Sóc una extensió de..."*.
+    *   `extends CharacterBody2D`: Significa "Tinc tots els mètodes i propietats d'un CharacterBody2D, més el que jo afegeixi aquí".
+    
+    Això s'anomena **Herència de Classes**. És un concepte fonamental de programació orientada a objectes. El teu script no comença de zero: hereta un "vehicle" ja funcional amb rodes, motor i volant (`CharacterBody2D`), i tu només afegeixes la personalització (la teva lògica de moviment).
 2.  **`func` (Acció/Verb)**:
     És una ordre o tasca. Agrupa una llista de passos.
     *   `func _physics_process(delta)`: És una funció especial que Godot crida a un ritme fix (per defecte **60 vegades per segon**). Tot el que escriguis dins, es repetirà en bucle per moure coses.
-3.  **`var` (Caixa)**:
+3.  **`var` (Variable)**:
     És un lloc on guardem informació **a la memòria RAM** de l'ordinador.
     *   `var velocitat = 300`: Hem reservat un lloc a la memòria, li hem posat l'etiqueta "velocitat" i hem guardat el nombre 300 dins.
 

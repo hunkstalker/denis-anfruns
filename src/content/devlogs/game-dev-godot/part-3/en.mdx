@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #3: Signals & Enemies'
 description: We bring the game to life with enemies. Learn about Area2D, collisions, and signals via code.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev with Godot
-seriesDescription: Learn Godot by creating a Space Shooter from scratch, with emphasis on Math and Shaders.
+seriesDescription: We learn the fundamentals of game development (vectors, trigonometry, shaders) using Godot and a Shoot 'em Up as a practical excuse.
 lang: en
 ---
 
@@ -33,7 +33,7 @@ For bullets and simple enemies, we will use **`Area2D`**.
 
 You can use your own sprite or download this one:
 
-![Enemy Sprite](/assets/godot-basics/enemy_128.png)
+![Enemy Sprite](/assets/gamedev-godot-basics/enemy_128.png)
 
 > Right click -> Save image.  
 > *Credits: <a href="https://www.freepik.com/free-vector/set-military-aircraft_40063568.htm" target="_blank" rel="noopener noreferrer">Set of military aircraft</a> by **brgfx** on Freepik (Free license with attribution).*
@@ -92,6 +92,14 @@ func _process(delta):
   ]}
 />
 
+**Diving deeper into `@export`:**
+
+In Part 1 we saw that `@export` makes the variable appear in the Inspector. But there's more:
+
+1.  **Balancing without recompiling**: You can change `speed` in the Inspector while the game is PAUSED (F7) and see the effect immediately. This is invaluable for adjusting difficulty.
+2.  **Per-instance values**: If you have 3 enemies in the scene, each one can have a different `speed` WITHOUT modifying the script. Simple: select one and change its value in the Inspector.
+3.  **Implicit documentation**: The variable name appears in the editor, making it clear to others (or future you) what can be adjusted.
+
 ### Phase 2: Signal Connection
 Now we add the connection. Remember: `connect(who_responds)`.
 
@@ -112,6 +120,12 @@ func _on_area_entered(area):
     }
   ]}
 />
+
+**Where does the `area` parameter come from?**
+
+The `area_entered` signal doesn't just notify about the collision, it also passes information: the **other** `Area2D` that collided with you. In our case, that "other" is the bullet fired by the player.
+
+That's why, inside `_on_area_entered(area)`, the `area` variable contains a direct reference to the bullet node. This allows us to do things like `area.queue_free()` to destroy it.
 
 ### Phase 3: Life and Death
 We add health (`hp`) and damage logic.

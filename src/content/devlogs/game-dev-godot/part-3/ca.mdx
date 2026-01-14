@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #3: Senyals i Enemics'
 description: Donem vida al joc amb enemics. Aprèn sobre Area2D, col·lisions i senyals per codi.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev amb Godot
-seriesDescription: Aprèn Godot creant un Space Shooter des de zero, amb èmfasi en Matemàtiques i Shaders.
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
 lang: ca
 ---
 
@@ -33,7 +33,7 @@ Per a les bales i enemics simples, farem servir **`Area2D`**.
 
 Pots fer servir el teu propi sprite o descarregar aquest:
 
-![Sprite de l'Enemic](/assets/godot-basics/enemy_128.png)
+![Sprite de l'Enemic](/assets/gamedev-godot-basics/enemy_128.png)
 
 > Clic dret -> Desa la imatge.  
 > *Crèdits: <a href="https://www.freepik.com/free-vector/set-military-aircraft_40063568.htm" target="_blank" rel="noopener noreferrer">Set of military aircraft</a> per **brgfx** a Freepik (Llicència gratuïta amb atribució).*
@@ -92,6 +92,14 @@ func _process(delta):
   ]}
 />
 
+**Aprofundint en `@export`:**
+
+A la Part 1 vam veure que `@export` fa que la variable aparegui a l'Inspector. Però hi ha més:
+
+1.  **Balanceig sense recompilar**: Pots canviar `speed` a l'Inspector mentre el joc està PAUSAT (F7) i veure l'efecte immediatament. Això és invaluable per ajustar la dificultat.
+2.  **Valors per instància**: Si tens 3 enemics a l'escena, cadascun pot tenir un `speed` diferent SENSE modificar l'script. Simple: selecciona'n un i canvia el seu valor a l'Inspector.
+3.  **Documentació implícita**: El nom de la variable apareix a l'editor, fent que altres (o tu del futur) entenguin què es pot ajustar.
+
 ### Fase 2: Connexió de Senyals
 Ara afegim la connexió. Recorda: `connect(qui_respon)`.
 
@@ -112,6 +120,12 @@ func _on_area_entered(area):
     }
   ]}
 />
+
+**D'on surt el paràmetre `area`?**
+
+El senyal `area_entered` no només avisa de la col·lisió, també passa informació: l'**altre** `Area2D` que ha col·lisionat amb tu. En el nostre cas, aquest "altre" és la bala disparada pel jugador.
+
+Per això, dins de `_on_area_entered(area)`, la variable `area` conté una referència directa al node bala. Això ens permet fer coses com `area.queue_free()` per destruir-la.
 
 ### Fase 3: Vida i Mort
 Afegim vida (`hp`) i la lògica de rebre mal.

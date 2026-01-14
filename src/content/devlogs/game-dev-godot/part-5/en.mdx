@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #5: Combat Trigonometry'
 description: Enemies that wave, orbit and execute mathematical patterns. Learn how to use Sine and Cosine for classic arcade movements.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Godot Game Dev
-seriesDescription: Learn Godot by creating a Space Shooter from scratch, with emphasis on Math and Shaders.
+seriesDescription: We learn the fundamentals of game development (vectors, trigonometry, shaders) using Godot and a Shoot 'em Up as a practical excuse.
 lang: en
 ---
 
@@ -75,7 +75,7 @@ We're going to keep our basic plane (`enemy.gd`) as is, moving straight. For the
 2.  **Orbit**: Turns in perfect circles.
 3.  **Ellipse**: Turns in ovals.
 
-![Chopper Sprite](/assets/godot-basics/chopper_128.png)
+![Chopper Sprite](/assets/gamedev-godot-basics/chopper_128.png)
 
 > Right click -> Save image.  
 > *Credits: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> by **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
@@ -147,6 +147,7 @@ func _on_area_entered(area):
 />
 
 **Formula breakdown:**
+*   `time += delta`: We accumulate the elapsed time. Since `delta` represents the seconds since the last frame, `time` becomes a **clock in real seconds**. This is crucial: if we used `time += 1`, the enemy would wave faster on powerful PCs (more FPS = more increments per second).
 *   `time * wave_frequency`: The higher the frequency, the faster it completes the cycle.
 *   `sin(...)`: Returns a value between -1 and 1.
 *   `* wave_amplitude`: Converts that range to real pixels.

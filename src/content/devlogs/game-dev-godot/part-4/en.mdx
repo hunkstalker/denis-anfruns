@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #4: Game Juice with Shaders'
 description: Introduction to the world of Shaders. CPU vs GPU architecture, basic GLSL and creating a Hit Flash effect step by step.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev with Godot
-seriesDescription: Learn Godot by creating a Space Shooter from scratch, with emphasis on Math and Shaders.
+seriesDescription: We learn the fundamentals of game development (vectors, trigonometry, shaders) using Godot and a Shoot 'em Up as a practical excuse.
 lang: en
 ---
 
@@ -380,6 +380,19 @@ If we leave the flash active forever, the enemy stays white. We need to turn it 
     }
   ]}
 />
+
+**What does `await` do?**
+
+`await` is a keyword that **pauses the execution of this specific function** until something happens (in this case, until the timer's time passes).
+
+**Important**: `await` does NOT freeze the game. The rest of the engine keeps running:
+*   The enemy keeps moving.
+*   Other bullets keep flying.
+*   The player can shoot.
+
+Only THIS function (`hit_flash`) is "sleeping" waiting. When the timer finishes, the function "wakes up" and continues from where it left off (deactivating the flash).
+
+It's like setting a reminder on your phone: "In 0.1 seconds, turn off the flash". Meanwhile, you go on with your life.
 
 **Phase 4: Call the Flash When Taking Damage**
 

@@ -92,10 +92,10 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 
 ### Part 12: Fondos Infinitos (Shader)
 **Focus**: Scroll visual sin mover objetos.
-- Manipulación de UVs en el shader.
-- Capas de paralax con velocidades diferentes.
-- Shader de estrellas/nebulosa.
-- **🔄 Espiral**: Profundizar en shaders (UVs avanzados, TIME, efectos visuales complejos).
+- **Parallax por Shader**: Manipulación de UVs con `TIME` para scroll infinito.
+  - ⚠️ *Sección saltable*: Este enfoque enseña la teoría. Más adelante se mostrará cómo hacerlo fácilmente con los nodos `ParallaxBackground` y `ParallaxLayer` de Godot.
+- Capas de parallax con velocidades diferentes.
+- **🔄 Espiral**: Profundizar en shaders (UVs avanzados, TIME, efectos visuales).
 
 ### Part 13: UI y Game Loop
 **Focus**: Retroalimentación al jugador.
@@ -116,6 +116,7 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - `CPUParticles2D` para explosiones.
 - Screen Shake (cámara).
 - Transiciones de escena.
+- **CRT / Scanlines** (Opcional): Shader de post-procesado retro con `CanvasLayer`.
 
 ### Part 16: Exportación
 **Focus**: Publicar el juego.

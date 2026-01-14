@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #4: Game Juice amb Shaders'
 description: Introducció al món dels Shaders. Arquitectura CPU vs GPU, GLSL bàsic i creació d'un efecte de Hit Flash pas a pas.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev amb Godot
-seriesDescription: Aprèn Godot creant un Space Shooter des de zero, amb èmfasi en Matemàtiques i Shaders.
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
 lang: ca
 ---
 
@@ -380,6 +380,19 @@ Si deixem el flash actiu per sempre, l'enemic es queda blanc. Necessitem apagar-
     }
   ]}
 />
+
+**Què fa `await`?**
+
+`await` és una paraula clau que **pausa l'execució d'aquesta funció específica** fins que passi alguna cosa (en aquest cas, que passi el temps del timer).
+
+**Important**: `await` NO congela el joc. La resta del motor segueix funcionant:
+*   L'enemic segueix movent-se.
+*   Altres bales segueixen volant.
+*   El jugador pot disparar.
+
+Només AQUESTA funció (`hit_flash`) està "dormint" esperant. Quan el timer acaba, la funció es "desperta" i continua des d'on es va quedar (desactivar el flash).
+
+És com posar un recordatori al mòbil: "En 0.1 segons, apaga el flash". Mentrestant, segueixes amb la teva vida.
 
 **Fase 4: Cridar el Flash en Rebre Mal**
 

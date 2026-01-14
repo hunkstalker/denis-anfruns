@@ -10,13 +10,13 @@ El usuario utiliza los Devlogs como una herramienta de aprendizaje activo. No "e
 ## 1. Planificación y Roadmap
 El núcleo de cada proyecto reside en su plan de implementación.
 
-- **Ubicación**: `public/assets/[slug-proyecto]/implementation_plan.md`
+- **Ubicación**: `docs/[slug-proyecto]/implementation_plan.md`
 - **Lectura Contextual**: 
   - Al iniciar una sesión, LEE `implementation_plan.md` para cargar los objetivos.
   - **Historial**: Si estás trabajando en un capítulo avanzado (ej. Parte 6), debes tener en cuenta el código y las decisiones tomadas en los capítulos anteriores (Partes 1-5). Usa `view_file` o `grep_search` para consultar cómo se implementaron mecánicas previas si es necesario para mantener la coherencia.
 - **Backups (Regla Legacy)**:
   - Si se requieren cambios significativos en el diseño o roadmap del proyecto, **ANTES** de sobrescribir el archivo:
-  1. Crea la carpeta `legacy` si no existe: `public/assets/[slug-proyecto]/legacy/`.
+  1. Crea la carpeta `legacy` si no existe: `docs/[slug-proyecto]/legacy/`.
   2. Copia el `implementation_plan.md` actual a esa carpeta con fecha: `implementation_plan_YYYY-MM-DD.md`.
   3. Procede a actualizar el plan principal con las nuevas ideas.
 

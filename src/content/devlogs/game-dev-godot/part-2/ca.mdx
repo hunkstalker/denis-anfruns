@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #2: Instanciació i Bales'
 description: 'Aprèn a crear objectes dinàmicament: instanciar bales, rotacions i el concepte de Object Pooling per optimitzar el teu joc.'
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev amb Godot
-seriesDescription: Aprèn Godot creant un Space Shooter des de zero, amb èmfasi en Matemàtiques i Shaders.
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
 lang: ca
 ---
 
@@ -33,7 +33,7 @@ Crearem una bala que sàpiga moure's i morir quan surti de la pantalla.
 
 Igual que vam fer amb la nau, si vols pots descarregar aquesta imatge per a la bala:
 
-![Sprite de la Bala](/assets/godot-basics/shot.png)
+![Sprite de la Bala](/assets/gamedev-godot-basics/shot.png)
 
 > Clic dret -> Desa la imatge.  
 > *Crèdits: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> per **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
@@ -117,6 +117,14 @@ En GDScript, crear alguna cosa nova té 3 passos:
 1.  **Carregar el Plànol**: `preload("res://bullet.tscn")`.
 2.  **Instanciar**: `plano.instantiate()`. Construeixes l'objecte a la memòria RAM, però **encara no existeix al món visible**.
 3.  **Afegir a l'Arbre**: `add_child(bala)`. Aquí col·loques l'objecte a l'univers del joc.
+
+**Per què `preload` i no `load`?**
+
+Godot té dues formes de carregar recursos:
+*   **`preload("ruta")`**: Carrega l'escena **quan el joc arrenca**. És més ràpid en execució perquè ja està en memòria, però consumeix RAM des de l'inici.
+*   **`load("ruta")`**: Carrega l'escena **sota demanda**, en el moment exacte que s'executa aquesta línia. Estalvia RAM inicial, però pot causar estrebades (micro-parades) si el recurs és pesat.
+
+Per a bales (arxius petits que farem servir constantment), `preload` és l'elecció correcta.
 
 ## 3. Implementant el Tret
 

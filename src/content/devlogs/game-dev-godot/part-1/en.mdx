@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #1: Vectors and Movement'
 description: Understanding the math behind movement. Why do we normalize? What is Delta? Explained for humans.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev with Godot
-seriesDescription: Learn Godot by creating a Space Shooter from scratch, with an emphasis on Math and Shaders.
+seriesDescription: We learn the fundamentals of game development (vectors, trigonometry, shaders) using Godot and a Shoot 'em Up as a practical excuse.
 lang: en
 ---
 
@@ -47,7 +47,7 @@ If the Scene is the house, the Nodes are the bricks. And there are many types of
 ### Prepare your Assets
 Before starting, you need a ship. You can draw one or use this test one:
 
-![Player Ship](/assets/godot-basics/plane_128.png)
+![Player Ship](/assets/gamedev-godot-basics/plane_128.png)
 
 > Right click -> Save image.  
 > *Credits: <a href="https://puszke.itch.io/psx-plane" target="_blank" rel="noopener noreferrer">PSX Plane</a> by **Puck**.*
@@ -80,13 +80,15 @@ Before starting, you need a ship. You can draw one or use this test one:
 
 Before writing code, you need to know how to read the map. If you have never programmed, this is all you need to know for now. Imagine the script is a cooking recipe:
 
-1.  **`extends` (DNA)**:
-    It's the first line. Tells Godot: *"Hey, I'm an improved copy of..."*.
-    *   `extends CharacterBody2D`: Means "I have all the superpowers of a CharacterBody2D (collide, move) and, also, whatever I add here".
+1.  **`extends` (Inheritance)**:
+    It's the first line. Tells Godot: *"I am an extension of..."*.
+    *   `extends CharacterBody2D`: Means "I have all the methods and properties of a CharacterBody2D, plus whatever I add here".
+    
+    This is called **Class Inheritance**. It's a fundamental concept in object-oriented programming. Your script doesn't start from scratch: it inherits a "vehicle" that already works with wheels, engine, and steering (`CharacterBody2D`), and you just add the customization (your movement logic).
 2.  **`func` (Action/Verb)**:
     It is an order or task. Groups a list of steps.
     *   `func _physics_process(delta)`: It is a special function that Godot calls at a fixed rate (by default **60 times per second**). Everything you write inside will repeat in a loop to move things.
-3.  **`var` (Box)**:
+3.  **`var` (Variable)**:
     It is a place where we store information **in the computer's RAM**.
     *   `var speed = 300`: We have reserved a slot in memory, put the label "speed" on it, and stored the number 300 inside.
 

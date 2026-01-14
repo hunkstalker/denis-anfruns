@@ -5,9 +5,9 @@ draft: false
 new: true
 title: 'Godot #5: Trigonometria de Combat'
 description: Enemics que ondulen, orbiten i executen patrons matemàtics. Aprèn a fer servir Sinus i Cosinus per a moviments clàssics d'arcade.
-series: godot-basics
+series: gamedev-godot-basics
 seriesTitle: Game Dev amb Godot
-seriesDescription: Aprèn Godot creant un Space Shooter des de zero, amb èmfasi en Matemàtiques i Shaders.
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
 lang: ca
 ---
 
@@ -75,7 +75,7 @@ Deixarem el nostre avió bàsic (`enemy.gd`) tal com està, movent-se recte. Per
 2.  **Òrbita**: Gira en cercles perfectes.
 3.  **El·lipse**: Gira en ovals.
 
-![Sprite de l'Helicòpter](/assets/godot-basics/chopper_128.png)
+![Sprite de l'Helicòpter](/assets/gamedev-godot-basics/chopper_128.png)
 
 > Clic dret -> Guardar imatge.  
 > *Crèdits: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> per **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
@@ -147,6 +147,7 @@ func _on_area_entered(area):
 />
 
 **Desglossament de la fórmula:**
+*   `time += delta`: Acumulem el temps transcorregut. Com que `delta` representa els segons des de l'últim frame, `time` es converteix en un **rellotge en segons reals**. Això és crucial: si féssim servir `time += 1`, l'enemic ondularia més ràpid en PCs potents (més FPS = més increments per segon).
 *   `time * wave_frequency`: Com més gran sigui la freqüència, més ràpid completa el cicle.
 *   `sin(...)`: Retorna un valor entre -1 i 1.
 *   `* wave_amplitude`: Converteix aquest rang a píxels reals.
