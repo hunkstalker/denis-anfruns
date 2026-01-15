@@ -48,13 +48,22 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 
 ---
 
-### Part 6: Formaciones y Coreografías 🔜
-**Focus**: Orquestación de grupos.
-- Variables compartidas entre instancias.
-- Offsets de fase para formaciones.
-- Patrón de "V" y "Escalera".
+### Part 6: El SpawnPoint - Formaciones Lineales 🔜
+**Focus**: Sistema de spawn configurable (parte 1).
+- **Corrección Bug Shader**: `material.duplicate()` para instancias independientes.
+- **Collision Layers**: Configurar capas para que solo balas dañen enemigos.
+- **SpawnPoint Base**: Nodo que carga escenas y define patrones.
+- **Patrón LINE**: Enemigos en fila (avión), dirección configurable.
+- **Patrón WAVE**: LINE + ondulación (sin/cos), desfase para efecto serpiente.
 
-### Part 7: Estados y Rutas de Enemigos 🆕
+### Part 7: El SpawnPoint - Formaciones Orbitales 🆕
+**Focus**: Sistema de spawn configurable (parte 2).
+- **Patrón ORBIT**: Helicópteros girando alrededor de un centro.
+- **Radios Diferentes**: Órbitas elípticas (radius_x ≠ radius_y).
+- **Patrón LINE_TO_ORBIT**: Transición por posición X (entrada en fila → órbita).
+- **Mejora futura (nota)**: Transición por distancia recorrida.
+
+### Part 8: Estados y Rutas de Enemigos
 **Focus**: Comportamientos secuenciales.
 - **Enum y Match**: Estructura de estados en GDScript.
 - **Transiciones por Posición**: `move_toward()` para llegar a un punto, luego cambiar estado.
@@ -62,20 +71,20 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - **Práctica**: Enemigo que entra → orbita 3s → huye.
 - **🔄 Espiral**: Profundizar en `lerp()`, `clamp()`, `move_toward()` (interpolación y límites).
 
-### Part 8: El Motor de Nivel (Level Engine)
+### Part 9: El Motor de Nivel (Level Engine)
 **Focus**: Infraestructura del "Scroll" infinito.
 - **Virtual Scroll**: Separar la posición de la cámara del avance del nivel.
 - **Scroll Table**: Implementar la estructura de datos (Coordinate-based triggering).
 - **Prototipo**: Lograr que *un* solo enemigo aparezca en la coordenada X=5000.
 
-### Part 9: Diseño de Nivel y Oleadas (Grayboxing)
+### Part 10: Diseño de Nivel y Oleadas (Grayboxing)
 **Focus**: Diseñar la EXPERIENCIA usando cajas prototipo.
 - **Grayboxing**: Crear obstáculos (muros, asteroides) usando `StaticBody2D` y formas simples.
 - **Level Flow**: Combinar topografía (obstáculos) con enemigos.
 - **Editor de Oleadas**: Crear arrays de datos complejos (JSON/Dictionaries).
 - **Pacing**: Curva de dificultad básica.
 
-### Part 10: Arsenal y Sistema de Daño (Refactor)
+### Part 11: Arsenal y Sistema de Daño (Refactor)
 **Focus**: Expandir combate y arquitectura.
 - **Armas del Player**:
   - *Main Alternativo*: Disparo Doble (Frontal + Diagonal-Abajo). Menos daño, mayor cobertura (2 zonas).
@@ -84,20 +93,20 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - **Refactor**: Grupos de Godot para detección de daño (`is_in_group` vs `class_name`).
 - Estrategia de armas escalable.
 
-### Part 11: Audio Espacial
+### Part 12: Audio Espacial
 **Focus**: Feedback sonoro.
 - `AudioStreamPlayer` y `AudioStreamPlayer2D`.
 - AudioBus (Master, SFX, Music).
 - Pitch randomizer para variedad.
 
-### Part 12: Fondos Infinitos (Shader)
+### Part 13: Fondos Infinitos (Shader)
 **Focus**: Scroll visual sin mover objetos.
 - **Parallax por Shader**: Manipulación de UVs con `TIME` para scroll infinito.
   - ⚠️ *Sección saltable*: Este enfoque enseña la teoría. Más adelante se mostrará cómo hacerlo fácilmente con los nodos `ParallaxBackground` y `ParallaxLayer` de Godot.
 - Capas de parallax con velocidades diferentes.
 - **🔄 Espiral**: Profundizar en shaders (UVs avanzados, TIME, efectos visuales).
 
-### Part 13: UI y Game Loop
+### Part 14: UI y Game Loop
 **Focus**: Retroalimentación al jugador.
 - `CanvasLayer` y `Control` nodes.
 - Score, Vidas, Game Over.
@@ -105,20 +114,21 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - `reload_current_scene()`.
 - **🔄 Espiral**: Profundizar en señales personalizadas (`signal`, `emit_signal()`).
 
-### Part 14: Object Pooling
+### Part 15: Object Pooling
 **Focus**: Optimización profesional.
 - Por qué `instantiate()` es costoso.
 - Pool Manager genérico.
 - Reutilizar balas y enemigos.
+- **`instance uniform`**: Shaders optimizados donde todas las instancias comparten el código pero con valores individuales (mencionado en Part 6).
 
-### Part 15: Polish Final
+### Part 16: Polish Final
 **Focus**: Detalles de juego profesional.
 - `CPUParticles2D` para explosiones.
 - Screen Shake (cámara).
 - Transiciones de escena.
 - **CRT / Scanlines** (Opcional): Shader de post-procesado retro con `CanvasLayer`.
 
-### Part 16: Exportación
+### Part 17: Exportación
 **Focus**: Publicar el juego.
 - Export HTML5.
 - PWA y Fullscreen.

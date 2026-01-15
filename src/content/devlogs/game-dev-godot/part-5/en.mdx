@@ -183,7 +183,7 @@ An enemy orbiting around a point uses both functions: `cos` for X and `sin` for 
 
 For these orbital enemies, we'll keep using our **Chopper**.
 
-> You can duplicate the chopper scene from the previous section (call it `EnemyOrbital.tscn`) and change its script, or just change the script in the same scene to test.
+> You can duplicate the chopper scene from the previous section (call it `enemy_orbital.tscn`) and change its script, or just change the script in the same scene to test.
 
 Create a script named `enemy_orbital.gd`:
 
@@ -262,7 +262,7 @@ This enemy spins in place. In the future, we'll use this to create squads that e
 
 A circle has the same radius in X and Y. An **ellipse** has different radii.
 
-> **Tip:** You don't need to look for another sprite. You can duplicate your chopper scene (`EnemyOrbital.tscn`) and replace its script with this new one.
+> **Tip:** You don't need to look for another sprite. You can duplicate your chopper scene (`enemy_orbital.tscn`) and replace its script with this new one.
 
 Create a script named `enemy_ellipse.gd`:
 
@@ -342,9 +342,9 @@ func die():
 ## Testing in your World
 
 1.  Open `world.tscn`.
-2.  Duplicate your `Enemy.tscn` scene as `EnemyWave.tscn`.
+2.  Duplicate your `enemy.tscn` scene as `enemy_wave.tscn`.
 3.  Modify the script with the wave code.
-4.  Drag `EnemyWave.tscn` to the viewport.
+4.  Drag `enemy_wave.tscn` to the viewport.
 5.  Adjust `wave_amplitude` and `wave_frequency` in the Inspector.
 6.  Run (**F5**) and observe how it waves.
 

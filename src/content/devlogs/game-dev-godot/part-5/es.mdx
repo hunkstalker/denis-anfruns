@@ -191,7 +191,7 @@ Un enemigo que orbita alrededor de un punto usa las dos funciones: `cos` para X 
 
 Para estos enemigos orbitales, seguiremos usando nuestro **Helicóptero**.
 
-> Puedes duplicar la escena del helicóptero de la sección anterior (llámala `EnemyOrbital.tscn`) y cambiarle el script, o simplemente cambiar el script en la misma escena para probar.
+> Puedes duplicar la escena del helicóptero de la sección anterior (llámala `enemy_orbital.tscn`) y cambiarle el script, o simplemente cambiar el script en la misma escena para probar.
 
 Crea un script llamado `enemy_orbital.gd`:
 
@@ -281,7 +281,7 @@ Este enemigo se queda girando en el sitio. En el futuro, usaremos esto para crea
 
 Un círculo tiene el mismo radio en X e Y. Una **elipse** tiene radios diferentes.
 
-> **Tip:** No necesitas buscar otro sprite. Puedes duplicar tu escena del helicóptero (`EnemyOrbital.tscn`) y reemplazar su script por este nuevo.
+> **Tip:** No necesitas buscar otro sprite. Puedes duplicar tu escena del helicóptero (`enemy_orbital.tscn`) y reemplazar su script por este nuevo.
 
 Crea un script llamado `enemy_ellipse.gd`:
 
@@ -375,9 +375,9 @@ func die():
 ## Probando en tu Mundo
 
 1.  Abre `world.tscn`.
-2.  Duplica tu escena `Enemy.tscn` como `EnemyWave.tscn`.
+2.  Duplica tu escena `enemy.tscn` como `enemy_wave.tscn`.
 3.  Modifica el script con el código de ondulación.
-4.  Arrastra `EnemyWave.tscn` al viewport.
+4.  Arrastra `enemy_wave.tscn` al viewport.
 5.  Ajusta `wave_amplitude` y `wave_frequency` en el Inspector.
 6.  Ejecuta (**F5**) y observa cómo ondula.
 

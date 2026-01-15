@@ -1,0 +1,447 @@
+---
+pubDate: '2026-01-15T15:00:00Z'
+tags: ['godot', 'gdscript', 'spawner', 'patterns', 'gamedev']
+draft: false
+new: true
+title: 'Godot #6: El SpawnPoint - Formacions Lineals'
+description: Creem un sistema de spawn configurable que controla el moviment dels enemics. Patrons LINE i WAVE amb avions.
+series: gamedev-godot-basics
+seriesTitle: Game Dev amb Godot
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
+lang: ca
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+
+## El Problema: Enemics que Es Manen Sols
+
+Als capítols anteriors, cada enemic tenia el seu **propi script de moviment**. L'avió es movia recte, l'helicòpter ondulava o orbitava. Cadascun decidia com moure's.
+
+Això funciona per a demos, però té un problema fonamental: **no hi ha coordinació**.
+
+Si volem crear una *onada de 5 avions* que entrin en formació, qui decideix on van? Cada avió pel seu compte? Això és caos, no una formació.
+
+**La solució**: Un **director d'orquestra** que controli el moviment de tots els seus enemics. En lloc que l'enemic sàpiga moure's, serà un node extern (el `SpawnPoint`) qui li digui on anar.
+
+### El Canvi de Paradigma
+
+| Abans | Després |
+|-------|---------| 
+| Enemic decideix el seu moviment | Enemic és "ximple", només té stats |
+| Múltiples scripts de moviment | Un sol `SpawnPoint` amb patrons configurables |
+| Moviment hardcodejat | Moviment injectat des de fora |
+
+Aquest capítol el dedicarem a construir aquest sistema. Però abans, necessitem polir algunes coses.
+
+---
+
+## 1. Millorant: Tots els Enemics Flashegen Alhora
+
+Ara si instancies diversos helicòpters i dispares a **un sol**, tots executen l'efecte de `hit_flash` simultàniament. Per què?
+
+### La Causa: Recursos Compartits
+
+Quan crees una escena a l'Editor de Godot i li assignes un `ShaderMaterial` al `Sprite2D`, aquest material es guarda com un **recurs únic** al fitxer `.tscn`.
+
+En usar `enemy_scene.instantiate()`, Godot **no duplica** els recursos. Només crea referències al mateix fitxer.
+
+```text
+enemy.tscn
+   └── Sprite2D
+        └── Material: ShaderMaterial (fitxer únic)
+               ↑        ↑        ↑
+          Enemic 1  Enemic 2  Enemic 3
+          (tots apunten al MATEIX material)
+```
+
+Quan un crida a `set_shader_parameter("flash_active", true)`, **canvia la variable per a tots** perquè és literalment el mateix objecte en memòria.
+
+### La Solució: Duplicar el Material
+
+La solució és fer una **còpia independent** del material al `_ready()` de cada enemic:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy.gd',
+      lang: 'gdscript',
+      code: `func _ready():
+  # Creem una còpia ÚNICA del material per a AQUESTA instància
+  $Sprite2D.material = $Sprite2D.material.duplicate()
+  
+  # Resta del codi...
+  area_entered.connect(_on_area_entered)`
+    }
+  ]}
+/>
+
+**Què fa `.duplicate()`?**
+
+El mètode `duplicate()` crea una **còpia profunda** del recurs. Ara cada enemic té el seu propi `ShaderMaterial` independent:
+
+```text
+Enemic 1 → Material Còpia A (independent)
+Enemic 2 → Material Còpia B (independent)
+Enemic 3 → Material Còpia C (independent)
+```
+
+Quan dispares a un, només el **seu** material rep el canvi.
+
+<Callout type="tip" title="Alternatives més eficients">
+**`duplicate()`** és simple però crea còpies del material en memòria. Per a projectes grans hi ha opcions millors:
+
+1. **`Resource → Local to Scene`**: Activa aquesta opció a l'Inspector del `ShaderMaterial`. Godot duplicarà automàticament el material en instanciar, sense codi extra.
+
+2. **`instance uniform`** (Godot 4): Permet que totes les instàncies comparteixin el mateix shader però amb valors diferents. Ho veurem en un capítol avançat d'optimització.
+
+Per a aquest curs, `duplicate()` és suficient i més explícit didàcticament.
+</Callout>
+
+> **Aplica aquest canvi** a tots els teus scripts d'enemics (`enemy.gd`, `enemy_wave.gd`, `enemy_orbital.gd`, etc.) afegint la línia de `duplicate()` a l'inici de `_ready()`.
+
+---
+
+## 2. Millorant: Col·lisions Entre Enemics
+
+Si els enemics volen molt a prop uns dels altres, poden xocar entre si i destruir-se. Podríem usar grups (`is_in_group("enemy")`) per filtrar col·lisions en codi, però hi ha una solució millor i més eficient: **Collision Layers**.
+
+### Què són les Collision Layers?
+
+Godot té un sistema de **capes de col·lisió** que funciona com a filtres. Cada objecte té:
+
+- **Layer** (capa): "Jo **sóc** d'aquesta capa"
+- **Mask** (màscara): "Jo **detecto** objectes d'aquestes capes"
+
+L'event `area_entered` **només es dispara** si la capa de l'objecte entrant coincideix amb la màscara de l'objecte receptor.
+
+<Callout type="info" title="Límit de 32 capes">
+Godot usa un bitmask de 32 bits, cosa que limita a **32 capes** per sistema. A la pràctica és més que suficient si uses categories genèriques (player, enemy, bullet) en lloc d'una capa per tipus específic. Si necessites més granularitat, pots combinar Layers amb Groups.
+</Callout>
+
+### Configuració per al Nostre Joc
+
+Definirem 3 capes:
+
+| Bit | Nom | Qui hi és |
+|-----|--------|-----------------|
+| 1 | Player | La nau del jugador |
+| 2 | Enemy | Avions, helicòpters, tots els enemics |
+| 3 | PlayerBullet | Les bales que dispara el jugador |
+
+**Configuració de cada objecte:**
+
+| Objecte | Layer (sóc) | Mask (detecto) |
+|--------|-------------|----------------|
+| Player | 1 | - |
+| Enemy | 2 | 3 (només bales del player) |
+| PlayerBullet | 3 | 2 (només enemics) |
+
+Amb aquesta configuració:
+- Els enemics **només detecten** bales del player (capa 3).
+- Si un enemic toca un altre enemic (ambdós a capa 2), **no passa res** perquè la màscara de l'enemic no inclou la capa 2.
+- Per ara Player no detecta col·lisions amb enemics perquè per ara és invencible, si detectéssim la col·lisió encara no tindríem res a fer amb ella.
+
+### Com Configurar-ho a Godot
+
+**Pas 1: Nomenar les capes**
+
+1. Ves a **Project → Project Settings → Layer Names → 2D Physics**.
+2. Nomena les capes:
+   - Layer 1: `player`
+   - Layer 2: `enemy`
+   - Layer 3: `player_bullet`
+
+**Pas 2: Configurar l'Enemic**
+
+1. Obre la teva escena d'enemic (`enemy.tscn`).
+2. Selecciona el node arrel (`Area2D`).
+3. A l'Inspector, busca **Collision → Layer**.
+4. Desactiva la capa 1, activa només la **capa 2** (enemy).
+5. A **Collision → Mask**, desactiva la capa 1, activa només la **capa 3** (player_bullet).
+
+**Pas 3: Configurar la Bala**
+
+1. Obre la teva escena de bala (`bullet.tscn`).
+2. Selecciona el node arrel (`Area2D`).
+3. **Layer**: Només capa 3 (player_bullet).
+4. **Mask**: Només capa 2 (enemy).
+
+> **Resultat**: Amb aquesta configuració, el senyal `area_entered` de l'enemic **només es dispara** quan una bala del player el toca. No necessites verificar manualment quin tipus d'objecte ha col·lisionat; el motor ja ho ha filtrat per tu.
+
+La teva funció `_on_area_entered` del Capítol 3 queda neta:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy.gd',
+      lang: 'gdscript',
+      code: `func _on_area_entered(area):
+  if is_dying:
+    return
+  
+  # Gràcies a Collision Layers, aquí només arriben bales del player
+  # El motor ja ha filtrat les col·lisions per nosaltres
+  
+  hp -= 1
+  area.queue_free()
+  hit_flash()  # Definit al Capítol 4
+  
+  if hp <= 0:
+    die()  # Definit al Capítol 3`
+    }
+  ]}
+/>
+
+---
+
+## 3. El SpawnPoint: Estructura Base
+
+Ara que els enemics estan preparats, anem a crear el `SpawnPoint`. Aquest serà un `Node2D` que:
+
+1. Usarem una escena d'enemic (`PackedScene`).
+2. Instanciarem N enemics a l'inici.
+3. Controlarem el seu moviment cada frame segons el patró seleccionat.
+
+### Definint els Patrons amb Enum
+
+Primer, necessitem una forma de seleccionar quin patró usar. En GDScript, usem un `enum`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'Concepte: Enum',
+      lang: 'gdscript',
+      code: `enum MovementPattern {
+  LINE,       # Fila índia
+  WAVE,       # Fila amb ondulació
+  ORBIT,      # Moviment circular (Part 7)
+  LINE_TO_ORBIT  # Transició (Part 7)
+}`
+    }
+  ]}
+/>
+
+**Què és un `enum`?**
+
+Un `enum` (enumeració) és una forma de definir un conjunt de **constants amb nom**. Internament, cada valor és un número:
+
+| Nom | Valor Intern |
+|--------|---------------|
+| `LINE` | 0 |
+| `WAVE` | 1 |
+| `ORBIT` | 2 |
+| `LINE_TO_ORBIT` | 3 |
+
+L'avantatge és que al codi escrius `MovementPattern.WAVE` en lloc de recordar què significa el número `1`. A més, a l'Inspector de Godot apareix un **desplegable** amb els noms.
+
+Ara anem a construir el SpawnPoint pas a pas, començant amb el patró més simple.
+
+---
+
+## 4. Patró LINE: Fila Índia
+
+El patró més simple. Els enemics entren en fila índia (un darrere l'altre) i avancen cap a l'esquerra.
+
+```text
+← enemy_0 ← enemy_1 ← enemy_2 ← enemy_3 ← enemy_4
+   (tots en línia horitzontal, movent-se cap a l'esquerra)
+```
+
+![Patró de moviment LINE: fila índia](public/assets/gamedev-godot-basics/line.webp)
+
+### Script Simplificat (Només LINE)
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (LINE)',
+      lang: 'gdscript',
+      code: `extends Node2D
+
+@export var enemy_scene: PackedScene
+@export var formation_size: int = 5
+@export var spawn_spacing: float = 150.0
+@export var speed: float = 150.0
+
+var enemies: Array = []
+
+func _ready():
+    spawn_formation()
+
+func spawn_formation():
+    for i in range(formation_size):
+      var enemy = enemy_scene.instantiate()
+
+      # Fila índia: el primer a X=0, els altres darrere
+      enemy.position = Vector2(i * spawn_spacing, 0)
+
+      enemies.append(enemy)
+      call_deferred("add_child", enemy)
+
+func _process(delta):
+    for enemy in enemies:
+      if is_instance_valid(enemy):
+        enemy.position.x -= speed * delta`
+    }
+  ]}
+/>
+
+**Què fa `spawn_formation()`?**
+
+1. `enemy_scene.instantiate()` — Crea una còpia de l'enemic.
+2. `enemy.position = Vector2(i * spawn_spacing, 0)` — El posiciona en fila índia.
+3. `enemies.append(enemy)` — El guarda a l'array per poder accedir-hi després a `_process()`.
+4. `call_deferred("add_child", enemy)` — L'afegeix com a fill del SpawnPoint (de forma segura).
+
+### Provant el Patró LINE
+
+1. Crea un nou `Node2D` a la teva escena `world.tscn`.
+2. Reanomena'l a `SpawnPoint`.
+3. Afegeix-li el script `spawn_point.gd`.
+4. A l'Inspector:
+   - **Enemy Scene**: Arrossega `enemy.tscn` (l'avió).
+   - **Formation Size**: `5`.
+   - **Spawn Spacing**: `60`.
+   - **Speed**: `150`.
+5. Posiciona el `SpawnPoint` a la dreta de la pantalla (ex: X=1200, Y=300).
+6. Executa (F5).
+
+**Resultat esperat**: 5 avions en fila índia avancen cap a l'esquerra.
+
+---
+
+## 5. Patró WAVE: La Serp
+
+Ara volem que la fila índia **onduli** verticalment mentre avança. El truc és que cada enemic ha de seguir **exactament la mateixa ruta** que el que té al davant, com els segments d'una serp.
+
+![Patró de moviment WAVE: serp](public/assets/gamedev-godot-basics/wave.webp)
+
+### El Secret: Ondulació Basada en Posició X
+
+La clau és que la posició Y es calcula a partir de la posició X:
+
+Com tots els enemics passen per les mateixes coordenades X (només que en moments diferents), tots segueixen exactament la mateixa corba.
+
+### Script Complet (LINE + WAVE)
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd',
+      lang: 'gdscript',
+      code: `
+extends Node2D
+
+enum MovementPattern { LINE, WAVE }
+
+@export var enemy_scene: PackedScene
+@export var pattern: MovementPattern = MovementPattern.LINE
+@export var formation_size: int = 5
+@export var spawn_spacing: float = 60.0
+@export var speed: float = 150.0
+
+# Paràmetres WAVE
+@export var wave_amplitude: float = 80.0
+@export var wave_frequency: float = 0.02
+
+var enemies: Array = []
+
+func _ready():
+    spawn_formation()
+
+func spawn_formation():
+    for i in range(formation_size):
+      var enemy = enemy_scene.instantiate()
+      enemy.position = Vector2(i * spawn_spacing, 0)
+      enemies.append(enemy)
+      call_deferred("add_child", enemy)
+
+func _process(delta):
+    for enemy in enemies:
+      if not is_instance_valid(enemy):
+        continue
+      
+      match pattern:
+        MovementPattern.LINE:
+          move_line(enemy, delta)
+        MovementPattern.WAVE:
+          move_wave(enemy, delta)
+
+func move_line(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta
+
+func move_wave(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta
+    enemy.position.y = sin(enemy.position.x * wave_frequency) * wave_amplitude`
+    }
+  ]}
+/>
+
+### Explicació del Codi
+
+Fixa't que aquí canviem l'estil del `if`: a LINE usem `if is_instance_valid(enemy):` i aniuem el codi a dins. Aquí usem `if not ... continue` per saltar els enemics eliminats. Tots dos fan el mateix, però aquest estil evita aniuació extra amb el `match`.
+
+**`move_line()`** fa exactament el mateix que al script de LINE: moure l'enemic cap a l'esquerra.
+
+<CodeTabs
+  items={[
+    {
+      label: 'move_line',
+      lang: 'gdscript',
+      code: `
+func move_line(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta`
+    }
+  ]}
+/>
+
+**`move_wave()`** afegeix una línia extra: a més d'avançar cap a l'esquerra, calcula la posició Y usant `sin()`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'move_wave',
+      lang: 'gdscript',
+      code: `
+func move_wave(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta
+    enemy.position.y = sin(enemy.position.x * wave_frequency) * wave_amplitude`
+    }
+  ]}
+/>
+
+- `enemy.position.x * wave_frequency`: Converteix la posició X en un angle per a `sin()`.
+- `wave_amplitude`: Escala el resultat (de -1 a 1) a píxels.
+
+La Y es **reassigna** cada frame, no s'acumula. Per això no hi ha problema de "volar a l'infinit".
+
+### Provant el Patró WAVE
+
+1. Canvia el `Pattern` a `WAVE` a l'Inspector.
+2. Configura:
+    - **Formation Size**: `8`
+    - **Spawn Spacing**: `120`
+    - **Speed**: `50`
+    - **Wave Amplitude**: `150`
+    - **Wave Frequency**: `0.01`
+3. Executa (F5).
+
+**Resultat**: Els helicòpters avancen ondulant amunt i avall.
+
+**Experimenta:**
+- `wave_frequency = 0.01`: Ones llargues.
+- `wave_frequency = 0.05`: Ones curtes.
+- `wave_amplitude = 150`: Ones altes.
+---
+
+## Repassem el que hem après
+
+1. **Millora del Shader**: Els recursos es comparteixen entre instàncies. Solució: `material.duplicate()`.
+2. **Millora de la col·lisió**: Filtrar col·lisions a nivell de motor és més eficient que fer-ho en codi.
+3. **SpawnPoint**: Un node que controla el spawn i moviment dels seus enemics.
+4. **Enum**: Constants amb nom per seleccionar opcions a l'Inspector.
+5. **Patró LINE**: Fila índia avançant amb `position.x -= speed * delta`.
+6. **Patró WAVE**: Ondulació basada en posició X: `position.y = sin(position.x * freq) * amp`. Tots segueixen la mateixa corba.
+
+Al **proper capítol**, afegirem el patró **ORBIT** (helicòpters girant) i **LINE_TO_ORBIT** (transició de fila a òrbita).

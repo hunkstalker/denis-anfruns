@@ -1,0 +1,604 @@
+---
+pubDate: '2026-01-16T15:00:00Z'
+tags: ['godot', 'gdscript', 'spawner', 'patterns', 'gamedev']
+draft: true
+new: true
+title: 'Godot #7: El SpawnPoint - Formaciones Orbitales'
+description: Helicópteros que orbitan y transiciones de fila a círculo. Completamos el sistema de spawn con patrones ORBIT y LINE_TO_ORBIT.
+series: gamedev-godot-basics
+seriesTitle: Game Dev con Godot
+seriesDescription: Aprendemos los fundamentos del desarrollo de videojuegos (vectores, trigonometría, shaders) usando Godot y un Shoot 'em Up como excusa práctica.
+lang: es
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+
+## Continuamos con el SpawnPoint
+
+En el capítulo anterior construimos el sistema `SpawnPoint` con dos patrones:
+- **LINE**: Enemigos en fila india.
+- **WAVE**: Fila con ondulación (efecto serpiente).
+
+Ahora añadiremos dos patrones más complejos:
+- **ORBIT**: Enemigos girando alrededor del SpawnPoint.
+- **LINE_TO_ORBIT**: Enemigos que entran en fila y transicionan a órbita.
+
+Para estos patrones usaremos el **helicóptero** en lugar del avión, ya que visualmente encaja mejor con movimientos circulares.
+
+---
+
+## 1. Patrón ORBIT: Movimiento Circular
+
+En el capítulo 5 aprendimos que un círculo se describe con:
+
+```text
+x = centro_x + cos(ángulo) * radio
+y = centro_y + sin(ángulo) * radio
+```
+
+Donde el `ángulo` aumenta con el tiempo para generar rotación.
+
+### Implementación en el SpawnPoint
+
+Primero, añadimos el patrón al enum y sus parámetros:
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (añadir al inicio)',
+      lang: 'gdscript',
+      code: `enum MovementPattern { LINE, WAVE, ORBIT }
+
+# --- Parámetros de Órbita (ORBIT) ---
+@export var orbit_radius_x: float = 100.0   # Radio horizontal
+@export var orbit_radius_y: float = 100.0   # Radio vertical (si diferente = elipse)
+@export var orbit_speed: float = 2.0        # Velocidad angular (radianes/segundo)
+@export var auto_distribute: bool = true    # Distribuir equidistantes en el círculo`
+    }
+  ]}
+/>
+
+**¿Por qué dos radios?**
+
+Si `orbit_radius_x == orbit_radius_y`, los enemigos describen un **círculo perfecto**.
+Si son diferentes, describen una **elipse**. Esto nos da flexibilidad sin necesidad de un patrón separado.
+
+### La Función de Movimiento
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (función ORBIT)',
+      lang: 'gdscript',
+      code: `func move_orbit(enemy: Node2D, index: int):
+    var data = enemy_data[index]
+    
+    # Calculamos el ángulo actual
+    # time * orbit_speed = cuánto ha rotado en total
+    # data.phase_offset = desfase inicial de este enemigo
+    var angle = time * orbit_speed + data.phase_offset
+    
+    # Fórmula del círculo/elipse
+    var x = cos(angle) * orbit_radius_x
+    var y = sin(angle) * orbit_radius_y
+    
+    # La posición es relativa al SpawnPoint (que es el centro)
+    enemy.position = Vector2(x, y)`
+    }
+  ]}
+/>
+
+**Desglose:**
+
+1. **`time * orbit_speed`**: Cuántos radianes ha girado desde el inicio. Si `orbit_speed = 2`, gira 2 radianes por segundo (aproximadamente 115° por segundo).
+
+2. **`data.phase_offset`**: El desfase inicial de cada enemigo. Si queremos 4 enemigos equidistantes, sus desfases serían: 0, π/2, π, 3π/2 (0°, 90°, 180°, 270°).
+
+3. **`cos(angle) * radio_x`**: La coordenada X del punto en el círculo.
+
+4. **`sin(angle) * radio_y`**: La coordenada Y del punto en el círculo.
+
+### Distribución Automática
+
+Para que los enemigos empiecen equidistantes, calculamos el desfase en `spawn_formation()`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (modificar spawn_formation)',
+      lang: 'gdscript',
+      code: `func spawn_formation():
+    var perpendicular = Vector2(-direction.y, direction.x)
+    
+    for i in range(formation_size):
+        var enemy = enemy_scene.instantiate()
+        var data = {}
+        
+        match pattern:
+            MovementPattern.LINE, MovementPattern.WAVE:
+                # Posición en fila (como antes)
+                var formation_offset = (i - (formation_size - 1) / 2.0) * spawn_spacing
+                enemy.position = perpendicular * formation_offset
+                data["start_perpendicular_offset"] = formation_offset
+                data["distance"] = 0.0
+                
+            MovementPattern.ORBIT:
+                # Calcular el desfase angular
+                if auto_distribute:
+                    # Dividimos el círculo en partes iguales
+                    data["phase_offset"] = (2 * PI / formation_size) * i
+                else:
+                    data["phase_offset"] = i * phase_increment
+                
+                # Posición inicial en el círculo
+                var angle = data["phase_offset"]
+                enemy.position = Vector2(
+                    cos(angle) * orbit_radius_x,
+                    sin(angle) * orbit_radius_y
+                )
+        
+        enemy_data.append(data)
+        enemies.append(enemy)
+        call_deferred("add_child", enemy)`
+    }
+  ]}
+/>
+
+**¿Qué es `2 * PI`?**
+
+En radianes, un círculo completo son **2π** (aproximadamente 6.28). Si tenemos 4 enemigos:
+
+```text
+2π / 4 = π/2 radianes = 90°
+
+Enemigo 0: 0° (derecha)
+Enemigo 1: 90° (arriba)
+Enemigo 2: 180° (izquierda)
+Enemigo 3: 270° (abajo)
+```
+
+**`PI`** es una constante global en GDScript que vale 3.14159...
+
+### Actualizando el _process
+
+Añadimos el caso ORBIT al `match`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (modificar _process)',
+      lang: 'gdscript',
+      code: `func _process(delta):
+    time += delta
+    
+    for i in range(enemies.size()):
+        var enemy = enemies[i]
+        
+        if not is_instance_valid(enemy):
+            continue
+        
+        match pattern:
+            MovementPattern.LINE:
+                move_line(enemy, delta)
+            MovementPattern.WAVE:
+                move_wave(enemy, i, delta)
+            MovementPattern.ORBIT:
+                move_orbit(enemy, i)  # No necesita delta, usa time directamente`
+    }
+  ]}
+/>
+
+### Probando el Patrón ORBIT
+
+1. Crea un nuevo `SpawnPoint` en `world.tscn`.
+2. En el Inspector:
+   - **Enemy Scene**: Arrastra la escena del helicóptero.
+   - **Pattern**: `ORBIT`.
+   - **Formation Size**: `4`.
+   - **Orbit Radius X**: `100`.
+   - **Orbit Radius Y**: `100`.
+   - **Orbit Speed**: `2`.
+   - **Auto Distribute**: `true`.
+3. Posiciona el SpawnPoint en el centro de la pantalla.
+4. Ejecuta (F5).
+
+**Resultado esperado**: 4 helicópteros girando en círculo, equidistantes como las horas de un reloj.
+
+### Variación: Elipse
+
+Cambia los radios:
+- `Orbit Radius X = 150`, `Orbit Radius Y = 50` → Elipse horizontal (achatada).
+- `Orbit Radius X = 50`, `Orbit Radius Y = 150` → Elipse vertical (alargada).
+
+---
+
+## 2. Patrón LINE_TO_ORBIT: La Transición
+
+Este es el patrón más complejo. Los enemigos:
+1. Entran en **fila** (como LINE).
+2. Al llegar a una posición X determinada, **transicionan** a órbita.
+
+### Estados del SpawnPoint
+
+Necesitamos un **estado interno** que indique en qué fase estamos:
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (añadir)',
+      lang: 'gdscript',
+      code: `enum SpawnState { ENTERING, ORBITING }
+
+var state: SpawnState = SpawnState.ENTERING
+
+# Parámetro de transición
+@export var transition_x: float = 600.0  # Coordenada X donde empieza la órbita`
+    }
+  ]}
+/>
+
+**¿Por qué posición X y no distancia recorrida?**
+
+En los shooters clásicos (Galaga, R-Type), el diseñador de niveles colocaba "triggers" en posiciones fijas del mapa. Los enemigos entraban y, al cruzar cierta coordenada, cambiaban de comportamiento.
+
+Esto facilita el diseño: "Quiero que empiecen a orbitar cuando lleguen al centro de la pantalla" → `transition_x = 640` (mitad de 1280px).
+
+> **Nota para el futuro**: Podríamos añadir un modo de transición por distancia recorrida, útil si el SpawnPoint se mueve. Lo dejamos como mejora futura.
+
+### La Lógica de Transición
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (LINE_TO_ORBIT)',
+      lang: 'gdscript',
+      code: `# Añadir al enum
+enum MovementPattern { LINE, WAVE, ORBIT, LINE_TO_ORBIT }
+
+func _process(delta):
+    time += delta
+    
+    for i in range(enemies.size()):
+        var enemy = enemies[i]
+        
+        if not is_instance_valid(enemy):
+            continue
+        
+        match pattern:
+            MovementPattern.LINE:
+                move_line(enemy, delta)
+            MovementPattern.WAVE:
+                move_wave(enemy, i, delta)
+            MovementPattern.ORBIT:
+                move_orbit(enemy, i)
+            MovementPattern.LINE_TO_ORBIT:
+                move_line_to_orbit(enemy, i, delta)
+
+func move_line_to_orbit(enemy: Node2D, index: int, delta: float):
+    var data = enemy_data[index]
+    
+    match state:
+        SpawnState.ENTERING:
+            # Fase 1: Moverse en línea recta
+            enemy.position += direction * speed * delta
+            
+            # Comprobar si hemos llegado al punto de transición
+            # Usamos la posición GLOBAL porque el SpawnPoint puede estar en cualquier lugar
+            var global_x = global_position.x + enemy.position.x
+            
+            # Si avanzamos hacia la izquierda, transition_x es el límite inferior
+            if direction.x < 0 and global_x <= transition_x:
+                start_orbit_transition(index, enemy)
+            # Si avanzamos hacia la derecha, es el límite superior
+            elif direction.x > 0 and global_x >= transition_x:
+                start_orbit_transition(index, enemy)
+                
+        SpawnState.ORBITING:
+            # Fase 2: Orbitar normalmente
+            move_orbit(enemy, index)
+
+func start_orbit_transition(index: int, enemy: Node2D):
+    # Solo transicionamos una vez
+    if state == SpawnState.ORBITING:
+        return
+    
+    # Cambiamos el estado GLOBAL del spawner
+    state = SpawnState.ORBITING
+    
+    # Guardamos el centro de órbita como la posición actual del primer enemigo
+    # Esto hace que orbiten alrededor de donde estaban cuando transicionaron
+    var orbit_center = enemy.position
+    
+    # Recalculamos los datos de todos los enemigos para orbitar
+    for i in range(enemies.size()):
+        if not is_instance_valid(enemies[i]):
+            continue
+            
+        # Calculamos el ángulo inicial basándonos en la posición relativa al centro
+        var relative_pos = enemies[i].position - orbit_center
+        var initial_angle = atan2(relative_pos.y, relative_pos.x)
+        
+        enemy_data[i]["phase_offset"] = initial_angle
+        enemy_data[i]["orbit_center"] = orbit_center
+    
+    # Reiniciamos el tiempo para que la órbita empiece desde 0
+    time = 0.0`
+    }
+  ]}
+/>
+
+### Desglose del Código
+
+**1. Estados con `SpawnState`:**
+```gdscript
+enum SpawnState { ENTERING, ORBITING }
+var state: SpawnState = SpawnState.ENTERING
+```
+El spawner empieza en estado `ENTERING` (entrando). Al cruzar `transition_x`, cambia a `ORBITING`.
+
+**2. Detección de transición:**
+```gdscript
+var global_x = global_position.x + enemy.position.x
+if direction.x < 0 and global_x <= transition_x:
+```
+Calculamos la posición X global del enemigo. Si avanza hacia la izquierda (`direction.x < 0`), la transición ocurre cuando `global_x` cae **por debajo** de `transition_x`.
+
+**3. `atan2()` - Convertir posición a ángulo:**
+```gdscript
+var initial_angle = atan2(relative_pos.y, relative_pos.x)
+```
+`atan2(y, x)` es la función inversa de sin/cos. Dado un punto (x, y), devuelve el ángulo en radianes.
+
+| Posición | atan2(y, x) |
+|----------|-------------|
+| (1, 0) derecha | 0 |
+| (0, 1) arriba | π/2 (90°) |
+| (-1, 0) izquierda | π (180°) |
+| (0, -1) abajo | -π/2 (-90°) |
+
+Esto nos permite que cada enemigo empiece a orbitar **desde donde estaba** cuando ocurrió la transición, en lugar de saltar a una posición calculada.
+
+**4. Centro de órbita dinámico:**
+```gdscript
+enemy_data[i]["orbit_center"] = orbit_center
+```
+Guardamos dónde estaba el primer enemigo cuando transicionó. Todos orbitan alrededor de ese punto, no del SpawnPoint original.
+
+### Modificar move_orbit para usar el centro dinámico
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (move_orbit actualizado)',
+      lang: 'gdscript',
+      code: `func move_orbit(enemy: Node2D, index: int):
+    var data = enemy_data[index]
+    
+    var angle = time * orbit_speed + data.phase_offset
+    
+    # Usamos el centro guardado si existe (LINE_TO_ORBIT), si no, (0,0)
+    var center = data.get("orbit_center", Vector2.ZERO)
+    
+    var x = center.x + cos(angle) * orbit_radius_x
+    var y = center.y + sin(angle) * orbit_radius_y
+    
+    enemy.position = Vector2(x, y)`
+    }
+  ]}
+/>
+
+### Probando LINE_TO_ORBIT
+
+1. Crea un `SpawnPoint` a la derecha de la pantalla (ej: X=1100).
+2. En el Inspector:
+   - **Enemy Scene**: Helicóptero.
+   - **Pattern**: `LINE_TO_ORBIT`.
+   - **Formation Size**: `5`.
+   - **Spawn Spacing**: `50`.
+   - **Speed**: `200`.
+   - **Direction**: `(-1, 0)`.
+   - **Transition X**: `500`.
+   - **Orbit Radius X/Y**: `80`.
+   - **Orbit Speed**: `2`.
+3. Ejecuta (F5).
+
+**Resultado esperado**: Los helicópteros entran en fila desde la derecha. Al cruzar X=500, empiezan a orbitar en círculo alrededor del punto donde el primero llegó.
+
+---
+
+## 3. Script Completo del SpawnPoint
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (completo)',
+      lang: 'gdscript',
+      code: `extends Node2D
+
+# --- Enumeraciones ---
+enum MovementPattern { LINE, WAVE, ORBIT, LINE_TO_ORBIT }
+enum SpawnState { ENTERING, ORBITING }
+
+# --- Configuración General ---
+@export var enemy_scene: PackedScene
+@export var pattern: MovementPattern = MovementPattern.LINE
+@export var formation_size: int = 5
+@export var spawn_spacing: float = 60.0
+
+# --- Parámetros LINE/WAVE ---
+@export var speed: float = 150.0
+@export var direction: Vector2 = Vector2(-1, 0)
+
+# --- Parámetros WAVE ---
+@export var wave_amplitude: float = 80.0
+@export var wave_frequency: float = 3.0
+@export var phase_increment: float = 0.4
+
+# --- Parámetros ORBIT ---
+@export var orbit_radius_x: float = 100.0
+@export var orbit_radius_y: float = 100.0
+@export var orbit_speed: float = 2.0
+@export var auto_distribute: bool = true
+
+# --- Parámetros LINE_TO_ORBIT ---
+@export var transition_x: float = 600.0
+
+# --- Variables Internas ---
+var enemies: Array = []
+var enemy_data: Array = []
+var time: float = 0.0
+var state: SpawnState = SpawnState.ENTERING
+
+func _ready():
+    direction = direction.normalized()
+    spawn_formation()
+
+func spawn_formation():
+    var perpendicular = Vector2(-direction.y, direction.x)
+    
+    for i in range(formation_size):
+        var enemy = enemy_scene.instantiate()
+        var data = {}
+        
+        match pattern:
+            MovementPattern.LINE, MovementPattern.WAVE, MovementPattern.LINE_TO_ORBIT:
+                var formation_offset = (i - (formation_size - 1) / 2.0) * spawn_spacing
+                enemy.position = perpendicular * formation_offset
+                data["start_perpendicular_offset"] = formation_offset
+                data["distance"] = 0.0
+                data["phase_offset"] = 0.0
+                
+            MovementPattern.ORBIT:
+                if auto_distribute:
+                    data["phase_offset"] = (2 * PI / formation_size) * i
+                else:
+                    data["phase_offset"] = i * phase_increment
+                
+                var angle = data["phase_offset"]
+                enemy.position = Vector2(
+                    cos(angle) * orbit_radius_x,
+                    sin(angle) * orbit_radius_y
+                )
+        
+        enemy_data.append(data)
+        enemies.append(enemy)
+        call_deferred("add_child", enemy)
+
+func _process(delta):
+    time += delta
+    
+    for i in range(enemies.size()):
+        var enemy = enemies[i]
+        
+        if not is_instance_valid(enemy):
+            continue
+        
+        match pattern:
+            MovementPattern.LINE:
+                move_line(enemy, delta)
+            MovementPattern.WAVE:
+                move_wave(enemy, i, delta)
+            MovementPattern.ORBIT:
+                move_orbit(enemy, i)
+            MovementPattern.LINE_TO_ORBIT:
+                move_line_to_orbit(enemy, i, delta)
+
+func move_line(enemy: Node2D, delta: float):
+    enemy.position += direction * speed * delta
+
+func move_wave(enemy: Node2D, index: int, delta: float):
+    var data = enemy_data[index]
+    data.distance += speed * delta
+    
+    var base_position = direction * data.distance
+    
+    var phase = time * wave_frequency + index * phase_increment
+    var wave_offset = sin(phase) * wave_amplitude
+    
+    var total_perpendicular = data.start_perpendicular_offset + wave_offset
+    
+    var perpendicular = Vector2(-direction.y, direction.x)
+    enemy.position = base_position + perpendicular * total_perpendicular
+
+func move_orbit(enemy: Node2D, index: int):
+    var data = enemy_data[index]
+    
+    var angle = time * orbit_speed + data.phase_offset
+    var center = data.get("orbit_center", Vector2.ZERO)
+    
+    enemy.position = Vector2(
+        center.x + cos(angle) * orbit_radius_x,
+        center.y + sin(angle) * orbit_radius_y
+    )
+
+func move_line_to_orbit(enemy: Node2D, index: int, delta: float):
+    var data = enemy_data[index]
+    
+    match state:
+        SpawnState.ENTERING:
+            enemy.position += direction * speed * delta
+            
+            var global_x = global_position.x + enemy.position.x
+            
+            if direction.x < 0 and global_x <= transition_x:
+                start_orbit_transition()
+            elif direction.x > 0 and global_x >= transition_x:
+                start_orbit_transition()
+                
+        SpawnState.ORBITING:
+            move_orbit(enemy, index)
+
+func start_orbit_transition():
+    if state == SpawnState.ORBITING:
+        return
+    
+    state = SpawnState.ORBITING
+    
+    # El centro de órbita será la posición media de todos los enemigos
+    var center = Vector2.ZERO
+    var valid_count = 0
+    for enemy in enemies:
+        if is_instance_valid(enemy):
+            center += enemy.position
+            valid_count += 1
+    center /= valid_count
+    
+    # Recalculamos datos para orbitar
+    for i in range(enemies.size()):
+        if not is_instance_valid(enemies[i]):
+            continue
+        
+        var relative_pos = enemies[i].position - center
+        enemy_data[i]["phase_offset"] = atan2(relative_pos.y, relative_pos.x)
+        enemy_data[i]["orbit_center"] = center
+    
+    time = 0.0`
+    }
+  ]}
+/>
+
+---
+
+## 4. Tabla de Referencia de Patrones
+
+| Patrón | Enemigo Típico | Parámetros Clave | Resultado Visual |
+|--------|----------------|------------------|------------------|
+| **LINE** | Avión | `speed`, `direction` | Fila avanzando |
+| **WAVE** | Avión | `wave_amplitude`, `phase_increment` | Serpiente ondulante |
+| **ORBIT** | Helicóptero | `orbit_radius_x/y`, `orbit_speed` | Círculo/elipse girando |
+| **LINE_TO_ORBIT** | Helicóptero | `transition_x` | Entrada → órbita |
+
+---
+
+## Repasemos lo aprendido
+
+1. **Patrón ORBIT**: `cos(angle) * radio` para X, `sin(angle) * radio` para Y.
+2. **Distribución equidistante**: `(2 * PI / n) * i` para n enemigos.
+3. **Elipse**: Usar radios diferentes en X e Y.
+4. **Estados del Spawner**: `enum SpawnState` para manejar transiciones.
+5. **Transición por posición X**: Detectar cuándo un enemigo cruza una coordenada.
+6. **`atan2(y, x)`**: Convertir una posición cartesiana a un ángulo.
+7. **Centro de órbita dinámico**: Guardar dónde ocurrió la transición.
+
+En el **próximo capítulo**, aprenderemos a crear **comportamientos secuenciales**: enemigos que cambian de estado automáticamente (entrar → atacar → huir) usando Enums y Timers.

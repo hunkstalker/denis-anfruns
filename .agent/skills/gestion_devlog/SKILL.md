@@ -20,7 +20,18 @@ El núcleo de cada proyecto reside en su plan de implementación.
   2. Copia el `implementation_plan.md` actual a esa carpeta con fecha: `implementation_plan_YYYY-MM-DD.md`.
   3. Procede a actualizar el plan principal con las nuevas ideas.
 
-## 2. Desarrollo del Contenido (Fase A)
+## 2. Consulta Pre-Desarrollo (Fase 0)
+Antes de crear contenido con múltiples ejemplos o patrones, SIEMPRE consulta al usuario.
+
+- **Disparador**: Cuando el capítulo requiera crear varios ejemplos (ej. patrones de movimiento, tipos de enemigos, variantes de un sistema).
+- **Objetivo**: Definir con el usuario EXACTAMENTE qué ejemplos crear, su alcance y prioridad.
+- **Proceso**:
+  1. Presenta tu propuesta inicial de ejemplos/patrones.
+  2. Pide feedback explícito: "¿Estos son los ejemplos que quieres? ¿Falta o sobra alguno?"
+  3. Itera hasta tener claridad antes de escribir código/contenido.
+- **Motivo**: Evitar trabajo que luego no cuadre con la visión del proyecto. Es más eficiente alinear primero que rehacer después.
+
+## 3. Desarrollo del Contenido (Fase A)
 El trabajo se realiza iterativamente capítulo a capítulo.
 
 ### Reglas de Escritura
@@ -42,7 +53,7 @@ El trabajo se realiza iterativamente capítulo a capítulo.
    - Es válido y deseable repetir explicaciones si aportan nuevo contexto o profundidad.
    - Ejemplo: `sin()` se introduce en Part 5 como "oscila de -1 a 1". En Part 6 se puede profundizar en "2π = ciclo completo, relación con grados".
 
-## 3. Traducción y Cierre (Fase B)
+## 4. Traducción y Cierre (Fase B)
 La traducción es un proceso destructivo (sobrescribe archivos destino basándose en el origen).
 
 - **Disparador**: NUNCA inicies la traducción o sincronización automáticamente. Hazlo **SOLO** cuando el usuario lo pida explícitamente (ej. *"Genera las traducciones"*).
@@ -53,7 +64,7 @@ La traducción es un proceso destructivo (sobrescribe archivos destino basándos
    - **Textos**: Traduce `title` y `description`.
    - **Contenido**: Traduce el cuerpo del artículo manteniendo el formato MDX y componentes intactos.
 
-## 4. Estructura de Archivos Esperada
+## 5. Estructura de Archivos Esperada
 ```text
 src/content/devlogs/[slug-proyecto]/[slug-capitulo]/
 ├── es.mdx  (MASTER: Aquí se edita todo)
@@ -61,7 +72,7 @@ src/content/devlogs/[slug-proyecto]/[slug-capitulo]/
 └── ca.mdx  (Generado automáticamente a petición)
 ```
 
-## 5. Uso del Componente Callout
+## 6. Uso del Componente Callout
 
 Los Callouts son cajas destacadas para información secundaria. NO son para el temario principal.
 

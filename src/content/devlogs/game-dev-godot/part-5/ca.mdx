@@ -183,7 +183,7 @@ Un enemic que orbita al voltant d'un punt fa servir les dues funcions: `cos` per
 
 Per a aquests enemics orbitals, seguirem fent servir el nostre **Helicòpter**.
 
-> Pots duplicar l'escena de l'helicòpter de la secció anterior (anomena-la `EnemyOrbital.tscn`) i canviar-li l'script, o simplement canviar l'script a la mateixa escena per provar.
+> Pots duplicar l'escena de l'helicòpter de la secció anterior (anomena-la `enemy_orbital.tscn`) i canviar-li l'script, o simplement canviar l'script a la mateixa escena per provar.
 
 Crea un script anomenat `enemy_orbital.gd`:
 
@@ -262,7 +262,7 @@ Aquest enemic es queda girant al lloc. En el futur, farem servir això per crear
 
 Un cercle té el mateix radi a X i Y. Una **el·lipse** té radis diferents.
 
-> **Tip:** No necessites buscar un altre sprite. Pots duplicar la teva escena de l'helicòpter (`EnemyOrbital.tscn`) i reemplaçar el seu script per aquest nou.
+> **Tip:** No necessites buscar un altre sprite. Pots duplicar la teva escena de l'helicòpter (`enemy_orbital.tscn`) i reemplaçar el seu script per aquest nou.
 
 Crea un script anomenat `enemy_ellipse.gd`:
 
@@ -342,9 +342,9 @@ func die():
 ## Provant al teu Món
 
 1.  Obre `world.tscn`.
-2.  Duplica la teva escena `Enemy.tscn` com a `EnemyWave.tscn`.
+2.  Duplica la teva escena `enemy.tscn` com a `enemy_wave.tscn`.
 3.  Modifica l'script amb el codi d'ondulació.
-4.  Arrossega `EnemyWave.tscn` al viewport.
+4.  Arrossega `enemy_wave.tscn` al viewport.
 5.  Ajusta `wave_amplitude` i `wave_frequency` a l'Inspector.
 6.  Executa (**F5**) i observa com ondula.
 

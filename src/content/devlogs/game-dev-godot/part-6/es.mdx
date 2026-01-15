@@ -1,10 +1,10 @@
 ---
 pubDate: '2026-01-15T15:00:00Z'
-tags: ['godot', 'gdscript', 'math', 'patterns', 'gamedev']
-draft: true
+tags: ['godot', 'gdscript', 'spawner', 'patterns', 'gamedev']
+draft: false
 new: true
-title: 'Godot #6: Formaciones de Combate'
-description: Crea escuadrones de enemigos que se mueven coordinadamente. Aprende a usar desfases de tiempo para crear patrones clásicos.
+title: 'Godot #6: El SpawnPoint - Formaciones Lineales'
+description: Creamos un sistema de spawn configurable que controla el movimiento de los enemigos. Patrones LINE y WAVE con aviones.
 series: gamedev-godot-basics
 seriesTitle: Game Dev con Godot
 seriesDescription: Aprendemos los fundamentos del desarrollo de videojuegos (vectores, trigonometría, shaders) usando Godot y un Shoot 'em Up como excusa práctica.
@@ -14,426 +14,436 @@ lang: es
 import Callout from '../../../../components/mdx/Callout.astro';
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 
-## El Problema: Enemigos Idénticos
+## El Problema: Enemigos que Se Mandan Solos
 
-En el capítulo anterior, creamos helicópteros que ondulan y orbitan. Pero si ponemos 5 helicópteros en fila, todos se mueven **exactamente igual**. Están sincronizados al milisegundo, lo cual es aburrido y predecible.
+En los capítulos anteriores, cada enemigo tenía su **propio script de movimiento**. El avión se movía recto, el helicóptero ondulaba o orbitaba. Cada uno decidía cómo moverse.
 
-Los shooters clásicos tienen enemigos que entran en **formación**: líneas, serpientes, V's. ¿Cómo lo logran?
+Esto funciona para demos, pero tiene un problema fundamental: **no hay coordinación**.
 
-La respuesta es sorprendentemente simple: **Desfase de Tiempo (Phase Offset)**.
+Si queremos crear una *oleada de 5 aviones* que entren en formación, ¿quién decide dónde van? ¿Cada avión por su cuenta? Eso es caos, no una formación.
 
-## 1. El Concepto: Desfase de Fase
+**La solución**: Un **director de orquesta** que controle el movimiento de todos sus enemigos. En lugar de que el enemigo sepa moverse, será un nodo externo (el `SpawnPoint`) quien le diga dónde ir.
 
-Imagina 5 enemigos que usan `sin(time)` para moverse. Si todos empiezan con `time = 0`, todos están en el mismo punto de la onda.
+### El Cambio de Paradigma
 
-Pero si el segundo empieza con `time = 0.5`, el tercero con `time = 1.0`, etc., **cada uno está en un punto diferente de la onda**.
+| Antes | Después |
+|-------|---------|
+| Enemigo decide su movimiento | Enemigo es "tonto", solo tiene stats |
+| Múltiples scripts de movimiento | Un solo `SpawnPoint` con patrones configurables |
+| Movimiento hardcodeado | Movimiento inyectado desde fuera |
 
-El resultado visual: una **serpiente**.
-
-<CodeTabs
-  items={[
-    {
-      label: 'Concepto',
-      lang: 'gdscript',
-      code: `# Enemigo 1: sin(0) = 0
-# Enemigo 2: sin(0.5) = 0.48
-# Enemigo 3: sin(1.0) = 0.84
-# Enemigo 4: sin(1.5) = 0.99
-# Enemigo 5: sin(2.0) = 0.91`
-    }
-  ]}
-/>
-
-Cada uno empieza en un **momento diferente** de la misma animación.
+Este capítulo lo dedicaremos a construir ese sistema. Pero antes, necesitamos 
+pulir algunas cosas.
 
 ---
 
-## 2. Implementación: El Index
+## 1. Mejorando: Todos los Enemigos Flashean a la Vez
 
-La forma más simple de crear un desfase es asignar un **índice** a cada enemigo cuando lo instanciamos.
+Ahora si instancias varios helicópteros y disparas a **uno solo**, todos ejecutan el efecto de `hit_flash` simultáneamente. ¿Por qué?
 
-### Paso 1: Modificar el Script del Enemigo
+### La Causa: Recursos Compartidos
 
-Partimos del `enemy_wave.gd` que creamos en el capítulo anterior. Solo necesitamos **2 cambios**:
+Cuando creas una escena en el Editor de Godot y le asignas un `ShaderMaterial` al `Sprite2D`, ese material se guarda como un **recurso único** en el archivo `.tscn`.
 
-> **Preparación**: Duplica tu escena `EnemyWave.tscn` y renómbrala a `EnemyFormation.tscn`. El script que modificaremos será `enemy_formation.gd` (una copia de `enemy_wave.gd`).
+Al usar `enemy_scene.instantiate()`, Godot **no duplica** los recursos. Solo crea referencias al mismo archivo.
 
-**Cambio 1: Añadir una variable `@export` para el desfase**
+```text
+enemy.tscn
+   └── Sprite2D
+        └── Material: ShaderMaterial (archivo único)
+               ↑        ↑        ↑
+          Enemigo 1  Enemigo 2  Enemigo 3
+          (todos apuntan al MISMO material)
+```
 
-<CodeTabs
-  items={[
-    {
-      label: 'Añadir variable',
-      lang: 'gdscript',
-      code: `# Junto a las demás variables @export:
-@export var phase_offset = 0.0   # Desfase inicial (segundos)`
-    }
-  ]}
-/>
+Cuando uno llama a `set_shader_parameter("flash_active", true)`, **cambia la variable para todos** porque es literalmente el mismo objeto en memoria.
 
-**Cambio 2: Inicializar `time` con ese desfase**
+### La Solución: Duplicar el Material
 
-En la función `_ready()`, en lugar de dejar `time = 0`, lo inicializamos con el valor del desfase:
+La solución es hacer una **copia independiente** del material en el `_ready()` de cada enemigo:
 
 <CodeTabs
   items={[
     {
-      label: 'Modificar _ready()',
+      label: 'enemy.gd',
       lang: 'gdscript',
       code: `func _ready():
-    start_y = position.y
-    time = phase_offset   # ← ESTA ES LA LÍNEA CLAVE
-    area_entered.connect(_on_area_entered)`
+  # Creamos una copia ÚNICA del material para ESTA instancia
+  $Sprite2D.material = $Sprite2D.material.duplicate()
+  
+  # Resto del código...
+  area_entered.connect(_on_area_entered)`
     }
   ]}
 />
 
-**¿Por qué funciona?**
+**¿Qué hace `.duplicate()`?**
 
-Normalmente todos los enemigos empiezan con `time = 0`, así que todos están en la misma posición de la onda.
-Al inicializar con `phase_offset`, cada enemigo "empieza" en un punto diferente del ciclo de `sin()`.
+El método `duplicate()` crea una **copia profunda** del recurso. Ahora cada enemigo tiene su propio `ShaderMaterial` independiente:
 
-> El resto del script (movimiento, daño, muerte) se mantiene exactamente igual.
+```text
+Enemigo 1 → Material Copia A (independiente)
+Enemigo 2 → Material Copia B (independiente)
+Enemigo 3 → Material Copia C (independiente)
+```
 
-### Script Modificado Completo
+Cuando disparas a uno, solo **su** material recibe el cambio.
 
-Aquí tienes el script `enemy_formation.gd` completo con los cambios integrados:
+<Callout type="tip" title="Alternativas más eficientes">
+**`duplicate()`** es simple pero crea copias del material en memoria. Para proyectos grandes hay opciones mejores:
+
+1. **`Resource → Local to Scene`**: Activa esta opción en el Inspector del `ShaderMaterial`. Godot duplicará automáticamente el material al instanciar, sin código extra.
+
+2. **`instance uniform`** (Godot 4): Permite que todas las instancias compartan el mismo shader pero con valores diferentes. Lo veremos en un capítulo avanzado de optimización.
+
+Para este curso, `duplicate()` es suficiente y más explícito didácticamente.
+</Callout>
+
+> **Aplica este cambio** a todos tus scripts de enemigos (`enemy.gd`, `enemy_wave.gd`, `enemy_orbital.gd`, etc.) añadiendo la línea de `duplicate()` al inicio de `_ready()`.
+
+---
+
+## 2. Mejorando: Colisiones Entre Enemigos
+
+Si los enemigos vuelan muy cerca unos de otros, pueden chocar entre sí y destruirse. Podríamos usar grupos (`is_in_group("enemy")`) para filtrar colisiones en código, pero hay una solución mejor y más eficiente: **Collision Layers**.
+
+### ¿Qué son las Collision Layers?
+
+Godot tiene un sistema de **capas de colisión** que funciona como filtros. Cada objeto tiene:
+
+- **Layer** (capa): "Yo **soy** de esta capa"
+- **Mask** (máscara): "Yo **detecto** objetos de estas capas"
+
+El evento `area_entered` **solo se dispara** si la capa del objeto entrante coincide con la máscara del objeto receptor.
+
+<Callout type="info" title="Límite de 32 capas">
+Godot usa un bitmask de 32 bits, lo que limita a **32 capas** por sistema. En la práctica es más que suficiente si usas categorías genéricas (player, enemy, bullet) en lugar de una capa por tipo específico. Si necesitas más granularidad, puedes combinar Layers con Groups.
+</Callout>
+
+### Configuración para Nuestro Juego
+
+Vamos a definir 3 capas:
+
+| Bit | Nombre | Quién está aquí |
+|-----|--------|-----------------|
+| 1 | Player | La nave del jugador |
+| 2 | Enemy | Aviones, helicópteros, todos los enemigos |
+| 3 | PlayerBullet | Las balas que dispara el jugador |
+
+**Configuración de cada objeto:**
+
+| Objeto | Layer (soy) | Mask (detecto) |
+|--------|-------------|----------------|
+| Player | 1 | - |
+| Enemy | 2 | 3 (solo balas del player) |
+| PlayerBullet | 3 | 2 (solo enemigos) |
+
+Con esta configuración:
+- Los enemigos **solo detectan** balas del player (capa 3).
+- Si un enemigo toca a otro enemigo (ambos en capa 2), **no pasa nada** porque la máscara del enemigo no incluye la capa 2.
+- Por ahora Player no detecta colisiones con enemigos porque por ahora es invencible, si detectásemos la colisión todavía no tendríamos nada que hacer con ella.
+
+### Cómo Configurarlo en Godot
+
+**Paso 1: Nombrar las capas**
+
+1. Ve a **Project → Project Settings → Layer Names → 2D Physics**.
+2. Nombra las capas:
+   - Layer 1: `player`
+   - Layer 2: `enemy`
+   - Layer 3: `player_bullet`
+
+**Paso 2: Configurar el Enemigo**
+
+1. Abre tu escena de enemigo (`enemy.tscn`).
+2. Selecciona el nodo raíz (`Area2D`).
+3. En el Inspector, busca **Collision → Layer**.
+4. Desactiva la capa 1, activa solo la **capa 2** (enemy).
+5. En **Collision → Mask**, desactiva la capa 1, activa solo la **capa 3** (player_bullet).
+
+**Paso 3: Configurar la Bala**
+
+1. Abre tu escena de bala (`bullet.tscn`).
+2. Selecciona el nodo raíz (`Area2D`).
+3. **Layer**: Solo capa 3 (player_bullet).
+4. **Mask**: Solo capa 2 (enemy).
+
+> **Resultado**: Con esta configuración, la señal `area_entered` del enemigo **solo se dispara** cuando una bala del player lo toca. No necesitas verificar manualmente qué tipo de objeto colisionó; el motor ya lo filtró por ti.
+
+Tu función `_on_area_entered` del Capítulo 3 queda limpia:
 
 <CodeTabs
   items={[
     {
-      label: 'enemy_formation.gd',
+      label: 'enemy.gd',
       lang: 'gdscript',
-      code: `extends Area2D
-
-@export var speed = 200
-@export var hp = 3
-@export var wave_amplitude = 100.0
-@export var wave_frequency = 3.0
-@export var phase_offset = 0.0      # (nuevo) Desfase inicial
-
-var is_dying = false
-var fall_speed = 0.0
-var time = 0.0
-var start_y = 0.0
-
-func _ready():
-    start_y = position.y
-    time = phase_offset               # (nuevo) Inicializamos con el desfase
-    area_entered.connect(_on_area_entered)
-
-func _process(delta):
-    if is_dying:
-      fall_speed += 500 * delta
-      position.y += fall_speed * delta
-      position.x -= speed * 0.5 * delta 
-    else:
-      time += delta
-      position.x -= speed * delta
-      position.y = start_y + sin(time * wave_frequency) * wave_amplitude
-
-func _on_area_entered(area):
-    if is_dying:
-      return
-    hp -= 1
-    area.queue_free()
-    hit_flash()
-    if hp <= 0:
-      die()
-
-func hit_flash():
-    var sprite = $Sprite2D
-    var shader_material = sprite.material
-    if shader_material is ShaderMaterial:
-        shader_material.set_shader_parameter("flash_active", true)
-        await get_tree().create_timer(0.1).timeout
-        shader_material.set_shader_parameter("flash_active", false)
-    
-func die():
-    is_dying = true
-    $CollisionShape2D.set_deferred("disabled", true)
-    await get_tree().create_timer(1.0).timeout
-    queue_free()`
+      code: `func _on_area_entered(area):
+  if is_dying:
+    return
+  
+  # Gracias a Collision Layers, aquí solo llegan balas del player
+  # El motor ya filtró las colisiones por nosotros
+  
+  hp -= 1
+  area.queue_free()
+  hit_flash()  # Definido en Capítulo 4
+  
+  if hp <= 0:
+    die()  # Definido en Capítulo 3`
     }
   ]}
 />
 
-### Paso 2: El Spawner de Formación
+---
 
-Ahora necesitamos un script que instancie varios enemigos y les asigne un `phase_offset` diferente a cada uno.
-Crea un script `formation_spawner.gd`.
+## 3. El SpawnPoint: Estructura Base
+
+Ahora que los enemigos están preparados, vamos a crear el `SpawnPoint`. Este será un `Node2D` que:
+
+1. Usaremos una escena de enemigo (`PackedScene`).
+2. Instanciaremos N enemigos al inicio.
+3. Controlaremos su movimiento cada frame según el patrón seleccionado.
+
+### Definiendo los Patrones con Enum
+
+Primero, necesitamos una forma de seleccionar qué patrón usar. En GDScript, usamos un `enum`:
 
 <CodeTabs
   items={[
     {
-      label: 'formation_spawner.gd',
+      label: 'Concepto: Enum',
+      lang: 'gdscript',
+      code: `enum MovementPattern {
+  LINE,       # Fila india
+  WAVE,       # Fila con ondulación
+  ORBIT,      # Movimiento circular (Part 7)
+  LINE_TO_ORBIT  # Transición (Part 7)
+}`
+    }
+  ]}
+/>
+
+**¿Qué es un `enum`?**
+
+Un `enum` (enumeración) es una forma de definir un conjunto de **constantes con nombre**. Internamente, cada valor es un número:
+
+| Nombre | Valor Interno |
+|--------|---------------|
+| `LINE` | 0 |
+| `WAVE` | 1 |
+| `ORBIT` | 2 |
+| `LINE_TO_ORBIT` | 3 |
+
+La ventaja es que en el código escribes `MovementPattern.WAVE` en lugar de recordar qué significa el número `1`. Además, en el Inspector de Godot aparece un **desplegable** con los nombres.
+
+Ahora vamos a construir el SpawnPoint paso a paso, empezando con el patrón más simple.
+
+---
+
+## 4. Patrón LINE: Fila India
+
+El patrón más simple. Los enemigos entran en fila india (uno detrás del otro) y avanzan hacia la izquierda.
+
+```text
+← enemy_0 ← enemy_1 ← enemy_2 ← enemy_3 ← enemy_4
+   (todos en línea horizontal, moviéndose a la izquierda)
+```
+
+![Patrón de movimiento LINE: fila india](public/assets/gamedev-godot-basics/line.webp)
+
+### Script Simplificado (Solo LINE)
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (LINE)',
       lang: 'gdscript',
       code: `extends Node2D
 
-@export var enemy_scene: PackedScene   # Arrastra EnemyFormation.tscn aquí
-@export var formation_size = 5         # Número de enemigos
-@export var phase_increment = 0.3      # (nuevo) Desfase entre cada enemigo
-@export var vertical_spacing = 50.0    # Separación vertical inicial
+@export var enemy_scene: PackedScene
+@export var formation_size: int = 5
+@export var spawn_spacing: float = 150.0
+@export var speed: float = 150.0
+
+var enemies: Array = []
+
+func _ready():
+    spawn_formation()
 
 func spawn_formation():
     for i in range(formation_size):
-        var enemy = enemy_scene.instantiate()
-        
-        # Posición inicial: apilados verticalmente
-        enemy.position = Vector2(
-            position.x,
-            position.y + (i * vertical_spacing)
-        )
-        
-        # (nuevo) Asignamos el desfase de fase
-        enemy.phase_offset = i * phase_increment
-        
-        # Añadimos al árbol de escena
-        get_parent().add_child(enemy)`
+      var enemy = enemy_scene.instantiate()
+
+      # Fila india: el primero en X=0, los demás detrás
+      enemy.position = Vector2(i * spawn_spacing, 0)
+
+      enemies.append(enemy)
+      call_deferred("add_child", enemy)
+
+func _process(delta):
+    for enemy in enemies:
+      if is_instance_valid(enemy):
+        enemy.position.x -= speed * delta`
     }
   ]}
 />
 
-**Explicación:**
-*   `i` es el índice del enemigo (0, 1, 2, 3, 4...).
-*   `phase_increment` es cuánto desfase añadimos por cada enemigo.
-*   `i * phase_increment` da: 0.0, 0.3, 0.6, 0.9, 1.2...
+**¿Qué hace `spawn_formation()`?**
+
+1. `enemy_scene.instantiate()` — Crea una copia del enemigo.
+2. `enemy.position = Vector2(i * spawn_spacing, 0)` — Lo posiciona en fila india.
+3. `enemies.append(enemy)` — Lo guarda en el array para poder accederlo después en `_process()`.
+4. `call_deferred("add_child", enemy)` — Lo añade como hijo del SpawnPoint (de forma segura).
+
+### Probando el Patrón LINE
+
+1. Crea un nuevo `Node2D` en tu escena `world.tscn`.
+2. Renómbralo a `SpawnPoint`.
+3. Añádele el script `spawn_point.gd`.
+4. En el Inspector:
+   - **Enemy Scene**: Arrastra `enemy.tscn` (el avión).
+   - **Formation Size**: `5`.
+   - **Spawn Spacing**: `60`.
+   - **Speed**: `150`.
+5. Posiciona el `SpawnPoint` a la derecha de la pantalla (ej: X=1200, Y=300).
+6. Ejecuta (F5).
+
+**Resultado esperado**: 5 aviones en fila india avanzan hacia la izquierda.
 
 ---
 
-## 3. Patrones Clásicos
+## 5. Patrón WAVE: La Serpiente
 
-Con el sistema de `phase_increment` y `vertical_spacing`, podemos crear múltiples patrones solo cambiando valores:
+Ahora queremos que la fila india **ondule** verticalmente mientras avanza. El truco es que cada enemigo debe seguir **exactamente la misma ruta** que el que tiene delante, como los segmentos de una serpiente.
 
-### Serpiente (Wave)
+![Patrón de movimiento WAVE: serpiente](public/assets/gamedev-godot-basics/wave.webp)
 
-Los enemigos ondean verticalmente, pero desfasados entre sí.
+### El Secreto: Ondulación Basada en Posición X
 
-<CodeTabs
-  items={[
-    {
-      label: 'Parámetros',
-      lang: 'gdscript',
-      code: `# FormationSpawner
-formation_size = 6
-phase_increment = 0.4    # Desfase notable
-vertical_spacing = 0     # Todos en la misma Y inicial
+La clave es que la posición Y se calcula a partir de la posición X:
 
-# EnemyFormation
-wave_amplitude = 100
-wave_frequency = 3`
-    }
-  ]}
-/>
+Como todos los enemigos pasan por las mismas coordenadas X (solo que en momentos diferentes), todos siguen exactamente la misma curva.
 
-**Resultado**: Una serpiente que se desliza por la pantalla.
-
-### Línea Recta
-
-Sin desfase, todos se mueven igual. Útil para formaciones que disparan al unísono.
+### Script Completo (LINE + WAVE)
 
 <CodeTabs
   items={[
     {
-      label: 'Parámetros',
+      label: 'spawn_point.gd',
       lang: 'gdscript',
-      code: `# FormationSpawner
-formation_size = 5
-phase_increment = 0.0    # Sin desfase
-vertical_spacing = 60    # Separados verticalmente
+      code: `
+extends Node2D
 
-# EnemyFormation
-wave_amplitude = 0       # Sin ondulación
-wave_frequency = 0`
-    }
-  ]}
-/>
-
-**Resultado**: Una pared de enemigos avanzando.
-
-### Formación en V
-
-Los enemigos del centro salen primero, los de los lados después. Se logra con posiciones iniciales en V y el mismo desfase.
-
-<CodeTabs
-  items={[
-    {
-      label: 'v_formation_spawner.gd',
-      lang: 'gdscript',
-      code: `extends Node2D
+enum MovementPattern { LINE, WAVE }
 
 @export var enemy_scene: PackedScene
-@export var formation_size = 5
-@export var phase_increment = 0.2
-@export var v_spread = 40.0           # (nuevo) Separación horizontal de la V
-@export var v_depth = 30.0            # (nuevo) Separación vertical de la V
+@export var pattern: MovementPattern = MovementPattern.LINE
+@export var formation_size: int = 5
+@export var spawn_spacing: float = 60.0
+@export var speed: float = 150.0
 
-func spawn_v_formation():
-    var center_index = formation_size / 2  # (nuevo) Índice del enemigo central
-    
+# Parámetros WAVE
+@export var wave_amplitude: float = 80.0
+@export var wave_frequency: float = 0.02
+
+var enemies: Array = []
+
+func _ready():
+    spawn_formation()
+
+func spawn_formation():
     for i in range(formation_size):
-        var enemy = enemy_scene.instantiate()
-        
-        # (nuevo) Distancia desde el centro
-        var distance_from_center = abs(i - center_index)
-        
-        # (nuevo) Posición en V: más atrás cuanto más lejos del centro
-        enemy.position = Vector2(
-            position.x - (distance_from_center * v_spread),
-            position.y + ((i - center_index) * v_depth)
-        )
-        
-        # (nuevo) Desfase: los del borde empiezan después
-        enemy.phase_offset = distance_from_center * phase_increment
-        
-        get_parent().add_child(enemy)`
+      var enemy = enemy_scene.instantiate()
+      enemy.position = Vector2(i * spawn_spacing, 0)
+      enemies.append(enemy)
+      call_deferred("add_child", enemy)
+
+func _process(delta):
+    for enemy in enemies:
+      if not is_instance_valid(enemy):
+        continue
+      
+      match pattern:
+        MovementPattern.LINE:
+          move_line(enemy, delta)
+        MovementPattern.WAVE:
+          move_wave(enemy, delta)
+
+func move_line(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta
+
+func move_wave(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta
+    enemy.position.y = sin(enemy.position.x * wave_frequency) * wave_amplitude`
     }
   ]}
 />
 
-**¿Qué hace `abs()`?**
+### Explicación del Código
 
-`abs()` es la función de **valor absoluto**. Elimina el signo negativo de un número, dejando siempre un valor positivo (o cero).
+Fíjate que aquí cambiamos el estilo del `if`: en LINE usamos `if is_instance_valid(enemy):` y anidamos el código dentro. Aquí usamos `if not ... continue` para saltar los enemigos eliminados. Ambos hacen lo mismo, pero este estilo evita anidación extra con el `match`.
 
-| Entrada | `abs(entrada)` |
-|---------|----------------|
-| `abs(3)` | 3 |
-| `abs(-3)` | 3 |
-| `abs(0)` | 0 |
-| `abs(-7.5)` | 7.5 |
-
-**¿Por qué la usamos aquí?**
-
-En nuestra formación, si tenemos 5 enemigos (índices 0, 1, 2, 3, 4), el centro es el índice 2.
-*   Enemigo 0: `i - center = 0 - 2 = -2` → `abs(-2) = 2` (está a 2 posiciones del centro)
-*   Enemigo 1: `i - center = 1 - 2 = -1` → `abs(-1) = 1`
-*   Enemigo 2: `i - center = 2 - 2 = 0` → `abs(0) = 0` (es el centro)
-*   Enemigo 3: `i - center = 3 - 2 = 1` → `abs(1) = 1`
-*   Enemigo 4: `i - center = 4 - 2 = 2` → `abs(2) = 2`
-
-Sin `abs()`, los enemigos a la izquierda del centro tendrían distancias negativas, lo cual rompería la simetría de la V.
-
-**Resultado**: Formación en punta de flecha.
-
----
-
-## 4. Formaciones Orbitales
-
-¿Recuerdas los helicópteros que orbitan? Podemos aplicar el mismo principio de desfase:
+**`move_line()`** hace exactamente lo mismo que en el script de LINE: mover al enemigo hacia la izquierda.
 
 <CodeTabs
   items={[
     {
-      label: 'orbital_formation.gd',
+      label: 'move_line',
       lang: 'gdscript',
-      code: `extends Node2D
-
-@export var enemy_scene: PackedScene
-@export var formation_size = 4
-
-func spawn_orbital_squad():
-    for i in range(formation_size):
-        var enemy = enemy_scene.instantiate()
-        enemy.position = position
-        
-        # (nuevo) Desfase angular: dividimos el círculo en partes iguales
-        enemy.phase_offset = (2 * PI / formation_size) * i
-        
-        get_parent().add_child(enemy)`
+      code: `
+func move_line(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta`
     }
   ]}
 />
 
-**¿Qué es `PI`?**
-
-En GDScript, `PI` es una constante global que vale aproximadamente **3.14159**. Representa la relación entre la circunferencia y el diámetro de un círculo.
-
-*   Un círculo completo son **2π radianes** (equivalente a 360°).
-*   Si queremos 4 enemigos equidistantes, dividimos el círculo: `2 * PI / 4 = π/2` radianes entre cada uno (90°).
-*   Multiplicamos por el índice `i` para que cada enemigo empiece en un punto diferente.
-
-**Resultado**: 4 enemigos girando equidistantes en un círculo (como los puntos de un reloj a las 12, 3, 6 y 9).
-
----
-
-## 5. Combinando Movimientos
-
-El verdadero poder viene al **apilar** movimientos. Un enemigo puede orbitar **Y** además ondular sobre esa órbita.
-
-### La Idea
-
-En el `_process()` del `enemy_orbital.gd` ya calculamos la posición con círculos:
+**`move_wave()`** añade una línea extra: además de avanzar hacia la izquierda, calcula la posición Y usando `sin()`.
 
 <CodeTabs
   items={[
     {
-      label: 'Órbita base',
+      label: 'move_wave',
       lang: 'gdscript',
-      code: `position.x = center.x + cos(time * orbit_speed) * orbit_radius
-position.y = center.y + sin(time * orbit_speed) * orbit_radius`
+      code: `
+func move_wave(enemy: Node2D, delta: float):
+    enemy.position.x -= speed * delta
+    enemy.position.y = sin(enemy.position.x * wave_frequency) * wave_amplitude`
     }
   ]}
 />
 
-Para añadir ondulación encima, simplemente **sumamos** un offset extra a `position.y`:
+- `enemy.position.x * wave_frequency`: Convierte la posición X en un ángulo para `sin()`.
+- `wave_amplitude`: Escala el resultado (de -1 a 1) a píxeles.
 
-<CodeTabs
-  items={[
-    {
-      label: 'Modificar _process()',
-      lang: 'gdscript',
-      code: `# Después de calcular la órbita base:
-var orbit_x = center.x + cos(time * orbit_speed) * orbit_radius
-var orbit_y = center.y + sin(time * orbit_speed) * orbit_radius
+La Y se **reasigna** cada frame, no se acumula. Por eso no hay problema de "volar al infinito".
 
-# Añadimos una segunda capa de movimiento
-var wave_offset = sin(time * wave_frequency) * wave_amplitude
+### Probando el Patrón WAVE
 
-position.x = orbit_x
-position.y = orbit_y + wave_offset   # ← Órbita + Ondulación`
-    }
-  ]}
-/>
+1. Cambia el `Pattern` a `WAVE` en el Inspector.
+2. Configura:
+    - **Formation Size**: `8`
+    - **Spawn Spacing**: `120`
+    - **Speed**: `50`
+    - **Wave Amplitude**: `150`
+    - **Wave Frequency**: `0.01`
+3. Ejecuta (F5).
 
-**Resultado**: Cada enemigo describe un círculo *mientras* vibra verticalmente. Añade `phase_offset` al Spawner y tienes un escuadrón haciendo coreografías complejas con apenas unas líneas extra. ¡Caos hermoso!
+**Resultado**: Los helicópteros avanzan ondulando arriba y abajo.
 
----
-
-## 6. Tabla de Referencia de Formaciones
-
-| Formación | phase_increment | vertical_spacing | wave_amplitude | Notas |
-|-----------|-----------------|------------------|----------------|-------|
-| **Serpiente** | 0.3 - 0.5 | 0 | 80 - 120 | Todos en la misma Y inicial |
-| **Línea** | 0 | 50 - 80 | 0 | Sin ondulación |
-| **V** | Variable (por distancia al centro) | Variable | 0 - 50 | Requiere spawner especial |
-| **Círculo** | `2π / n` | 0 | 0 | Para enemigos orbitales |
-| **Escalera** | 0.2 | 40 | 40 | Ondulación suave |
-
----
-
-## 7. Probando en tu Mundo
-
-1.  Crea un nuevo nodo `Node2D` llamado `FormationSpawner`.
-2.  Añádele el script `formation_spawner.gd`.
-3.  Asigna `EnemyFormation.tscn` al campo `enemy_scene`.
-4.  Crea un botón o timer que llame a `spawn_formation()`.
-5.  Ejecuta y observa la magia.
-
-Experimenta con los valores:
-*   `phase_increment = 0.1` → Serpiente muy apretada.
-*   `phase_increment = 1.0` → Enemigos muy separados en la onda.
-*   `vertical_spacing = 0` + `wave_amplitude = 100` → Serpiente perfecta.
-
+**Experimenta:**
+- `wave_frequency = 0.01`: Ondas largas.
+- `wave_frequency = 0.05`: Ondas cortas.
+- `wave_amplitude = 150`: Ondas altas.
 ---
 
 ## Repasemos lo aprendido
 
-1.  **Desfase de Fase**: Iniciar cada enemigo en un punto diferente del tiempo (`time = phase_offset`).
-2.  **Index del Bucle**: Usar `i` del `for` para calcular desfases incrementales.
-3.  **Serpiente**: Mismo Y inicial, desfase de fase creciente.
-4.  **Línea**: Sin desfase, separación vertical.
-5.  **V**: Posiciones y desfases basados en distancia al centro.
-6.  **Círculo**: Desfase = `2π / número_de_enemigos * índice`.
-7.  **Combinación**: Apilar múltiples movimientos (órbita + onda).
+1. **Mejora del Shader**: Los recursos se comparten entre instancias. Solución: `material.duplicate()`.
+2. **Mejora de la colisión**: Filtrar colisiones a nivel de motor es más eficiente que hacerlo en código.
+3. **SpawnPoint**: Un nodo que controla el spawn y movimiento de sus enemigos.
+4. **Enum**: Constantes con nombre para seleccionar opciones en el Inspector.
+5. **Patrón LINE**: Fila india avanzando con `position.x -= speed * delta`.
+6. **Patrón WAVE**: Ondulación basada en posición X: `position.y = sin(position.x * freq) * amp`. Todos siguen la misma curva.
 
-En el **próximo capítulo**, crearemos el **Motor de Nivel**: el sistema que decide *cuándo* y *dónde* aparecen estas formaciones basándose en la posición del scroll.
+En el **próximo capítulo**, añadiremos el patrón **ORBIT** (helicópteros girando) y **LINE_TO_ORBIT** (transición de fila a órbita).
+

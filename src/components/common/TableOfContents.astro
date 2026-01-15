@@ -14,10 +14,35 @@ interface Props {
 const { headings, lang = 'es', mode = 'static' } = Astro.props
 const t = useTranslations(lang)
 
+// Filtramos h2 y h3, limpiamos emojis
 const toc = headings.filter((h) => h.depth > 1 && h.depth <= 3).map(h => ({
 	...h,
 	cleanText: h.text.replace(/[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{200D}]+/gu, '').trim()
 }))
+
+// Agrupamos: cada h2 tiene sus h3 hijos
+interface TocGroup {
+	h2: typeof toc[0]
+	h3s: typeof toc
+}
+
+const groupedToc: TocGroup[] = []
+let currentGroup: TocGroup | null = null
+
+for (const heading of toc) {
+	if (heading.depth === 2) {
+		if (currentGroup) {
+			groupedToc.push(currentGroup)
+		}
+		currentGroup = { h2: heading, h3s: [] }
+	} else if (heading.depth === 3 && currentGroup) {
+		currentGroup.h3s.push(heading)
+	}
+}
+if (currentGroup) {
+	groupedToc.push(currentGroup)
+}
+
 const tocId = 'toc-' + Math.random().toString(36).substr(2, 9)
 ---
 
@@ -59,17 +84,30 @@ const tocId = 'toc-' + Math.random().toString(36).substr(2, 9)
 				{t('blog.tableOfContents')}
 			</h3>
 			<ul class="space-y-1 toc-list">
-				{toc.map((heading) => {
-                    return (
-					<a
-						href={`#${heading.slug}`}
-						class={`block py-1 text-zinc-500 no-underline hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 ${heading.depth === 2 ? 'pl-4' : 'text-xs pl-8'} `}
-					>
-						{heading.cleanText}
-					</a>
-				    )
-                })}
-
+				{groupedToc.map((group) => (
+					<li class="toc-group" data-section={group.h2.slug}>
+						<a
+							href={`#${group.h2.slug}`}
+							class="toc-h2 block py-1 pl-4 text-zinc-500 no-underline hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+						>
+							{group.h2.cleanText}
+						</a>
+						{group.h3s.length > 0 && (
+							<ul class="toc-sublist grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out overflow-hidden">
+								<div class="overflow-hidden">
+									{group.h3s.map((h3) => (
+										<a
+											href={`#${h3.slug}`}
+											class="toc-h3 block py-1 pl-8 text-xs text-zinc-500 no-underline hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400"
+										>
+											{h3.cleanText}
+										</a>
+									))}
+								</div>
+							</ul>
+						)}
+					</li>
+				))}
 			</ul>
 		</nav>
 		)
@@ -77,31 +115,69 @@ const tocId = 'toc-' + Math.random().toString(36).substr(2, 9)
 }
 
 <script>
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach((entry) => {
-			const id = entry.target.getAttribute('id')
-			if (entry.intersectionRatio > 0) {
-				document.querySelectorAll('.toc-container a, .toc-widget a').forEach((link) => {
-					link.classList.remove(
-						'text-blue-600',
-						'font-medium',
-						'border-l-2',
-						'border-blue-500',
-						'-ml-0.5',
-                        'dark:text-blue-400'
-					)
-				})
-				const activeLinks = document.querySelectorAll(`.toc-container a[href="#${id}"], .toc-widget a[href="#${id}"]`)
-				activeLinks.forEach(link => {
-					link.classList.add('text-blue-600', 'dark:text-blue-400', 'font-medium')
-				})
-			}
-		})
-	})
+	function initTocObserver() {
+		// Almacenamos qué sección está activa
+		let activeSection: string | null = null
 
-	document.querySelectorAll('article h2, article h3').forEach((h) => {
-		observer.observe(h)
-	})
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				const id = entry.target.getAttribute('id')
+				if (!id) return
+
+				if (entry.intersectionRatio > 0) {
+					// Limpiar estados anteriores de links
+					document.querySelectorAll('.toc-container a, .toc-widget a').forEach((link) => {
+						link.classList.remove(
+							'text-blue-600',
+							'font-medium',
+							'border-l-2',
+							'border-blue-500',
+							'-ml-0.5',
+							'dark:text-blue-400'
+						)
+					})
+
+					// Marcar link activo
+					const activeLinks = document.querySelectorAll(`.toc-container a[href="#${id}"], .toc-widget a[href="#${id}"]`)
+					activeLinks.forEach(link => {
+						link.classList.add('text-blue-600', 'dark:text-blue-400', 'font-medium')
+					})
+
+					// Encontrar el grupo padre (h2) de este heading
+					const tocGroup = document.querySelector(`.toc-group[data-section="${id}"]`) ||
+						document.querySelector(`.toc-group:has(a[href="#${id}"])`)
+
+					if (tocGroup) {
+						const sectionId = tocGroup.getAttribute('data-section')
+
+						// Si cambió la sección activa, actualizar sublistas
+						if (sectionId !== activeSection) {
+							// Colapsar todas las sublistas
+							document.querySelectorAll('.toc-sublist').forEach(sublist => {
+								sublist.classList.remove('grid-rows-[1fr]')
+								sublist.classList.add('grid-rows-[0fr]')
+							})
+
+							// Expandir solo la sublista de la sección activa
+							const activeSublist = tocGroup.querySelector('.toc-sublist')
+							if (activeSublist) {
+								activeSublist.classList.remove('grid-rows-[0fr]')
+								activeSublist.classList.add('grid-rows-[1fr]')
+							}
+
+							activeSection = sectionId
+						}
+					}
+				}
+			})
+		}, {
+			rootMargin: '-10% 0px -70% 0px' // Detecta cuando el heading está en el tercio superior
+		})
+
+		document.querySelectorAll('article h2, article h3').forEach((h) => {
+			observer.observe(h)
+		})
+	}
 
 	function initTocAccordion() {
 		document.querySelectorAll('.toc-widget .accordion-trigger').forEach(trigger => {
@@ -127,6 +203,11 @@ const tocId = 'toc-' + Math.random().toString(36).substr(2, 9)
 		})
 	}
 
-	document.addEventListener('astro:page-load', initTocAccordion)
+	document.addEventListener('astro:page-load', () => {
+		initTocObserver()
+		initTocAccordion()
+	})
+
+	initTocObserver()
 	initTocAccordion()
 </script>

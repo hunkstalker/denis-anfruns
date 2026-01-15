@@ -5,8 +5,11 @@ import errorIcon from '@icons/error-circle.svg?raw'
 import successIcon from '@icons/check-circle.svg?raw'
 import partyPopperIcon from '@icons/party-popper.svg?raw'
 
+// Tipos válidos para el Callout
+export type CalloutType = 'info' | 'warning' | 'error' | 'success' | 'tip' | 'party' | 'question'
+
 interface Props {
-	type?: 'info' | 'warning' | 'error' | 'success' | 'tip' | 'party' | 'question'
+	type?: CalloutType
 	title?: string
 	filled?: boolean | string
 	icon?: boolean
@@ -15,7 +18,17 @@ interface Props {
 const { type = 'tip', title, filled = true, icon = true } = Astro.props
 const isFilled = filled === true || filled === '' || filled === 'true'
 
-const icons = {
+// Validación de tipo con mensaje de error descriptivo
+const validTypes: CalloutType[] = ['info', 'warning', 'error', 'success', 'tip', 'party', 'question']
+if (!validTypes.includes(type)) {
+	throw new Error(
+		`[Callout] Tipo inválido: "${type}". ` +
+		`Los tipos válidos son: ${validTypes.join(', ')}. ` +
+		`Revisa el componente Callout en tu archivo MDX.`
+	)
+}
+
+const icons: Record<CalloutType, string> = {
 	info: infoIcon,
 	warning: warningIcon,
 	error: errorIcon,
@@ -25,7 +38,7 @@ const icons = {
 	question: infoIcon, // Reusing info icon for question
 }
 
-const styles = {
+const styles: Record<CalloutType, { container: string; iconColor: string }> = {
 	info: {
 		container: isFilled
 			? 'bg-blue-100 dark:bg-blue-500/30 border-2 border-blue-500 text-blue-900 dark:text-blue-100'
@@ -78,7 +91,7 @@ const styles = {
 	},
 }
 
-const colors = {
+const colors: Record<CalloutType, string> = {
 	info: '#3b82f6',
 	warning: '#f59e0b',
 	error: '#ef4444',
@@ -109,7 +122,6 @@ const displayTitle = getTitle()
 <div class={`p-4 rounded-xl ${currentStyle.container} relative my-6 shadow-sm`} style={inlineStyle}>
 	{(displayTitle || icon) && (
 		<div class="flex items-center gap-2 mb-2">
-			{displayTitle && <h5 class="font-bold m-0">{displayTitle}</h5>}
 			{icon && (
 				<div
 					class={`shrink-0 size-5 ${currentStyle.iconColor} [&>svg]:w-full [&>svg]:h-full`}
@@ -117,6 +129,7 @@ const displayTitle = getTitle()
 					<Fragment set:html={icons[type]} />
 				</div>
 			)}
+			{displayTitle && <h5 class="font-bold m-0">{displayTitle}</h5>}
 		</div>
 	)}
 

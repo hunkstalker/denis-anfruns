@@ -369,18 +369,34 @@ const GODOT_COLORS = {
 			const lang = activeTab?.getAttribute('data-lang')
 
 			if (lang === 'gdscript') {
-				// Reemplaza grupos de 4 espacios al inicio de cada línea por tabs
-				// Usamos un regex que busca espacios al principio de la línea
-				code = code.split('\n').map(line => {
-					let newLine = line
-					// Reemplazar todos los grupos de 4 espacios iniciales por tabs
-					// Ejemplo: "        func" -> "\t\tfunc"
-					const leadingSpaces = line.match(/^ */)?.[0].length || 0
-					if (leadingSpaces > 0 && leadingSpaces % 4 === 0) {
-						const tabs = '\t'.repeat(leadingSpaces / 4)
-						newLine = tabs + line.trimStart()
+				// Convertir espacios a tabs basándose en NIVELES de indentación
+				// Paso 1: Encontrar todos los valores únicos de indentación
+				const lines = code.split('\n')
+				const indentLevels = new Set<number>()
+				
+				for (const line of lines) {
+					const match = line.match(/^( +)/)
+					if (match) {
+						indentLevels.add(match[1].length)
 					}
-					return newLine
+				}
+				
+				// Paso 2: Ordenar los niveles para crear un mapeo
+				const sortedLevels = Array.from(indentLevels).sort((a, b) => a - b)
+				const levelMap = new Map<number, number>()
+				sortedLevels.forEach((spaces, index) => {
+					levelMap.set(spaces, index + 1) // nivel 1, 2, 3, etc.
+				})
+				
+				// Paso 3: Convertir cada línea
+				code = lines.map(line => {
+					const match = line.match(/^( +)/)
+					if (match) {
+						const spaces = match[1].length
+						const level = levelMap.get(spaces) || 1
+						return '\t'.repeat(level) + line.trimStart()
+					}
+					return line
 				}).join('\n')
 			}
 
