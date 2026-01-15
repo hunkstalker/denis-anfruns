@@ -249,7 +249,7 @@ El patrón más simple. Los enemigos entran en fila india (uno detrás del otro)
    (todos en línea horizontal, moviéndose a la izquierda)
 ```
 
-![Patrón de movimiento LINE: fila india](public/assets/gamedev-godot-basics/line.webp)
+![Patrón de movimiento LINE: fila india](/assets/gamedev-godot-basics/line.webp)
 
 ### Script Simplificado (Solo LINE)
 
@@ -316,7 +316,7 @@ func _process(delta):
 
 Ahora queremos que la fila india **ondule** verticalmente mientras avanza. El truco es que cada enemigo debe seguir **exactamente la misma ruta** que el que tiene delante, como los segmentos de una serpiente.
 
-![Patrón de movimiento WAVE: serpiente](public/assets/gamedev-godot-basics/wave.webp)
+![Patrón de movimiento WAVE: serpiente](/assets/gamedev-godot-basics/wave.webp)
 
 ### El Secreto: Ondulación Basada en Posición X
 
@@ -446,4 +446,3 @@ La Y se **reasigna** cada frame, no se acumula. Por eso no hay problema de "vola
 6. **Patrón WAVE**: Ondulación basada en posición X: `position.y = sin(position.x * freq) * amp`. Todos siguen la misma curva.
 
 En el **próximo capítulo**, añadiremos el patrón **ORBIT** (helicópteros girando) y **LINE_TO_ORBIT** (transición de fila a órbita).
-
