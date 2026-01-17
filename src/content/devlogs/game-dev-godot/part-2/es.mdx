@@ -24,7 +24,7 @@ En la parte anterior movimos nuestra nave. Ahora toca que la nave haga algo más
 2.  **Scene Tree**: Entender dónde poner esas balas (`add_child`) para que no se muevan con la nave.
 3.  **Local vs Global**: Coordenadas para que la bala salga del cañón, no del origen del mundo.
 4.  **Limpieza**: Usar `VisibleOnScreenNotifier2D` para borrar balas y no fundir la RAM.
-5.  **Bonus: Object Pooling**: Introducción a cómo reciclar balas para un rendimiento extremo.
+
 
 ## 1. Receta: La Bala (`bullet.tscn`)
 
@@ -33,18 +33,31 @@ Vamos a crear una bala que sepa moverse y morir cuando salga de la pantalla.
 
 Igual que hicimos con la nave, si quieres puedes descargar esta imagen para la bala:
 
-![Sprite de la Bala](/assets/gamedev-godot-basics/shot.png)
+![Sprite de la Bala (Atlas)](/assets/gamedev-godot-basics/shot-atlas.png)
 
 > Clic derecho -> Guardar imagen.  
-> *Créditos: <a href="https://wenrexa.itch.io/laser2020" target="_blank" rel="noopener noreferrer">Assets Free Laser Bullets Pack 2020</a> por **Wenrexa** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
+> *Créditos: <a href="https://mattwalkden.itch.io/lunar-battle-pack" target="_blank" rel="noopener noreferrer">Lunar Battle Pack</a> por **MattWalkden** (<a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0 1.0</a>).*
 
 
 1.  Crea una **Nueva Escena**.
 2.  Nodo raíz: **`Area2D`** (¡Ojo! No queremos físicas complejas como chocarse y rebotar, solo detectar si *tocamos* algo). Llámalo `Bullet`.
-3.  Hijo: **`CollisionShape2D`** (con forma de rectángulo o cápsula pequeña).
-4.  Hijo: **`Sprite2D`** (usa un rectángulo pequeño o tu imagen de bala, y métela en la carpeta sprites).
+3.  Hijo: **`CollisionShape2D`** (con forma de rectángulo o cápsula pequeña que cubra el sprite).
+4.  Hijo: **`AnimatedSprite2D`**: [NUEVO] ¡Vamos a darle vida! No usaremos una imagen estática.
+    *   En el **Inspector**, busca la propiedad `Sprite Frames` -> Pulsa donde pone `<empty>` -> Selecciona **`New SpriteFrames`**.
+    *   Haz clic de nuevo sobre el texto `SpriteFrames` que acabas de crear para abrir el panel inferior de edición.
+    *   En el panel inferior, busca el icono de **rejilla** ("Add frames from sprite sheet") y púlsalo.
+
+    ![Rejilla de SpriteFrames](/assets/gamedev-godot-basics/screenshot_3.webp)
+
+    *   Selecciona el archivo `shot-atlas.png`.
+    *   En la ventana emergente verás tu imagen. Configura las divisiones: **Horizontal: 3**, **Vertical: 1**.
+    *   Selecciona los 3 cuadros (haz clic o arrastra) para iluminarlos y pulsa **Add 3 frames**.
+    *   **Configuración de la Animación**:
+        *   Busca el botón **"Loop"** (icono de flechas giratorias) en el panel izquierdo y **DESACTÍVALO**. Queremos que crezca una vez y se quede grande, no que palpite.
+        *   Cambia **FPS** (Speed) a **12**. Como son solo 3 frames, esto hará que "crezca" súper rápido (en 0.25 segundos).
+    *   Finalmente, en el **Inspector** del nodo `AnimatedSprite2D`, activa el botón **"Autoplay on Load"** (icono con una `A` y una flecha junto a la propiedad Animation). Esto asegura que la animación arranque sola al disparar.
 5.  Hijo: **`VisibleOnScreenNotifier2D`**: Este nodo es mágico. Nos avisa cuando el objeto sale de la pantalla.
-    *   *Asegúrate de que el rectángulo rosa de este nodo cubra el sprite.*
+    *   *Asegúrate de que el rectángulo rosa de este nodo cubra todo el sprite.*
 
 
 #### 1.1 Limpieza Automática (Señales)
@@ -77,18 +90,32 @@ Ahora que tenemos la conexión, completemos el código:
       lang: 'gdscript',
       code: `extends Area2D
 
-var speed = 600
+var speed = 1500
 
-func _process(delta):
-    position.x += speed * delta # Mover hacia la DERECHA (X positivo es derecha en Godot)
+func _physics_process(delta: float) -> void:
+    position.x += speed * delta
 
-# Esta función la ha creado Godot automáticamente al conectar la señal.
-# Nosotros solo escribimos lo de dentro.
-func _on_visible_on_screen_notifier_2d_screen_exited():
-    queue_free() # Si salimos de pantalla, nos autodestruimos`
+func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
+    queue_free()`
     }
   ]}
 />
+
+**Desglose del Script:**
+
+**1. `extends Area2D`**
+Heredamos de `Area2D` porque solo necesitamos detectar si la bala "toca" algo. No necesitamos rebotes físicos (RigidBody) ni movimiento complejo de personaje (CharacterBody).
+
+**2. `position.x += speed * delta`**
+Queremos que la bala avance sola hacia la derecha (X positivo). Para ello, sumamos velocidad a su posición en cada fotograma. Multiplicamos por `speed` para definir la rapidez y por `delta` para asegurar que el movimiento sea fluido y consistente en cualquier ordenador (evitando que vaya más rápido si tienes más FPS).
+
+**3. `_on_..._screen_exited()`**
+Las balas infinitas consumen memoria hasta que el juego explota. Necesitamos detectar cuándo la bala sale de la cámara y deja de ser útil. Usamos la señal del nodo `VisibleOnScreenNotifier2D` para avisarnos y llamamos a `queue_free()` para eliminarla limpiamente.
+
+> **Nota sobre Rendimiento (El mito de `queue_free`)**:
+> `queue_free()` le dice a la RAM: *"Borra esto y libera espacio"*. Y al disparar de nuevo: *"Busca espacio y asigna memoria"*.
+> En un juego normal, no pasa nada. Pero en un **Bullet Hell** con 5.000 balas, hacer esto constantemente causaría tirones (lag) porque el procesador se saturaría limpiando basura.
+> *Solución futura*: En capítulos avanzados veremos **Object Pooling** (reciclar balas en lugar de borrarlas). Por ahora, `queue_free()` es perfecto.
 
 ¿Qué significa queue_free()?
 
@@ -130,8 +157,12 @@ Para balas (archivos pequeños que usaremos constantemente), `preload` es la ele
 
 ### ¿Cómo preguntamos al juego?
 Para disparar, necesitamos que el script tome decisiones. Usamos dos herramientas nuevas:
-1.  **`if` (Condicional)**: Significa **"SI"**. "SI pasa esto... haz esto otro".
-2.  **`Input`**: Es la clase que escucha tu teclado. `is_action_just_pressed` devuelve `true` solo en el instante exacto que pulsas la tecla. Ideal para disparos individuales.
+1.  **`if` (Condicional)**: "SI pasa esto... haz esto otro".
+2.  **`Input`**: En el capítulo anterior usamos `get_vector`. Ahora usaremos `is_action_pressed` ("¿Está la tecla mantenida?").
+
+Pero cuidado: `_physics_process` se ejecuta 60 veces por segundo. Si disparamos cada vez que la tecla está "mantenida", crearemos una línea sólida de 60 balas en un segundo. 
+
+Necesitamos un **Limitador de Cadencia** (Cooldown). Una forma sencilla es usar una variable "bandera" (`can_shoot`) y un temporizador.
 
 Veamos un ejemplo (que tiene un problema):
 
@@ -141,25 +172,43 @@ Veamos un ejemplo (que tiene un problema):
     {
       label: 'player.gd',
       lang: 'gdscript',
-      code: `extends CharacterBody2D
+      code: `
+extends CharacterBody2D
 
 @export var speed = 400
-# Cargamos el "Plano" de la bala
+@export var fire_rate = 0.125 # Cadencia rápida
 var bullet_scene = preload("res://scenes/bullet.tscn")
 
-func _physics_process(delta):
-    # 1. Movimiento (Lo que ya tenías)
-    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+var can_shoot = true
+var shoot_timer = 0.0
+
+func _physics_process(delta: float) -> void:
+    # Movimiento
+    var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
     velocity = direction * speed
     move_and_slide()
+    
+    # Cooldown (Timer)
+    if not can_shoot:
+        shoot_timer -= delta
+        if shoot_timer <= 0.0:
+            can_shoot = true
 
-    # 2. Disparo (Lo NUEVO)
-    if Input.is_action_just_pressed("ui_accept"): # Barra espaciadora
-        var bala = bullet_scene.instantiate()
-        add_child(bala) # <--- EL ERROR (Canguro)`
+    # Disparo
+    if Input.is_action_pressed("shoot") and can_shoot:
+        shoot()
+
+func shoot():
+    can_shoot = false
+    shoot_timer = fire_rate
+    
+    var bala = bullet_scene.instantiate()
+    add_child(bala) # <--- EL ERROR (Canguro)`
     }
   ]}
 />
+
+Aquí hemos creado una función propia `shoot()` para organizar el código. Usamos `shoot_timer` para controlar el ritmo de disparo de forma precisa y sincronizada con el motor de físicas.
 
 ### El Problema de la Jerarquía
 
@@ -183,87 +232,74 @@ La bala debe nacer en el **Mundo**, no en la Nave. Pero necesitamos que nazca *d
     {
       label: 'player.gd',
       lang: 'gdscript',
-      code: `# Correcto: Usando el padre (La Escena World)
-    if Input.is_action_just_pressed("ui_accept"):
-        var bala = bullet_scene.instantiate()
-        
-        # 1. Añadir al "Padre" (el Mundo) PRIMERO
-        # Necesitamos que la bala tenga un padre para que pueda calcular sus coordenadas globales
-        get_parent().add_child(bala)
-         
-        # 2. COLOCAR
-        # Ahora que está en el mundo, le decimos "ponte donde estoy yo"
-        bala.global_position = global_position`
+      code: `func shoot():
+    can_shoot = false
+    shoot_timer = fire_rate
+    
+    var bala = bullet_scene.instantiate()
+    # 1. Añadir al "Padre" (el Mundo) PRIMERO
+    get_parent().add_child(bala)
+     
+    # 2. COLOCAR
+    bala.global_position = global_position`
     }
   ]}
 />
-En la línea `bala.global_position = global_position`:
-*   El `global_position` de la izquierda es el de la **Bala**.
-*   El `global_position` de la derecha es el de **la Nave** (el script donde estamos escribiendo).
+**Desglose de la Inyección:**
 
-Estamos diciendo: *"Bala, colócate en el mundo EXACTAMENTE donde estoy yo (la Nave) ahora mismo"*.
+**1. `var bala = bullet_scene.instantiate()`**
+`bullet_scene` es solo el plano (el molde). No existe en el juego. Para tener una bala real, usamos `.instantiate()`, que crea una copia tangible en la memoria lista para ser usada. Guardamos esta nueva bala en una variable.
 
-Si usáramos `bala.position = position`, le estaríamos diciendo *"Bala, ponte en relación al Mundo (padre de la bala) igual que yo estoy en relación al Mundo"*. Si la nave está en (100, 100), la bala aparecería en (100, 100). ¡Esto parece correcto!
+**2. `get_parent().add_child(bala)`**
+Si usáramos `add_child(bala)` directamente, la bala sería hija de la Nave. Esto causaría que rotara y se moviera con ella (como si estuviera pegada al casco).
+Para "divorciarla", pedimos el padre de la nave (`get_parent()`, que es el Mundo) y le entregamos la bala a él. Así ambos viven en el mismo universo pero se mueven independientes.
 
-Usar siempre **Global** evita dolores de cabeza: igualamos coordenadas universales.
+**3. `bala.global_position = global_position`**
+Al nacer en el Mundo, la bala aparecería en el origen (0,0) por defecto. Necesitamos teletransportarla a la boca del cañón.
+Al igualar la `global_position` de la bala con la nuestra (o la del `Muzzle`), nos aseguramos de que empiece su viaje exactamente donde estamos nosotros en el universo.
 
-### Pro Tip: Disparando desde el Cañón (`Marker2D`)
+**4. Velocidad y Física**
+Como nuestras balas van muy rápido (1500), no necesitamos calcular inercias complejas. La propia velocidad hace que el "efecto doppler" sea invisible. Es la ventaja de los juegos Arcade: a veces, la solución más bruta es la mejor.
+
+### 4. Ajustando la Posición de Salida (Marker2D)
+
 Ahora mismo la bala sale del centro de la nave (su barriga). Queda feo.
-Podrías intentar sumar números mágicos (`global_position + Vector2(50, 0)`), pero si cambias el sprite de la nave, tendrás que cambiar el código.
+Para arreglarlo, usaremos un nodo invisible que sirva de "referencia".
 
-La solución elegante:
 1.  Añade un nodo hijo **`Marker2D`** a tu Player.
-2.  Muévelo visualmente hasta la punta del cañón. Llámalo `Muzzle` (Boquilla).
-3.  En el código, usa la posición de ese marcador:
+2.  Llámalo **`Muzzle`** (Boquilla).
+3.  Muévelo visualmente hasta la punta del cañón (o donde quieras que salgan las balas).
 
-#### Posición del marcador
+Ahora actualizamos el código para usar este marcador:
+
 <CodeTabs
   items={[
     {
       label: 'player.gd',
       lang: 'gdscript',
-      code: `# En lugar de usar mi posición, uso la del marcador
-bala.global_position = $Muzzle.global_position `
-    }
-  ]}
-/>
-<Callout type="info" title="¿Qué es ese signo de Dólar?">
-  Escribir `$Muzzle` es la forma corta y rápida de decir `get_node("Muzzle")`.
-  Le estás diciendo a Godot: *"Busca entre mis hijos directos al que se llame Muzzle"*.
-</Callout>
-
-¡Ahora la bala saldrá siempre del sitio correcto, aunque cambies la nave!
-
-## 4. Optimización: El mito de `queue_free()`
-
-Cuando una bala sale de la pantalla, normalmente hacemos:
-
-<CodeTabs
-  items={[
-    {
-      label: 'bullet.gd',
-      lang: 'gdscript',
-      code: `func _on_visible_on_screen_notifier_2d_screen_exited():
-    queue_free() # Adiós, bala.`
+      code: `func shoot():
+    can_shoot = false
+    shoot_timer = fire_rate
+    
+    var bala = bullet_scene.instantiate()
+    
+    get_parent().add_child(bala)
+     
+    # Usamos la posición del Muzzle
+    bala.global_position = $Muzzle.global_position`
     }
   ]}
 />
 
-*(Nota: El nombre de la función puede variar según cómo llames a tu nodo Notifier/Enabler. Godot lo genera automáticamente al conectar la señal).*
+### Resumen y Retos
 
-Esto le dice a la RAM: *"Borra estos datos y libera el espacio"*. Y cuando disparas otra vez: *"Busca espacio libre y asigna memoria nueva"*.
+Hoy has aprendido uno de los conceptos fundamentales del desarrollo de software: **Instanciación** (crear objetos dinámicamente).
 
-En un juego normal, no pasa nada.
-En un **Bullet Hell** con 5.000 balas por minuto, esto es un suicidio.
-El "Recolector de Basura" (Garbage Collector) de la CPU se saturará limpiando y creando memoria, causando tirones (micro-stuttering).
+Repasemos los conceptos clave:
+1.  **Escenas (`.tscn`)**: Son los planos (moldes) de tus objetos.
+2.  **Instanciar**: Convertir esos planos en objetos vivos en el juego (`.instantiate()`).
+3.  **Nodos Marker2D**: Puntos de referencia invisibles vitales para `spawns`.
+4.  **Señales**: Cables invisibles para que los objetos hablen (`screen_exited`).
+5.  **`queue_free()`**: La forma segura de borrar basura de la memoria.
 
-Repasemos lo aprendido:
-1.  **Escenas (`.tscn`)**: Son los planos de tus objetos.
-2.  **Instanciar**: Convertir esos planos en objetos vivos en el juego.
-3.  **Señales**: Cables invisibles para que los objetos hablen (`screen_exited`).
-4.  **`queue_free()`**: La forma segura de borrar basura.
-
-¡Felicidades! Has creado tu primer arma semi-funcional. Por ahora lo podemos disparar, pero no daña nada.
-
-En el **próximo capítulo**, vamos a darles algo a lo que disparar.
-Crearemos **Enemigos** que volarán hacia ti y aprenderemos a detectar cuando una bala les golpea.
+En el **próximo capítulo**, convertiremos este campo de tiro vacío en una batalla real. Crearemos **Enemigos** que gestionan su propia vida y detectan colisiones. ¡Prepara la munición!

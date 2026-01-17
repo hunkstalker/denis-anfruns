@@ -24,10 +24,10 @@ Pero antes, una decisión arquitectónica vital.
 Para el jugador usamos `CharacterBody2D` porque queríamos física de movimiento precisa (chocar con paredes y deslizarse).
 Para las balas y enemigos simples, usaremos **`Area2D`**.
 
-**¿Por qué?**
+**¿Por qué usamos Area2D?**
 *   **Es más barato**: Consume menos CPU que un cuerpo físico completo.
-*   **Permite atravesar**: En un *Space Shooter*, no quieres que los enemigos reboten contra ti como bolas de billar. Quieres que *detecten* que te han tocado y exploten. `Area2D` es perfecta para eso: detecta solapamientos ("overlap") sin empujar.
-*   **Superpoderes Físicos**: Un `Node2D` normal es invisible para el motor de física. Aunque le pongas una forma, Godot la ignorará. Necesitas un nodo que herede de `CollisionObject2D` (como este) para que la magia funcione.
+*   **Permite atravesar**: En un *Space Shooter*, no quieres que los enemigos reboten, sino que *detecten* que te han tocado y exploten. `Area2D` es perfecta para detectar solapamientos ("overlap") sin empujar.
+*   **Superpoderes Físicos**: Hereda de `CollisionObject2D`, lo que lo hace visible para el motor de física (a diferencia de un `Node2D` normal que sería invisible aunque tuviera forma).
 
 ### Preparando la Escena Enemiga
 
@@ -52,10 +52,8 @@ Puedes usar tu propio sprite o descargar este:
 Antes de escribir el código, analicemos qué necesita hacer nuestro enemigo. Vamos a mezclar tres conceptos:
 
 ### A. Señales por Código
-En el capítulo anterior usamos el editor para conectar señales. Hoy lo haremos **por Código** para que el enemigo sea autónomo.
-*   **¿Qué usamos?**: La señal `area_entered`.
-*   **¿Dónde?**: En `_ready()`, usaremos `connect()`.
-*   **¿Por qué?**: Para que cada enemigo sepa reaccionar sin necesidad de configurarlo manualmente en el editor.
+En el capítulo anterior usamos el editor para conectar señales. Hoy lo haremos **por Código** en `_ready()` usando `connect()`.
+Esto permite que cada enemigo sea autónomo y sepa reaccionar sin necesidad de configurarlo manualmente en el editor cada vez que instanciamos uno.
 
 ### B. Físicas Simuladas
 Como usamos `Area2D` y no un cuerpo físico (`RigidBody`), la gravedad no nos afecta.

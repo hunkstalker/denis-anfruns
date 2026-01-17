@@ -132,6 +132,15 @@ Para moverla, necesitamos dos cosas mágicas que viven dentro de `CharacterBody2
 
 **No tienes que pasarle `velocity` a `move_and_slide()`. Lo hace solo.**
 
+<Callout type="warning" title="¡Espera! ¿Qué es move_right?">
+  Por defecto, Godot usa `ui_right`, `ui_left`, etc. para las flechas del teclado.
+  Pero nosotros vamos a usar nombres profesionales ("move_right", "move_left") para poder asignar **WASD y Joystick** a la vez.
+
+  1.  Ve a **Proyecto > Configuración del Proyecto > Mapa de Entradas**.
+  2.  Añade las acciones: `move_right`, `move_left`, `move_up`, `move_down`.
+  3.  Asigna sus teclas (WASD) y los ejes de tu mando favorito.
+</Callout>
+
 Aquí tienes el código completo. **Te recomiendo escribirlo a mano** para memorizar los comandos, pero si tienes prisa, puedes copiarlo.
 
 <CodeTabs
@@ -142,15 +151,43 @@ Aquí tienes el código completo. **Te recomiendo escribirlo a mano** para memor
       code: `extends CharacterBody2D
 
 func _physics_process(delta):
-    # Pedimos al Input que nos construya el Vector de Dirección basado en las teclas
-    # "ui_left", "ui_right", "ui_up", "ui_down" son acciones por defecto en Godot
-    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
     
-    velocity = direction * 300
+    velocity = direction * 400
     move_and_slide()`
     }
   ]}
 />
+
+**Desglose línea a línea:**
+
+**1. `extends CharacterBody2D`**
+
+Tu script "hereda" de CharacterBody2D. Esto significa que tienes acceso a `velocity` (una variable interna) y `move_and_slide()` (un método que hace la magia de mover y chocar). Sin esta línea, GDScript no sabría qué eres.
+
+**2. `func _physics_process(delta):`**
+
+Godot llama esta función automáticamente **60 veces por segundo** (o el tick rate que configures). Todo lo que esté dentro se ejecuta en bucle. El parámetro `delta` contiene cuánto tiempo ha pasado desde el último frame (en segundos) – lo usaremos más adelante para hacer que todo vaya a la misma velocidad en cualquier PC.
+
+**3. `var direction = Input.get_vector(...)`**
+
+| Tecla(s) presionada(s) | Valor de `direction` |
+|------------------------|----------------------|
+| Ninguna | `(0, 0)` |
+| Derecha | `(1, 0)` |
+| Abajo | `(0, 1)` |
+| Derecha + Abajo | `(0.707, 0.707)` ← ¡Normalizado! |
+
+`Input.get_vector()` lee las teclas y construye un vector de dirección. **Ya viene normalizado** (magnitud 1), así que moverse en diagonal no es más rápido que moverse recto.
+
+**4. `velocity = direction * 300`**
+
+La dirección es un vector de magnitud 1. Al multiplicar por 300, obtenemos "300 píxeles por segundo en esa dirección". Es como decir: "Apunta hacia allá y ve a 300 de velocidad".
+
+**5. `move_and_slide()`**
+
+Esta función lee `velocity` automáticamente (no hace falta pasárselo) y mueve el nodo. Además, gestiona colisiones: si hay una pared, "desliza" en vez de quedarse pegado. Por eso se llama "move and slide".
+
 
 ### 4. ¿Por qué corres más en diagonal? (Pitágoras)
 
@@ -266,7 +303,7 @@ Antes de copiar, mira dos detalles nuevos:
 @export var speed = 400
 
 func _physics_process(delta):
-    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
     
     velocity = direction * speed
     move_and_slide()`

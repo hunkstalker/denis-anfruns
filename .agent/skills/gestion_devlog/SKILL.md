@@ -47,7 +47,17 @@ El trabajo se realiza iterativamente capítulo a capítulo.
    - **Matemáticas**: Desarrolla las fórmulas paso a paso. No asumas que el lector sabe trigonometría o álgebra lineal.
    - **Shaders**: Explica cada línea de GLSL. La GPU es un mundo nuevo para el usuario.
    - **No hay límite de longitud**: Si un capítulo necesita 500-600 líneas para explicar bien un tema, hazlo. Mejor un capítulo denso que uno superficial.
-4. **Aprendizaje en Espiral (Repetición Progresiva)**:
+4. **Patrón de Desglose de Código (Por qué / Para qué / Cómo)**:
+   - Cada línea o bloque de código en un desglose debe cubrir **tres conceptos**:
+     - **Por qué**: El problema que resuelve o la necesidad que lo origina.
+     - **Para qué**: El objetivo o resultado que buscamos al implementarlo.
+     - **Cómo**: La implementación técnica, de dónde sale cada valor, y el cálculo si aplica.
+   - **IMPORTANTE**: No uses los títulos "Por qué/Para qué/Cómo" de forma literal y repetitiva. 
+     - ❌ **Mal**: "*Por qué: X. Para qué: Y. Cómo: Z.*"
+     - ✅ **Bien**: "*Necesitamos X para evitar Y. Para ello, usamos la función Z que calcula...*"
+   - La explicación debe fluir de forma natural, integrando estos tres aspectos en la narrativa o en puntos de lista descriptivos sin etiquetas robóticas.
+
+5. **Aprendizaje en Espiral (Repetición Progresiva)**:
    - Los conceptos se introducen de forma ligera la primera vez ("esto hace X").
    - Cuando vuelven a aparecer en capítulos posteriores, se profundiza ("¿recuerdas X? Ahora veamos POR QUÉ funciona así").
    - Es válido y deseable repetir explicaciones si aportan nuevo contexto o profundidad.
@@ -72,7 +82,34 @@ src/content/devlogs/[slug-proyecto]/[slug-capitulo]/
 └── ca.mdx  (Generado automáticamente a petición)
 ```
 
-## 6. Uso del Componente Callout
+## 6. Scripts y Estructura del Proyecto
+
+Cada capítulo que incluya código GDScript debe mantener:
+
+1. **Carpeta `scripts/`**: Contiene los archivos `.gd` finales del capítulo.
+   - Solo incluir archivos que se crean o modifican en ese capítulo.
+   - El código debe coincidir EXACTAMENTE con los bloques "Script Completo" del MDX.
+
+2. **Archivo `structure.md`**: Mapa de la estructura del proyecto Godot.
+   - Tabla con cada archivo, su ruta en Godot y descripción.
+   - Árbol de estructura completa del proyecto al finalizar el capítulo.
+   - Estructura de nodos de las escenas si es relevante.
+
+**Ejemplo de estructura de carpeta:**
+```text
+src/content/devlogs/game-dev-godot/part-X/
+├── es.mdx
+├── en.mdx
+├── ca.mdx
+├── _scripts/              ← Guion bajo para que Astro lo ignore
+│   ├── player.gd
+│   └── enemy.gd
+└── _structure.md          ← Guion bajo para que Astro lo ignore
+```
+
+**Regla de Verificación**: Antes de finalizar un capítulo, verificar que TODOS los fragmentos de código del MDX coincidan con el script completo en la carpeta `scripts/`.
+
+## 7. Uso del Componente Callout
 
 Los Callouts son cajas destacadas para información secundaria. NO son para el temario principal.
 

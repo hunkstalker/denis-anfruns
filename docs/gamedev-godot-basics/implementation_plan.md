@@ -48,7 +48,7 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 
 ---
 
-### Part 6: El SpawnPoint - Formaciones Lineales 🔜
+### Part 6: El SpawnPoint - Formaciones Lineales ✅
 **Focus**: Sistema de spawn configurable (parte 1).
 - **Corrección Bug Shader**: `material.duplicate()` para instancias independientes.
 - **Collision Layers**: Configurar capas para que solo balas dañen enemigos.
@@ -56,7 +56,7 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - **Patrón LINE**: Enemigos en fila (avión), dirección configurable.
 - **Patrón WAVE**: LINE + ondulación (sin/cos), desfase para efecto serpiente.
 
-### Part 7: El SpawnPoint - Formaciones Orbitales 🆕
+### Part 7: El SpawnPoint - Formaciones Orbitales 🔜
 **Focus**: Sistema de spawn configurable (parte 2).
 - **Patrón ORBIT**: Helicópteros girando alrededor de un centro.
 - **Radios Diferentes**: Órbitas elípticas (radius_x ≠ radius_y).
@@ -88,7 +88,6 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 **Focus**: Expandir combate y arquitectura.
 - **Armas del Player**:
   - *Main Alternativo*: Disparo Doble (Frontal + Diagonal-Abajo). Menos daño, mayor cobertura (2 zonas).
-  - *Sub-Weapons*: Misiles Guiados (Homing Missiles) automáticos.
   - *Special*: "Cluster Shield" (Ref. U.N. Squadron). Proyectiles orbitando en elipse (sin/cos) que se expanden y contraen.
 - **Refactor**: Grupos de Godot para detección de daño (`is_in_group` vs `class_name`).
 - Estrategia de armas escalable.
@@ -124,7 +123,6 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 ### Part 16: Polish Final
 **Focus**: Detalles de juego profesional.
 - `CPUParticles2D` para explosiones.
-- Screen Shake (cámara).
 - Transiciones de escena.
 - **CRT / Scanlines** (Opcional): Shader de post-procesado retro con `CanvasLayer`.
 
@@ -140,3 +138,21 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - **Godot Avanzado**: Path2D, PathFollow2D, Tweens, AnimationPlayer.
 - **IA para Juegos**: State Machines, Behavior Trees.
 - **Multijugador**: Networking básico.
+
+---
+
+## Capítulos Extra (Post-MVP)
+
+### Part 18: Refactoring y Arquitectura
+**Focus**: Limpieza de código y patrones.
+- Revisar acoplamiento entre scripts.
+- Extraer lógica repetida a clases base o Autoloads.
+- Documentar funciones públicas.
+- Revisar señales vs llamadas directas.
+
+### Part 19: Más Enemigos y Armas
+**Focus**: Expandir contenido del juego.
+- **Torreta Estática**: Enemigo sin movimiento con `Area2D` de detección.
+- **Misil Homing (Enemigo)**: Giro limitado, persigue al jugador, explosión por proximidad.
+- **Misiles Guiados Predictivos (Player)**: Homing con predicción de posición futura del enemigo.
+- **Power-Ups**: Cambio de arma temporal, escudo, bomba.

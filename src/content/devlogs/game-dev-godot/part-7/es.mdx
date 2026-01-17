@@ -24,29 +24,237 @@ Ahora añadiremos dos patrones más complejos:
 - **ORBIT**: Enemigos girando alrededor del SpawnPoint.
 - **LINE_TO_ORBIT**: Enemigos que entran en fila y transicionan a órbita.
 
+Pero antes de añadirlos, necesitamos mejorar la arquitectura del código que escribimos en el capítulo anterior.
+
 ---
 
-## 1. Patrón ORBIT: Movimiento Circular
+## 1. Refactorización: Datos por Enemigo
 
-En el capítulo 5 aprendimos que un círculo se describe con:
+### El Problema
 
-```text
-x = centro_x + cos(ángulo) * radio
-y = centro_y + sin(ángulo) * radio
+En el capítulo 6, WAVE calculaba la ondulación usando la posición X del enemigo:
+
+```gdscript
+# Cap 6: WAVE original
+enemy.position.y = sin(enemy.position.x * wave_frequency) * wave_amplitude
 ```
 
-Donde el `ángulo` aumenta con el tiempo para generar rotación.
+Esto funcionaba, pero tiene una limitación: **si el enemigo deja de avanzar, la onda se congela** (porque `position.x` no cambia).
 
-### Implementación en el SpawnPoint
+Para ORBIT, cada enemigo necesita empezar en un **punto diferente** del círculo. Si 4 helicópteros orbitan, queremos que estén distribuidos como las horas de un reloj: uno a las 3, otro a las 12, otro a las 9, otro a las 6.
 
-Primero, añadimos el patrón al enum y sus parámetros:
+| Enemigo | Posición inicial |
+|---------|------------------|
+| 0 | Derecha (3:00) |
+| 1 | Arriba (12:00) |
+| 2 | Izquierda (9:00) |
+| 3 | Abajo (6:00) |
+
+Esto significa que cada enemigo tiene un **ángulo inicial diferente** que llamamos `phase_offset`. Este valor se calcula **una sola vez** al nacer y debe recordarse para siempre.
+
+### La Solución: `enemy_data`
+
+El enemigo es "tonto" – solo sabe recibir daño y morir. No tiene una variable `phase_offset`. Toda la lógica de movimiento vive en el SpawnPoint.
+
+La solución: un **array paralelo** que guarde datos únicos de cada enemigo.
 
 <CodeTabs
   items={[
     {
-      label: 'spawn_point.gd (añadir al inicio)',
+      label: 'spawn_point.gd (añadir a las variables)',
       lang: 'gdscript',
-      code: `enum MovementPattern { LINE, WAVE, ORBIT }
+      code: `
+var enemies: Array = []       # Las instancias de los nodos (ya existía)
+var enemy_data: Array = []    # (nuevo) diccionarios con datos únicos de cada enemigo
+var time: float = 0.0         # (nuevo) acumulador de tiempo`
+    }
+  ]}
+/>
+
+Ahora tenemos dos arrays que funcionan en paralelo:
+- `enemies[2]` → El nodo del tercer enemigo
+- `enemy_data[2]` → El diccionario con sus datos (desfases, distancias, etc.)
+
+### Actualizando `spawn_formation()`
+
+Ahora cada enemigo crea un diccionario `data` que se guarda en `enemy_data`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (reemplazar spawn_formation)',
+      lang: 'gdscript',
+      code: `
+func spawn_formation():
+    var perpendicular = Vector2(-direction.y, direction.x)
+    
+    for i in range(formation_size):
+        var enemy = enemy_scene.instantiate()
+        var data = {}
+        
+        match pattern:
+            MovementPattern.LINE:
+                var formation_offset = (i - (formation_size - 1) / 2.0) * spawn_spacing
+                enemy.position = perpendicular * formation_offset
+            
+            MovementPattern.WAVE:
+                var formation_offset = (i - (formation_size - 1) / 2.0) * spawn_spacing
+                enemy.position = perpendicular * formation_offset
+                data["start_perpendicular_offset"] = formation_offset  # Guardar posición inicial
+                data["distance"] = 0.0                                 # Distancia recorrida
+        
+        enemy_data.append(data)
+        enemies.append(enemy)
+        call_deferred("add_child", enemy)`
+    }
+  ]}
+/>
+
+**¿Qué es `perpendicular`?**
+
+Si los enemigos avanzan hacia la izquierda (`direction = (-1, 0)`), querremos que la fila sea vertical (uno encima del otro).
+
+El vector perpendicular se calcula intercambiando X e Y y negando uno:
+- `direction = (-1, 0)` → `perpendicular = (0, -1)` → fila vertical
+
+**¿Por qué `(i - (formation_size - 1) / 2.0)`?**
+
+Esto centra la formación. Con 5 enemigos:
+```text
+i=0: (0 - 2) = -2  → arriba
+i=1: (1 - 2) = -1
+i=2: (2 - 2) =  0  → centro
+i=3: (3 - 2) = +1
+i=4: (4 - 2) = +2  → abajo
+```
+
+### Actualizando `move_wave()`
+
+Ahora que tenemos `time` y `phase_offset`, WAVE puede usar ondulación basada en tiempo (no se congela):
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (reemplazar move_wave)',
+      lang: 'gdscript',
+      code: `
+func move_wave(enemy: Node2D, index: int, delta: float):
+    var data = enemy_data[index]
+    
+    # Acumulamos la distancia recorrida
+    data.distance += speed * delta
+    
+    # Posición base: avance en la dirección de movimiento
+    var base_position = direction * data.distance
+    
+    # Ondulación basada en tiempo + desfase
+    var phase = time * wave_frequency + index * phase_increment
+    var wave_offset = sin(phase) * wave_amplitude
+    
+    # Sumamos el offset inicial de formación + la ondulación
+    var total_perpendicular = data.start_perpendicular_offset + wave_offset
+    
+    # Aplicamos todo
+    var perpendicular = Vector2(-direction.y, direction.x)
+    enemy.position = base_position + perpendicular * total_perpendicular`
+    }
+  ]}
+/>
+
+**Desglose:**
+
+**1. `data.distance += speed * delta`**
+
+Acumulamos cuántos píxeles ha recorrido este enemigo desde que nació. Esto reemplaza la multiplicación directa `position += direction * speed * delta` porque necesitamos la distancia para calcular la posición base.
+
+**2. `var base_position = direction * data.distance`**
+
+La posición "de avance" puro, sin ondulación. Si `distance = 300` y `direction = (-1, 0)`, entonces `base_position = (-300, 0)`.
+
+**3. `var phase = time * wave_frequency + index * phase_increment`**
+
+| Componente | Qué representa |
+|------------|----------------|
+| `time * wave_frequency` | Cuántas oscilaciones han pasado |
+| `index * phase_increment` | Desfase según posición en la formación |
+
+Con `phase_increment = 0.4` y 4 enemigos, cada uno está desfasado 0.4 radianes respecto al anterior. Esto crea el efecto serpiente.
+
+**4. `data.start_perpendicular_offset + wave_offset`**
+
+Sumamos dos cosas:
+- `start_perpendicular_offset`: Dónde estaba este enemigo en la fila inicial (para mantener separación)
+- `wave_offset`: La ondulación actual calculada con `sin(phase)`
+
+**5. `enemy.position = base_position + perpendicular * total_perpendicular`**
+
+Combinamos el avance horizontal con la posición vertical (que incluye formación + ondulación).
+
+### Actualizando `move_line()`
+
+Para consistencia, `move_line` también recibe `index` aunque no use `enemy_data` actualmente:
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (reemplazar move_line)',
+      lang: 'gdscript',
+      code: `
+func move_line(enemy: Node2D, index: int, delta: float):
+    enemy.position += direction * speed * delta`
+    }
+  ]}
+/>
+
+Añadimos `index` por uniformidad. Si en el futuro LINE necesita datos por enemigo, ya tenemos la infraestructura.
+
+### Actualizando `_process()`
+
+Añadimos `time` y pasamos `index` a las funciones:
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (reemplazar _process)',
+      lang: 'gdscript',
+      code: `
+func _process(delta):
+    time += delta
+    
+    for i in range(enemies.size()):
+        var enemy = enemies[i]
+        
+        if not is_instance_valid(enemy):
+            continue
+        
+        match pattern:
+            MovementPattern.LINE:
+                move_line(enemy, i, delta)
+            MovementPattern.WAVE:
+                move_wave(enemy, i, delta)`
+    }
+  ]}
+/>
+
+**¿Por qué `time += delta`?**
+
+Acumulamos el tiempo transcurrido en segundos. Esto nos da un "reloj" que avanza igual independientemente de los FPS.
+
+---
+
+## 2. Patrón ORBIT: Movimiento Circular
+
+Ahora que tenemos `enemy_data`, añadir ORBIT es sencillo.
+
+### Añadiendo el Patrón y sus Parámetros
+
+<CodeTabs
+  items={[
+    {
+      label: 'spawn_point.gd (modificar enum y añadir exports)',
+      lang: 'gdscript',
+      code: `
+enum MovementPattern { LINE, WAVE, ORBIT }
 
 # --- Parámetros de Órbita (ORBIT) ---
 @export var orbit_radius_x: float = 100.0   # Radio horizontal
@@ -62,69 +270,113 @@ Primero, añadimos el patrón al enum y sus parámetros:
 Si `orbit_radius_x == orbit_radius_y`, los enemigos describen un **círculo perfecto**.
 Si son diferentes, describen una **elipse**. Esto nos da flexibilidad sin necesidad de un patrón separado.
 
-### La Función de Movimiento
+### Calculando el `phase_offset`
+
+Un círculo completo son **2π radianes** (≈ 6.28). Si queremos distribuir `N` enemigos equidistantes, dividimos el círculo entre `N`:
+
+```text
+phase_offset = (2π / N) * índice_del_enemigo
+
+Con 4 enemigos:
+2π / 4 = π/2 = 90°
+
+Enemigo 0: (π/2) × 0 = 0      → 0° (derecha)
+Enemigo 1: (π/2) × 1 = π/2    → 90° (arriba)
+Enemigo 2: (π/2) × 2 = π      → 180° (izquierda)
+Enemigo 3: (π/2) × 3 = 3π/2   → 270° (abajo)
+```
+
+### La Función `move_orbit()`
 
 <CodeTabs
   items={[
     {
-      label: 'spawn_point.gd (función ORBIT)',
+      label: 'spawn_point.gd (añadir función)',
       lang: 'gdscript',
-      code: `func move_orbit(enemy: Node2D, index: int):
+      code: `
+func move_orbit(enemy: Node2D, index: int):
     var data = enemy_data[index]
     
-    # Calculamos el ángulo actual
-    # time * orbit_speed = cuánto ha rotado en total
-    # data.phase_offset = desfase inicial de este enemigo
     var angle = time * orbit_speed + data.phase_offset
     
-    # Fórmula del círculo/elipse
     var x = cos(angle) * orbit_radius_x
     var y = sin(angle) * orbit_radius_y
     
-    # La posición es relativa al SpawnPoint (que es el centro)
     enemy.position = Vector2(x, y)`
     }
   ]}
 />
 
-**Desglose:**
+**Desglose línea a línea:**
 
-1. **`time * orbit_speed`**: Cuántos radianes ha girado desde el inicio. Si `orbit_speed = 2`, gira 2 radianes por segundo (aproximadamente 115° por segundo).
+**1. `var data = enemy_data[index]`**
 
-2. **`data.phase_offset`**: El desfase inicial de cada enemigo. Si queremos 4 enemigos equidistantes, sus desfases serían: 0, π/2, π, 3π/2 (0°, 90°, 180°, 270°).
+Recuperamos el diccionario de datos de este enemigo. Contiene `phase_offset`: su ángulo inicial en el círculo.
 
-3. **`cos(angle) * radio_x`**: La coordenada X del punto en el círculo.
+**2. `var angle = time * orbit_speed + data.phase_offset`**
 
-4. **`sin(angle) * radio_y`**: La coordenada Y del punto en el círculo.
+| Componente | Qué representa | Ejemplo |
+|------------|----------------|---------|
+| `time` | Segundos desde que empezó | 2.5s |
+| `orbit_speed` | Radianes por segundo | 2.0 rad/s |
+| `time * orbit_speed` | Cuánto ha girado en total | 5.0 rad |
+| `data.phase_offset` | Dónde empezó este enemigo | π/2 (90°) |
+| **Total** | Ángulo actual | 5.0 + 1.57 = 6.57 rad |
 
-### Distribución Automática
+Todos los enemigos giran con `time`, pero cada uno está **desplazado** por su `phase_offset`. Por eso siguen separados aunque usen la misma fórmula.
 
-Para que los enemigos empiecen equidistantes, calculamos el desfase en `spawn_formation()`:
+**3. `var x = cos(angle) * orbit_radius_x`**
+
+El **coseno** de un ángulo nos da la coordenada X en un círculo unitario (radio 1). Multiplicamos por el radio real para escalar.
+
+| Ángulo | cos(ángulo) | Con radio 100 |
+|--------|-------------|---------------|
+| 0° | 1 | 100 (derecha) |
+| 90° | 0 | 0 |
+| 180° | -1 | -100 (izquierda) |
+| 270° | 0 | 0 |
+
+**4. `var y = sin(angle) * orbit_radius_y`**
+
+El **seno** hace lo mismo pero para la coordenada Y.
+
+| Ángulo | sin(ángulo) | Con radio 100 |
+|--------|-------------|---------------|
+| 0° | 0 | 0 |
+| 90° | 1 | 100 (arriba) |
+| 180° | 0 | 0 |
+| 270° | -1 | -100 (abajo) |
+
+Si `orbit_radius_x ≠ orbit_radius_y`, el resultado es una **elipse** en vez de un círculo.
+
+**5. `enemy.position = Vector2(x, y)`**
+
+Asignamos la posición calculada. Como el enemigo es **hijo** del SpawnPoint, esta posición es **relativa al padre**. Godot convierte automáticamente a coordenadas globales al renderizar.
+
+
+### Actualizando `spawn_formation()` para ORBIT
+
+Añadimos el caso ORBIT:
 
 <CodeTabs
   items={[
     {
-      label: 'spawn_point.gd (modificar spawn_formation)',
+      label: 'spawn_point.gd (añadir caso ORBIT a spawn_formation)',
       lang: 'gdscript',
-      code: `func spawn_formation():
-    var perpendicular = Vector2(-direction.y, direction.x)
-    
-    for i in range(formation_size):
-        var enemy = enemy_scene.instantiate()
-        var data = {}
-        
+      code: `
         match pattern:
-            MovementPattern.LINE, MovementPattern.WAVE:
-                # Posición en fila (como antes)
+            MovementPattern.LINE:
                 var formation_offset = (i - (formation_size - 1) / 2.0) * spawn_spacing
                 enemy.position = perpendicular * formation_offset
-                data["start_perpendicular_offset"] = formation_offset
-                data["distance"] = 0.0
-                
+            
+            MovementPattern.WAVE:
+                var formation_offset = (i - (formation_size - 1) / 2.0) * spawn_spacing
+                enemy.position = perpendicular * formation_offset
+                data["phase_offset"] = i * phase_increment
+            
             MovementPattern.ORBIT:
-                # Calcular el desfase angular
+                # Distribuir equidistantes en el círculo
                 if auto_distribute:
-                    # Dividimos el círculo en partes iguales
                     data["phase_offset"] = (2 * PI / formation_size) * i
                 else:
                     data["phase_offset"] = i * phase_increment
@@ -134,40 +386,38 @@ Para que los enemigos empiecen equidistantes, calculamos el desfase en `spawn_fo
                 enemy.position = Vector2(
                     cos(angle) * orbit_radius_x,
                     sin(angle) * orbit_radius_y
-                )
-        
-        enemy_data.append(data)
-        enemies.append(enemy)
-        call_deferred("add_child", enemy)`
+                )`
     }
   ]}
 />
 
-**¿Qué es `2 * PI`?**
+**Desglose del caso ORBIT:**
 
-En radianes, un círculo completo son **2π** (aproximadamente 6.28). Si tenemos 4 enemigos:
+**1. `data["phase_offset"] = (2 * PI / formation_size) * i`**
 
-```text
-2π / 4 = π/2 radianes = 90°
+Calculamos el ángulo inicial de cada enemigo. `PI` es una constante global de GDScript que vale 3.14159...
 
-Enemigo 0: 0° (derecha)
-Enemigo 1: 90° (arriba)
-Enemigo 2: 180° (izquierda)
-Enemigo 3: 270° (abajo)
-```
+- `2 * PI` = 6.28 radianes = 360° (un círculo completo)
+- Dividimos entre `formation_size` para obtener la separación entre enemigos
+- Multiplicamos por `i` para que cada enemigo tenga su propio ángulo
 
-**`PI`** es una constante global en GDScript que vale 3.14159...
+**2. Posición inicial**
 
-### Actualizando el _process
+Usamos la misma fórmula que `move_orbit()`:
+- `cos(angle) * radius_x` para X
+- `sin(angle) * radius_y` para Y
 
-Añadimos el caso ORBIT al `match`:
+Esto coloca al enemigo en su punto correcto del círculo desde el primer frame.
+
+### Actualizando `_process()` para ORBIT
 
 <CodeTabs
   items={[
     {
-      label: 'spawn_point.gd (modificar _process)',
+      label: 'spawn_point.gd (añadir caso ORBIT a _process)',
       lang: 'gdscript',
-      code: `func _process(delta):
+      code: `
+func _process(delta):
     time += delta
     
     for i in range(enemies.size()):
@@ -178,14 +428,16 @@ Añadimos el caso ORBIT al `match`:
         
         match pattern:
             MovementPattern.LINE:
-                move_line(enemy, delta)
+                move_line(enemy, i, delta)
             MovementPattern.WAVE:
                 move_wave(enemy, i, delta)
             MovementPattern.ORBIT:
-                move_orbit(enemy, i)  # No necesita delta, usa time directamente`
+                move_orbit(enemy, i)`
     }
   ]}
 />
+
+Nota que `move_orbit()` no necesita `delta` porque calcula la posición absoluta basándose en `time`, no un desplazamiento incremental.
 
 ### Probando el Patrón ORBIT
 
@@ -211,7 +463,7 @@ Cambia los radios:
 
 ---
 
-## 2. Patrón LINE_TO_ORBIT: La Transición
+## 3. Patrón LINE_TO_ORBIT: La Transición
 
 Este es el patrón más complejo. Los enemigos:
 1. Entran en **fila** (como LINE).
@@ -405,7 +657,7 @@ Guardamos dónde estaba el primer enemigo cuando transicionó. Todos orbitan alr
 
 ---
 
-## 3. Script Completo del SpawnPoint
+## 4. Script Completo del SpawnPoint
 
 <CodeTabs
   items={[
@@ -494,7 +746,7 @@ func _process(delta):
         
         match pattern:
             MovementPattern.LINE:
-                move_line(enemy, delta)
+                move_line(enemy, i, delta)
             MovementPattern.WAVE:
                 move_wave(enemy, i, delta)
             MovementPattern.ORBIT:
@@ -502,7 +754,7 @@ func _process(delta):
             MovementPattern.LINE_TO_ORBIT:
                 move_line_to_orbit(enemy, i, delta)
 
-func move_line(enemy: Node2D, delta: float):
+func move_line(enemy: Node2D, index: int, delta: float):
     enemy.position += direction * speed * delta
 
 func move_wave(enemy: Node2D, index: int, delta: float):
@@ -578,7 +830,7 @@ func start_orbit_transition():
 
 ---
 
-## 4. Tabla de Referencia de Patrones
+## 5. Tabla de Referencia de Patrones
 
 | Patrón | Enemigo Típico | Parámetros Clave | Resultado Visual |
 |--------|----------------|------------------|------------------|
