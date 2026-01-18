@@ -84,7 +84,7 @@ func _ready() -> void:
     pass
 
 # Añadimos el movimiento en _process
-func _process(delta):
+func _process(delta) -> void:
     position.x -= speed * delta`
     }
   ]}
@@ -104,7 +104,7 @@ Ahora añadimos la conexión. Recuerda: `connect(quien_responde)`.
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `func _ready():
     # area_entered es una señal de Area2D, con .connect haremos que llame a una 
@@ -131,7 +131,7 @@ Añadimos vida (`hp`) y la lógica de recibir daño.
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `@export var speed = 150
 @export var hp = 3 # Añadimos la variable hp para controlar la vida y la exponemos 
@@ -157,13 +157,13 @@ func die():
 />
 
 ### Fase 4: Muerte Dramática (Físicas Fake)
-Como usamos `Area2D` y no `RigidBody2D`, no tenemos física real. Vamos a "fingir" que caemos al morir.
-Necesitamos una variable `is_dying` para saber si estamos en "modo caída".
+Como usamos `Area2D` y no `RigidBody2D`, no tenemos física real. Vamos a "fingir" que el enemigo cae al morir.
+Necesitamos una variable `is_dying` para saber si está en "modo caída".
 
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `# Definimos variables un par de variables de estado del enemigo
 var is_dying = false # booleano, si está muerto o no, por defecto no está muerto (false)
@@ -176,13 +176,19 @@ func _process(delta):
         # Ahora, teniendo la velocidad le decimos hacia dónde moverse
         position.y += fall_speed * delta # Le añadimos velocidad vertical
         position.x -= speed * 0.5 * delta # Le restamos velocidad horizontal (frenada)
-        rotation += 5 * delta # Giramos
-        # La limpieza la hace die() con un timer, no aquí
     else:
-        position.x -= speed * delta # Movimiento normal`
+        position.x -= speed * delta # Movimiento normal que ya teníamos`
     }
   ]}
 />
+
+**¿Qué es ese `else`?**
+Hasta ahora hemos usado `if` ("Si pasa esto..."). El `else` significa **"Si NO pasa eso..."**.
+Es como un interruptor de dos vías:
+*   **IF (`is_dying` es true)**: Ejecuta la física de caída.
+*   **ELSE (si no, en el otro caso)**: Ejecuta el movimiento normal hacia la izquierda.
+
+Esto nos garantiza que el enemigo **nunca** hará las dos cosas a la vez. O está se está acercando al player, o está muriendo.
 
 ### Fase 5: Eliminación de la Instancia
 Cuando `hp` llega a 0, llamamos a `die()`. Esta función:
@@ -193,7 +199,7 @@ Cuando `hp` llega a 0, llamamos a `die()`. Esta función:
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `func die():
     is_dying = true
@@ -206,11 +212,40 @@ Cuando `hp` llega a 0, llamamos a `die()`. Esta función:
   ]}
 />
 
+### Fase 6: Evitando Bugs (La Cláusula de Guardia)
+
+Hay un detalle sutil pero peligroso. ¿Qué pasa si le metemos 20 balazos al enemigo mientras está cayendo?
+Que llamaríamos a `die()` 20 veces.
+
+Para evitar esto mejoramos `_on_area_entered` con dos reglas de oro:
+1.  **Si ya estoy muriendo, ignora las balas**: Usamos `if is_dying: return` para salir de la función inmediatamente.
+2.  **Si me tocas, desapareces**: La bala (`area`) debe destruirse siempre tras impactar.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func _on_area_entered(area):
+    # 1. Cláusula de Guardia: Si ya estoy muerto, no molestes
+    if is_dying:
+        return
+        
+    hp -= 1
+    # 2. La bala impacta y desaparece (siempre)
+    area.queue_free()
+    
+    if hp <= 0:
+        die()`
+    }
+  ]}
+/>
+
 ---
 
-## 4. Script Completo
+## 5. Script Completo
 
-Ahora junta todas las piezas. Así queda tu archivo `enemy.gd` final:
+Ahora junta todas las piezas. Así queda tu archivo `enemy_plane.gd` final:
 
 <CodeTabs
   items={[
@@ -233,7 +268,6 @@ func _process(delta):
         fall_speed += 500 * delta
         position.y += fall_speed * delta
         position.x -= speed * 0.5 * delta
-        rotation += 5 * delta
     else:
         position.x -= speed * delta
 
@@ -264,7 +298,7 @@ func die():
 
 Antes de pasar al siguiente capítulo, verifica que todo funciona:
 
-1.  Abre `world.tscn` (tu escena principal).
+1.  Abre `level.tscn` (tu escena principal).
 2.  Arrastra `enemy_plane.tscn` desde el panel **FileSystem** al viewport.
 3.  Posiciona el enemigo a la derecha de la pantalla (para que vuele hacia el jugador).
 4.  Ejecuta el juego (**F5**).

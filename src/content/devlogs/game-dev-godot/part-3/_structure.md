@@ -1,34 +1,24 @@
-# Estructura del Proyecto Godot - Capítulo 3
+---
+title: Estructura del Proyecto - Parte 3
+description: Estructura de archivos y nodos al finalizar la Parte 3.
+---
 
-## Archivos creados en este capítulo
+# Estructura del Proyecto (Parte 3)
 
-| Archivo | Ruta en Godot | Descripción |
-|---------|---------------|-------------|
-| [enemy_plane.gd](./_scripts/enemy_plane.gd) | `res://scripts/enemy_plane.gd` | Script del enemigo básico (avión) |
+| Archivo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `scenes/enemy_plane.tscn` | Escena | [NUEVO] El enemigo básico (Area2D). |
+| `scripts/enemy_plane.gd` | Script | [NUEVO] Lógica del enemigo (movimiento, señales, muerte). |
+| `scenes/player.tscn` | Escena | La nave del jugador (Sin cambios). |
+| `scripts/player.gd` | Script | Controlador del jugador (Sin cambios). |
+| `scenes/bullet.tscn` | Escena | El proyectil (Sin cambios). |
+| `scripts/bullet.gd` | Script | Lógica de la bala (Sin cambios). |
+| `scenes/level.tscn` | Escena | Nivel principal donde probamos el juego. |
 
-## Estructura completa al finalizar el capítulo
-
-```text
-res://
-├── scenes/
-│   ├── player.tscn
-│   ├── world.tscn
-│   ├── bullet.tscn
-│   └── enemy_plane.tscn     ← [NUEVO] Escena del enemigo
-├── scripts/
-│   ├── player.gd
-│   ├── bullet.gd
-│   └── enemy_plane.gd       ← [NUEVO]
-└── sprites/
-    ├── plane_128.png
-    ├── shot-atlas.png
-    └── enemy_128.png        ← [NUEVO] Sprite enemigo
-```
-
-## Nodos del Enemigo (enemy_plane.tscn)
+## Estructura de Nodos (EnemyPlane)
 
 ```text
 EnemyPlane (Area2D)
-├── CollisionShape2D
-└── Sprite2D (texture: enemy_128.png)
+├── Sprite2D (enemy_128.png)
+└── CollisionShape2D (Circle/Rect)
 ```

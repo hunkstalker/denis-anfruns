@@ -1,27 +1,29 @@
 extends Area2D
 
+# Exportamos la velocidad para que la podamos ajustar en el editor
 @export var speed = 150
 @export var hp = 3
 
 var is_dying = false
 var fall_speed = 0.0
 
-func _ready():
+# Ignoramos por ahora _ready()
+func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
-func _process(delta):
+# Añadimos el movimiento en _process
+func _process(delta) -> void:
 	if is_dying:
 		fall_speed += 500 * delta
 		position.y += fall_speed * delta
 		position.x -= speed * 0.5 * delta
-		rotation += 5 * delta
 	else:
 		position.x -= speed * delta
 
 func _on_area_entered(area):
 	if is_dying:
 		return
-		
+
 	hp -= 1
 	area.queue_free()
 	

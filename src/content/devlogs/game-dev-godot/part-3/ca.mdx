@@ -1,0 +1,323 @@
+---
+pubDate: '2026-01-13T10:00:00Z'
+tags: ['godot', 'gdscript', 'signals', 'area2d']
+draft: false
+new: true
+title: 'Godot #3: Senyals i Enemics'
+description: Donem vida al joc amb enemics. Aprèn sobre Area2D, col·lisions i senyals per codi.
+series: gamedev-godot-basics
+seriesTitle: Game Dev amb Godot
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
+lang: ca
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+
+## Enemics i Senyals: Contacte!
+
+Ja disparem, però les nostres bales viatgen cap a l'infinit sense colpejar res. És hora de crear dianes voladores.
+Però abans, una decisió arquitectònica vital.
+
+## 1. El Node Area2D
+
+Per al jugador hem usat `CharacterBody2D` perquè volíem física de moviment precisa (xocar amb parets i lliscar).
+Per a les bales i enemics simples, usarem **`Area2D`**.
+
+**Per què usem Area2D?**
+*   **És més barat**: Consumeix menys CPU que un cos físic complet.
+*   **Permet travessar**: En un *Space Shooter*, no vols que els enemics rebotin, sinó que *detectin* que t'han tocat i explotin. `Area2D` és perfecte per detectar solapaments ("overlap") sense empènyer.
+*   **Superpoders Físics**: Hereta de `CollisionObject2D`, cosa que el fa visible per al motor de física (a diferència d'un `Node2D` normal que seria invisible encara que tingués forma).
+
+### Preparant l'Escena Enemiga
+
+Pots usar el teu propi sprite o descarregar aquest:
+
+![Sprite de l'Enemic](/assets/gamedev-godot-basics/enemy_128.png)
+
+> Clic dret -> Desa la imatge.  
+> *Crèdits: <a href="https://www.freepik.com/free-vector/set-military-aircraft_40063568.htm" target="_blank" rel="noopener noreferrer">Set of military aircraft</a> per **brgfx** a Freepik (Llicència gratuïta amb atribució).*
+
+1.  Crea nova Escena. Node arrel: `Area2D`. Nom: `EnemyPlane`.
+2.  Afegeix `Sprite2D` (la teva nau enemiga).
+3.  Afegeix `CollisionShape2D` (cercle o rectangle que cobreixi la nau).
+4.  **Adjunta un Script** a l'Area2D: Guarda'l com `enemy_plane.gd`.
+
+<Callout type="warning" title="No oblidis la forma!">
+  Un `Area2D` sense `CollisionShape2D` no serveix per a res. Godot et mostrarà una alerta ⚠️ groga si se t'oblida posar-lo.
+</Callout>
+
+## 2. Preparant l'Script
+
+Abans d'escriure el codi, analitzem què necessita fer el nostre enemic. Barrejarem tres conceptes:
+
+### A. Senyals per Codi
+En el capítol anterior vam usar l'editor per connectar senyals. Avui ho farem **per Codi** a `_ready()` usant `connect()`.
+Això permet que cada enemic sigui autònom i sàpiga reaccionar sense necessitat de configurar-lo manualment a l'editor cada cop que n'instanciem un.
+
+### B. Físiques Simulades
+Com que usem `Area2D` i no un cos físic (`RigidBody`), la gravetat no ens afecta.
+Si volem que l'enemic caigui dramàticament en morir, haurem de programar aquesta caiguda manualment modificant la seva posició. És un truc visual molt comú i barat.
+
+### C. Estat
+Necessitarem saber si l'enemic està viu (movent-se recte) o morint (caient). Usarem una variable ("bandera") per controlar aquest estat.
+
+## 3. Programant l'Enemic
+
+Construirem l'script peça a peça.
+
+### Fase 1: Moviment Bàsic
+Primer, fem que es mogui a l'esquerra. Res nou aquí.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+# Exportem la velocitat perquè la puguem ajustar a l'editor
+@export var speed = 150
+
+# Ignorem per ara _ready()
+func _ready() -> void:
+    pass
+
+# Afegim el moviment a _process
+func _process(delta) -> void:
+    position.x -= speed * delta`
+    }
+  ]}
+/>
+
+**Aprofundint en `@export`:**
+
+A Part 1 vam veure que `@export` fa que la variable aparegui a l'Inspector. Però hi ha més:
+
+1.  **Balanceig sense recompilar**: Pots canviar `speed` a l'Inspector mentre el joc està PAUSAT (F7) i veure l'efecte immediatament. Això és inavaluable per ajustar la dificultat.
+2.  **Valors per instància**: Si tens 3 enemics a l'escena, cada un pot tenir un `speed` diferent SENSE modificar l'script. Simple: selecciona'n un i canvia el seu valor a l'Inspector.
+3.  **Documentació implícita**: El nom de la variable apareix a l'editor, fent que altres (o tu del futur) entenguin què es pot ajustar.
+
+### Fase 2: Connexió de Senyals
+Ara afegim la connexió. Recorda: `connect(qui_respon)`.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func _ready():
+    # area_entered és un senyal d'Area2D, amb .connect farem que cridi a una 
+    # funció que definirem ara més avall
+    area_entered.connect(_on_area_entered)
+
+# Aquesta funció s'executarà quan alguna cosa toqui aquest el CollisionShape2D d'aquest Area2D
+# gràcies al comportament d'area_entered
+func _on_area_entered(area):
+    print("M'han tocat!") # <-- Això és només temporal`
+    }
+  ]}
+/>
+
+**D'on surt el paràmetre `area`?**
+
+El senyal `area_entered` no només avisa de la col·lisió, també passa informació: l'**altre** `Area2D` que ha col·lisionat amb tu. En el nostre cas, aquest "altre" és la bala disparada pel jugador.
+
+Per això, dins de `_on_area_entered(area)`, la variable `area` conté una referència directa al node bala. Això ens permet fer coses com `area.queue_free()` per destruir-la.
+
+### Fase 3: Vida i Mort
+Afegim vida (`hp`) i la lògica de rebre dany.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `@export var speed = 150
+@export var hp = 3 # Afegim la variable hp per controlar la vida i l'exposem 
+                   # a l'editor per comoditat
+
+# Codi intermedi ---
+
+func _on_area_entered(area):
+    # El paràmetre 'area' és l'ALTRE Area2D que ha col·lisionat, la bala
+    hp -= 1
+    # area.queue_free() # Si ho descomentes, la bala es destruirà (no travessarà)
+    
+    # Un condicional 'if' bàsic, si hp és menor o igual a 0, crida a die()
+    if hp <= 0:
+        die()
+
+func die():
+    # Com ja hem explicat, queue_free() eliminarà l'Area2D 
+    # (el posa en una cua per eliminar-lo)
+    queue_free()`
+    }
+  ]}
+/>
+
+### Fase 4: Mort Dramàtica (Físiques Fake)
+Com que usem `Area2D` i no `RigidBody2D`, no tenim física real. Anem a "fingir" que l'enemic cau en morir.
+Necessitem una variable `is_dying` per saber si està en "mode caiguda".
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `# Definim un parell de variables d'estat de l'enemic
+var is_dying = false # booleà, si està mort o no, per defecte no està mort (false)
+var fall_speed = 0.0 # número, controla la velocitat de caiguda, per defecte 0
+
+func _process(delta):
+    if is_dying:
+        # Caiguda amb gravetat simulada, si mor li afegim velocitat
+        fall_speed += 500 * delta 
+        # Ara, tenint la velocitat li diem cap a on moure's
+        position.y += fall_speed * delta # Li afegim velocitat vertical
+        position.x -= speed * 0.5 * delta # Li restem velocitat horitzontal (frenada)
+    else:
+        position.x -= speed * delta # Moviment normal que ja teníem`
+    }
+  ]}
+/>
+
+**Què és aquest `else`?**
+Fins ara hem usat `if` ("Si passa això..."). L'`else` significa **"Si NO passa això..."**.
+És com un interruptor de dues vies:
+*   **IF (`is_dying` és true)**: Executa la física de caiguda.
+*   **ELSE (si no, en l'altre cas)**: Executa el moviment normal cap a l'esquerra.
+
+Això ens garanteix que l'enemic **mai** farà les dues coses alhora. O està s'està acostant al player, o està morint.
+
+### Fase 5: Eliminació de la Instància
+Quan `hp` arriba a 0, cridem a `die()`. Aquesta funció:
+1. Activa l'estat `is_dying` perquè `_process` executi la caiguda.
+2. Desactiva les col·lisions per ignorar impactes durant l'animació.
+3. Usa un timer per destruir el node després d'1 segon.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func die():
+    is_dying = true
+    # set_deferred evita errors si es crida durant una col·lisió
+    $CollisionShape2D.set_deferred("disabled", true)
+    # Espera 1 segon i destrueix
+    await get_tree().create_timer(1.0).timeout
+    queue_free()`
+    }
+  ]}
+/>
+
+### Fase 6: Evitant Bugs (La Clàusula de Guàrdia)
+
+Hi ha un detall subtil però perillós. Què passa si li fotem 20 trets a l'enemic mentre està caient?
+Que cridaríem a `die()` 20 cops.
+
+Per evitar això millorem `_on_area_entered` amb dues regles d'or:
+1.  **Si ja estic morint, ignora les bales**: Usem `if is_dying: return` per sortir de la funció immediatament.
+2.  **Si em toques, desapareixes**: La bala (`area`) s'ha de destruir sempre després d'impactar.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func _on_area_entered(area):
+    # 1. Clàusula de Guàrdia: Si ja estic mort, no molestis
+    if is_dying:
+        return
+        
+    hp -= 1
+    # 2. La bala impacta i desapareix (sempre)
+    area.queue_free()
+    
+    if hp <= 0:
+        die()`
+    }
+  ]}
+/>
+
+---
+
+## 5. Script Complet
+
+Ara ajunta totes les peces. Així queda el teu arxiu `enemy_plane.gd` final:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `extends Area2D
+
+@export var speed = 150
+@export var hp = 3
+
+var is_dying = false
+var fall_speed = 0.0
+
+func _ready():
+    area_entered.connect(_on_area_entered)
+
+func _process(delta):
+    if is_dying:
+        fall_speed += 500 * delta
+        position.y += fall_speed * delta
+        position.x -= speed * 0.5 * delta
+    else:
+        position.x -= speed * delta
+
+func _on_area_entered(area):
+    if is_dying:
+        return
+        
+    hp -= 1
+    area.queue_free()
+    
+    if hp <= 0:
+        die()
+
+func die():
+    is_dying = true
+    $CollisionShape2D.set_deferred("disabled", true)
+    await get_tree().create_timer(1.0).timeout
+    queue_free()`
+    }
+  ]}
+/>
+
+Fet! Has creat un enemic autònom que gestiona el seu propi moviment, les seves col·lisions i la seva mort, tot encapsulat en un script robust.
+
+---
+
+## Provant al teu Món
+
+Abans de passar al següent capítol, verifica que tot funciona:
+
+1.  Obre `level.tscn` (la teva escena principal).
+2.  Arrossega `enemy_plane.tscn` des del panell **FileSystem** al viewport.
+3.  Posiciona l'enemic a la dreta de la pantalla (perquè voli cap al jugador).
+4.  Executa el joc (**F5**).
+5.  Dispara a l'enemic i verifica:
+    *   Les bales desapareixen en impactar.
+    *   L'enemic perd HP i eventualment cau girant.
+    *   Després d'1 segon de caiguda, desapareix.
+
+Si tot funciona, felicitats! El teu sistema de combat està operatiu.
+
+---
+
+## Repassem el que hem après
+
+1.  **`Area2D`**: Node per detectar solapaments sense física d'empenta.
+2.  **Senyals per codi**: Usar `signal.connect(funció)` a `_ready()` per encapsular la lògica.
+3.  **Estat (`is_dying`)**: Usar variables "bandera" per controlar el comportament.
+4.  **Físiques simulades**: Modificar `position` manualment per crear efectes de caiguda.
+5.  **`set_deferred()`**: Desactivar col·lisions de forma segura durant callbacks de física.
+6.  **`await` + Timer**: Esperar un temps abans d'executar codi (ex: destruir després d'1 segon).
+
+En el **proper capítol**, aprendrem a donar feedback visual amb **Shaders** (el famós "Hit Flash").

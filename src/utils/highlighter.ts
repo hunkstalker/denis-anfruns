@@ -1,10 +1,11 @@
 import { createHighlighter } from 'shiki'
 
-let highlighter: Awaited<ReturnType<typeof createHighlighter>> | null = null
+// Store the PROMISE, not the result, to handle parallel calls
+let highlighterPromise: ReturnType<typeof createHighlighter> | null = null
 
 export const getHighlighterInstance = async () => {
-	if (!highlighter) {
-		highlighter = await createHighlighter({
+	if (!highlighterPromise) {
+		highlighterPromise = createHighlighter({
 			themes: [
 				'github-light',
 				'github-dark',
@@ -85,6 +86,7 @@ export const getHighlighterInstance = async () => {
 								'punctuation.decorator',
 								'keyword.control.export',
 								'keyword.other.export',
+								'keyword.other.export-file', // Extra safety
 							],
 							settings: { foreground: '#ffb96a' },
 						},
@@ -111,5 +113,5 @@ export const getHighlighterInstance = async () => {
 			],
 		})
 	}
-	return highlighter
+	return highlighterPromise
 }

@@ -1,11 +1,19 @@
+---
+title: Estructura del Proyecto - Parte 2
+description: Estructura de archivos y nodos al finalizar la Parte 2.
+---
+
 # Estructura del Proyecto Godot - Capítulo 2
 
-## Archivos creados en este capítulo
+## Archivos del Proyecto (Parte 2)
 
-| Archivo | Ruta en Godot | Descripción |
-|---------|---------------|-------------|
-| [bullet.gd](./_scripts/bullet.gd) | `res://scripts/bullet.gd` | Script de la bala (movimiento y limpieza) |
-| [player.gd](./_scripts/player.gd) | `res://scripts/player.gd` | Actualizado para disparar |
+| Archivo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `scenes/bullet.tscn` | Escena | [NUEVO] El proyectil (Area2D). |
+| `scripts/bullet.gd` | Script | [NUEVO] Lógica de la bala (movimiento y limpieza). |
+| `scenes/player.tscn` | Escena | La nave del jugador (Actualizada con Muzzle). |
+| `scripts/player.gd` | Script | Controlador actualizado con disparo. |
+| `scenes/level.tscn` | Escena | Nivel principal. |
 
 ## Estructura completa al finalizar el capítulo
 
