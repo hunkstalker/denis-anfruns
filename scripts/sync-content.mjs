@@ -56,9 +56,15 @@ function parseFrontmatter(content) {
 			// Handle values that might contain colons (like URLs or times)
 			let value = parts.slice(1).join(':').trim()
 
-			// Remove quotes
-			if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1)
-			else if (value.startsWith("'") && value.endsWith("'")) value = value.slice(1, -1)
+			// Remove quotes and unescape
+			if (value.startsWith('"') && value.endsWith('"')) {
+				// Unescape: handle both \" and \\" patterns
+				value = value.slice(1, -1)
+					.replace(/\\\\"/g, '"')  // \\" -> "
+					.replace(/\\"/g, '"')    // \" -> "
+			} else if (value.startsWith("'") && value.endsWith("'")) {
+				value = value.slice(1, -1)
+			}
 
 			// Handle booleans
 			if (value === 'true') data[key] = true
