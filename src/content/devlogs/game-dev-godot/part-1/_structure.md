@@ -12,11 +12,11 @@
 res://
 ├── scenes/
 │   ├── player.tscn          ← Escena del jugador (CharacterBody2D + CollisionShape2D + Sprite2D)
-│   └── world.tscn           ← Escena principal del mundo (Node2D + Camera2D + player instance)
+│   └── level.tscn           ← Escena principal del mundo (Node2D + Camera2D + player instance)
 ├── scripts/
 │   └── player.gd            ← Script de movimiento
 └── sprites/
-    └── plane_128.png        ← Sprite de la nave
+    └── player.png        ← Sprite de la nave
 ```
 
 ## Nodos del Player (player.tscn)
@@ -27,10 +27,10 @@ Player (CharacterBody2D)
 └── Sprite2D (texture: plane_128.png)
 ```
 
-## Nodos del World (world.tscn)
+## Nodos del Level (level.tscn)
 
 ```text
-World (Node2D)
+Level (Node2D)
 ├── Camera2D (Anchor Mode: Fixed Top Left)
-└── player (instancia de player.tscn, posición: 576, 324)
+└── player (instancia de player.tscn, posición: 400, 300)
 ```

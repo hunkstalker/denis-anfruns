@@ -4,7 +4,7 @@
 
 | Archivo | Ruta en Godot | Descripción |
 |---------|---------------|-------------|
-| [enemy.gd](./_scripts/enemy.gd) | `res://scripts/enemy.gd` | Script del enemigo básico |
+| [enemy_plane.gd](./_scripts/enemy_plane.gd) | `res://scripts/enemy_plane.gd` | Script del enemigo básico (avión) |
 
 ## Estructura completa al finalizar el capítulo
 
@@ -14,21 +14,21 @@ res://
 │   ├── player.tscn
 │   ├── world.tscn
 │   ├── bullet.tscn
-│   └── enemy.tscn           ← [NUEVO] Escena del enemigo
+│   └── enemy_plane.tscn     ← [NUEVO] Escena del enemigo
 ├── scripts/
 │   ├── player.gd
 │   ├── bullet.gd
-│   └── enemy.gd             ← [NUEVO]
+│   └── enemy_plane.gd       ← [NUEVO]
 └── sprites/
     ├── plane_128.png
     ├── shot-atlas.png
     └── enemy_128.png        ← [NUEVO] Sprite enemigo
 ```
 
-## Nodos del Enemigo (enemy.tscn)
+## Nodos del Enemigo (enemy_plane.tscn)
 
 ```text
-Enemy (Area2D)
+EnemyPlane (Area2D)
 ├── CollisionShape2D
 └── Sprite2D (texture: enemy_128.png)
 ```

@@ -13,7 +13,7 @@
 res://
 ├── scenes/
 │   ├── player.tscn
-│   ├── world.tscn
+│   ├── level.tscn
 │   └── bullet.tscn          ← [NUEVO] Escena de la bala
 ├── scripts/
 │   ├── player.gd            ← Actualizado

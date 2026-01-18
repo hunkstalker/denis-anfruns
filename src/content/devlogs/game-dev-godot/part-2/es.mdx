@@ -53,9 +53,9 @@ Igual que hicimos con la nave, si quieres puedes descargar esta imagen para la b
     *   En la ventana emergente verás tu imagen. Configura las divisiones: **Horizontal: 3**, **Vertical: 1**.
     *   Selecciona los 3 cuadros (haz clic o arrastra) para iluminarlos y pulsa **Add 3 frames**.
     *   **Configuración de la Animación**:
-        *   Busca el botón **"Loop"** (icono de flechas giratorias) en el panel izquierdo y **DESACTÍVALO**. Queremos que crezca una vez y se quede grande, no que palpite.
+        *   Busca el botón **"Animation Looping"** (icono de flechas giratorias) en el panel izquierdo y **DESACTÍVALO**. Queremos que crezca una vez y se quede grande, no que palpite.
         *   Cambia **FPS** (Speed) a **12**. Como son solo 3 frames, esto hará que "crezca" súper rápido (en 0.25 segundos).
-    *   Finalmente, en el **Inspector** del nodo `AnimatedSprite2D`, activa el botón **"Autoplay on Load"** (icono con una `A` y una flecha junto a la propiedad Animation). Esto asegura que la animación arranque sola al disparar.
+    *   Finalmente, a la izquierda de **"Animation Looping"** del nodo `AnimatedSprite2D`, activa el botón **"Autoplay on Load"**. Esto asegura que la animación arranque sola al disparar.
 5.  Hijo: **`VisibleOnScreenNotifier2D`**: Este nodo es mágico. Nos avisa cuando el objeto sale de la pantalla.
     *   *Asegúrate de que el rectángulo rosa de este nodo cubra todo el sprite.*
 
@@ -160,41 +160,186 @@ Para disparar, necesitamos que el script tome decisiones. Usamos dos herramienta
 1.  **`if` (Condicional)**: "SI pasa esto... haz esto otro".
 2.  **`Input`**: En el capítulo anterior usamos `get_vector`. Ahora usaremos `is_action_pressed` ("¿Está la tecla mantenida?").
 
-Pero cuidado: `_physics_process` se ejecuta 60 veces por segundo. Si disparamos cada vez que la tecla está "mantenida", crearemos una línea sólida de 60 balas en un segundo. 
+**Configuración Obligatoria (Input Map):**
+Igual que hicimos con WASD:
+1.  Ve a **Project > Project Settings > Input Map**.
+2.  Añade una nueva acción llamada `shoot`.
+3.  Asígnale la **Barra Espaciadora** y, si quieres, el **Clic Izquierdo del Ratón** (Mouse Left Button) o el botón **A/X del Mando**.
 
-Necesitamos un **Limitador de Cadencia** (Cooldown). Una forma sencilla es usar una variable "bandera" (`can_shoot`) y un temporizador.
-
-Veamos un ejemplo (que tiene un problema):
-
+### Paso 1: Cargar la munición
+Para disparar balas, primero debemos decirle al script **cuál** es la escena de la bala.
+Añadimos esta línea al principio del script, junto a las otras variables:
 
 <CodeTabs
   items={[
     {
       label: 'player.gd',
       lang: 'gdscript',
-      code: `
-extends CharacterBody2D
+      code: `extends CharacterBody2D
 
 @export var speed = 400
-@export var fire_rate = 0.125 # Cadencia rápida
+# "preload" carga el plano en memoria RAM al iniciar el juego
+var bullet_scene = preload("res://scenes/bullet.tscn")`
+    }
+  ]}
+/>
+
+### Paso 2: Apretar el gatillo (Input)
+Ahora vamos al `_physics_process` y preguntamos si el jugador está pulsando el botón de disparo.
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `func _physics_process(delta: float) -> void:
+    # ... código de movimiento ...
+
+    # Si se MANTIENE pulsada la tecla "shoot"
+    if Input.is_action_pressed("shoot"):
+        shoot()`
+    }
+  ]}
+/>
+
+> **Nota**: `is_action_pressed` devuelve `true` mientras mantengas la tecla pulsada. Si quisieras disparar solo una vez por clic (semiautomático), usarías `is_action_just_pressed`. Para este juego queremos fuego automático.
+
+### Paso 3: ¡Fuego! (La función básica)
+Creamos la función `shoot()` al final del archivo. Aquí ocurre la magia de instanciar.
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `func shoot():
+    # 1. Crear una copia de la bala en memoria
+    var bala = bullet_scene.instantiate()
+    
+    # 2. Añadirla al mundo visible (como hija nuestra)
+    add_child(bala)`
+    }
+  ]}
+/>
+
+### El Problema 1: Disparo sin control
+Si ejecutas el juego ahora y mantienes pulsado espacio, verás que salen **miles de balas**.
+¿Por qué? Porque `_physics_process` se ejecuta **60 veces por segundo**.
+Estás creando 60 balas cada segundo. Eso destruirá el rendimiento y la jugabilidad.
+
+**Solución**: Necesitamos un **Cooldown** (Tiempo de espera entre disparos).
+
+### El Problema 2: Las balas se mueven con la nave
+Si te mueves mientras disparas, verás que **las balas se mueven contigo**.
+¿Por qué? Porque usaste `add_child(bala)`.
+Al ser hija de la nave, la bala hereda tu posición y rotación. Es decir, ¡llevas las balas pegadas al cuerpo!
+
+**Solución**: La bala debe ser hija del **Mundo**, no de la Nave.
+
+---
+
+### Paso 4: Controlar el caos (Cooldown y Jerarquías)
+
+Para arreglar los 2 problemas necesitamos mejorar nuestro script paso a paso.
+
+#### 4.1. Variables Nuevas
+Necesitamos memoria para saber cuánto tiempo ha pasado y si podemos disparar. Añade esto al principio:
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `@export var fire_rate = 0.125 # Tiempo entre balas (0.125s = 8 balas/seg)
+var can_shoot = true          # ¿El arma está lista?
+var shoot_timer = 0.0         # Contador de tiempo`
+    }
+  ]}
+/>
+
+#### 4.2. El Contador (La Lógica)
+En el `_physics_process`, necesitamos que alguien cuente el tiempo hacia atrás cuando el arma se está "enfriando".
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `func _physics_process(delta: float) -> void:
+    # ... aqui va el movimiento ...
+  
+    # GESTIÓN DEL COOLDOWN
+    if not can_shoot:
+        shoot_timer -= delta  # Restamos el tiempo que ha pasado
+        if shoot_timer <= 0.0:
+            can_shoot = true  # ¡Recargada!
+            
+    if Input.is_action_pressed("shoot") and can_shoot: # <-- añade "and can_shoot" al 
+    # final para controlar el ratio de disparo.
+        shoot()`
+    }
+  ]}
+/>
+
+#### 4.3. El Disparo Mejorado
+Actualizamos la función `shoot()`. Ahora, además de disparar, debe bloquear el arma e iniciar el contador.
+Y lo más importante: **Arreglar la jerarquía**.
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `func shoot():
+    # 1. Bloqueamos el arma
+    can_shoot = false
+    shoot_timer = fire_rate
+    
+    # 2. Instanciamos
+    var bala = bullet_scene.instantiate()
+    
+    # 3. SOLUCIÓN AL CANGURO:
+    # En lugar de add_child(bala), la damos en adopción al PADRE (el Mundo)
+    get_parent().add_child(bala)
+    
+    # 4. Importante: Como ahora es independiente, debemos decirle "Ves a donde estoy yo"
+    bala.global_position = global_position`
+    }
+  ]}
+/>
+
+---
+
+### Código Final: Player.gd
+Si juntamos todas las piezas, así debe quedar tu script completo y funcional:
+
+<CodeTabs
+  items={[
+    {
+      label: 'player.gd',
+      lang: 'gdscript',
+      code: `extends CharacterBody2D
+
+@export var speed = 400
+@export var fire_rate = 0.125
 var bullet_scene = preload("res://scenes/bullet.tscn")
 
 var can_shoot = true
 var shoot_timer = 0.0
 
 func _physics_process(delta: float) -> void:
-    # Movimiento
+    # 1. Movimiento
     var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
     velocity = direction * speed
     move_and_slide()
     
-    # Cooldown (Timer)
+    # 2. Lógica del Cooldown
     if not can_shoot:
         shoot_timer -= delta
         if shoot_timer <= 0.0:
             can_shoot = true
 
-    # Disparo
+    # 3. Gatillo (ahora comprobamos "can_shoot")
     if Input.is_action_pressed("shoot") and can_shoot:
         shoot()
 
@@ -203,70 +348,22 @@ func shoot():
     shoot_timer = fire_rate
     
     var bala = bullet_scene.instantiate()
-    add_child(bala) # <--- EL ERROR (Canguro)`
-    }
-  ]}
-/>
-
-Aquí hemos creado una función propia `shoot()` para organizar el código. Usamos `shoot_timer` para controlar el ritmo de disparo de forma precisa y sincronizada con el motor de físicas.
-
-### El Problema de la Jerarquía
-
-**¡Prueba el juego ahora (F5)!**
-Muévete con la nave mientras disparas ráfagas. ¿Notas algo raro?
-Las balas se mueven contigo. Si avanzas, las balas te siguen.
-
-Esto ocurre porque la bala es **hija de la nave**. Hereda su movimiento.
-
-La bala será **hija de la nave**.
-*   Si la nave avanza, la bala avanza con ella (más su propia velocidad).
-*   Si la nave rota, la bala rotará orbitando alrededor de la nave.
-
-¡Queremos que la bala sea independiente! Una vez disparada, no debería importarle qué hace la nave.
-
-### La Solución: Divorcio de Coordenadas
-La bala debe nacer en el **Mundo**, no en la Nave. Pero necesitamos que nazca *donde está la nave*.
-
-<CodeTabs
-  items={[
-    {
-      label: 'player.gd',
-      lang: 'gdscript',
-      code: `func shoot():
-    can_shoot = false
-    shoot_timer = fire_rate
-    
-    var bala = bullet_scene.instantiate()
-    # 1. Añadir al "Padre" (el Mundo) PRIMERO
     get_parent().add_child(bala)
-     
-    # 2. COLOCAR
     bala.global_position = global_position`
     }
   ]}
 />
-**Desglose de la Inyección:**
 
-**1. `var bala = bullet_scene.instantiate()`**
-`bullet_scene` es solo el plano (el molde). No existe en el juego. Para tener una bala real, usamos `.instantiate()`, que crea una copia tangible en la memoria lista para ser usada. Guardamos esta nueva bala en una variable.
+Ahora sí. Tenemos un control de ritmo preciso y las balas son independientes.
 
-**2. `get_parent().add_child(bala)`**
-Si usáramos `add_child(bala)` directamente, la bala sería hija de la Nave. Esto causaría que rotara y se moviera con ella (como si estuviera pegada al casco).
-Para "divorciarla", pedimos el padre de la nave (`get_parent()`, que es el Mundo) y le entregamos la bala a él. Así ambos viven en el mismo universo pero se mueven independientes.
 
-**3. `bala.global_position = global_position`**
-Al nacer en el Mundo, la bala aparecería en el origen (0,0) por defecto. Necesitamos teletransportarla a la boca del cañón.
-Al igualar la `global_position` de la bala con la nuestra (o la del `Muzzle`), nos aseguramos de que empiece su viaje exactamente donde estamos nosotros en el universo.
 
-**4. Velocidad y Física**
-Como nuestras balas van muy rápido (1500), no necesitamos calcular inercias complejas. La propia velocidad hace que el "efecto doppler" sea invisible. Es la ventaja de los juegos Arcade: a veces, la solución más bruta es la mejor.
-
-### 4. Ajustando la Posición de Salida (Marker2D)
+## 4. Ajustando la Posición de Salida (Marker2D)
 
 Ahora mismo la bala sale del centro de la nave (su barriga). Queda feo.
 Para arreglarlo, usaremos un nodo invisible que sirva de "referencia".
 
-1.  Añade un nodo hijo **`Marker2D`** a tu Player.
+1.  Abre la escena de Player y añade un nodo hijo **`Marker2D`** al nodo principal (también llamado Player).
 2.  Llámalo **`Muzzle`** (Boquilla).
 3.  Muévelo visualmente hasta la punta del cañón (o donde quieras que salgan las balas).
 

@@ -38,10 +38,10 @@ Puedes usar tu propio sprite o descargar este:
 > Clic derecho -> Guardar imagen.  
 > *Créditos: <a href="https://www.freepik.com/free-vector/set-military-aircraft_40063568.htm" target="_blank" rel="noopener noreferrer">Set of military aircraft</a> por **brgfx** en Freepik (Licencia gratuita con atribución).*
 
-1.  Crea nueva Escena. Nodo raíz: `Area2D`. Nombre: `Enemy`.
+1.  Crea nueva Escena. Nodo raíz: `Area2D`. Nombre: `EnemyPlane`.
 2.  Añade `Sprite2D` (tu nave enemiga).
 3.  Añade `CollisionShape2D` (círculo o rectángulo que cubra la nave).
-4.  **Adjunta un Script** en Area2D: Guárdalo como `enemy.gd`.
+4.  **Adjunta un Script** en Area2D: Guárdalo como `enemy_plane.gd`.
 
 <Callout type="warning" title="¡No olvides la forma!">
   Un `Area2D` sin `CollisionShape2D` no sirve para nada. Godot te mostrará una alerta ⚠️ amarilla si se te olvida ponerlo.
@@ -72,7 +72,7 @@ Primero, hagamos que se mueva a la izquierda. Nada nuevo aquí.
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `extends Area2D
 
@@ -215,7 +215,7 @@ Ahora junta todas las piezas. Así queda tu archivo `enemy.gd` final:
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `extends Area2D
 
@@ -265,7 +265,7 @@ func die():
 Antes de pasar al siguiente capítulo, verifica que todo funciona:
 
 1.  Abre `world.tscn` (tu escena principal).
-2.  Arrastra `enemy.tscn` desde el panel **FileSystem** al viewport.
+2.  Arrastra `enemy_plane.tscn` desde el panel **FileSystem** al viewport.
 3.  Posiciona el enemigo a la derecha de la pantalla (para que vuele hacia el jugador).
 4.  Ejecuta el juego (**F5**).
 5.  Dispara al enemigo y verifica:

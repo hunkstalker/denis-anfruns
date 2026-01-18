@@ -47,7 +47,7 @@ Si la Escena es la casa, los Nodos son los ladrillos. Y hay muchos tipos de ladr
 #### Prepara tus Assets
 Antes de empezar, necesitas una nave. Puedes dibujar una o usar esta de prueba:
 
-![Nave del Jugador](/assets/gamedev-godot-basics/plane_128.png)
+![Nave del Jugador](/assets/gamedev-godot-basics/player.png)
 
 > Clic derecho -> Guardar imagen.  
 > *Créditos: <a href="https://puszke.itch.io/psx-plane" target="_blank" rel="noopener noreferrer">PSX Plane</a> por **Puck**.*
@@ -82,7 +82,8 @@ Antes de escribir código, necesitas saber leer el mapa. Si nunca has programado
 
 1.  **`extends` (Herencia)**:
     Es la primera línea. Le dice a Godot: *"Soy una extensión de..."*.
-    *   `extends CharacterBody2D`: Significa "Tengo todos los métodos y propiedades de un CharacterBody2D, más lo que yo añada aquí".
+    
+    * `extends CharacterBody2D`: Si extiendes de como en este caso `CharacterBody2D` significará que ahora el script tiene todos los métodos y propiedades de un CharacterBody2D, más lo que añadas.
     
     Esto se llama **Herencia de Clases**. Es un concepto fundamental de programación orientada a objetos. Tu script no empieza de cero: hereda un "vehículo" ya funcional con ruedas, motor y volante (`CharacterBody2D`), y tú solo añades la personalización (tu lógica de movimiento).
 2.  **`func` (Acción/Verbo)**:
@@ -132,14 +133,6 @@ Para moverla, necesitamos dos cosas mágicas que viven dentro de `CharacterBody2
 
 **No tienes que pasarle `velocity` a `move_and_slide()`. Lo hace solo.**
 
-<Callout type="warning" title="¡Espera! ¿Qué es move_right?">
-  Por defecto, Godot usa `ui_right`, `ui_left`, etc. para las flechas del teclado.
-  Pero nosotros vamos a usar nombres profesionales ("move_right", "move_left") para poder asignar **WASD y Joystick** a la vez.
-
-  1.  Ve a **Proyecto > Configuración del Proyecto > Mapa de Entradas**.
-  2.  Añade las acciones: `move_right`, `move_left`, `move_up`, `move_down`.
-  3.  Asigna sus teclas (WASD) y los ejes de tu mando favorito.
-</Callout>
 
 Aquí tienes el código completo. **Te recomiendo escribirlo a mano** para memorizar los comandos, pero si tienes prisa, puedes copiarlo.
 
@@ -163,11 +156,11 @@ func _physics_process(delta):
 
 **1. `extends CharacterBody2D`**
 
-Tu script "hereda" de CharacterBody2D. Esto significa que tienes acceso a `velocity` (una variable interna) y `move_and_slide()` (un método que hace la magia de mover y chocar). Sin esta línea, GDScript no sabría qué eres.
+Ya sabemos que esto es herencia. Aquí lo usamos concretamente para **desbloquear la variable `velocity`**. Si extendiéramos de un simple `Node2D`, esta variable no existiría y tendríamos que calcular la física manualmente. Al heredar de `CharacterBody2D`, ganamos todo el sistema de colisiones sin tener que reescribir a mano toda una lógica que ya nos da CharacterBody2D.
 
 **2. `func _physics_process(delta):`**
 
-Godot llama esta función automáticamente **60 veces por segundo** (o el tick rate que configures). Todo lo que esté dentro se ejecuta en bucle. El parámetro `delta` contiene cuánto tiempo ha pasado desde el último frame (en segundos) – lo usaremos más adelante para hacer que todo vaya a la misma velocidad en cualquier PC.
+Usamos el bucle de físicas (y no el `_process` normal) porque `move_and_slide()` necesita una **estabilidad perfecta** para calcular choques. Si usáramos el loop visual, la nave podría atravesar paredes si el juego va lento. Aquí nos aseguramos de que el movimiento sea sólido como una roca.
 
 **3. `var direction = Input.get_vector(...)`**
 
@@ -179,6 +172,21 @@ Godot llama esta función automáticamente **60 veces por segundo** (o el tick r
 | Derecha + Abajo | `(0.707, 0.707)` ← ¡Normalizado! |
 
 `Input.get_vector()` lee las teclas y construye un vector de dirección. **Ya viene normalizado** (magnitud 1), así que moverse en diagonal no es más rápido que moverse recto.
+
+**¿Pero qué es "move_right"?**
+Si intentas ejecutar el código ahora, **no funcionará**. Godot no sabe qué teclas son esas. Tienes que configurarlas tú para definir qué significa "mover a la derecha" (puede ser la tecla D, la Flecha Derecha o el Joystick).
+
+**Configúralo ahora:**
+1.  Ve a **Project > Project Settings > Input Map**.
+2.  Escribe `move_right` en la barra "**Add New Action**" y pulsa **Add**.
+3.  Busca la nueva acción en la lista inferior y pulsa el botón **+** a su derecha.
+4.  Pulsa la tecla **D** (y opcionalmente la tecla Flecha Derecha) y dale a **OK**.
+5.  Repite el proceso para el resto:
+    *   `move_left`: Tecla **A**.
+    *   `move_up`: Tecla **W**.
+    *   `move_down`: Tecla **S**.
+  
+Si quieres, puedes adicionalmente en cada acción añadir por ejemplo el joystick (stick izquierdo) y al cruceta (d-pad).
 
 **4. `velocity = direction * 300`**
 
@@ -319,19 +327,19 @@ Hasta ahora hemos trabajado en el "taller" (la escena del `Player`). Pero una na
 Si le das al botón de **Play (F5)** ahora, te pedirá una escena principal. Vamos a crearla:
 
 1.  Crea una **Nueva Escena**.
-2.  Elige **2D Scene** (Node2D). Esta vez no queremos físicas, solo un contenedor para el mundo. Llámalo `World` (PascalCase, porque es un Nodo).
-3.  Guárdala en `scenes/world.tscn` (snake_case, porque es un archivo).
+2.  Elige **2D Scene** (Node2D). Esta vez no queremos físicas, solo un contenedor para el mundo. Llámalo `Level` (PascalCase, porque es un Nodo).
+3.  Guárdala en `scenes/level.tscn` (snake_case, porque es un archivo).
 
 #### Instanciando al Jugador (El "Link")
 Aquí ocurre la magia de Godot. No vamos a "copiar y pegar" al jugador. Vamos a **referenciarlo**.
 1.  Busca tu archivo `player.tscn` en la carpeta `scenes` (abajo a la izquierda).
-2.  **Arrástralo** desde el explorador de archivos y suéltalo dentro del panel de **Escena** (arriba a la izquierda, bajo donde dice `World`). Esto lo colocará automáticamente en la posición `(0, 0)`, perfectamente centrado.
+2.  **Arrástralo** desde el explorador de archivos y suéltalo dentro del panel de **Escena** (arriba a la izquierda, bajo donde dice `Level`). Esto lo colocará automáticamente en la posición `(0, 0)`, perfectamente centrado.
 3.  Verás que aparece con un icono de claqueta de cine 🎬 al lado. Eso significa que es una **Instancia**. Si cambias el `player.tscn` original (ej: lo pintas de rojo), ¡este también cambiará!
 
 #### Luz, Cámara... ¡Coordenadas!
 Para facilitarnos las matemáticas (donde 0 es arriba y el máximo es abajo):
 
-1.  En la escena `World`, añade un nodo hijo **`Camera2D`**.
+1.  En la escena `Level`, añade un nodo hijo **`Camera2D`**.
 2.  En el Inspector, busca **Anchor Mode** y cámbialo a **`Fixed Top Left`**.
     *   *Esto hace que la esquina superior izquierda sea el (0,0), como en las pantallas de píxeles clásicas.*
 
@@ -339,15 +347,18 @@ Para facilitarnos las matemáticas (donde 0 es arriba y el máximo es abajo):
 Ahora que el (0,0) es la esquina, tu nave (que está en 0,0) se verá cortada arriba a la izquierda.
 Vamos a colocarla en el centro exacto usando lógica:
 
-1.  La resolución por defecto de Godot es **1152 x 648**.
-2.  El centro es la mitad: `1152 / 2 = 576` (X) y `648 / 2 = 324` (Y).
+1.  La resolución por defecto de Godot es **1152 x 648** (muy ancha para nuestro juego retro). Vamos a cambiarla a **800 x 600**:
+    *   Ve a **Project > Project Settings > Display > Window**.
+    *   Cambia `Viewport Width` a **800**.
+    *   Cambia `Viewport Height` a **600**.
+2.  El centro ahora es: `800 / 2 = 400` (X) y `600 / 2 = 300` (Y).
 3.  Selecciona el nodo `player` (la instancia).
 4.  En Inspector > Transform > Position, escribe:
-    *   **X**: `1152/2`
-    *   **Y**: `648/2`
+    *   **X**: `800/2`
+    *   **Y**: `600/2`
 
 <Callout type="tip" title="Truco: ¡Godot sabe matemáticas!">
-  Puedes escribir literalmente `1152/2` en la casilla y él hará la cuenta.
+  Puedes escribir literalmente `800/2` en la casilla y él hará la cuenta. O también simplemente puedes mover el Player con el ratón hasta donde quieras en la vista 2D.
 </Callout>
 
 #### ¡A Jugar!

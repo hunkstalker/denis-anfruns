@@ -7,7 +7,7 @@ title: 'Godot #1: Vectors i Moviment'
 description: Entenent les matemàtiques darrere del moviment. Per què normalitzem? Què és Delta? Explicat per a humans.
 series: gamedev-godot-basics
 seriesTitle: Game Dev amb Godot
-seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) utilitzant Godot i un Shoot 'em Up com a excusa pràctica.
+seriesDescription: Aprenem els fonaments del desenvolupament de videojocs (vectors, trigonometria, shaders) usant Godot i un Shoot 'em Up com a excusa pràctica.
 lang: ca
 ---
 
@@ -17,7 +17,7 @@ import VectorDemo from '../../../../components/mdx/interactive/VectorDemo.tsx';
 
 ## La Nau i les Matemàtiques
 
-En aquest capítol crearem la nostra nau i farem que es mogui. Però no copiarem un script. Entendrem **per què** es mou. I per fer-ho, hem de parlar de la nostra amiga (o enemiga): **La Fletxa (El Vector)**.
+En aquest capítol crearem la nostra nau i farem que es mogui. Però no copiarem un script. Entendrem **per què** es mou. I per això, hem de parlar de la nostra amiga (o enemiga): **La Fletxa (El Vector)**.
 
 <Callout type="tip" title="Necessites gràfics?">
   Per seguir aquest curs, necessitaràs una nau. Si no en tens una a mà, et recomanem encaridament el pack gratuït de **[Kenney Space Shooter Extension](https://kenney.nl/assets/space-shooter-extension)**. És net, bonic i perfecte per aprendre.
@@ -32,7 +32,7 @@ El teu monitor és una quadrícula de píxels.
 *   **Y (Vertical)**: Creix cap a **BAIX**.
 
 <Callout type="warning" title="Compte amb la Y!">
-  A les matemàtiques de l'escola, la Y creix cap amunt. En Game Dev, la Y creix cap avall (perquè comencem a dibuixar des de la cantonada superior esquerra). No ho oblidis o la teva nau volarà al revés.
+  A les matemàtiques de l'escola, la Y creix cap amunt. En Game Dev, la Y creix cap avall (perquè comencem a dibuixar des de la cantonada superior esquerra). No ho oblidis o la teva nau volarà cap per avall.
 </Callout>
 
 ### 2. L'Elecció del Node (La Teva Nau)
@@ -42,12 +42,12 @@ Si l'Escena és la casa, els Nodes són els maons. I hi ha molts tipus de maons:
 
 1.  **Node2D**: És la base **per al món 2D**. Té posició `(x, y)`, rotació i escala. (Si estiguéssim en 3D seria `Node3D`, i per a interfícies `Control`, però aquí vivim al pla).
 2.  **RigidBody2D**: Té física real (gravetat, rebots). Si li dones una puntada de peu, surt volant. Difícil de controlar per a un personatge principal.
-3.  **CharacterBody2D**: El terme mitjà perfecte. Té posició (com Node2D) i sap xocar (com RigidBody), però **no es mou sol**. TU ets el motor. És l'estàndard per a personatges en jocs 2D.
+3.  **CharacterBody2D**: El terme mig perfecte. Té posició (com Node2D) i sap xocar (com RigidBody), però **no es mou sol**. TU ets el motor. És l'estàndard per a personatges en jocs 2D.
 
 #### Prepara els teus Assets
 Abans de començar, necessites una nau. Pots dibuixar-ne una o utilitzar aquesta de prova:
 
-![Nau del Jugador](/assets/gamedev-godot-basics/plane_128.png)
+![Nau del Jugador](/assets/gamedev-godot-basics/player.png)
 
 > Clic dret -> Desa la imatge.  
 > *Crèdits: <a href="https://puszke.itch.io/psx-plane" target="_blank" rel="noopener noreferrer">PSX Plane</a> per **Puck**.*
@@ -65,24 +65,25 @@ Abans de començar, necessites una nau. Pots dibuixar-ne una o utilitzar aquesta
     *   **Important**: Fes clic sobre el requadre que posa "CircleShape2D" (s'expandirà).
     *   A **Radius**, escriu `40 px`. Això ajustarà la mida exacta sense escalar el node.
 6.  Afegeix un altre node fill `Sprite2D` perquè es vegi bonic (arrossega la teva imatge de la nau a la propietat Texture).
-7.  Crea una carpeta anomenada `scenes` a l'arrel del projecte i guarda a dins l'escena com a `player.tscn`.
+7.  Crea una carpeta anomenada `scenes` a l'arrel del projecte i desa-hi l'escena com a `player.tscn`.
 
 <Callout type="info" title="Regla d'or: Hitbox vs Sprite">
-  En Game Design, hi ha una regla no escrita: **"Millor que sobri que no que falti"**.
+  En Game Design, hi ha una regla no escrita: **"Més val que en sobri que no que en falti"**.
   
   *   Si la teva col·lisió és **més gran** que la nau, el jugador cridarà *"Però si no m'ha tocat!"* quan mori per l'aire. Això se sent **injust**.
-  *   Si la teva col·lisió és **una mica més petita**, permets que les bales "freguin" la nau sense matar-la. Això genera moments de *"Ui, gairebé!"* que se senten **èpics**.
+  *   Si la teva col·lisió és **una mica més petita**, permets que les bales "freguin" la nau sense matar-la. Això genera moments de *"Ufff, gairebé!"* que se senten **èpics**.
   
-  Dóna-li sempre una mica d'avantatge al jugador. Fes el `CollisionShape` un 10-20% més petit que el dibuix visible.
+  Dona-li sempre una mica d'avantatge al jugador. Fes el `CollisionShape` un 10-20% més petit que el dibuix visible.
 </Callout>
 
 ### 3. Conceptes Bàsics de GDScript
 
-Abans d'escriure codi, necessites saber llegir el mapa. Si mai has programat, això és tot el que necessites saber per ara:
+Abans d'escriure codi, necessites saber llegir el mapa. Si no has programat mai, això és tot el que necessites saber per ara:
 
 1.  **`extends` (Herència)**:
     És la primera línia. Li diu a Godot: *"Sóc una extensió de..."*.
-    *   `extends CharacterBody2D`: Significa "Tinc tots els mètodes i propietats d'un CharacterBody2D, més el que jo afegeixi aquí".
+    
+    * `extends CharacterBody2D`: Si estens de com en aquest cas `CharacterBody2D` significarà que ara l'script té tots els mètodes i propietats d'un CharacterBody2D, més el que afegeixis.
     
     Això es diu **Herència de Classes**. És un concepte fonamental de programació orientada a objectes. El teu script no comença de zero: hereta un "vehicle" ja funcional amb rodes, motor i volant (`CharacterBody2D`), i tu només afegeixes la personalització (la teva lògica de moviment).
 2.  **`func` (Acció/Verb)**:
@@ -90,11 +91,11 @@ Abans d'escriure codi, necessites saber llegir el mapa. Si mai has programat, ai
     *   `func _physics_process(delta)`: És una funció especial que Godot crida a un ritme fix (per defecte **60 vegades per segon**). Tot el que escriguis a dins, es repetirà en bucle per moure coses.
 3.  **`var` (Variable)**:
     És un lloc on guardem informació **a la memòria RAM** de l'ordinador.
-    *   `var velocitat = 300`: Hem reservat un forat a la memòria, li hem posat l'etiqueta "velocitat" i hem guardat el número 300 a dins.
+    *   `var speed = 300`: Hem reservat un lloc a la memòria, li hem posat l'etiqueta "speed" i hem guardat el número 300 a dins.
 
 <Callout type="warning" title="Perill: Tabs vs Espais">
   GODOT NO PERDONA.
-  La "sagnat" (aquests espais a l'esquerra) defineix quin codi està dins de quina funció.
+  La "sagnia" (aquests espais a l'esquerra) defineix quin codi està dins de quina funció.
   *   Utilitza sempre **Tabulacions** (Tecla Tab ↹), no espais.
   *   **Mai barregis** tabs i espais al mateix fitxer o tindràs errors invisibles.
   *   *Nota: El botó de copiar d'aquesta web intenta convertir espais a Tabs automàticament, però si veus errors vermells, revisa això primer.*
@@ -106,11 +107,11 @@ La nostra nau és bonica, però no fa res. Necessitem un **Script**.
 
 1.  Crea una carpeta a l'arrel anomenada `scripts`.
 2.  Selecciona el node arrel `Player`.
-3.  Fes clic a la icona del **Pergamí amb un `+` verd** (a dalt del panell d'escena). O fes clic dret -> **Attach Script**.
+3.  Fes clic a la icona del **Pergamí amb un `+` verd** (a sobre del panell d'escena). O fes clic dret -> **Attach Script**.
 4.  Apareixerà una finestra.
-5.  **Template**: Deixa-ho a `CharacterBody2D: Basic Movement` si vols veure molt codi complex, o posa `Empty` per començar net. Nosaltres ho esborrarem tot, així que és igual.
-6.  **Path**: Aquí està la clau. No ho llencis a l'arrel. Escriu `res://scripts/player.gd`.
-7.  Dóna-li a **Create**.
+5.  **Template**: Deixa-ho en `CharacterBody2D: Basic Movement` si vols veure molt codi complex, o posa `Empty` per començar net. Nosaltres ho esborrarem tot, així que és igual.
+6.  **Path**: Aquí està la clau. No el llencis a l'arrel. Escriu `res://scripts/player.gd`.
+7.  Dona-li a **Create**.
 
 Ara veuràs un editor de text. Benvingut al teu primer programa!
 
@@ -120,9 +121,9 @@ Per moure la nau, necessitem dir-li cap a on anar. Aquí entren els **Vectors**.
 
 Un vector no és més que una fletxa. En videojocs, quan aquesta fletxa ens indica "cap a on", l'anomenem **Vector de Direcció**.
 *   Si toques **Dreta**, el vector apunta a `(1, 0)`.
-*   Si toques **Baix**, el vector apunta a `(0, 1)`.
+*   Si toques **Avall**, el vector apunta a `(0, 1)`.
 
-A Godot, això es diu `Input.get_vector()`.
+En Godot, això es diu `Input.get_vector()`.
 
 Però obtenir el vector no mou la nau. Només ens diu "cap a on vol anar el jugador".
 Per moure-la, necessitem dues coses màgiques que viuen dins de `CharacterBody2D`:
@@ -132,16 +133,8 @@ Per moure-la, necessitem dues coses màgiques que viuen dins de `CharacterBody2D
 
 **No has de passar-li `velocity` a `move_and_slide()`. Ho fa sol.**
 
-<Callout type="warning" title="Espera! Què és move_right?">
-  Per defecte, Godot utilitza `ui_right`, `ui_left`, etc. per a les fletxes del teclat.
-  Però nosaltres utilitzarem noms professionals ("move_right", "move_left") per poder assignar **WASD i Joystick** a la vegada.
 
-  1.  Ves a **Projecte > Configuració del Projecte > Mapa d'Entrades**.
-  2.  Afegeix les accions: `move_right`, `move_left`, `move_up`, `move_down`.
-  3.  Assigna les seves tecles (WASD) i els eixos del teu comandament favorit.
-</Callout>
-
-Aquí tens el codi complet. **Et recomano escriure-ho a mà** per memoritzar les comandes, però si tens pressa, pots copiar-ho.
+Aquí tens el codi complet. **Et recomano escriure'l a mà** per memoritzar les comandes, però si tens pressa, pots copiar-lo.
 
 <CodeTabs
   items={[
@@ -159,30 +152,45 @@ func _physics_process(delta):
   ]}
 />
 
-**Desglossament línia a línia:**
+**Desglossament línia per línia:**
 
 **1. `extends CharacterBody2D`**
 
-El teu script "hereta" de CharacterBody2D. Això significa que tens accés a `velocity` (una variable interna) i `move_and_slide()` (un mètode que fa la màgia de moure i xocar). Sense aquesta línia, GDScript no sabria què ets.
+Ja sabem que això és herència. Aquí ho usem concretament per **desbloquejar la variable `velocity`**. Si estenguéssim d'un simple `Node2D`, aquesta variable no existiria i hauríem de calcular la física manualment. En heretar de `CharacterBody2D`, guanyem tot el sistema de col·lisions sense haver de reescriure a mà tota una lògica que ja ens dona CharacterBody2D.
 
 **2. `func _physics_process(delta):`**
 
-Godot crida aquesta funció automàticament **60 vegades per segon** (o el tick rate que configuris). Tot el que estigui a dins s'executa en bucle. El paràmetre `delta` conté quant temps ha passat des de l'últim frame (en segons) – ho utilitzarem més endavant per fer que tot vagi a la mateixa velocitat a qualsevol PC.
+Usem el bucle de físiques (i no el `_process` normal) perquè `move_and_slide()` necessita una **estabilitat perfecta** per calcular xocs. Si uséssim el loop visual, la nau podria travessar parets si el joc va lent. Aquí ens assegurem que el moviment sigui sòlid com una roca.
 
 **3. `var direction = Input.get_vector(...)`**
 
-| Tecla(es) pressionada(es) | Valor de `direction` |
-|------------------------|----------------------|
+| Tecla/es premuda/es | Valor de `direction` |
+|---------------------|----------------------|
 | Cap | `(0, 0)` |
 | Dreta | `(1, 0)` |
-| Baix | `(0, 1)` |
-| Dreta + Baix | `(0.707, 0.707)` ← Normalitzat! |
+| Avall | `(0, 1)` |
+| Dreta + Avall | `(0.707, 0.707)` ← Normalitzat! |
 
 `Input.get_vector()` llegeix les tecles i construeix un vector de direcció. **Ja ve normalitzat** (magnitud 1), així que moure's en diagonal no és més ràpid que moure's recte.
 
+**Però què és "move_right"?**
+Si intentes executar el codi ara, **no funcionarà**. Godot no sap quines tecles són aquestes. Has de configurar-les tu per definir què significa "moure a la dreta" (pot ser la tecla D, la Fletxa Dreta o el Joystick).
+
+**Configura-ho ara:**
+1.  Ves a **Project > Project Settings > Input Map**.
+2.  Escriu `move_right` a la barra "**Add New Action**" i prem **Add**.
+3.  Busca la nova acció a la llista de sota i prem el botó **+** a la seva dreta.
+4.  Prem la tecla **D** (i opcionalment la tecla Fletxa Dreta) i dona-li a **OK**.
+5.  Repeteix el procés per a la resta:
+    *   `move_left`: Tecla **A**.
+    *   `move_up`: Tecla **W**.
+    *   `move_down`: Tecla **S**.
+  
+Si vols, pots addicionalment en cada acció afegir per exemple el joystick (stick esquerre) i al creueta (d-pad).
+
 **4. `velocity = direction * 300`**
 
-La direcció és un vector de magnitud 1. En multiplicar per 300, obtenim "300 píxels per segon en aquesta direcció". És com dir: "Apunta cap allà i vés a 300 de velocitat".
+La direcció és un vector de magnitud 1. En multiplicar per 300, obtenim "300 píxels per segon en aquesta direcció". És com dir: "Apunta cap allà i ve a 300 de velocitat".
 
 **5. `move_and_slide()`**
 
@@ -191,17 +199,17 @@ Aquesta funció llegeix `velocity` automàticament (no cal passar-li) i mou el n
 
 ### 4. Per què corres més en diagonal? (Pitàgores)
 
-Si prems **Dreta** `(1, 0)` i **Baix** `(0, 1)` a la vegada, Godot suma els vectors. El resultat és `(1, 1)`.
+Si prems **Dreta** `(1, 0)` i **Avall** `(0, 1)` alhora, Godot suma els vectors. El resultat és `(1, 1)`.
 
 Quant mesura aquest vector `(1, 1)`? Aquí és on entra el nostre amic grec.
 
-Imagina que estàs en una ciutat quadriculada (com l'Eixample de Barcelona o Manhattan):
+Imagina que ets en una ciutat quadriculada (com l'Eixample de Barcelona o Manhattan):
 *   Caminar 1 carrer a l'Est costa **1 minut**.
 *   Caminar 1 carrer al Sud costa **1 minut**.
 *   Si camines Est i després Sud, trigues **2 minuts** en total.
 
 Però, **i si travesses el carrer en diagonal?**
-Aquí entra el senyor Pitàgores amb el seu famós **Teorema**. No t'espantis, el disseccionarem peça a peça:
+Aquí entra el senyor Pitàgores amb el seu famós **Teorema**. No t'espantis, anem a disseccionar-lo peça a peça:
 
 $$
 h = \sqrt{a^2 + b^2}
@@ -212,7 +220,7 @@ $$
 *   **$a$ i $b$ (Catets)**: Són els costats rectes. En el nostre cas, el moviment en **X** (1 pas) i en **Y** (1 pas).
 
 **Treu la calculadora! De debò, fes-ho.**
-Substituirem les lletres pels nostres números (1 dreta, 1 baix):
+Anem a substituir les lletres per els nostres números (1 dreta, 1 avall):
 
 1.  **Elevem al quadrat**: $1^2$ significa $1 \times 1$. Segueix sent $1$.
     
@@ -222,25 +230,25 @@ Substituirem les lletres pels nostres números (1 dreta, 1 baix):
 
     Resultat:
     $$ h = \sqrt{2} $$
-3.  **Arrel quadrada**: Busca el botó $\sqrt{}$ a la calculadora del mòbil i posa $2$.
+3.  **Arrel quadrada**: Busca el botó $\sqrt{}$ a la teva calculadora del mòbil i posa $2$.
 
     Resultat:
     $$ h \approx 1.41421356... $$
 
 <Callout type="info" title="Diccionari Gamer 🤓">
   En videojocs i matemàtiques, a aquesta longitud $h$ li diem **Magnitud** o **Mòdul** del vector.
-  També és coneguda com a **Distància Euclidiana** (la línia recta entre dos punts).
+  També és coneguda com **Distància Euclidiana** (la línia recta entre dos punts).
   
-  Quan fem `input_vector.length()` a Godot, el motor fa aquest càlcul de Pitàgores per tu.
+  Quan fem `input_vector.length()` en Godot, el motor fa aquest càlcul de Pitàgores per tu.
 </Callout>
 
-Així que ja ho tens!
+Aquí ho tens!
 Si no fem res, la teva direcció té una força de **1.41**.
 Comparat amb la força de **1.0** quan vas recte, **estàs corrent un 41% més ràpid!**
 
 <VectorDemo client:visible />
 
-Això és un problema clàssic ("Speedrunning hack"). En un joc competitiu, tots anirien en diagonal per arribar abans.
+Això és un problema clàssic ("Speedrunning hack"). En un joc competitiu, tothom aniria en diagonal per arribar abans.
 
 #### La Solució: Normalitzar
 
@@ -251,7 +259,7 @@ Godot és llest. `Input.get_vector()` **JA normalitza** el resultat per defecte.
 
 ### 5. Què dimonis és `delta`?
 
-Veuràs `delta` a tots els tutorials.
+Veuràs `delta` en tots els tutorials.
 
 <CodeTabs
   items={[
@@ -280,7 +288,7 @@ Si multipliques per delta:
 *   Tu: `1 * 60 vegades * 0.016 = 1` metre per segon.
 *   Amic: `1 * 144 vegades * 0.006 = 1` metre per segon.
 
-**Conclusió**: Multiplicar per Delta converteix "Píxels per Frame" en "Píxels per Segon". Fa que el joc vagi igual en una torradora que en un PC de la NASA.
+**Conclusió**: Multiplicar per Delta converteix "Píxels per Frame" en "Píxels per Segon". Fa que el joc vagi igual en una patata que en un PC de la NASA.
 
 <Callout type="tip" title="Nota de Godot">
   `move_and_slide()` utilitza `delta` automàticament a dins, per això al codi de dalt no el veus multiplicant. Però si mous coses manualment canviant `position`, SEMPRE utilitza delta.
@@ -291,7 +299,7 @@ Si multipliques per delta:
 Abans de copiar, mira dos detalls nous:
 1.  **`@export`**: Aquesta paraula màgica fa que la variable `speed` aparegui a l'**Inspector** de Godot. Així pots ajustar la velocitat escrivint un número a la capseta sense tornar a obrir l'script.
 2.  **`direction * speed`**: Recorda que `direction` val **1** (és un Vector Unitari). És només la direcció pura. En multiplicar-lo per **400**, convertim aquest 1 en 400 píxels per segon.
-    *   Això significa: **"Mourà't 400 píxels per segon en aquesta direcció"**.
+    *   Això significa: **"Mou-te 400 píxels per segon en aquesta direcció"**.
 
 <CodeTabs
   items={[
@@ -313,41 +321,44 @@ func _physics_process(delta):
 
 Felicitats! Tens una nau que es mou consistentment en totes direccions.
 
-### 7. Provant tot: El Teu Primer Nivell (Sandbox)
+### 7. Provant-ho tot: El Teu Primer Nivell (Sandbox)
 
 Fins ara hem treballat al "taller" (l'escena del `Player`). Però una nau necessita un univers.
 Si li dones al botó de **Play (F5)** ara, et demanarà una escena principal. Anem a crear-la:
 
 1.  Crea una **Nova Escena**.
-2.  Tria **2D Scene** (Node2D). Aquesta vegada no volem físiques, només un contenidor per al món. Anomena'l `World` (PascalCase, perquè és un Node).
-3.  Guarda-la a `scenes/world.tscn` (snake_case, perquè és un fitxer).
+2.  Tria **2D Scene** (Node2D). Aquesta vegada no volem físiques, només un contenidor per al món. Anomena'l `Level` (PascalCase, perquè és un Node).
+3.  Desa-la a `scenes/level.tscn` (snake_case, perquè és un fitxer).
 
 #### Instanciant al Jugador (El "Link")
 Aquí passa la màgia de Godot. No "copiarem i enganxarem" al jugador. El **referenciarem**.
 1.  Busca el teu fitxer `player.tscn` a la carpeta `scenes` (a baix a l'esquerra).
-2.  **Arrossega'l** des de l'explorador de fitxers i deixa'l anar dins del panell d'**Escena** (a dalt a l'esquerra, sota on diu `World`). Això el col·locarà automàticament a la posició `(0, 0)`, perfectament centrat.
+2.  **Arrossega'l** des de l'explorador de fitxers i deixa'l anar dins del panell de **Scene** (a dalt a l'esquerra, sota on diu `Level`). Això el col·locarà automàticament a la posició `(0, 0)`, perfectament centrat.
 3.  Veuràs que apareix amb una icona de claqueta de cinema 🎬 al costat. Això significa que és una **Instància**. Si canvies el `player.tscn` original (ex: el pintes de vermell), aquest també canviarà!
 
 #### Llums, Càmera... Coordenades!
 Per facilitar-nos les matemàtiques (on 0 és a dalt i el màxim és a baix):
 
-1.  A l'escena `World`, afegeix un node fill **`Camera2D`**.
+1.  A l'escena `Level`, afegeix un node fill **`Camera2D`**.
 2.  A l'Inspector, busca **Anchor Mode** i canvia'l a **`Fixed Top Left`**.
     *   *Això fa que la cantonada superior esquerra sigui el (0,0), com a les pantalles de píxels clàssiques.*
 
 #### Centrant la Nau
 Ara que el (0,0) és la cantonada, la teva nau (que està a 0,0) es veurà tallada a dalt a l'esquerra.
-Anem a col·locar-la al centre exacte utilitzant lògica:
+Anem a col·locar-la al centre exacte usant lògica:
 
-1.  La resolució per defecte de Godot és **1152 x 648**.
-2.  El centre és la meitat: `1152 / 2 = 576` (X) i `648 / 2 = 324` (Y).
+1.  La resolució per defecte de Godot és **1152 x 648** (massa ampla per al nostre joc retro). Anem a canviar-la a **800 x 600**:
+    *   Ves a **Project > Project Settings > Display > Window**.
+    *   Canvia `Viewport Width` a **800**.
+    *   Canvia `Viewport Height` a **600**.
+2.  El centre ara és: `800 / 2 = 400` (X) i `600 / 2 = 300` (Y).
 3.  Selecciona el node `player` (la instància).
 4.  A Inspector > Transform > Position, escriu:
-    *   **X**: `1152/2`
-    *   **Y**: `648/2`
+    *   **X**: `800/2`
+    *   **Y**: `600/2`
 
 <Callout type="tip" title="Truc: Godot sap matemàtiques!">
-  Pots escriure literalment `1152/2` a la casella i ell farà el compte.
+  Pots escriure literalment `800/2` a la casella i ell farà el compte. O també simplement pots moure el Player amb el ratolí fins on vulguis a la vista 2D.
 </Callout>
 
 #### A Jugar!
@@ -357,5 +368,5 @@ Anem a col·locar-la al centre exacte utilitzant lògica:
 
 <Callout type="tip" title="La meva nau marxa de la pantalla?">
   És normal! Encara no hem posat límits (parets). La teva nau viatja feliçment cap a l'infinit de coordenades matemàtiques.
-  En pròxims capítols li posarem murs a aquest univers.
+  En propers capítols posarem murs a aquest univers.
 </Callout>
