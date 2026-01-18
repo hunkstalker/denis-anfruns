@@ -1,36 +1,29 @@
-# Estructura del Proyecto Godot - Capítulo 1
+---
+title: Estructura del Proyecto - Parte 1
+description: Estructura de archivos y nodos al finalizar la Parte 1.
+---
 
-## Archivos creados en este capítulo
+# Estructura del Proyecto (Parte 1)
 
-| Archivo | Ruta en Godot | Descripción |
-|---------|---------------|-------------|
-| [player.gd](./scripts/player.gd) | `res://scripts/player.gd` | Movimiento básico del jugador con CharacterBody2D |
+| Archivo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `scenes/player.tscn` | Escena | La nave del jugador (CharacterBody2D). |
+| `scripts/player.gd` | Script | Movimiento básico del jugador. |
+| `scenes/level.tscn` | Escena | Nivel principal con cámara. |
+| `sprites/player.png` | Sprite | Sprite de la nave del jugador. |
 
-## Estructura completa al finalizar el capítulo
-
-```text
-res://
-├── scenes/
-│   ├── player.tscn          ← Escena del jugador (CharacterBody2D + CollisionShape2D + Sprite2D)
-│   └── level.tscn           ← Escena principal del mundo (Node2D + Camera2D + player instance)
-├── scripts/
-│   └── player.gd            ← Script de movimiento
-└── sprites/
-    └── player.png        ← Sprite de la nave
-```
-
-## Nodos del Player (player.tscn)
+## Estructura de Nodos (Player)
 
 ```text
 Player (CharacterBody2D)
-├── CollisionShape2D (CircleShape2D, radius=40)
-└── Sprite2D (texture: plane_128.png)
+├── CollisionShape2D (CircleShape2D)
+└── Sprite2D (player.png)
 ```
 
-## Nodos del Level (level.tscn)
+## Estructura de Nodos (Level)
 
 ```text
 Level (Node2D)
 ├── Camera2D (Anchor Mode: Fixed Top Left)
-└── player (instancia de player.tscn, posición: 400, 300)
+└── Player (instancia de player.tscn)
 ```

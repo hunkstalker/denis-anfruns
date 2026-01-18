@@ -14,11 +14,14 @@ description: Estructura de archivos y nodos al finalizar la Parte 3.
 | `scenes/bullet.tscn` | Escena | El proyectil (Sin cambios). |
 | `scripts/bullet.gd` | Script | Lógica de la bala (Sin cambios). |
 | `scenes/level.tscn` | Escena | Nivel principal donde probamos el juego. |
+| `sprites/player.png` | Sprite | Sprite de la nave del jugador. |
+| `sprites/shot-atlas.png` | Sprite | Atlas de la bala. |
+| `sprites/enemy_plane.png` | Sprite | [NUEVO] Sprite del enemigo. |
 
 ## Estructura de Nodos (EnemyPlane)
 
 ```text
 EnemyPlane (Area2D)
-├── Sprite2D (enemy_128.png)
+├── Sprite2D (enemy_plane.png)
 └── CollisionShape2D (Circle/Rect)
 ```
