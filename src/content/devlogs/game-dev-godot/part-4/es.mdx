@@ -299,16 +299,16 @@ Al preservar la transparencia original (`.a`), solo se vuelven blancos los píxe
 ## 5. Conectando CPU y GPU
 
 El shader está listo, pero no hace nada porque `flash_active` siempre es `false`.
-Ahora volvemos a GDScript (`enemy.gd`) para activarlo cuando recibamos daño.
+Ahora volvemos a GDScript (`enemy_plane.gd`) para activarlo cuando recibamos daño.
 
 **Fase 1: Acceder al Material**
 
-Primero necesitamos una referencia al `ShaderMaterial` del sprite:
+Primero necesitamos crear la función `hit_flash()`, creamos una variable con la referencia de Sprite2D y otra con la referencia del material.
 
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `func hit_flash():
     # 1. Obtenemos el nodo Sprite2D
@@ -320,7 +320,9 @@ Primero necesitamos una referencia al `ShaderMaterial` del sprite:
   ]}
 />
 
-**Nota**: `sprite.material` devuelve un tipo genérico `Material`. Para usar funciones específicas de `ShaderMaterial`, necesitamos verificar el tipo primero.
+`sprite.material` devuelve un tipo genérico `Material`. Para acceder a `set_shader_parameter()`, necesitamos que GDScript sepa que es un `ShaderMaterial`.
+
+La solución es usar `if shader_material is ShaderMaterial`. Esto mata dos pájaros de un tiro, luego lo explicaré:
 
 **Fase 2: Enviar el Dato a la GPU**
 
@@ -329,7 +331,7 @@ Usamos `set_shader_parameter()` para cambiar el valor del `uniform`:
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `func hit_flash():
     var sprite = $Sprite2D
@@ -342,12 +344,12 @@ Usamos `set_shader_parameter()` para cambiar el valor del `uniform`:
   ]}
 />
 
-**¿Qué es `if shader_material is ShaderMaterial`?**
+**¿Cómo funciona `if shader_material is ShaderMaterial`?**
 Esto se llama **type narrowing** (estrechamiento de tipo):
 1. **Verifica** en tiempo de ejecución si `shader_material` es realmente un `ShaderMaterial`.
 2. **Dentro del bloque `if`**, GDScript sabe que `shader_material` es un `ShaderMaterial`, habilitando el autocompletado de `set_shader_parameter()`.
 
-Es más seguro que usar `as ShaderMaterial`, que asume ciegamente el tipo sin verificar.
+Se puede asignar el tipo de otro modo usando `as ShaderMaterial`, pero si el tipo no coincide, devolverá `null` y podrías tener errores al intentar usar el resultado. Con `is`, evitamos ese riesgo.
 
 **¿Qué hace `set_shader_parameter`?**
 *   `"flash_active"` es el nombre exacto de la variable `uniform` en el shader.
@@ -361,7 +363,7 @@ Si dejamos el flash activo para siempre, el enemigo se queda blanco. Necesitamos
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `func hit_flash():
     var sprite = $Sprite2D
@@ -401,7 +403,7 @@ Finalmente, integramos la función en `_on_area_entered`:
 <CodeTabs
   items={[
     {
-      label: 'enemy.gd',
+      label: 'enemy_plane.gd',
       lang: 'gdscript',
       code: `func _on_area_entered(area):
     if is_dying:

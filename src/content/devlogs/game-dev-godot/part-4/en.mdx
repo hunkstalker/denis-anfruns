@@ -1,0 +1,464 @@
+---
+pubDate: '2026-01-13T14:00:00Z'
+tags: ['godot', 'shaders', 'gpu', 'game-juice']
+draft: false
+new: true
+title: 'Godot #4: Game Juice with Shaders'
+description: Introduction to the world of Shaders. CPU vs GPU architecture, basic GLSL, and creating a Hit Flash effect step by step.
+series: gamedev-godot-basics
+seriesTitle: Game Dev with Godot
+seriesDescription: We learn the fundamentals of game development (vectors, trigonometry, shaders) using Godot and a Shoot 'em Up as a practical excuse.
+lang: en
+---
+
+import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
+
+## Visual Feedback
+
+In the previous chapter, we made enemies die and fall. It works, but there wasn't feedback when they take damage.
+For a game to feel professional, we need immediate **Visual Feedback**. This is what the industry calls "Game Juice".
+
+The most powerful tool to achieve this visual effect are **Shaders**.
+
+## 1. What is a Shader?
+
+A Shader is a small program that **doesn't run on the CPU**, but on the **GPU** (the graphics card).
+
+*   **CPU**: Runs your GDScript code. Processes game logic (movement, collisions, score).
+*   **GPU**: Draws pixels on screen. It's a processor specialized in massive graphical operations.
+
+When you write a Shader, you are giving direct instructions to the GPU on how to paint each pixel.
+
+## 2. Architecture: Cores and Parallelism
+
+Why use the GPU instead of the CPU for visual effects?
+
+### CPU: Few Cores, Very Powerful
+
+A modern CPU like the **Intel Core i7-14700K** has:
+*   **20 physical cores** (8 performance + 12 efficiency).
+*   **28 threads** thanks to Hyper-Threading.
+
+Each core can execute complex and different instructions from each other. But even with 28 threads, if you need to process 10,000 pixels, the CPU would have to distribute them among those threads and execute them in **sequential batches**.
+
+### GPU: Thousands of Cores, Very Simple
+
+A modern GPU like the **NVIDIA RTX 4080** has:
+*   **9,728 CUDA cores**.
+*   Each core is much simpler than a CPU one.
+*   But they can execute **the same instruction** on thousands of different data at once.
+
+This architecture is called **SIMD** (Single Instruction, Multiple Data): a single instruction applied to many data in parallel.
+
+**The Concrete Example**
+
+If your enemy sprite measures 100x100 pixels, that's **10,000 pixels** in total.
+
+| Processor | Parallel Threads | Operations per Batch |
+|-----------|------------------|----------------------|
+| CPU (i7-14700K) | ~28 | 10,000 ÷ 28 = ~357 batches |
+| GPU (RTX 4080) | ~9,728+ | 10,000 ÷ 9,728 = ~1 batch |
+
+The GPU can process all pixels practically **in a single pass**.
+That's why Shaders are so fast for visual effects.
+
+## 3. GLSL: The GPU Language
+
+Shaders in Godot are written in a language called **GLSL** (OpenGL Shading Language), similar to C.
+Don't be scared. We'll explain each concept before using it.
+
+### `shader_type`
+
+Every Godot shader starts with a type declaration:
+
+<CodeTabs
+  items={[
+    {
+      label: 'example.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;`
+    }
+  ]}
+/>
+
+**What does it mean?**
+*   `shader_type canvas_item`: This shader is for 2D elements (sprites, canvas nodes).
+*   There are other types like `spatial` (3D) or `particles`, but in this course we'll use `canvas_item`.
+
+### `fragment()`
+
+It's the main shader function. It runs **once for each pixel** of the sprite.
+
+<CodeTabs
+  items={[
+    {
+      label: 'example.gdshader',
+      lang: 'glsl',
+      code: `void fragment() {
+    // This code runs for EACH pixel
+    // Your job here: calculate the final color of the pixel
+}`
+    }
+  ]}
+/>
+
+**Important**: If your sprite has 10,000 pixels, this function runs 10,000 times in parallel.
+
+### `COLOR`
+
+It's the **mandatory output variable**. This is where you store the final color the pixel will have.
+
+<CodeTabs
+  items={[
+    {
+      label: 'example.gdshader',
+      lang: 'glsl',
+      code: `void fragment() {
+    COLOR = vec4(1.0, 0.0, 0.0, 1.0); // Paints the ENTIRE sprite solid red
+}`
+    }
+  ]}
+/>
+
+### `vec4`
+
+A color in GLSL is represented with **4 numbers** from 0.0 to 1.0:
+
+| Component | Meaning | Range |
+|-----------|---------|-------|
+| R (Red) | Amount of red | 0.0 - 1.0 |
+| G (Green) | Amount of green | 0.0 - 1.0 |
+| B (Blue) | Amount of blue | 0.0 - 1.0 |
+| A (Alpha) | Transparency | 0.0 (invisible) - 1.0 (solid) |
+
+**Examples:**
+*   `vec4(1.0, 1.0, 1.0, 1.0)` = Opaque white
+*   `vec4(0.0, 0.0, 0.0, 1.0)` = Opaque black
+*   `vec4(1.0, 0.0, 0.0, 0.5)` = Semi-transparent red
+
+### `TEXTURE`
+
+It's a special variable that references the **sprite's image** (the texture you loaded in `Sprite2D`).
+You can't use it directly as a color. You need to "read" it with the `texture()` function.
+
+### `UV`
+
+These are the **normalized coordinates** of each pixel within the sprite.
+
+*   They go from `(0.0, 0.0)` (top-left corner) to `(1.0, 1.0)` (bottom-right corner).
+*   Each execution thread (each pixel) has its own `UV` value.
+*   The central pixel's thread would have `UV = (0.5, 0.5)`.
+
+**Technical note**: `UV` is to shaders what `self.position` is to scripts. Each thread knows its own coordinate.
+
+### `texture()`
+
+It's a function that **reads a pixel's color** from an image given a coordinate.
+
+<CodeTabs
+  items={[
+    {
+      label: 'example.gdshader',
+      lang: 'glsl',
+      code: `vec4 color = texture(TEXTURE, UV);`
+    }
+  ]}
+/>
+
+**Breakdown:**
+*   `TEXTURE`: The sprite's image.
+*   `UV`: The coordinate of *this* specific pixel.
+*   Result: Returns the `vec4` (RGBA color) of the pixel at that image position.
+
+**With this, each of the 10,000 threads reads its own color from the original image, reconstructing the complete sprite.**
+
+---
+
+## 4. The Mission: Hit Flash
+
+We want an effect where, when taking damage, the enemy blinks **pure white** for a fraction of a second.
+
+**Preparing the Material**
+
+1.  Select the enemy's `Sprite2D`.
+2.  In the **Inspector**, find `CanvasItem > Material`.
+3.  Click the dropdown and select `New ShaderMaterial`.
+4.  Click on the new material and in `Shader`, select `New Shader`.
+5.  Create the `shaders` folder in your project and save the file as `shaders/hit_flash.gdshader`.
+
+**Phase 1: Empty Structure**
+
+We start with the minimum structure of a 2D shader:
+
+<CodeTabs
+  items={[
+    {
+      label: 'hit_flash.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;
+
+void fragment() {
+    // For now, we do nothing
+    // The sprite will look normal
+}`
+    }
+  ]}
+/>
+
+If you test now, the sprite will look **invisible** because we haven't assigned anything to `COLOR`.
+
+**Phase 2: Recover the Original Color**
+
+For the sprite to look normal, we must read its texture and assign it to `COLOR`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'hit_flash.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;
+
+void fragment() {
+    // We read the sprite's original color at this coordinate (UV)
+    vec4 original_color = texture(TEXTURE, UV);
+    
+    // We assign that color as output
+    COLOR = original_color;
+}`
+    }
+  ]}
+/>
+
+Now the sprite looks exactly the same as before the shader. We have "reconstructed" the original image.
+
+**Phase 3: Add the Control Variable (Uniform)**
+
+We need a way to activate/deactivate the flash from GDScript code.
+For that we use a `uniform` variable:
+
+<CodeTabs
+  items={[
+    {
+      label: 'hit_flash.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;
+
+// GLOBAL variable: the same for all pixels
+// We'll control it from GDScript
+uniform bool flash_active = false;
+
+void fragment() {
+    vec4 original_color = texture(TEXTURE, UV);
+    COLOR = original_color;
+}`
+    }
+  ]}
+/>
+
+**Why `uniform`?**
+*   It's a variable whose value comes from **outside the shader** (from GDScript/CPU).
+*   All 10,000 threads receive the **same value**. That's why it's called "uniform".
+*   Unlike `UV` (which is different for each thread), `flash_active` will be `true` or `false` for ALL at once.
+
+**Phase 4: The Flash Logic**
+
+Now we add the conditional logic. If `flash_active` is `true`, we paint white. If not, we paint normal:
+
+<CodeTabs
+  items={[
+    {
+      label: 'hit_flash.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;
+
+uniform bool flash_active = false;
+
+void fragment() {
+    vec4 original_color = texture(TEXTURE, UV);
+    
+    if (flash_active) {
+        // If active, we paint WHITE
+        // We use the original transparency (original_color.a) to not paint invisible pixels
+        COLOR = vec4(1.0, 1.0, 1.0, original_color.a);
+    } else {
+        // If not, we paint the normal color
+        COLOR = original_color;
+    }
+}`
+    }
+  ]}
+/>
+
+**Why `original_color.a`?**
+If we used `vec4(1.0, 1.0, 1.0, 1.0)`, we would paint a solid white square (including the sprite's transparent areas).
+By preserving the original transparency (`.a`), only the pixels that were already visible turn white.
+
+---
+
+## 5. Connecting CPU and GPU
+
+The shader is ready, but it does nothing because `flash_active` is always `false`.
+Now we go back to GDScript (`enemy_plane.gd`) to activate it when we take damage.
+
+**Phase 1: Access the Material**
+
+First we need to create the `hit_flash()` function, we create a variable with the Sprite2D reference and another with the material reference.
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func hit_flash():
+    # 1. We get the Sprite2D node
+    var sprite = $Sprite2D
+    
+    # 2. We access its material and treat it as ShaderMaterial
+    var shader_material = sprite.material`
+    }
+  ]}
+/>
+
+`sprite.material` returns a generic `Material` type. To access `set_shader_parameter()`, we need GDScript to know it's a `ShaderMaterial`.
+
+The solution is to use `if shader_material is ShaderMaterial`. This kills two birds with one stone, I'll explain later:
+
+**Phase 2: Send the Data to the GPU**
+
+We use `set_shader_parameter()` to change the `uniform` value:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func hit_flash():
+    var sprite = $Sprite2D
+    var shader_material = sprite.material
+
+    if shader_material is ShaderMaterial:
+        # We activate the flash (we send 'true' to the GPU)
+        shader_material.set_shader_parameter("flash_active", true)`
+    }
+  ]}
+/>
+
+**How does `if shader_material is ShaderMaterial` work?**
+This is called **type narrowing**:
+1. **Verifies** at runtime if `shader_material` is really a `ShaderMaterial`.
+2. **Inside the `if` block**, GDScript knows that `shader_material` is a `ShaderMaterial`, enabling autocompletion for `set_shader_parameter()`.
+
+You can assign the type differently using `as ShaderMaterial`, but if the type doesn't match, it will return `null` and you could have errors when trying to use the result. With `is`, we avoid that risk.
+
+**What does `set_shader_parameter` do?**
+*   `"flash_active"` is the exact name of the `uniform` variable in the shader.
+*   `true` is the value we want to assign.
+*   When calling this, the 10,000 GPU threads receive `true` and paint white.
+
+**Phase 3: Turn Off the Flash**
+
+If we leave the flash active forever, the enemy stays white. We need to turn it off after an instant:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func hit_flash():
+    var sprite = $Sprite2D
+    var shader_material = sprite.material
+    
+    # We verify that the material is a ShaderMaterial
+    if shader_material is ShaderMaterial:
+        # Activate flash
+        shader_material.set_shader_parameter("flash_active", true)
+        
+        # Wait 0.1 seconds (100 milliseconds)
+        await get_tree().create_timer(0.1).timeout
+        
+        # Deactivate flash
+        shader_material.set_shader_parameter("flash_active", false)`
+    }
+  ]}
+/>
+
+**What does `await` do?**
+
+`await` is a keyword that **pauses the execution of this specific function** until something happens (in this case, the timer time passes).
+
+**Important**: `await` does NOT freeze the game. The rest of the engine keeps running:
+*   The enemy keeps moving.
+*   Other bullets keep flying.
+*   The player can shoot.
+
+Only THIS function (`hit_flash`) is "sleeping" waiting. When the timer ends, the function "wakes up" and continues from where it left off (deactivate the flash).
+
+It's like setting a reminder on your phone: "In 0.1 seconds, turn off the flash". Meanwhile, you continue with your life.
+
+**Phase 4: Call the Flash When Taking Damage**
+
+Finally, we integrate the function into `_on_area_entered`:
+
+<CodeTabs
+  items={[
+    {
+      label: 'enemy_plane.gd',
+      lang: 'gdscript',
+      code: `func _on_area_entered(area):
+    if is_dying:
+        return
+        
+    hp -= 1
+    area.queue_free()
+    hit_flash() # New: activate visual feedback
+    
+    if hp <= 0:
+        die()`
+    }
+  ]}
+/>
+
+---
+
+## 6. Complete Shader Script
+
+<CodeTabs
+  items={[
+    {
+      label: 'hit_flash.gdshader',
+      lang: 'glsl',
+      code: `shader_type canvas_item;
+
+uniform bool flash_active = false;
+
+void fragment() {
+    vec4 original_color = texture(TEXTURE, UV);
+    
+    if (flash_active) {
+        COLOR = vec4(1.0, 1.0, 1.0, original_color.a);
+    } else {
+        COLOR = original_color;
+    }
+}`
+    }
+  ]}
+/>
+
+---
+
+## Let's Review What We Learned
+
+1.  **Shader**: Program that runs on the GPU to modify pixels.
+2.  **CPU vs GPU**: Serial (one task at a time) vs Parallel (thousands simultaneous).
+3.  **`shader_type canvas_item`**: Declaration for 2D shaders.
+4.  **`fragment()`**: Function that runs once for each pixel.
+5.  **`COLOR`**: Output variable that defines the pixel's final color.
+6.  **`vec4`**: Structure of 4 floats for colors (RGBA).
+7.  **`TEXTURE`**: Reference to the sprite's image.
+8.  **`UV`**: Normalized coordinates (0-1) of each pixel.
+9.  **`texture()`**: Function to read a color from an image.
+10. **`uniform`**: Global variable controlled from the CPU.
+11. **`set_shader_parameter()`**: GDScript function to send data to the GPU.
+
+In the **next chapter**, we will learn to give life to our enemies using **Trigonometry** to create wavy and circular movement patterns.
