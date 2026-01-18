@@ -128,9 +128,13 @@ function stringifyFrontmatter(data, originalContent) {
             yaml += `${key}: ${arrayStr}\n`
         } else if (typeof value === 'string') {
             // Check if needs quotes
-            if (value.includes(':') || value.includes('#') || value === '') {
-                 // wrap in quotes
-                 yaml += `${key}: '${value.replace(/'/g, "''")}'\n`
+            if (value.includes(':') || value.includes('#') || value === '' || value.includes("'")) {
+                 // If value contains apostrophes, use double quotes
+                 if (value.includes("'")) {
+                     yaml += `${key}: "${value.replace(/"/g, '\\"')}"\n`
+                 } else {
+                     yaml += `${key}: '${value}'\n`
+                 }
             } else {
                 yaml += `${key}: ${value}\n`
             }
