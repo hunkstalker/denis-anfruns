@@ -24,9 +24,17 @@ El núcleo de cada proyecto reside en su plan de implementación.
 
 Este protocolo asume el uso del **Godot MCP Server** para mantener la verdad entre el texto y el código real.
 
-1. **Protocolo de Localización**:
-   - Al iniciar sesión o cambiar de capítulo, si no conoces la ubicación del proyecto Godot, **PREGUNTA**: *"¿En qué directorio raíz están almacenados los proyectos de Godot para este devlog?"*.
-   - **NUNCA** asumas la ruta (ej. no inventes `C:/Proyectos/Godot`). Espera a que el usuario te dé la ruta o te confirme que uses la actual.
+1. **Protocolo de Localización Automática**:
+   - **Directorio raíz de proyectos Godot**: `E:\GameDev\proyectos-godot`
+   - **Estructura de carpetas**: `godot-X.Y\` donde X.Y es la versión major.minor (ej. `godot-4.5`)
+   - **Pasos**:
+     1. Usa `mcp_godot_get_godot_version` para obtener la versión instalada (ej. `4.5.1.stable`).
+     2. Extrae la versión major.minor (ej. `4.5`).
+     3. Usa `mcp_godot_list_projects` en `E:\GameDev\proyectos-godot\godot-X.Y\` con `recursive: true`.
+     4. Busca el proyecto que coincida con el devlog actual (ej. `game-dev-godot-devlog/part-6`).
+     5. Establece el contexto con `mcp_godot_set_project_context`.
+   - **Solo si no encuentras el proyecto**, pregunta al usuario: *"No encontré el proyecto de la Part X en godot-Y.Z. ¿En qué directorio está?"*.
+   - **NUNCA** inventes rutas.
 
 2. **Gestión de Contexto**:
    - Una vez identificada la carpeta del capítulo (ej. `.../game-dev-godot-devlog/part-3`), usa INMEDIATAMENTE `mcp_godot_set_project_context` con esa ruta.
