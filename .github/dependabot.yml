@@ -8,5 +8,8 @@ updates:
     allow:
       - dependency-type: "direct"
     ignore:
-      - update-types: ["version-update:semver-major"]
-    labels: ["deps", "dependabot"]
+      - dependency-name: "*" # Se añade para aplicar el filtro a todos los paquetes
+        update-types: ["version-update:semver-major"]
+    labels:
+      - "deps"
+      - "dependabot"
