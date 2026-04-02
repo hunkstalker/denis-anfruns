@@ -22,8 +22,7 @@ export async function getStaticPaths() {
 const { page } = Astro.props
 const { Content } = await page.render()
 
-// Map del texto del botón
-// Map del texto del botón
+// Map del texto del botón para cada idioma
 const buttonText = {
 	es: 'Volver',
 	ca: 'Tornar',

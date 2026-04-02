@@ -1,6 +1,6 @@
 import eslintPluginAstro from 'eslint-plugin-astro'
 import eslintPluginTailwind from 'eslint-plugin-tailwindcss'
-import tseslint from 'typescript-eslint'
+import tseslint from '@typescript-eslint/eslint-plugin'
 
 export default [
 	// Global ignores
