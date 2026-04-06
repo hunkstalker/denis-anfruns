@@ -30,7 +30,7 @@
 		"@nanostores/react": "1.1.0",
 		"@types/react": "19.2.14",
 		"@types/react-dom": "19.2.3",
-		"astro": "5.18.1",
+		"astro": "^5.18.1",
 		"framer-motion": "12.38.0",
 		"lucide-react": "1.7.0",
 		"nanostores": "1.2.0",
