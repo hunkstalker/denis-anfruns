@@ -65,7 +65,8 @@
 	},
 	"pnpm": {
 		"overrides": {
-			"dompurify": ">=3.3.2"
+			"dompurify": "^3.3.2",
+			"yaml": "^2.8.3"
 		}
 	},
 	"engines": {
