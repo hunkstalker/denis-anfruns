@@ -71,29 +71,20 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - **Práctica**: Enemigo que entra → orbita 3s → huye.
 - **🔄 Espiral**: Profundizar en `lerp()`, `clamp()`, `move_toward()` (interpolación y límites).
 
-### Part 9: Torreta y Misil Homing (atan2)
-**Focus**: Obtener ángulos desde vectores con matemáticas puras.
-- **Teoría de atan2()**: Por qué existe, diferencia con `atan()`, rango [-π, π], relación con vectores.
-- **Normalización de Ángulos**: Mantener en rango [-π, π] con módulo (sin helpers de Godot).
-- **Torreta Estática**: Enemigo sin movimiento que rota para encarar al jugador usando `atan2()`.
-- **Misil Homing**: Proyectil con giro limitado usando `clamp()`, persigue al jugador.
-- **Movimiento Direccional**: Usar `sin`/`cos` para mover en la dirección de la rotación actual.
-- ⚠️ *Sin facilidades*: No usar `angle_to_point()`, `lerp_angle()`, `look_at()`. Matemáticas de los 90.
-
-### Part 10: El Motor de Nivel (Level Engine)
+### Part 9: El Motor de Nivel (Level Engine)
 **Focus**: Infraestructura del "Scroll" infinito.
 - **Virtual Scroll**: Separar la posición de la cámara del avance del nivel.
 - **Scroll Table**: Implementar la estructura de datos (Coordinate-based triggering).
 - **Prototipo**: Lograr que *un* solo enemigo aparezca en la coordenada X=5000.
 
-### Part 11: Diseño de Nivel y Oleadas (Grayboxing)
+### Part 10: Diseño de Nivel y Oleadas (Grayboxing)
 **Focus**: Diseñar la EXPERIENCIA usando cajas prototipo.
 - **Grayboxing**: Crear obstáculos (muros, asteroides) usando `StaticBody2D` y formas simples.
 - **Level Flow**: Combinar topografía (obstáculos) con enemigos.
 - **Editor de Oleadas**: Crear arrays de datos complejos (JSON/Dictionaries).
 - **Pacing**: Curva de dificultad básica.
 
-### Part 12: Arsenal y Sistema de Daño (Refactor)
+### Part 11: Arsenal y Sistema de Daño (Refactor)
 **Focus**: Expandir combate y arquitectura.
 - **Armas del Player**:
   - *Main Alternativo*: Disparo Doble (Frontal + Diagonal-Abajo). Menos daño, mayor cobertura (2 zonas).
@@ -101,20 +92,20 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - **Refactor**: Grupos de Godot para detección de daño (`is_in_group` vs `class_name`).
 - Estrategia de armas escalable.
 
-### Part 13: Audio Espacial
+### Part 12: Audio Espacial
 **Focus**: Feedback sonoro.
 - `AudioStreamPlayer` y `AudioStreamPlayer2D`.
 - AudioBus (Master, SFX, Music).
 - Pitch randomizer para variedad.
 
-### Part 14: Fondos Infinitos (Shader)
+### Part 13: Fondos Infinitos (Shader)
 **Focus**: Scroll visual sin mover objetos.
 - **Parallax por Shader**: Manipulación de UVs con `TIME` para scroll infinito.
   - ⚠️ *Sección saltable*: Este enfoque enseña la teoría. Más adelante se mostrará cómo hacerlo fácilmente con los nodos `ParallaxBackground` y `ParallaxLayer` de Godot.
 - Capas de parallax con velocidades diferentes.
 - **🔄 Espiral**: Profundizar en shaders (UVs avanzados, TIME, efectos visuales).
 
-### Part 15: UI y Game Loop
+### Part 14: UI y Game Loop
 **Focus**: Retroalimentación al jugador.
 - `CanvasLayer` y `Control` nodes.
 - Score, Vidas, Game Over.
@@ -122,20 +113,20 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 - `reload_current_scene()`.
 - **🔄 Espiral**: Profundizar en señales personalizadas (`signal`, `emit_signal()`).
 
-### Part 16: Object Pooling
+### Part 15: Object Pooling
 **Focus**: Optimización profesional.
 - Por qué `instantiate()` es costoso.
 - Pool Manager genérico.
 - Reutilizar balas y enemigos.
 - **`instance uniform`**: Shaders optimizados donde todas las instancias comparten el código pero con valores individuales (mencionado en Part 6).
 
-### Part 17: Polish Final
+### Part 16: Polish Final
 **Focus**: Detalles de juego profesional.
 - `CPUParticles2D` para explosiones.
 - Transiciones de escena.
 - **CRT / Scanlines** (Opcional): Shader de post-procesado retro con `CanvasLayer`.
 
-### Part 18: Exportación
+### Part 17: Exportación
 **Focus**: Publicar el juego.
 - Export HTML5.
 - PWA y Fullscreen.
@@ -152,14 +143,16 @@ El jugador controla una nave que se mueve, dispara proyectiles y esquiva enemigo
 
 ## Capítulos Extra (Post-MVP)
 
-### Part 19: Refactoring y Arquitectura
+### Part 18: Refactoring y Arquitectura
 **Focus**: Limpieza de código y patrones.
 - Revisar acoplamiento entre scripts.
 - Extraer lógica repetida a clases base o Autoloads.
 - Documentar funciones públicas.
 - Revisar señales vs llamadas directas.
 
-### Part 20: Más Enemigos y Armas
+### Part 19: Más Enemigos y Armas
 **Focus**: Expandir contenido del juego.
+- **Torreta Estática**: Enemigo sin movimiento con `Area2D` de detección.
+- **Misil Homing (Enemigo)**: Giro limitado, persigue al jugador, explosión por proximidad.
 - **Misiles Guiados Predictivos (Player)**: Homing con predicción de posición futura del enemigo.
 - **Power-Ups**: Cambio de arma temporal, escudo, bomba.
