@@ -11,6 +11,42 @@ interface Props {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 const { title, description, image = '/denis-anfruns-millan.png', robots } = Astro.props
 const resolvedImage = new URL(image, Astro.site)
+
+// Lógica para etiquetas hreflang (i18n SEO)
+// 1. Obtener el path sin el prefijo del idioma
+const currentPath = Astro.url.pathname
+const locales = ['es', 'en', 'ca']
+const pathSegments = currentPath.split('/').filter(Boolean)
+
+// Detectar si el primer segmento es un idioma conocido
+let cleanPath = currentPath
+if (locales.includes(pathSegments[0]) && pathSegments[0] !== 'es') {
+	cleanPath = '/' + pathSegments.slice(1).join('/')
+}
+if (!cleanPath.endsWith('/')) cleanPath += '/'
+if (cleanPath === '//') cleanPath = '/'
+
+const getLocalizedURL = (loc: string) => {
+	const prefix = loc === 'es' ? '' : `/${loc}`
+	const finalPath = cleanPath === '/' ? prefix || '/' : `${prefix}${cleanPath}`
+	return new URL(finalPath, Astro.site)
+}
+
+// Datos estructurados (JSON-LD)
+const personSchema = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	"name": "Denis Anfruns Millán",
+	"url": Astro.site?.toString(),
+	"image": resolvedImage.toString(),
+	"sameAs": [
+		"https://github.com/hunkstalker",
+		"https://x.com/HunkStalker",
+		"https://www.linkedin.com/in/denis-anfruns-millan/"
+	],
+	"jobTitle": "Full Stack Developer",
+	"description": description
+}
 ---
 
 <!-- Global Metadata -->
@@ -18,16 +54,22 @@ const resolvedImage = new URL(image, Astro.site)
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 {robots && <meta name="robots" content={robots} />}
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-	<meta name="generator" content={Astro.generator} />
+<meta name="generator" content={Astro.generator} />
 
-	<!-- KaTeX CSS for math formulas -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<!-- KaTeX CSS for math formulas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
 
 <!-- Font preloads -->
 <link rel="preload" href="/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
+
+<!-- Alternate / Multi-language hreflang tags -->
+<link rel="alternate" hreflang="x-default" href={getLocalizedURL('es')} />
+<link rel="alternate" hreflang="es" href={getLocalizedURL('es')} />
+<link rel="alternate" hreflang="en" href={getLocalizedURL('en')} />
+<link rel="alternate" hreflang="ca" href={getLocalizedURL('ca')} />
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
@@ -44,7 +86,7 @@ const resolvedImage = new URL(image, Astro.site)
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Vista previa de Denis Anfruns Millán - Web portfolio" />
+<meta property="og:image:alt" content={`Vista previa de: ${title} - Denis Anfruns Millán`} />
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
@@ -54,8 +96,6 @@ const resolvedImage = new URL(image, Astro.site)
 <meta property="twitter:image" content={resolvedImage} />
 <meta name="twitter:site" content="@HunkStalker" />
 <meta name="twitter:creator" content="@HunkStalker" />
-<meta name="twitter:image:width" content="1200" />
-<meta name="twitter:image:height" content="630" />
 
-<!-- Alternate / multilenguaje -->
-<link rel="alternate" hreflang="x-default" href="https://denis-anfruns.dev/" />
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld-json" set:html={JSON.stringify(personSchema)} />
