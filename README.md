@@ -1,9 +1,9 @@
-# Denis Anfruns - Portfolio Web
+	### Denis Anfruns - Portfolio Web
 
-[![Astro](https://img.shields.io/badge/Astro-5.16-BC52EE?logo=astro&logoColor=white)](https://astro.build)
+[![Astro](https://img.shields.io/badge/Astro-6.1-BC52EE?logo=astro&logoColor=white)](https://astro.build)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Pagefind](https://img.shields.io/badge/Pagefind-1.4-FF6B35)](https://pagefind.app)
+[![Pagefind](https://img.shields.io/badge/Pagefind-1.5-FF6B35)](https://pagefind.app)
 
 Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. Incluye soporte multiidioma, búsqueda integrada con Pagefind, y sistema de contenido basado en MDX.
 
@@ -15,7 +15,7 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 
 - **Multiidioma (i18n)**: Español (default), English, Català
 - **Búsqueda integrada**: Powered by [Pagefind](https://pagefind.app) con filtros por categoría
-- **Content Collections**: TILs, DevLogs (series), Projects
+- **Content Collections**: Notes (antiguas notas técnicas), DevLogs (series), Projects
 - **Dark/Light mode**: Tema oscuro por defecto con toggle
 - **Responsive**: Mobile-first design
 - **Optimizado**: Static site generation, font preload, CSS crítico inline, SVGs optimizados
@@ -27,16 +27,17 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 ## 🗂️ Estructura del Proyecto
 
 ```
+├── .agents/          # Configuración del agente (Workflows, Skills, Rules)
 ├── src/
 │   ├── components/
 │   │   ├── layout/       # Nav, Header, Footer, MobileMenu (React)
 │   │   ├── search/       # Search modal, SearchResultsClient (React)
-│   │   ├── blog/         # DevLogCard, TilAside, SeriesWidget, TOC
+│   │   ├── blog/         # DevLogCard, SeriesWidget, TOC
 │   │   ├── ui/           # Button, LanguagePicker, ThemeToggle
 │   │   └── mdx/          # CodeTabs, componentes para MDX
 │   ├── content/
-│   │   ├── blog/         # DevLogs en MDX (series con partes)
-│   │   ├── til/          # Today I Learned notes
+│   │   ├── devlogs/      # DevLogs en MDX (series con partes)
+│   │   ├── notes/        # Notas técnicas (Today I Learned)
 │   │   ├── projects/     # Project showcases
 │   │   └── privacy/      # Política de privacidad
 │   ├── i18n/
@@ -45,14 +46,15 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 │   │   └── navigation.ts # Configuración de rutas
 │   ├── pages/
 │   │   ├── index.astro   # Home (es)
-│   │   ├── blog.astro    # Lista de DevLogs
 │   │   ├── [lang]/       # Rutas localizadas (en, ca)
-│   │   └── til/, blog/   # Rutas dinámicas [...slug]
+│   │   └── notes/, blog/ # Rutas dinámicas [...slug]
 │   ├── stores/           # Nanostores (estado global UI)
 │   ├── utils/            # Content helpers, i18n utils
+│   ├── data/             # Definición de Tags e iconos
 │   ├── icons/            # SVGs importables
 │   ├── styles/           # global.css
 │   └── layouts/          # BaseLayout.astro
+├── scripts/              # Scripts de automatización (Astro CLI)
 ├── packages/
 │   └── astro-search-badges/  # Submodule: componente de search badges
 ├── public/
@@ -68,19 +70,17 @@ El proyecto incluye un **CLI interactivo** para facilitar las tareas comunes. Ej
 
 ![CLI Menu](public/images/cli-menu.png)
 
-| Comando                  | Descripción                                         |
-| ------------------------ | --------------------------------------------------- |
-| `pnpm menu`              | **Menú interactivo CLI** (Recomendado)              |
-| `pnpm install`           | Instalar dependencias                               |
-| `pnpm dev`               | Servidor de desarrollo en `localhost:4321`          |
-| `pnpm build`             | Build de producción + índice Pagefind               |
-| `pnpm build:preview`     | Build + Preview (Rápido para diseño)                |
-| `pnpm preview`           | Preview del build local                             |
-| `pnpm normalize:content` | Normaliza metadata de TILs (unifica en `meta.json`) |
-| `pnpm verify:content`    | Verifica fechas e integridad del contenido          |
-| `pnpm check:drafts`      | Lista contenido marcado como borrador               |
-| `pnpm bp`                | **Normaliza** + Verifica + Build + Preview          |
-| `pnpm t`                 | **Normaliza** + Verifica + Build                    |
+| Comando           | Descripción                                         |
+| ----------------- | --------------------------------------------------- |
+| `pnpm menu`       | **Menú interactivo CLI** (Recomendado)              |
+| `pnpm dev`        | Servidor de desarrollo con auto-sincronía           |
+| `pnpm build`      | Build de producción + índice Pagefind               |
+| `pnpm preview`    | Preview del build local                             |
+| `pnpm set-badge`  | Gestionar badges de contenido                       |
+| `pnpm sync:content`| Sincronizar estructura de contenido                 |
+| `pnpm verify:content`| Verificar integridad de fechas y rutas            |
+| `pnpm check:drafts`| Listar borradores activos                           |
+| `pnpm lint:fix`   | Corregir errores de estilo y linting                |                   |
 
 > **Nota:** La búsqueda solo funciona en `preview` o producción (después de un comando que genere `pnpm build`).
 
@@ -113,18 +113,24 @@ src/content/devlog/
         └── ...
 ```
 
-### Frontmatter común
+### Frontmatter completo
 
 ```yaml
 ---
 title: 'Título del artículo'
-description: 'Descripción breve'
-# pubDate y tags se mueven a meta.json en TILs automáticamente
-pubDate: '2024-12-01'
-tags: ['tag1', 'tag2']
-lang: 'es' # es | en | ca
-draft: false # true = no se publica en producción
-series: 'nombre-serie' # solo para DevLogs
+description: 'Descripción breve para SEO'
+pubDate: '2024-12-01'        # Fecha de publicación
+updatedDate: '2024-12-05'    # (Opcional) Fecha de actualización
+tags: ['astro', 'react']     # Tags validados en /src/data/tags.ts
+lang: 'es'                   # es | en | ca
+draft: false                 # true = ocultar en producción
+new: true                    # Muestra badge de 'Nuevo'
+end: false                   # (Solo DevLogs) Marca el fin de una serie
+icon: 'typescript'           # git, typescript, react, astro, javascript, css, powerapps, vite
+series: 'nombre-serie'       # ID de la serie para agrupar
+seriesTitle:                 # (Opcional) Título de serie localizado
+  es: 'Serie en Español'
+  en: 'Series in English'
 ---
 ```
 
@@ -154,7 +160,7 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 
 1. `pnpm build` genera el índice en `dist/pagefind/`
 2. El componente `SearchResultsClient.tsx` (React) carga Pagefind en cliente
-3. Filtros disponibles: TIL, Projects, DevLogs
+3. Filtros disponibles: Notes, Projects, DevLogs
 
 > En `pnpm dev`, la búsqueda no funciona (Pagefind requiere build previo).
 
@@ -188,12 +194,11 @@ La búsqueda usa **Pagefind** para indexar contenido estático:
 
 ## 🛠️ Desarrollo
 
-### Añadir un nuevo TIL
+### Añadir una nueva nota (Note)
 
-1. Crear carpeta en `src/content/til/nombre-til/`
-2. Crear `es.mdx`, `en.mdx`, `ca.mdx` con frontmatter básico (título, lang).
-3. **Opcional**: Añadir `pubDate` y `tags` en `es.mdx` o crear `meta.json` manualmente.
-4. Al hacer `pnpm bp`, el sistema normalizará automáticamente los metadatos moviéndolos a `meta.json`.
+1. Crear carpeta en `src/content/notes/nombre-nota/`
+2. Crear `es.mdx`, `en.mdx`, `ca.mdx` con frontmatter completo.
+3. El sistema validará automáticamente los campos obligatorios vía Zod en `content.config.ts`.
 
 ### Añadir nuevo idioma
 
