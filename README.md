@@ -37,7 +37,7 @@ Portfolio personal y blog técnico construido con Astro, React y TailwindCSS. In
 │   │   └── mdx/          # CodeTabs, componentes para MDX
 │   ├── content/
 │   │   ├── devlogs/      # DevLogs en MDX (series con partes)
-│   │   ├── notes/        # Notas técnicas (Today I Learned)
+│   │   ├── notes/        # Notas técnicas
 │   │   ├── projects/     # Project showcases
 │   │   └── privacy/      # Política de privacidad
 │   ├── i18n/
@@ -88,15 +88,14 @@ El proyecto incluye un **CLI interactivo** para facilitar las tareas comunes. Ej
 
 ## 📝 Content Collections
 
-### TILs (Today I Learned)
+### Notes (Notas)
 
 ```
-src/content/til/
-└── nombre-til/
-    ├── es.mdx      # Fuente de verdad para fechas/tags si falta meta.json
+src/content/notes/
+└── nombre-nota/
+    ├── es.mdx      # Fuente de verdad (frontmatter con pubDate, tags, etc.)
     ├── en.mdx
-    ├── ca.mdx
-    └── meta.json   # { pubDate, tags } - Generado/Validado automáticamente
+    └── ca.mdx
 ```
 
 ### DevLogs (Series)
@@ -105,8 +104,7 @@ src/content/til/
 src/content/devlog/
 └── nombre-serie/
     ├── part-1/
-    │   ├── meta.json
-    │   ├── es.mdx
+    │   ├── es.mdx  # Frontmatter con pubDate, tags, series, etc.
     │   ├── en.mdx
     │   └── ca.mdx
     └── part-2/
