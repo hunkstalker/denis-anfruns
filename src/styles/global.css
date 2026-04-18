@@ -172,9 +172,31 @@ mark {
 }
 
 /* Global Focus Styles for Accessibility */
-:focus-visible {
-	outline: 2px solid rgb(var(--accent));
-	outline-offset: 2px;
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 2px var(--bg-color-dark), 0 0 0 4px var(--tangerine);
+	border-radius: 4px;
+	transition: box-shadow 0.2s ease;
+}
+
+.dark a:focus-visible,
+.dark button:focus-visible {
+	box-shadow: 0 0 0 2px #131313, 0 0 0 4px var(--tangerine);
+}
+
+/* Indicador visual al saltar al contenido principal */
+#main-content:focus h1 {
+	outline: none;
+	text-decoration: underline;
+	text-decoration-color: var(--tangerine);
+	text-underline-offset: 8px;
+	text-decoration-thickness: 4px;
+	transition: all 0.3s ease;
 }
 
 /* Reduced Motion Preference */

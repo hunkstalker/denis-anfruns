@@ -61,6 +61,7 @@ function getPathForLang(lang: string) {
 					},
 				]}
 				aria-label={`${t('language.changeTo')} ${languages[lang as keyof typeof languages]}`}
+				aria-current={lang === currentLang ? 'page' : undefined}
 			>
 				{lang.toUpperCase()}
 			</a>

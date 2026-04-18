@@ -82,6 +82,9 @@ export const ui = {
 		'home.latest.posts': 'Últimas publicaciones',
 		'home.view.all': 'Ver todo',
 
+		// ACCESIBILIDAD
+		'a11y.skipToContent': 'Saltar al contenido principal',
+
 		// SOBRE MÍ
 		'about.title': 'Sobre mí',
 		'about.intro.title': 'Hola, soy Denis Anfruns Millán',
@@ -179,23 +182,26 @@ export const ui = {
 		'home.latest.posts': 'Últimes publicacions',
 		'home.view.all': 'Veure tot',
 
+		// ACCESSIBILITAT
+		'a11y.skipToContent': 'Saltar al contingut principal',
+
 		// SOBRE MI
 		'about.title': 'Sobre mi',
 		'about.intro.title': 'Hola, sóc el Denis Anfruns Millán',
 		'about.intro.text':
-			"Sóc un desenvolupador Full Stack al qual li apassiona el rendiment del software i les bones pràctiques, **però el meu perfil abans de tot és pragmàtic**. Entenc el desenvolupament com una solució als problemes que sorgeixen, solucions que han de ser adaptables als ràpids canvis. Em moc entre l'**estabilitat i innovació** amb React + Astro i l'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint, la suite Microsoft 365 present a la majoria d'empreses.",
+			"Sóc un desenvolupador Full Stack al qual li apassiona el rendiment del software i les bones pràctiques, **però el meu perfil abans de tot és pragmàtic**. Entenc el desenvolupament com una solució als problemes que sorgeixen, solucions que han de ser adaptables als ràpids canvis. Em moc entre l'**estabilitat i innovació** con React + Astro i l'eficàcia de Power Platform (Power Apps - Power Automate - Power BI) i SharePoint, la suite Microsoft 365 present a la majoria d'empreses.",
 		'about.intro.deal':
 			"**Solucions d'alt rendiment** client-side, llocs dinàmics de **gran experiència per a l'usuari** o suports amb Web API Natives que garanteixen una **base sòlida**.",
 		'about.garden.title': 'El Jardí Digital',
 		'about.garden.text': 'Aquest lloc és un **"Jardí Digital"**. Aquí no només publicaré projectes acabats, sinó que documento els meus desenvolupaments o experiments així com petites notes que em serveixen dia a dia. M\'encanta ensenyar i compartir, així que espero que aquest repositori ens sigui d\'ajuda a tots dos. Crec fermament en el **Codi Lliure** ❤️',
 		'about.personal.title': 'Més enllà del codi',
-		'about.personal.text': `Quan no estic programant, et costarà trobar-me 🤣 
+		'about.personal.text': `Quan no estic programant, te costarà trobar-me 🤣 
       gaudeixo desconnectant amb una bona sèrie, pel·lícula o perdent-me en algun videojoc. 
       **Soc fan de Star Trek, Stargate** i mai em canso dels **videojocs retro**, m'omplen de nostàlgia. 
       <br><br>
       Com a detall, **vaig estudiar Disseny Industrial** i tinc bona mà per al dibuix; no em considero un gran creatiu, 
       però passo temps mirant obres d'artistes independents. Aprecio molt l'art i el disseny, per la qual cosa li 
-      dono gran importància a la **comunicació visual** i al **que transmet**.
+      dono gran importància a la **comunicación visual** i al **que transmet**.
       <br><br>
       Per últim espero que gaudeixis i aprenguis del contingut del meu lloc i et faig saber que tens alguns easter eggs repartits, així que diverteix-te trobant-los.`,
 		'about.contact.title': 'Parlem?',
@@ -276,6 +282,10 @@ export const ui = {
 			'I am a Full Stack developer passionate about technology and continuous learning.',
 		'home.latest.posts': 'Latest Posts',
 		'home.view.all': 'View all posts',
+
+		// ACCESSIBILITY
+		'a11y.skipToContent': 'Skip to main content',
+
 		// ABOUT ME
 		'about.title': 'About Me',
 		'about.intro.title': "Hi, I'm Denis Anfruns Millán",

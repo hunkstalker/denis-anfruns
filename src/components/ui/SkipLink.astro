@@ -1,0 +1,22 @@
+---
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+	lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<a
+	href="#main-content"
+	class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:flex focus:items-center focus:gap-3 focus:rounded-full focus:border focus:border-zinc-300/50 focus:bg-white/90 focus:px-6 focus:py-2.5 focus:text-sm focus:font-medium focus:text-zinc-900 focus:shadow-2xl focus:backdrop-blur-md focus:transition-all focus:duration-300 dark:focus:border-zinc-700/50 dark:focus:bg-zinc-950/80 dark:focus:text-white"
+>
+	<span class="relative flex size-2">
+		<span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[--tangerine] opacity-75"></span>
+		<span class="relative inline-flex size-2 rounded-full bg-[--tangerine]"></span>
+	</span>
+	{t('a11y.skipToContent')}
+</a>

@@ -13,6 +13,8 @@ export default function MenuToggle({ label }: Props) {
 		<button
 			onClick={() => isMenuOpen.set(!$isMenuOpen)}
 			aria-label={label}
+			aria-expanded={$isMenuOpen}
+			aria-controls="mobile-menu-panel"
 			className="p-2 text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
 		>
 			{$isMenuOpen ? <X size={24} /> : <Menu size={24} />}

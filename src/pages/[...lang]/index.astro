@@ -44,7 +44,7 @@ const isRoot = langParam === undefined
 )}
 
 <BaseLayout siteTitle={siteTitle} lang={lang as 'es' | 'en' | 'ca'}>
-	<Nav lang={lang as 'es' | 'en' | 'ca'} />
+	<Nav slot="nav" lang={lang as 'es' | 'en' | 'ca'} />
 	<div class="container flex-1">
 		<Header lang={lang as 'es' | 'en' | 'ca'} />
 	</div>

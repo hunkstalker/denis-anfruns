@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import { useStore } from '@nanostores/react'
 import { isMenuOpen } from '@stores/menuStore'
 import { ChevronDown, Shapes } from 'lucide-react'
+import { FocusTrap } from 'focus-trap-react'
 
 interface MenuItem {
 	label: string | React.ReactNode
@@ -33,6 +34,7 @@ const MobileMenuItem = ({ item, closeMenu, lang = 'es' }: { item: MenuItem; clos
 			<div className="flex flex-col">
 				<button
 					onClick={() => setIsExpanded(!isExpanded)}
+					aria-expanded={isExpanded}
 					className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-base font-medium transition-colors ${
 						item.active
 							? 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white'
@@ -164,32 +166,35 @@ export default function MobileMenu({ items, lang = 'es' }: Props) {
 					/>
 
 					{/* Menu Panel */}
-					<motion.aside
-						initial={{ x: '-100%' }}
-						animate={{ x: 0 }}
-						exit={{ x: '-100%' }}
-						transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-						drag="x"
-						dragControls={dragControls}
-						dragConstraints={{ left: 0, right: 0 }}
-						dragElastic={{ left: 0.5, right: 0.05 }}
-						onDragEnd={(_, { offset, velocity }) => {
-							if (offset.x < -50 || velocity.x < -500) {
-								closeMenu()
-							}
-						}}
-						className="fixed bottom-0 left-0 top-16 z-40 w-64 border-r border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
-					>
-						{/* Filler to hide gap when dragging right */}
-						<div className="absolute inset-y-0 right-full w-screen bg-white dark:bg-zinc-900" />
+					<FocusTrap active={$isMenuOpen} focusTrapOptions={{ allowOutsideClick: true }}>
+						<motion.aside
+							id="mobile-menu-panel"
+							initial={{ x: '-100%' }}
+							animate={{ x: 0 }}
+							exit={{ x: '-100%' }}
+							transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+							drag="x"
+							dragControls={dragControls}
+							dragConstraints={{ left: 0, right: 0 }}
+							dragElastic={{ left: 0.5, right: 0.05 }}
+							onDragEnd={(_, { offset, velocity }) => {
+								if (offset.x < -50 || velocity.x < -500) {
+									closeMenu()
+								}
+							}}
+							className="fixed bottom-0 left-0 top-16 z-40 w-64 border-r border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
+						>
+							{/* Filler to hide gap when dragging right */}
+							<div className="absolute inset-y-0 right-full w-screen bg-white dark:bg-zinc-900" />
 
-						<nav className="flex flex-col gap-1 pt-6">
-							{menuItems.map((item) => {
-								if (!item.enabled) return null
-								return <MobileMenuItem key={item.link} item={item} closeMenu={closeMenu} lang={lang} />
-							})}
-						</nav>
-					</motion.aside>
+							<nav className="flex flex-col gap-1 pt-6">
+								{menuItems.map((item) => {
+									if (!item.enabled) return null
+									return <MobileMenuItem key={item.link} item={item} closeMenu={closeMenu} lang={lang} />
+								})}
+							</nav>
+						</motion.aside>
+					</FocusTrap>
 				</>
 			)}
 		</AnimatePresence>,
