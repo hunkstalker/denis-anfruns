@@ -190,7 +190,7 @@ textarea:focus-visible {
 }
 
 /* Indicador visual al saltar al contenido principal */
-#main-content:focus h1 {
+#main-content:focus-visible h1 {
 	outline: none;
 	text-decoration: underline;
 	text-decoration-color: var(--tangerine);
