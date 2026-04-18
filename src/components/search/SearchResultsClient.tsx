@@ -65,7 +65,7 @@ interface SearchResultsClientProps {
 		[key: string]: string
 	}
 	counts: {
-		notes: number
+		note: number
 		project: number
 		devlog: number
 	}
@@ -159,7 +159,7 @@ export default function SearchResultsClient({
 		const container = initialContentRef.current
 
 		// Toggle Sections
-		const sections = ['project', 'notes', 'devlog']
+		const sections = ['project', 'note', 'devlog']
 
 		sections.forEach((sectionType) => {
 			const sectionEl = container.querySelector(`[data-section="${sectionType}"]`)
@@ -227,14 +227,14 @@ export default function SearchResultsClient({
 	const filteredResults = results.filter((r) => {
 		if (filter === 'all') return true
 		if (filter === 'project') return r.filters.type?.includes('project')
-		if (filter === 'notes') return r.filters.type?.includes('notes')
-		if (filter === 'devlog') return !r.filters.type || r.filters.type.includes('devlog')
+		if (filter === 'note') return r.filters.type?.includes('note') || r.filters.type?.includes('notes') // Fallback temporal
+		if (filter === 'devlog') return !r.filters.type || r.filters.type.includes('devlog') || r.url.includes('/devlogs/')
 		return true
 	})
 
 	// Calculate Sections (for rendering)
 	const projects = filteredResults.filter((r) => r.filters.type?.includes('project'))
-	const notes = filteredResults.filter((r) => r.filters.type?.includes('notes'))
+	const notes = filteredResults.filter((r) => r.filters.type?.includes('note') || r.filters.type?.includes('notes'))
 	const blogs = filteredResults.filter((r) => !r.filters.type || r.filters.type.includes('devlog'))
 
 	const hasResults = filteredResults.length > 0
@@ -295,7 +295,7 @@ export default function SearchResultsClient({
 	const chips = [
 		{ id: 'all', label: labels['search.all'], count: 999 },
 		{ id: 'project', label: labels['search.project'], count: counts.project },
-		{ id: 'notes', label: labels['search.notes'], count: counts.notes },
+		{ id: 'note', label: labels['search.notes'], count: counts.note },
 		{ id: 'devlog', label: labels['search.devblog'], count: counts.devlog },
 	].filter((chip) => chip.count > 0)
 

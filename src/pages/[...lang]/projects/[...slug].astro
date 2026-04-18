@@ -34,7 +34,7 @@ const { Content } = await render(post)
 	description={post.data.description}
 	image={post.data.heroImage}
 >
-	<div class="lg:col-span-8 lg:col-start-3">
+	<div class="lg:col-span-8 lg:col-start-3" data-pagefind-body data-pagefind-filter="type:project">
 		<div class="mb-8">
 			<BackLink href={lang === 'es' ? '/' : `/${lang}`} label={t('nav.home')} />
 
