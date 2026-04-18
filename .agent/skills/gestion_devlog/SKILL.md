@@ -1,6 +1,6 @@
 ---
 name: Gestión de Devlogs Didácticos
-description: Protocolo para la creación asistida de proyectos de aprendizaje (Devlogs). Define el manejo del roadmap, tono didáctico técnico, backups de planificación y flujo estricto de traducción.
+description: Protocolo para la creación asistida de proyectos de aprendizaje (Devlogs). Define el manejo del roadmap, tono didáctico técnico, backups de planificación y flujo estricto de traducción. Actualizado para Astro 6.
 ---
 
 # Protocolo de Gestión de Devlogs
@@ -35,7 +35,7 @@ Antes de crear contenido con múltiples ejemplos o patrones, SIEMPRE consulta al
 El trabajo se realiza iterativamente capítulo a capítulo.
 
 ### Reglas de Escritura
-1. **Single Source**: Trabaja ÚNICAMENTE en `es.mdx`. Ignora los otros idiomas hasta la fase de traducción.
+1. **Single Source**: Trabaja ÚNICAMENTE en `es.mdx`. Ignora los otros idiomas hasta la fase de traducción. (Metadatos validados en `src/content.config.ts`).
 2. **Enfoque Didáctico y Técnico**:
    - El objetivo es que el usuario aprenda profundamente cómo funcionan las cosas.
    - **Explicación Previa**: NUNCA muestres un bloque de código sin antes haberlo desglosado.
@@ -83,14 +83,15 @@ src/content/devlogs/[slug-proyecto]/[slug-capitulo]/
 ```
 
 ## 6. Scripts y Estructura del Proyecto
+**NOTA**: Esta sección es aplicable a proyectos con estado (ej. Godot/GameDev) para no perder el contexto del capítulo anterior. No es obligatoria para proyectos web o cursos de lógica.
 
 Cada capítulo que incluya código GDScript debe mantener:
 
-1. **Carpeta `scripts/`**: Contiene los archivos `.gd` finales del capítulo.
+1. **Carpeta `_scripts/`**: Contiene los archivos `.gd` finales del capítulo. (Guion bajo para que Astro lo ignore).
    - Solo incluir archivos que se crean o modifican en ese capítulo.
    - El código debe coincidir EXACTAMENTE con los bloques "Script Completo" del MDX.
 
-2. **Archivo `structure.md`**: Mapa de la estructura del proyecto Godot.
+2. **Archivo `_structure.md`**: Mapa de la estructura del proyecto Godot. (Guion bajo para que Astro lo ignore).
    - Tabla con cada archivo, su ruta en Godot y descripción.
    - Árbol de estructura completa del proyecto al finalizar el capítulo.
    - Estructura de nodos de las escenas si es relevante.
@@ -109,8 +110,9 @@ src/content/devlogs/game-dev-godot/part-X/
 
 **Regla de Verificación**: Antes de finalizar un capítulo, verificar que TODOS los fragmentos de código del MDX coincidan con el script completo en la carpeta `scripts/`.
 
-## 7. Uso del Componente Callout
+## 7. Uso de Componentes MDX
 
+### Callout
 Los Callouts son cajas destacadas para información secundaria. NO son para el temario principal.
 
 **Uso Correcto (✅):**
@@ -124,3 +126,9 @@ Los Callouts son cajas destacadas para información secundaria. NO son para el t
 - Explicar conceptos fundamentales del temario (eso va en texto principal).
 - Definiciones básicas que todo lector debe saber.
 - Código obligatorio o explicaciones de sintaxis core.
+
+### CodeTabs
+Úsalo para mostrar progresiones del mismo script o comparativas entre versiones/idiomas.
+
+## 8. Verificación Final
+Antes de despedirte, verifica que el `lang` en el frontmatter sea correcto y que las rutas a imágenes o assets sean coherentes con la estructura de Astro 6.
