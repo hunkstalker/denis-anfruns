@@ -4,5 +4,8 @@ export async function getProjects() {
 	const projects = await getCollection('projects', ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true
 	})
-	return projects
+	return projects.map((project) => ({
+		...project,
+		slug: project.id.replace(/\.[^/.]+$/, ''),
+	}))
 }

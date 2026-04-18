@@ -1,7 +1,8 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
 import type { Tag } from '../data/tags'
 
-export type NotePost = Omit<CollectionEntry<'notes'>, 'data'> & {
+export type NotePost = Omit<CollectionEntry<'notes'>, 'data' | 'slug'> & {
+    slug: string
     data: Omit<CollectionEntry<'notes'>['data'], 'pubDate' | 'tags'> & {
         pubDate: Date
         tags: Tag[]
@@ -39,8 +40,10 @@ export async function getNotes(): Promise<NotePost[]> {
                 }
             }
 
+            const slug = post.id.replace(/\.[^/.]+$/, '')
             return {
                 ...post,
+                slug,
                 data: {
                     ...post.data,
                     // post.data.pubDate is already Date (coerced by Zod in config.ts)
@@ -54,7 +57,7 @@ export async function getNotes(): Promise<NotePost[]> {
                         ? (post.data.seriesTitle as any)[post.data.lang] || (post.data.seriesTitle as any)['es'] 
                         : post.data.seriesTitle
                 },
-            }
+            } as NotePost
         })
 }
 

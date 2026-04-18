@@ -8,13 +8,16 @@ import type { SupportedLang } from '@utils/blogi18n'
 import Grid from '@components/notes/Grid'
 
 export async function getStaticPaths() {
-	return Object.keys(languages)
-		.filter((lang) => lang !== 'es')
-		.map((lang) => ({ params: { lang: lang as SupportedLang } }))
+	return [
+		{ params: { lang: undefined } }, // Español
+		{ params: { lang: 'en' } },
+		{ params: { lang: 'ca' } }
+	]
 }
 
-const { lang } = Astro.params
-const t = useTranslations(lang as SupportedLang)
+const { lang: langParam } = Astro.params
+const lang = (langParam || 'es') as SupportedLang
+const t = useTranslations(lang)
 
 const allNotes = await getNotes()
 
@@ -33,7 +36,7 @@ const notes = groupNotesBySeries(noteCollection)
 <ContentLayout
 	title={t('blog.note')}
 	siteTitle={`Notes - ${t('blog.note')}`}
-	lang={lang as SupportedLang}
+	lang={lang}
 >
 	<div class="lg:col-span-12">
 		<div class="mb-8">
@@ -51,7 +54,7 @@ const notes = groupNotesBySeries(noteCollection)
 			client:load
 			transition:persist
 			posts={notes}
-			lang={lang as SupportedLang}
+			lang={lang}
 			labels={{
 				all: t('search.all'),
 				noResults: t('blog.withoutNotes'),

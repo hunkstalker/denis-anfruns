@@ -1,35 +1,39 @@
 ---
+import { render } from 'astro:content'
 import { getDevlogs, type DevlogPost } from '@utils/devlogs-content'
 import ContentLayout from '@layouts/ContentLayout.astro'
 import BackLink from '@components/ui/BackLink.astro'
 import TableOfContents from '@components/common/TableOfContents.astro'
 import SeriesWidget from '@components/common/SeriesWidget.astro'
-
 import MarkAsRead from '@components/common/MarkAsRead.astro'
 import { getLangFromSlug, getBaseSlug } from '@utils/blogi18n'
 import { useTranslations } from '@i18n/utils'
 
 import ChevronUp from '@icons/chevron-up.svg'
 import ChevronRight from '@icons/chevron-right.svg'
-import ListIcon from '@icons/list.svg'
 
 export async function getStaticPaths() {
 	const posts = await getDevlogs()
 
-	return posts
-		.filter((post) => getLangFromSlug(post.slug) === 'es')
-		.map((post) => ({
-			params: { slug: getBaseSlug(post.slug) },
-			props: post,
-		}))
+	return posts.map((post) => {
+		const langCode = getLangFromSlug(post.slug)
+		const lang = langCode === 'es' ? undefined : langCode
+		const slug = getBaseSlug(post.slug)
+
+		return {
+			params: { lang, slug },
+			props: { post },
+		}
+	})
 }
-type Props = DevlogPost
 
-const post = Astro.props
-const lang = getLangFromSlug(post.slug)
+const { post } = Astro.props as { post: DevlogPost }
+const { lang: langParam } = Astro.params
+const lang = (langParam || 'es') as 'es' | 'en' | 'ca'
 const t = useTranslations(lang)
-const { Content, headings } = await post.render()
+const { Content, headings } = await render(post)
 
+// Lógica de siguiente post en la serie
 let nextPost: DevlogPost | null = null
 if (post.data.series) {
 	const allPosts = await getDevlogs()
@@ -42,16 +46,17 @@ if (post.data.series) {
 	const currentIndex = seriesPosts.findIndex((p) => p.slug === post.slug)
 	nextPost = seriesPosts[currentIndex + 1] || null
 }
-	// Resolve series title for search
-	const getSeriesTitle = () => {
-		const st = post.data.seriesTitle
-		if (!st) return post.data.title
-		if (typeof st === 'object') {
-			return st[lang] || st['es'] || post.data.title
-		}
-		return st
-	}
-	const searchTitle = getSeriesTitle()
+
+// Resolver título de la serie para búsqueda
+const getSeriesTitle = () => {
+    const st = post.data.seriesTitle
+    if (!st) return post.data.title
+    if (typeof st === 'object') {
+        return st[lang] || st['es'] || post.data.title
+    }
+    return st
+}
+const searchTitle = getSeriesTitle()
 ---
 
 <style>
@@ -60,25 +65,13 @@ if (post.data.series) {
 		animation: fadeInUp 0.8s ease-out forwards;
 	}
 
-	.delay-100 {
-		animation-delay: 0.1s;
-	}
-	.delay-200 {
-		animation-delay: 0.2s;
-	}
-	.delay-300 {
-		animation-delay: 0.3s;
-	}
+	.delay-100 { animation-delay: 0.1s; }
+	.delay-200 { animation-delay: 0.2s; }
+	.delay-300 { animation-delay: 0.3s; }
 
 	@keyframes fadeInUp {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
+		from { opacity: 0; transform: translateY(20px); }
+		to { opacity: 1; transform: translateY(0); }
 	}
 </style>
 
@@ -92,14 +85,14 @@ if (post.data.series) {
 >
 	<MarkAsRead slug={post.slug} collection="devlogs" />
 	<div
-		class="col-span-1 pl-4 lg:col-span-8"
+		class="col-span-1 pl-4 lg:col-span-8 xl:col-span-8"
 		data-pagefind-body
 		data-pagefind-filter={`type:${post.data.tags.some((t) => t.toLowerCase() === 'project') ? 'project' : 'devlog'}`}
 		data-pagefind-meta={`description:${post.data.description}`}
 		data-pagefind-meta={`title:${searchTitle}`}
 	>
 		<div class="mb-8">
-			<BackLink href={`/blog`} label={t('blog.back')} />
+			<BackLink href={lang === 'es' ? '/blog' : `/${lang}/blog`} label={t('blog.back')} />
 
 			{
 				post.data.heroImage && (
@@ -167,7 +160,6 @@ if (post.data.series) {
 			<hr class="animate-fade-in-up mt-8 border-stone-400 delay-300 dark:border-zinc-800" />
 		</div>
 
-		<!-- Mobile Table of Contents (Collapsible) -->
 		{/* Mobile TOC */}
 		{
 			headings.length > 0 && (
@@ -193,7 +185,7 @@ if (post.data.series) {
 		}
 
 		<article class="prose max-w-none dark:prose-invert lg:prose-xl">
-			{/* Hidden content for Pagefind indexing - allows search with highlighting */}
+			{/* Hidden content for Pagefind indexing */}
 			{
 				post.data.description && (
 					<span class="sr-only" data-pagefind-weight="2">
@@ -232,52 +224,12 @@ if (post.data.series) {
 			document.getElementById('scroll-to-top')?.addEventListener('click', () => {
 				window.scrollTo({ top: 0, behavior: 'smooth' })
 			})
-
-			// Mobile TOC Animation
-			const tocDetails = document.querySelector('.mobile-toc') as HTMLDetailsElement
-			const tocSummary = tocDetails?.querySelector('summary')
-			const tocContent = tocDetails?.querySelector('.toc-content') as HTMLElement
-
-			if (tocDetails && tocSummary && tocContent) {
-				tocSummary.addEventListener('click', (e) => {
-					e.preventDefault()
-
-					if (tocDetails.open) {
-						// Closing
-						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
-						// Force reflow
-						const _reflow = tocContent.offsetHeight
-
-						tocContent.style.maxHeight = '0'
-						tocContent.style.opacity = '0'
-
-						setTimeout(() => {
-							tocDetails.open = false
-						}, 300)
-					} else {
-						// Opening
-						tocDetails.open = true
-
-						tocContent.style.maxHeight = '0'
-						tocContent.style.opacity = '0'
-						// Force reflow
-						const _reflow = tocContent.offsetHeight
-
-						tocContent.style.maxHeight = `${tocContent.scrollHeight}px`
-						tocContent.style.opacity = '1'
-
-						setTimeout(() => {
-							tocContent.style.maxHeight = 'none'
-						}, 300)
-					}
-				})
-			}
 		</script>
 	</div>
 
-	{/* Columna derecha de Widgets */}
+	<!-- Sidebar Widgets -->
 	<aside class="hidden pl-2 lg:col-span-4 lg:block">
-		<div class="sticky top-32 mt-2.5 space-y-8">
+		<div class="sticky top-24 mt-2.5 space-y-8">
 			{
 				post.data.series && (
 					<SeriesWidget

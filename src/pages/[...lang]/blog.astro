@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro'
 import Nav from '@components/layout/Nav.astro'
-
 import { getDevlogs, groupDevlogsBySeries } from '@utils/devlogs-content'
 import { getLangFromSlug, type SupportedLang } from '@utils/blogi18n'
 import { languages } from '@i18n/ui'
@@ -10,26 +9,29 @@ import NotesAside from '@components/notes/Aside.astro'
 import DevLogGrid from '@components/devlog/Grid'
 
 export async function getStaticPaths() {
-	return Object.keys(languages)
-		.filter((lang) => lang !== 'es')
-		.map((lang) => ({ params: { lang: lang as SupportedLang } }))
+	return [
+		{ params: { lang: undefined } }, // Español
+		{ params: { lang: 'en' } },
+		{ params: { lang: 'ca' } },
+	]
 }
 
-const { lang } = Astro.params
+const { lang: langParam } = Astro.params
+const lang = (langParam || 'es') as SupportedLang
 const t = useTranslations(lang)
+
 const rawPosts = await getDevlogs()
-// Use shared logic for filtering and grouping
+// Lógica compartida para filtrar y agrupar
 const posts = rawPosts
 	.filter((p) => getLangFromSlug(p.slug) === lang && p.data.pubDate)
 	.filter((post) => (import.meta.env.PROD ? post.data.draft !== true : true))
 
 const devlogs = groupDevlogsBySeries(posts)
-
 const articles = devlogs
 ---
 
 <BaseLayout siteTitle={t('blog.title')} lang={lang}>
-	<Nav lang={lang as 'es' | 'en' | 'ca'} />
+	<Nav lang={lang} />
 	<div class="container mx-auto px-3 py-6 pt-20 sm:px-4 sm:py-8 md:pt-28">
 		<h3
 			class="text-xs mb-4 font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 lg:pl-6"
@@ -47,7 +49,7 @@ const articles = devlogs
 							{t('blog.series')}
 						</h2>
 						<a
-							href={`/${lang}/devlogs/`}
+							href={lang === 'es' ? '/devlogs/' : `/${lang}/devlogs/`}
 							class="group flex items-center gap-1 text-sm font-medium text-zinc-500 transition-colors hover:text-[--tangerine-hover] dark:hover:text-[--tangerine]"
 						>
 							{t('blog.viewAll')}
@@ -74,7 +76,7 @@ const articles = devlogs
 					<DevLogGrid
 						client:load
 						posts={articles}
-						lang={lang as 'es' | 'en' | 'ca'}
+						lang={lang}
 						labels={{ readArticle: t('blog.readArticle') }}
 						layout="blogList"
 					/>

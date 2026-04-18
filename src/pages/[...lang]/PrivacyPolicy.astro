@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content'
+import { getCollection, render } from 'astro:content'
 import BaseLayout from '@layouts/BaseLayout.astro'
 import BackLink from '@components/ui/BackLink.astro'
 import Nav from '@components/layout/Nav.astro'
@@ -7,11 +7,9 @@ import Nav from '@components/layout/Nav.astro'
 export async function getStaticPaths() {
 	const pages = await getCollection('privacy')
 
-	// Filter out 'es' since it's handled by src/pages/PrivacyPolicy.astro
-	const filteredPages = pages.filter((page) => page.slug !== 'es')
-
-	return filteredPages.map((page) => {
-		const lang = page.slug
+	return pages.map((page) => {
+		const slug = page.id.replace(/\.[^/.]+$/, '')
+		const lang = slug === 'es' ? undefined : slug
 		return {
 			params: { lang },
 			props: { page },
@@ -20,7 +18,7 @@ export async function getStaticPaths() {
 }
 
 const { page } = Astro.props
-const { Content } = await page.render()
+const { Content } = await render(page)
 
 // Map del texto del botón para cada idioma
 const buttonText = {
@@ -29,7 +27,8 @@ const buttonText = {
 	en: 'Back',
 }
 
-const lang = page.slug as keyof typeof buttonText
+const { lang: langParam } = Astro.params
+const lang = (langParam || 'es') as keyof typeof buttonText
 const btnText = buttonText[lang] || buttonText.es
 ---
 

@@ -1,6 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content'
 
-export type DevlogPost = CollectionEntry<'devlogs'> & {
+export type DevlogPost = Omit<CollectionEntry<'devlogs'>, 'slug'> & {
+	slug: string
 	data: CollectionEntry<'devlogs'>['data'] & {
 		pubDate: Date
 		tags: string[]
@@ -60,8 +61,10 @@ export async function getDevlogs(): Promise<DevlogPost[]> {
 					}
 				}
 
+				const slug = post.id.replace(/\.[^/.]+$/, '')
 				return {
 					...post,
+					slug,
 					data: {
 						...post.data,
 						pubDate: post.data.pubDate!, // ensured by filter
@@ -87,6 +90,7 @@ export function groupDevlogsBySeries(posts: DevlogPost[]): DevlogPost[] {
 			// Solo posts count as series of 1 for badge logic
 			const entry: DevlogPost = {
 				...post,
+				slug: post.slug,
 				data: {
 					...post.data,
 					seriesCount: 1,

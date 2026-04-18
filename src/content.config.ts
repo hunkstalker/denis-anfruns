@@ -1,8 +1,10 @@
-import { defineCollection, z } from 'astro:content'
-import { TAGS } from '../data/tags' // Validation too strict for CMS
+import { defineCollection } from 'astro:content'
+import { glob } from 'astro/loaders'
+import { z } from 'astro/zod'
+import { TAGS } from './data/tags' // Ruta actualizada de ../data/tags a ./data/tags
 
 const privacy = defineCollection({
-	type: 'content',
+	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/privacy' }),
 	schema: z.object({
 		title: z.string(),
 		lastUpdated: z.string(),
@@ -10,7 +12,7 @@ const privacy = defineCollection({
 })
 
 const devlogs = defineCollection({
-	type: 'content',
+	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/devlogs' }),
 	schema: z.object({
 		title: z.string(),
 		description: z.string(),
@@ -32,7 +34,7 @@ const devlogs = defineCollection({
 })
 
 const notes = defineCollection({
-	type: 'content',
+	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/notes' }),
 	schema: z.object({
 		title: z.string(),
 		description: z.string(),
@@ -50,7 +52,7 @@ const notes = defineCollection({
 })
 
 const projects = defineCollection({
-	type: 'content',
+	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/projects' }),
 	schema: z.object({
 		title: z.string(),
 		description: z.string(),

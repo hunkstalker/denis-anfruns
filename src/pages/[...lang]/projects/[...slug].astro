@@ -1,0 +1,54 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content'
+import ContentLayout from '@layouts/ContentLayout.astro'
+import BackLink from '@components/ui/BackLink.astro'
+import { getLangFromSlug, getBaseSlug } from '@utils/blogi18n'
+import { useTranslations } from '@i18n/utils'
+
+export async function getStaticPaths() {
+	const projects = await getCollection('projects')
+
+	return projects.map((post) => {
+		const langCode = getLangFromSlug(post.id)
+		const lang = langCode === 'es' ? undefined : langCode
+		const slug = getBaseSlug(post.id)
+
+		return {
+			params: { lang, slug },
+			props: { post },
+		}
+	})
+}
+
+const { post } = Astro.props as { post: CollectionEntry<'projects'> }
+const { lang: langParam } = Astro.params
+const lang = (langParam || 'es') as 'es' | 'en' | 'ca'
+const t = useTranslations(lang)
+const { Content } = await render(post)
+---
+
+<ContentLayout
+	title={post.data.title}
+	siteTitle={post.data.title}
+	lang={lang}
+	description={post.data.description}
+	image={post.data.heroImage}
+>
+	<div class="lg:col-span-8 lg:col-start-3">
+		<div class="mb-8">
+			<BackLink href={lang === 'es' ? '/' : `/${lang}`} label={t('nav.home')} />
+
+			<h1
+				class="animate-fade-in-up mb-6 text-3xl font-bold leading-tight delay-100 dark:text-zinc-200 md:text-4xl"
+			>
+				{post.data.title}
+			</h1>
+			<p class="text-lg text-zinc-500">{post.data.description}</p>
+			<hr class="animate-fade-in-up my-8 border-zinc-200 delay-300 dark:border-zinc-800" />
+		</div>
+
+		<article class="prose prose-lg max-w-none dark:prose-invert">
+			<Content />
+		</article>
+	</div>
+</ContentLayout>

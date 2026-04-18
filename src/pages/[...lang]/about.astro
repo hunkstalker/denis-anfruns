@@ -1,0 +1,23 @@
+---
+import ContentLayout from '@layouts/ContentLayout.astro'
+import AboutContent from '@components/about/AboutContent.astro'
+import { useTranslations } from '@i18n/utils'
+import { languages } from '@i18n/ui'
+import type { Lang } from '@i18n/ui'
+
+export function getStaticPaths() {
+	return [
+		{ params: { lang: undefined } }, // Español
+		{ params: { lang: 'ca' } },
+		{ params: { lang: 'en' } },
+	]
+}
+
+const { lang: langParam } = Astro.params
+const lang = (langParam || 'es') as Lang
+const t = useTranslations(lang)
+---
+
+<ContentLayout siteTitle={t('about.title')} lang={lang} title={t('about.title')}>
+	<AboutContent lang={lang} />
+</ContentLayout>

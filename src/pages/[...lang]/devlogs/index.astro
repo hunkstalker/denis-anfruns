@@ -5,13 +5,19 @@ import { getDevlogs, groupDevlogsBySeries } from '@utils/devlogs-content'
 import { getLangFromSlug } from '@utils/blogi18n'
 import { useTranslations } from '@i18n/utils'
 import DevLogGrid from '@components/devlog/Grid'
+import type { SupportedLang } from '@utils/blogi18n'
 
 export function getStaticPaths() {
-	return [{ params: { lang: 'en' } }, { params: { lang: 'ca' } }]
+	return [
+		{ params: { lang: undefined } }, // Español
+		{ params: { lang: 'en' } },
+		{ params: { lang: 'ca' } }
+	]
 }
 
-const { lang } = Astro.params
-const t = useTranslations(lang as 'en' | 'ca')
+const { lang: langParam } = Astro.params
+const lang = (langParam || 'es') as SupportedLang
+const t = useTranslations(lang)
 
 // Obtener y filtrar posts
 const rawPosts = (await getDevlogs()).filter(
@@ -27,11 +33,11 @@ const articles = groupDevlogsBySeries(rawPosts)
 <ContentLayout
 	title={t('blog.series')}
 	siteTitle={`DevLogs - ${t('site.title')}`}
-	lang={lang as 'en' | 'ca'}
+	lang={lang}
 >
 	<div class="lg:col-span-12">
 		<div class="mb-8">
-			<BackLink href={`/${lang}/blog`} label={t('blog.back')} />
+			<BackLink href={lang === 'es' ? '/blog' : `/${lang}/blog`} label={t('blog.back')} />
 
 			<h1 class="mb-6 flex items-center gap-2 text-3xl font-bold dark:text-zinc-200">DevLogs</h1>
 
@@ -46,7 +52,7 @@ const articles = groupDevlogsBySeries(rawPosts)
 				<DevLogGrid
 					client:load
 					posts={articles}
-					lang={lang as 'en' | 'ca'}
+					lang={lang}
 					labels={{ readArticle: t('blog.readArticle') }}
 				/>
 			)

@@ -1,0 +1,51 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro'
+import Nav from '@components/layout/Nav.astro'
+import Header from '@components/layout/Header.astro'
+import { languages } from '@i18n/ui'
+
+export function getStaticPaths() {
+	return [
+		{ params: { lang: undefined } }, // Español (ruta raíz)
+		{ params: { lang: 'ca' } },
+		{ params: { lang: 'en' } },
+	]
+}
+
+const { lang: langParam } = Astro.params
+const lang = langParam || 'es'
+const siteTitle = `Denis A. M. Portfolio`
+
+// Solo mostramos el script de redirección en la raíz absoluta
+const isRoot = langParam === undefined
+---
+
+{isRoot && (
+	<script is:inline>
+		const userLang = navigator.language || navigator.userLanguage
+		const savedLang = localStorage.getItem('selectedLang')
+
+		if (window.location.pathname === '/') {
+			if (savedLang) {
+				if (savedLang === 'ca') {
+					window.location.href = '/ca'
+				} else if (savedLang === 'en') {
+					window.location.href = '/en'
+				}
+			} else {
+				if (userLang.startsWith('ca')) {
+					window.location.href = '/ca'
+				} else if (!userLang.startsWith('es')) {
+					window.location.href = '/en'
+				}
+			}
+		}
+	</script>
+)}
+
+<BaseLayout siteTitle={siteTitle} lang={lang as 'es' | 'en' | 'ca'}>
+	<Nav lang={lang as 'es' | 'en' | 'ca'} />
+	<div class="container flex-1">
+		<Header lang={lang as 'es' | 'en' | 'ca'} />
+	</div>
+</BaseLayout>
