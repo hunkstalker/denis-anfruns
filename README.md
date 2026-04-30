@@ -1,6 +1,6 @@
 	### Denis Anfruns - Portfolio Web
 
-[![Astro](https://img.shields.io/badge/Astro-6.1-BC52EE?logo=astro&logoColor=white)](https://astro.build)
+[![Astro](https://img.shields.io/badge/Astro-6.2.1-BC52EE?logo=astro&logoColor=white)](https://astro.build)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Pagefind](https://img.shields.io/badge/Pagefind-1.5-FF6B35)](https://pagefind.app)
