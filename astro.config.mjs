@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config'
+import { defineConfig, svgoOptimizer } from 'astro/config'
 import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
 import mdx from '@astrojs/mdx'
@@ -55,8 +55,6 @@ export default defineConfig({
 		},
 	},
 	experimental: {
-		svgo: {
-			svgo: true,
-		},
+		svgOptimizer: svgoOptimizer()
 	},
 })
