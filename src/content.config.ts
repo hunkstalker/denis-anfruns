@@ -1,7 +1,6 @@
 import { defineCollection } from 'astro:content'
 import { glob } from 'astro/loaders'
 import { z } from 'astro/zod'
-import { TAGS } from './data/tags' // Ruta actualizada de ../data/tags a ./data/tags
 
 const privacy = defineCollection({
 	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/privacy' }),
@@ -35,12 +34,15 @@ const devlogs = defineCollection({
 
 const notes = defineCollection({
 	loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/notes' }),
-	schema: z.object({
-		title: z.string(),
-		description: z.string(),
-		pubDate: z.coerce.date().optional(),
-		tags: z.array(z.string()).default([]).optional(),
-		series: z.string().optional(),
+schema: z.object({
+			title: z.string(),
+			description: z.string(),
+			heroImage: z.string().optional(),
+			descriptionHeroImage: z.string().optional(),
+			ogImage: z.string().optional(),
+			pubDate: z.coerce.date().optional(),
+			tags: z.array(z.string()).default([]).optional(),
+			series: z.string().optional(),
 		seriesTitle: z.string().or(z.object({ es: z.string(), en: z.string(), ca: z.string().optional() })).optional(),
 		seriesDescription: z.string().or(z.object({ es: z.string(), en: z.string(), ca: z.string().optional() })).optional(),
 		lang: z.enum(['es', 'en', 'ca']).default('es'),
