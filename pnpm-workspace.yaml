@@ -1,6 +1,10 @@
 packages:
   - 'packages/*'
 
+overrides:
+  dompurify: 3.4.0
+  yaml: 2.8.3
+
 onlyBuiltDependencies:
   - esbuild
   - sharp
