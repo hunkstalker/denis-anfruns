@@ -141,29 +141,31 @@ const processText = (text: string) => {
 			</h2>
 			<p set:html={t('about.contact.text')} />
 
-			<p class="mt-4">
-				<a 
-					id="email-link" 
-					href="#" 
-					class="font-medium text-[--tangerine-hover] no-underline transition-colors hover:text-[--tangerine] dark:text-[--tangerine] dark:hover:text-[--tangerine-hover]"
-				>
-					<!-- Email loaded via JS to prevent scraping -->
-				</a>
-				<MailIcon class="ml-2 inline-block size-6" />
-			</p>
+<p class="mt-4">
+			<span
+				id="email-link"
+				class="font-medium text-[--tangerine-hover] no-underline transition-colors hover:text-[--tangerine] dark:text-[--tangerine] dark:hover:text-[--tangerine-hover]"
+			>
+				<!-- Email loaded via JS to prevent scraping -->
+			</span>
+			<MailIcon class="ml-2 inline-block size-6" />
+		</p>
 		</section>
 	</div>
 </div>
 
 <script>
 	// Obfuscated email to prevent scraping
-	const emailLink = document.getElementById('email-link')
-	if (emailLink) {
+	const emailSlot = document.getElementById('email-link')
+	if (emailSlot) {
 		const user = 'anfruns.denis'
 		const domain = 'gmail.com'
 		const email = `${user}@${domain}`
+		const emailLink = document.createElement('a')
+		emailLink.href = `mailto:${email}`
 		emailLink.textContent = email
-		emailLink.setAttribute('href', `mailto:${email}`)
+		emailLink.className = emailSlot.className
+		emailSlot.parentNode?.replaceChild(emailLink, emailSlot)
 	}
 </script>
 

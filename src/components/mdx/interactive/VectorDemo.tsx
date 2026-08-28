@@ -60,7 +60,6 @@ export default function VectorDemo() {
   // Values to display based on mode
   const displayX = isNormalized ? normalizedX : input.x;
   const displayY = isNormalized ? normalizedY : input.y;
-  const displayMagnitude = isNormalized ? (rawMagnitude > 0 ? 1 : 0) : rawMagnitude;
 
   // Visual coordinates
   const endX = centerX + displayX * scale;
@@ -156,9 +155,9 @@ export default function VectorDemo() {
         </div>
         {isAnimating && (
            <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-[--tangerine] backdrop-blur dark:bg-black/50">
-             <span className="relative flex h-2 w-2">
-               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[--tangerine] opacity-75"></span>
-               <span className="relative inline-flex h-2 w-2 rounded-full bg-[--tangerine]"></span>
+             <span className="relative flex size-2">
+               <span className="absolute inline-flex size-full animate-ping rounded-full bg-[--tangerine] opacity-75"></span>
+               <span className="relative inline-flex size-2 rounded-full bg-[--tangerine]"></span>
              </span>
              Demo Automática
            </div>
@@ -220,7 +219,7 @@ export default function VectorDemo() {
            <label className="flex items-center gap-3 cursor-pointer group">
              <div className="relative">
                <input type="checkbox" checked={isNormalized} onChange={toggleNormalize} className="peer sr-only" />
-               <div className="h-5 w-9 rounded-full bg-zinc-200 after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-zinc-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[--tangerine] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none dark:bg-zinc-700 dark:border-zinc-600 group-hover:bg-zinc-300 dark:group-hover:bg-zinc-600"></div>
+               <div className="h-5 w-9 rounded-full bg-zinc-200 after:absolute after:left-[2px] after:top-[2px] after:size-4 after:rounded-full after:border after:border-zinc-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-[--tangerine] peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none dark:bg-zinc-700 dark:border-zinc-600 group-hover:bg-zinc-300 dark:group-hover:bg-zinc-600"></div>
              </div>
              <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">Activar .normalized()</span>
            </label>

@@ -137,7 +137,7 @@ const titleDark = `${t('theme.toggle')} (${t('theme.dark')})`
 
 				btn.addEventListener(
 					'click',
-					(e) => {
+					() => {
 						console.log('ThemeToggle clicked', btn);
 						// Forzar layout para asegurar que el click se procesa antes de cambios
 						void btn.offsetWidth;

@@ -9,25 +9,6 @@ const CONTENT_ROOT = path.join(PROJECT_ROOT, 'src', 'content')
 
 const COLLECTIONS = ['devlogs', 'notes', 'projects']
 
-// Helper to recursively find meta.json files
-function findMetaFiles(dir, fileList = []) {
-	if (!fs.existsSync(dir)) return fileList
-
-	const files = fs.readdirSync(dir)
-	files.forEach((file) => {
-		const filePath = path.join(dir, file)
-		const stat = fs.statSync(filePath)
-		if (stat.isDirectory()) {
-			findMetaFiles(filePath, fileList)
-		} else {
-			if (file === 'meta.json') {
-				fileList.push(filePath)
-			}
-		}
-	})
-	return fileList
-}
-
 // Helper to find MDX files
 function findMdxFiles(dir, fileList = []) {
 	if (!fs.existsSync(dir)) return fileList
@@ -48,22 +29,6 @@ function findMdxFiles(dir, fileList = []) {
 }
 
 const FRONTMATTER_REGEX = /^---\s*[\r\n]+([\s\S]*?)[\r\n]+---/
-
-function parseFrontmatterKeys(content) {
-	const match = content.match(FRONTMATTER_REGEX)
-	if (!match) return []
-	
-	const frontmatter = match[1]
-	const keys = []
-	
-	frontmatter.split('\n').forEach(line => {
-		const parts = line.split(':')
-		if (parts.length >= 2) {
-			keys.push(parts[0].trim())
-		}
-	})
-	return keys
-}
 
 // Helper to validate date string
 function isValidDate(dateStr) {
@@ -111,14 +76,16 @@ async function verify() {
                     })
                 }
 
-				// Check pubDate
-				if (!json.pubDate) {
-					console.error(`❌ ERROR en ${relativePath}: Faltan el campo obligatorio 'pubDate'`)
-					hasError = true
-				} else if (!isValidDate(json.pubDate)) {
-					console.error(`❌ ERROR en ${relativePath}: pubDate inválida (${json.pubDate})`)
-					hasError = true
-				}
+// Check pubDate (skip drafts: pubDate is optional in the schema for WIP)
+			if (json.draft === 'true') return
+
+			if (!json.pubDate) {
+				console.error(`❌ ERROR en ${relativePath}: Faltan el campo obligatorio 'pubDate'`)
+				hasError = true
+			} else if (!isValidDate(json.pubDate)) {
+				console.error(`❌ ERROR en ${relativePath}: pubDate inválida (${json.pubDate})`)
+				hasError = true
+			}
 
 				// Check tags (Only strict check on ES usually, but let's check everywhere they exist)
 				if (json.tags) {

@@ -124,7 +124,7 @@ const displayTitle = getTitle()
 		<div class="flex items-center gap-2 mb-2">
 			{icon && (
 				<div
-					class={`shrink-0 size-5 ${currentStyle.iconColor} [&>svg]:w-full [&>svg]:h-full`}
+					class={`shrink-0 size-5 ${currentStyle.iconColor} [&>svg]:size-full`}
 				>
 					<Fragment set:html={icons[type]} />
 				</div>

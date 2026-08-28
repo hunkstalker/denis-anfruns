@@ -426,11 +426,11 @@ export default function AdminDashboard() {
 								onClick={() => { setActiveSeries(null); setSelectedIds(new Set()); }}
 								className="p-2 -ml-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-500"
 							>
-								<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+								<svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
 							</button>
 						) : (
-							<div className="w-9 h-9 flex items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-500">
-								<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+							<div className="size-9 flex items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-500">
+								<svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
 							</div>
 						)}
 						<div>
@@ -447,17 +447,17 @@ export default function AdminDashboard() {
 							className={`px-2 py-1 rounded-[6px] transition-colors ${showHiddenSidebar ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'}`}
 							title="Toggle Hidden Items Sidebar"
 						>
-							<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+							<svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
 						</button>
-						<div className="w-px bg-zinc-200 dark:bg-zinc-700 mx-1 my-1"></div>
+						<div className="w-px bg-zinc-200 dark:bg-zinc-700 m-1"></div>
 						<button
 							onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
 							className="px-2 py-1 rounded-[6px] text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300 transition-colors"
 							title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
 						>
-							<svg className={`w-4 h-4 transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>
+							<svg className={`size-4 transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>
 						</button>
-						<div className="w-px bg-zinc-200 dark:bg-zinc-700 mx-1 my-1"></div>
+						<div className="w-px bg-zinc-200 dark:bg-zinc-700 m-1"></div>
 						{(['all', 'notes', 'devlogs'] as const).map(f => (
 							<button
 								key={f}
@@ -476,7 +476,7 @@ export default function AdminDashboard() {
 
 				{/* Search Bar */}
 				<div className="relative group">
-					<svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+					<svg className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-400 group-focus-within:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
 					<input
 						type="text"
 						placeholder="Search content..."
@@ -488,7 +488,7 @@ export default function AdminDashboard() {
 			{/* Grid */}
 			{loading ? (
 				<div className="flex flex-col items-center justify-center py-32 text-zinc-400 animate-pulse">
-					<div className="w-8 h-8 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin mb-4"></div>
+					<div className="size-8 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin mb-4"></div>
 					<p className="text-sm">Loading content...</p>
 				</div>
 			) : (
@@ -543,11 +543,11 @@ export default function AdminDashboard() {
 											<div className="flex flex-col justify-between h-full relative z-10">
 												<div className="flex justify-between items-start">
 													{folder.icon && folder.icon !== 'folder' ? (
-														<div className="w-10 h-10 opacity-80 group-hover:opacity-100 transition-opacity">
-															<TechIcon name={folder.icon} className="w-full h-full" />
+														<div className="size-10 opacity-80 group-hover:opacity-100 transition-opacity">
+															<TechIcon name={folder.icon} className="size-full" />
 														</div>
 													) : (
-														<svg className={`w-10 h-10 ${folderIconColor} fill-current opacity-20 group-hover:opacity-100 transition-all duration-300`} viewBox="0 0 24 24"><path d="M20 18c0 .55-.45 1-1 1H5c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5.17l1.41 1.41C11.97 6.8 12.47 7 13 7h6c.55 0 1 .45 1 1v10z" /></svg>
+														<svg className={`size-10 ${folderIconColor} fill-current opacity-20 group-hover:opacity-100 transition-all duration-300`} viewBox="0 0 24 24"><path d="M20 18c0 .55-.45 1-1 1H5c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5.17l1.41 1.41C11.97 6.8 12.47 7 13 7h6c.55 0 1 .45 1 1v10z" /></svg>
 													)}
 													<div className="flex flex-col items-end gap-1">
 														<Badge variant="subtle" size="xs" intent={isNote ? 'emerald' : 'blue'}>SERIES</Badge>
@@ -568,7 +568,7 @@ export default function AdminDashboard() {
 															className="p-1 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-400 dark:text-zinc-600 hover:text-red-500 dark:hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
 															title={folder.children.every(c => hiddenIds.has(c.id)) ? "Unhide All" : "Hide All"}
 														>
-															<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 																{folder.children.every(c => hiddenIds.has(c.id)) ? (
 																	<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 																) : (
@@ -592,8 +592,8 @@ export default function AdminDashboard() {
 											</div>
 
 											{folder.icon && (
-												<div className="absolute -bottom-8 -right-8 w-40 h-40 transition-opacity -rotate-12 pointer-events-none opacity-[0.2] dark:opacity-[0.3] group-hover:opacity-[0.4] dark:group-hover:opacity-[0.5]">
-													<TechIcon name={folder.icon} className="w-full h-full" />
+												<div className="absolute -bottom-8 -right-8 size-40 transition-opacity -rotate-12 pointer-events-none opacity-20 dark:opacity-30 group-hover:opacity-40 dark:group-hover:opacity-50">
+													<TechIcon name={folder.icon} className="size-full" />
 												</div>
 											)}
 										</motion.div>
@@ -620,29 +620,29 @@ export default function AdminDashboard() {
                                     `}
 											onDoubleClick={() => setEditingItem(card)}
 										>
-											<div className={`w-full h-full relative ${isDraft ? 'grayscale group-hover:grayscale-0 transition-all duration-300' : ''}`}>
+											<div className={`size-full relative ${isDraft ? 'grayscale group-hover:grayscale-0 transition-all duration-300' : ''}`}>
 												<button
 													onClick={(e) => toggleHide(card.id, e)}
 													className="absolute top-2 right-2 p-1.5 rounded-full bg-white/50 dark:bg-black/50 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 text-zinc-400 opacity-0 group-hover:opacity-100 transition-all z-20 backdrop-blur-sm"
 													title={filter === 'hidden' ? "Unhide Item" : "Hide Item"}
 												>
 													{filter === 'hidden' ? (
-														<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+														<svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
 													) : (
-														<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+														<svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
 													)}
 												</button>
 
 												{iconKey && (
 													<div className={`
-                                                absolute -bottom-8 -right-8 w-40 h-40 
-                                                transition-opacity -rotate-12 pointer-events-none 
+                                                absolute -bottom-8 -right-8 size-40 transition-opacity 
+                                                -rotate-12 pointer-events-none 
                                                 ${isDraft
-															? 'opacity-[0.05] group-hover:opacity-[0.1]'
-															: 'opacity-[0.2] dark:opacity-[0.3] group-hover:opacity-[0.4] dark:group-hover:opacity-[0.5]'
+															? 'opacity-5 group-hover:opacity-10'
+															: 'opacity-20 dark:opacity-30 group-hover:opacity-40 dark:group-hover:opacity-50'
 														}
                                             `}>
-														<TechIcon name={iconKey} className="w-full h-full" />
+														<TechIcon name={iconKey} className="size-full" />
 													</div>
 												)}
 

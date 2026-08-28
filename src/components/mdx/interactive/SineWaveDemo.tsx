@@ -177,9 +177,9 @@ export default function SineWaveDemo({ showControls = false }: SineWaveDemoProps
         
         {isAnimating && (
           <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-[--tangerine] backdrop-blur dark:bg-black/50">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[--tangerine] opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[--tangerine]"></span>
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-[--tangerine] opacity-75"></span>
+              <span className="relative inline-flex size-2 rounded-full bg-[--tangerine]"></span>
             </span>
             Animación
           </div>

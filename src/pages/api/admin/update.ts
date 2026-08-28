@@ -21,7 +21,7 @@ export const POST: APIRoute = async ({ request }) => {
 			}
 
 			const currentContent = fs.readFileSync(filePath, 'utf-8')
-			let json = JSON.parse(currentContent)
+			const json = JSON.parse(currentContent)
 
 			// Separate title from other metadata
 			const { title, ...otherFields } = fieldsToUpdate

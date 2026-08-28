@@ -7,7 +7,6 @@ interface Props {
 	viewMode: ViewMode
 	setViewMode: (mode: ViewMode) => void
 	mounted: boolean
-	label: string // "Vista" or "View"
 	labels: {
 		all: string
 		singles: string
@@ -15,7 +14,7 @@ interface Props {
 	}
 }
 
-export default function ViewModeFilter({ viewMode, setViewMode, mounted, label, labels }: Props) {
+export default function ViewModeFilter({ viewMode, setViewMode, mounted, labels }: Props) {
 	const modes: { id: ViewMode; label: string }[] = [
 		{ id: 'all', label: labels.all },
 		{ id: 'singles', label: labels.singles },

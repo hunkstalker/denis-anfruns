@@ -58,7 +58,7 @@ export default function MobileFilters({
 					</svg>
 					<span>{labelFilters}</span>
 					{activeCount > 0 && (
-						<span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-[10px] text-white dark:bg-white dark:text-zinc-900">
+						<span className="flex size-5 items-center justify-center rounded-full bg-zinc-900 text-[10px] text-white dark:bg-white dark:text-zinc-900">
 							{activeCount}
 						</span>
 					)}

@@ -257,7 +257,6 @@ const TSEditor = ({
 
 		// 0. Validar tipos primero (Astro Check style)
 		const markers = monaco.editor.getModelMarkers({ owner: 'typescript' })
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const errors = markers
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			.filter((m: any) => m.severity === monaco.MarkerSeverity.Error)
@@ -449,7 +448,7 @@ const TSEditor = ({
 						) : (
 							<button
 								onClick={startCreating}
-								className="flex ml-2 h-6 w-6 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 [&_svg]:size-3.5"
+								className="flex ml-2 size-6 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 [&_svg]:size-3.5"
 								title="Nuevo Archivo"
 								dangerouslySetInnerHTML={{ __html: plusIcon }}
 							/>
@@ -479,7 +478,7 @@ const TSEditor = ({
 											className="relative flex h-4 items-center overflow-hidden mr-2"
 										>
 											<div
-												className="relative h-1.5 w-16 min-w-[4rem] cursor-pointer rounded-full bg-zinc-800 touch-none group/slider"
+												className="relative h-1.5 w-16 min-w-16 cursor-pointer rounded-full bg-zinc-800 touch-none group/slider"
 												onPointerDown={(e) => {
 													setIsDragging(true)
 													// Clear any hide timer while dragging
@@ -522,7 +521,7 @@ const TSEditor = ({
 												/>
 												{/* Knob */}
 												<div
-													className="absolute top-1/2 h-2.5 w-2.5 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white shadow-sm ring-1 ring-[--tangerine] transition-transform group-active/slider:scale-125"
+													className="absolute top-1/2 size-2.5 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white shadow-sm ring-1 ring-[--tangerine] transition-transform group-active/slider:scale-125"
 													style={{
 														left: `${volume * 100}%`,
 													}}
@@ -617,7 +616,7 @@ const TSEditor = ({
 						}}
 					/>
 				) : (
-					<div className="h-full w-full bg-[#1e1e1e] animate-pulse" />
+					<div className="size-full bg-[#1e1e1e] animate-pulse" />
 				)}
 			</div>
 

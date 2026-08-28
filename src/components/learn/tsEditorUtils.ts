@@ -151,7 +151,6 @@ export const executeRuntime = (
 ) => {
 	try {
 		// Creamos la función final que recibe 'customConsole' y 'onSuccess'
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const runtimeFunc = new Function('customConsole', 'onSuccess', runtimeCode)
 		runtimeFunc(consoleHandler, onSuccess)
 	} catch (err: unknown) {

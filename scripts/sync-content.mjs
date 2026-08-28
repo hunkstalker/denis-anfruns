@@ -75,7 +75,7 @@ function parseFrontmatter(content) {
 					// transform single quotes to double for JSON parse
 					const validJson = value.replace(/'/g, '"')
 					data[key] = JSON.parse(validJson)
-				} catch (e) {
+				} catch {
 					// Fallback manual parse
 					data[key] = value.slice(1, -1).split(',').map(s => s.trim().replace(/['"]/g, ''))
 				}
@@ -83,7 +83,7 @@ function parseFrontmatter(content) {
 			else if (value.startsWith('{') && value.endsWith('}')) {
 				try {
 					data[key] = JSON.parse(value)
-				} catch (e) {
+				} catch {
 					data[key] = value
 				}
 			}

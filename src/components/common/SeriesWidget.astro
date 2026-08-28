@@ -1,7 +1,7 @@
 
 ---
-import { getDevlogs, type DevlogPost } from '@utils/devlogs-content'
-import { getNotes, type NotePost } from '@utils/notes-content'
+import { getDevlogs } from '@utils/devlogs-content'
+import { getNotes } from '@utils/notes-content'
 import { getBaseSlug, getLangFromSlug, type SupportedLang } from '@utils/blogi18n'
 import CheckIcon from '@icons/check.svg'
 import { Badge } from '../ui/Badge'
@@ -183,13 +183,13 @@ const storageKey = collection === 'notes' ? 'notes:read-posts' : 'blog:read-post
 										{isFirst && enableScroll && (
 											<div
 												id={`border-bottom-${widgetId}`}
-												class='absolute bottom-0 left-0 right-0 z-10 h-[2px] bg-transparent transition-colors'
+												class='absolute bottom-0 inset-x-0 z-10 h-[2px] bg-transparent transition-colors'
 											/>
 										)}
 										{isLast && enableScroll && (
 											<div
 												id={`border-top-${widgetId}`}
-												class='absolute left-0 right-0 top-0 z-10 h-[2px] bg-transparent transition-colors'
+												class='absolute inset-x-0 top-0 z-10 h-[2px] bg-transparent transition-colors'
 											/>
 										)}
 
@@ -286,13 +286,13 @@ const storageKey = collection === 'notes' ? 'notes:read-posts' : 'blog:read-post
 								{isFirst && enableScroll && (
 									<div
 										id={`border-bottom-desktop-${widgetId}`}
-										class='absolute bottom-0 left-0 right-0 z-10 h-[2px] bg-transparent transition-colors'
+										class='absolute bottom-0 inset-x-0 z-10 h-[2px] bg-transparent transition-colors'
 									/>
 								)}
 								{isLast && enableScroll && (
 									<div
 										id={`border-top-desktop-${widgetId}`}
-										class='absolute left-0 right-0 top-0 z-10 h-[2px] bg-transparent transition-colors'
+										class='absolute inset-x-0 top-0 z-10 h-[2px] bg-transparent transition-colors'
 									/>
 								)}
 
@@ -335,7 +335,7 @@ const storageKey = collection === 'notes' ? 'notes:read-posts' : 'blog:read-post
 	)
 }
 
-<script is:inline define:vars={{ currentSlug, seriesId, widgetId, storageKey, enableScroll }}>
+<script is:inline define:vars={{ seriesId, widgetId, storageKey, enableScroll }}>
 	function initSeriesWidget() {
 		let readPosts = []
 		try {

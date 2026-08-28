@@ -5,11 +5,18 @@ import tseslint from '@typescript-eslint/eslint-plugin'
 export default [
 	// Global ignores
 	{
-		ignores: ['dist', 'node_modules', '.astro', '.github'],
+		ignores: [
+			'dist',
+			'node_modules',
+			'.astro',
+			'.github',
+			'src/content/**/*.ts',
+			'**/dist/**',
+		],
 	},
 
 	// TypeScript
-	...tseslint.configs.recommended,
+	...tseslint.configs['flat/recommended'],
 
 	// Astro Recommended Config
 	...eslintPluginAstro.configs.recommended,
