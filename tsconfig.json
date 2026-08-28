@@ -3,18 +3,17 @@
 	"compilerOptions": {
 		"jsx": "react-jsx",
 		"jsxImportSource": "react",
-		"baseUrl": ".",
 		"paths": {
-			"@components/*": ["src/components/*"],
-			"@layouts/*": ["src/layouts/*"],
-			"@icons/*": ["src/icons/*"],
-			"@utils/*": ["src/utils/*"],
-			"@styles/*": ["src/styles/*"],
-			"@hooks/*": ["src/hooks/*"],
-			"@data/*": ["src/data/*"],
-			"@i18n/*": ["src/i18n/*"],
-			"@stores/*": ["src/stores/*"],
-			"astro-search-badges/*": ["packages/astro-search-badges/*"]
+			"@components/*": ["./src/components/*"],
+			"@layouts/*": ["./src/layouts/*"],
+			"@icons/*": ["./src/icons/*"],
+			"@utils/*": ["./src/utils/*"],
+			"@styles/*": ["./src/styles/*"],
+			"@hooks/*": ["./src/hooks/*"],
+			"@data/*": ["./src/data/*"],
+			"@i18n/*": ["./src/i18n/*"],
+			"@stores/*": ["./src/stores/*"],
+			"astro-search-badges/*": ["./packages/astro-search-badges/*"]
 		}
 	},
 	"exclude": ["dist", "src/content/**/*.ts"]
