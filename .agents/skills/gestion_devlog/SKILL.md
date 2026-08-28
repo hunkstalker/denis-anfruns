@@ -14,6 +14,11 @@ El núcleo de cada proyecto reside en su plan de implementación.
 - **Lectura Contextual**: 
   - Al iniciar una sesión, LEE `implementation_plan.md` para cargar los objetivos.
   - **Historial**: Si estás trabajando en un capítulo avanzado (ej. Parte 6), debes tener en cuenta el código y las decisiones tomadas en los capítulos anteriores (Partes 1-5). Usa `view_file` o `grep_search` para consultar cómo se implementaron mecánicas previas si es necesario para mantener la coherencia.
+- **Inventario de Contenido**:
+  - El plan comienza por el inventario de contenidos (sección `INVENTARIO DE CONTENIDO` al inicio de `implementation_plan.md`), NO por el listado de capítulos: listar TODO el temario que se quiere enseñar (conceptos, prácticas, ejemplos, verificaciones) antes de decidir en cuántos capítulos se divide el devlog.
+  - Agrupar ese inventario en **hitos verificables**: momentos en los que "algo funciona" y el lector puede comprobarlo (pantalla, log, respuesta de API...). Cada hito se refleja en su capítulo como campo **Verificación**.
+  - Fijar SÓLO después los capítulos según la densidad de cada hito: ni demasiado largos ("eternos") ni demasiado vacíos ("huecos").
+  - Anotar la **densidad esperada** de cada capítulo (`baja`/`media`/`alta`) para calibrar la extensión, en coherencia con la regla de "no hay límite de longitud" del apartado de escritura.
 - **Backups (Regla Legacy)**:
   - Si se requieren cambios significativos en el diseño o roadmap del proyecto, **ANTES** de sobrescribir el archivo:
   1. Crea la carpeta `legacy` si no existe: `docs/[slug-proyecto]/legacy/`.
