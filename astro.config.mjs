@@ -5,6 +5,7 @@ import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
 import svgr from 'vite-plugin-svgr'
 
+import { unified } from '@astrojs/markdown-remark'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 
@@ -24,14 +25,13 @@ export default defineConfig({
 				},
 			},
 		}),
-		mdx({
+		mdx(),
+	],
+	markdown: {
+		processor: unified({
 			remarkPlugins: [remarkMath],
 			rehypePlugins: [rehypeKatex],
 		}),
-	],
-	markdown: {
-		remarkPlugins: [remarkMath],
-		rehypePlugins: [rehypeKatex],
 		shikiConfig: {
 			langAlias: {
 				powerfx: 'vb',
