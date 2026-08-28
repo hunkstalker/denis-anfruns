@@ -76,7 +76,6 @@ El proyecto incluye un **CLI interactivo** para facilitar las tareas comunes. Ej
 | `pnpm dev`        | Servidor de desarrollo con auto-sincronía           |
 | `pnpm build`      | Build de producción + índice Pagefind               |
 | `pnpm preview`    | Preview del build local                             |
-| `pnpm set-badge`  | Gestionar badges de contenido                       |
 | `pnpm sync:content`| Sincronizar estructura de contenido                 |
 | `pnpm verify:content`| Verificar integridad de fechas y rutas            |
 | `pnpm check:drafts`| Listar borradores activos                           |

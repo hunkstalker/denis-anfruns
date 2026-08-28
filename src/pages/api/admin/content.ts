@@ -6,22 +6,6 @@ import path from 'path'
 
 const CONTENT_DIR = path.join(process.cwd(), 'src', 'content')
 
-// Helper to check if a directory is a "Series Group" (has nested parts)
-function isSeriesGroup(dirPath: string) {
-	try {
-		const children = fs.readdirSync(dirPath)
-		// Heuristic: If it has subdirectories that contain meta.json, it's a series container
-		return children.some((child) => {
-			const childPath = path.join(dirPath, child)
-			return (
-				fs.statSync(childPath).isDirectory() && fs.existsSync(path.join(childPath, 'meta.json'))
-			)
-		})
-	} catch {
-		return false
-	}
-}
-
 function getRecursiveFiles(dir: string, collection: string, items: any[] = []) {
 	if (!fs.existsSync(dir)) return items
 
@@ -73,7 +57,7 @@ function getRecursiveFiles(dir: string, collection: string, items: any[] = []) {
 										title = (titleMatch[1] || titleMatch[2]).trim()
 										break // Found it, stop looking
 									}
-								} catch (e) {
+								} catch {
 									// ignore read errors
 								}
 							}
@@ -83,7 +67,7 @@ function getRecursiveFiles(dir: string, collection: string, items: any[] = []) {
 					items.push({
 						id: relativePath.replace(/\\/g, '/'), // normalization
 						filePath: metaPath,
-						collection, // 'notes' or 'devlog' inherited from root scan
+						collection, // 'notes' or 'devlogs' inherited from root scan
 						...json,
 						title: title || json.title, // Use extracted title if available
 						series: seriesId, // Inferred!
@@ -102,7 +86,7 @@ function getRecursiveFiles(dir: string, collection: string, items: any[] = []) {
 
 export const GET: APIRoute = async () => {
 	const notesItems = getRecursiveFiles(path.join(CONTENT_DIR, 'notes'), 'notes')
-	const devlogItems = getRecursiveFiles(path.join(CONTENT_DIR, 'devlog'), 'devlog')
+	const devlogItems = getRecursiveFiles(path.join(CONTENT_DIR, 'devlogs'), 'devlogs')
 
 	// Sort by new (optional, client does it too)
 	const allItems = [...notesItems, ...devlogItems]
