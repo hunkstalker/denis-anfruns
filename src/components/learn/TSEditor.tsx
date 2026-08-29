@@ -1,3 +1,4 @@
+import '../../utils/monaco-setup'
 import Editor, { type OnMount, type BeforeMount } from '@monaco-editor/react'
 import { useCallback, useEffect, useRef, useState, useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
