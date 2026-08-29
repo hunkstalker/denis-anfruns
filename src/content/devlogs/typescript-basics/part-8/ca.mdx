@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 Fins ara, els nostres tipus eren fixos. `string` és sempre `string`.
 Però, i si volem crear una funció o un component que funcioni amb **qualsevol tipus**, però sense perdre la seguretat?
@@ -116,17 +115,8 @@ const [user, setUser] = useState<Usuari | null>(null);`,
 Crea una funció `envolver` que **posis el que posis**, t'ho retorni dins d'un **array**.
 Si poses `10`, surt `[10]`. Si poses `"hola"`, surt `["hola"]`.
 
-import validationCode from './validation.ca.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-generics-basic"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  height="600px"
-  files={{
-    'main.ts': `// Repte: Crea la funció genèrica 'envolver'
+```ts
+// Repte: Crea la funció genèrica 'envolver'
 // Ha de rebre un valor de tipus T i retornar un array de T (T[])
 
 function envolver... // Implementa aquí la teva solució
@@ -137,7 +127,6 @@ const s = envolver("hola");
 
 console.log("Número embolicat:", n);
 console.log("Text embolicat:", s);
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).

@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 Fins ara hem vist tipus primitius (`string`, `number`, `boolean`). Però el món real funciona amb **objectes**.
 Usuaris, Productes, Comandes... tots són objectes amb múltiples propietats.
@@ -130,7 +129,7 @@ A la Part 8 aprofundirem en les diferències tècniques, però per ara queda't a
 
 ## Prova-ho tu!
 
-Anem a posar a prova el que has après. Has de definir una interfície i crear un objecte específic per passar la validació oculta.
+Anem a posar a prova el que has après. Has de definir una interfície i crear un objecte específic que compleixi els requisits següents.
 
 **Requisits de l'exercici:**
 
@@ -141,13 +140,8 @@ Anem a posar a prova el que has après. Has de definir una interfície i crear u
 2.  Crea un objecte constant anomenat `jocPreferit` que implementi aquesta interfície.
 3.  Les dades han de ser exactament: **"The Legend of Zelda"**, any **1986**.
 
-import validationCode from './validation.ca.ts?raw';
-
-<TSEditor
-  client:only="react"
-  showConsole={true}
-  files={{
-    'main.ts': `// 1. Defineix la teva interfície 'Videojoc' aquí
+```ts
+// 1. Defineix la teva interfície 'Videojoc' aquí
 // interface Videojoc ...
 
 
@@ -156,10 +150,9 @@ const jocPreferit = {
 
 };
 
-console.log("Resultat:", jocPreferit);`
-  }}
-  validationCode={validationCode}
-  successSound="/audio/grunt-birthday-party-sound.mp3"
-/>
+console.log("Resultat:", jocPreferit);
+```
+
+Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 A la **Part 4**, veurem què passa quan tenim molts objectes iguals... és a dir, **Arrays**.

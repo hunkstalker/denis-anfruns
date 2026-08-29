@@ -13,7 +13,6 @@ lang: es
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 En la parte anterior vimos que `<T>` puede ser cualquier cosa. A veces, eso es **demasiado flexible**.
 ¿Qué pasa si queremos que `T` tenga sí o sí una propiedad `.length`?
@@ -120,16 +119,8 @@ const respuestaCompleja: RespuestaAPI<number> = {
 
 Creemos una función `fusionar` que tome dos objetos `obj1` y `obj2` y los combine. Tipemos la función usando dos generics `T` y `U`.
 
-import validationCode from './validation.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-generics-constraints"
-  showConsole={false}
-  defaultMuted={true}
-  height="500px"
-  files={{
-    'main.ts': `// Reto: Modifica 'fusionar' para que SOLO acepte objetos reales.
+```ts
+// Reto: Modifica 'fusionar' para que SOLO acepte objetos reales.
 // 1. Añade generics <T, U> a la función.
 // 2. Usa 'extends object' (en minúscula) para restringirlos. 
 //      -> Esto bloqueará números, strings y booleanos.
@@ -149,9 +140,8 @@ console.log("Resultado:", resultado);
 // 🧪 Comprobación. Esto es lo que queremos evitar, que se pueda colar un número.
 // Si al descomentar la línea de abajo sale un error, ¡has superado el reto!
 // fusionar(user, 123);
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 En la **Parte 8**, abordaremos una de las mayores confusiones: **Generics en Interfaces vs en Tipos**, y cómo pasar tipos de padres a hijos (prop drilling de tipos).

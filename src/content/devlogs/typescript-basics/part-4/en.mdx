@@ -13,7 +13,6 @@ lang: en
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 In the previous part we saw Objects. Now, what if we have **many** objects? We need a list.
 
@@ -107,16 +106,8 @@ Let's get our hands dirty. You have two challenges below: one for Arrays and one
 ### Exercise 1: Arrays
 Create an array called `paises` containing at least 3 country names (strings). Try adding a number to the array to see how TypeScript complains.
 
-import validationArrays from './validation-arrays.en.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-arrays"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  files={{
-    'main.ts': `// 1. Create an array of strings called 'paises'
+```ts
+// 1. Create an array of strings called 'paises'
 // const paises...
 
 // 2. Add countries (uncomment and complete)
@@ -126,10 +117,9 @@ import validationArrays from './validation-arrays.en.ts?raw';
 // paises.push(123);
 
 // 4. Comment out the push from the previous numbering again and hit RUN
-`
-  }}
-  validationCode={validationArrays}
-/>
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
 
 ### Exercise 2: Tuples
 Create a strict tuple called `usuario`. It must have exactly 3 elements in this order:
@@ -137,20 +127,11 @@ Create a strict tuple called `usuario`. It must have exactly 3 elements in this 
 2. `age` (number)
 3. `isAdmin` (boolean)
 
-import validationTuples from './validation-tuples.en.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-tuples"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  files={{
-    'main.ts': `// Create the tuple 'usuario' with type [string, number, boolean]
+```ts
+// Create the tuple 'usuario' with type [string, number, boolean]
 // const usuario...
-`
-  }}
-  validationCode={validationTuples}
-/>
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
 
 In **Part 5**, things get serious. We leave the basics and enter the magic of TypeScript: we will learn to have TS **write the types for us** using `typeof` and `keyof`.

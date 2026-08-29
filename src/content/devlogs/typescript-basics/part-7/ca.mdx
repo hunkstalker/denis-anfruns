@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 A TypeScript existeixen dos "Tipus Superiors" (Top Types) que poden contenir **qualsevol valor**: `any` i `unknown`. Encara que semblen similars, són oposats en filosofia.
 
@@ -129,15 +128,8 @@ La teva missió:
 2. Si ho és, retornar-lo en MAJÚSCULES.
 3. Si NO ho és, llançar un error dient exactament: `"No és text"`.
 
-import validationCode from './validation.ca.ts?raw';
-
-<TSEditor
-  client:only="react"
-  validationCode={validationCode}
-  showConsole={true}
-  successSound="success"
-  files={{
-    'exercise.ts': `// 1. Afegeix el type unknown
+```ts
+// 1. Afegeix el type unknown
 
     function safeUpperCase(value: ...): string {
 
@@ -149,9 +141,10 @@ import validationCode from './validation.ca.ts?raw';
   // JS TIP: per llançar un error, usa 'throw new Error();'
 
   return "ups"; 
-}`
-  }}
-/>
+}
+```
+
+Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 Amb això tanquem el bloc de tipus avançats de seguretat! Ara el teu codi serà molt més robust. 🛡️
 

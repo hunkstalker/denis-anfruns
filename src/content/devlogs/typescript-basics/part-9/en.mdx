@@ -13,7 +13,6 @@ lang: en
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 In the previous part we saw that `<T>` can be anything. Sometimes, that is **too flexible**.
 What if we want `T` to have a `.length` property yes or yes?
@@ -114,16 +113,8 @@ const complex: ApiResponse<number> = { data: 123, status: 200 }; // T is number`
 
 Let's create a function `merge` that takes two objects `obj1` and `obj2` and combines them. Let's type the function using two generics `T` and `U`.
 
-import validationCode from './validation.en.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-generics-constraints"
-  showConsole={false}
-  defaultMuted={true}
-  height="500px"
-  files={{
-    'main.ts': `// Challenge: Modify 'merge' to ONLY accept real objects.
+```ts
+// Challenge: Modify 'merge' to ONLY accept real objects.
 // 1. Add generics <T, U> to the function.
 // 2. Use 'extends object' (lowercase) to restrict them. 
 //      -> This will block numbers, strings and booleans.
@@ -143,7 +134,6 @@ console.log("Result:", result);
 // 🧪 Check. This is what we want to avoid, letting a number slip through.
 // If uncommenting the line below causes an error, you passed the challenge!
 // merge(user, 123);
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).

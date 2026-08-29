@@ -221,11 +221,3 @@ textarea:focus-visible {
 	transform: rotate(var(--hover-rotation)) !important;
 }
 
-/* Fix for Monaco Editor hidden textarea glitch (Background Only) */
-/* We strictly update background/border to avoid breaking Monaco's measurements or text rendering */
-.monaco-editor textarea {
-	background-color: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
-	outline: none !important;
-}

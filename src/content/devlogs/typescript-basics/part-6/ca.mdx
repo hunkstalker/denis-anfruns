@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 TypeScript és molt llest, però a vegades necessita "pistes" per saber exactament de quin tipus és una variable en un moment donat. Aquest procés de refinar un tipus ampli (com `string | number`) a un de més específic (com `string`) es diu **Narrowing**.
 
@@ -149,20 +148,14 @@ Tens una funció que rep inputs segurs, però no saps si vindran com `string` o 
 
 Idealment fes ús de `typeof`
 
-import validationCode from './validation.ca.ts?raw';
-
-<TSEditor
-  client:only="react"
-  validationCode={validationCode}
-  showConsole={true}
-  successSound="success"
-  files={{
-    'exercise.ts': `function procesarInput(input: string | number) {
+```ts
+function procesarInput(input: string | number) {
   // TODO: Usa un Type Guard (typeof) aquí
   // 1. Si és string -> return string.toUpperCase()
   // 2. Si és number -> return number.toFixed(2)
   
   return input; // ❌ Error: toUpperCase no existeix en number
-}`
-  }}
-/>
+}
+```
+
+Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).

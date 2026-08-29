@@ -16,5 +16,5 @@
 			"astro-search-badges/*": ["./packages/astro-search-badges/*"]
 		}
 	},
-	"exclude": ["dist", "public/monaco", "src/content/**/*.ts"]
+	"exclude": ["dist", "src/content/**/*.ts"]
 }

@@ -192,25 +192,6 @@ const siteTitle = 'Denis Anfruns - Error 404'
 			},
 		},
 
-		// Secret Playground Access
-		// "RUN PLAYGROUND.EXE" hashed (SHA-256)
-		dcc5b20bef132083b0f1f6baaa2f5738dcad807e6669ae43d67c9a75e1667a57: {
-			logs: [
-				'> SYSTEM_OVERRIDE_DETECTED',
-				'> DECRYPTING_SECURE_CHANNEL...',
-				'> LOADING_DEV_TOOLS_MODULE...',
-				'> MOUNTING_VIRTUAL_FILESYSTEM...',
-				'> ACCESS_GRANTED: WELCOME_CREATOR',
-			],
-			barSize: 40,
-			duration: 1500,
-			logDelay: 100,
-			redirect: '/playground',
-			onBeforeRedirect: () => {
-				localStorage.setItem('playground_access', 'granted')
-			},
-		},
-
 		// ============================================================
 		// ADD MORE COMMANDS HERE! Example:
 		// 'MATRIX': {
@@ -388,10 +369,6 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		await new Promise((r) => setTimeout(r, 200))
 	}
 
-	// Password Protection State
-	let isPasswordMode = false
-	const PLAYGROUND_HASH = '8a2266f450423a535981b12c13c39562b59e4ff8f8574a9b3a6d7a8c526b681c' // SHA-256 for "GEMINI"
-
 	// Input handling
 	hiddenInput.addEventListener('input', (e) => {
 		if (isExecuting) return
@@ -403,11 +380,7 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		if (val !== cleanVal) hiddenInput.value = cleanVal
 
 		if (typeTarget) {
-			if (isPasswordMode) {
-				typeTarget.textContent = '*'.repeat(cleanVal.length)
-			} else {
-				typeTarget.textContent = cleanVal
-			}
+			typeTarget.textContent = cleanVal
 		}
 	})
 
@@ -417,90 +390,6 @@ const siteTitle = 'Denis Anfruns - Error 404'
 		if (isExecuting) return
 
 		const input = hiddenInput.value.toUpperCase().trim()
-
-		// --- PASSWORD MODE LOGIC ---
-		if (isPasswordMode) {
-			isExecuting = true
-			if (commandLine) commandLine.style.display = 'none'
-
-			// "Double Hash" check (User input -> Hash -> Compare)
-			const hash = await sha256(input) // input is UPPERCASE from value, maybe we want case-insensitive?
-			// But for "1234" it's same. If we want complex passwords, we might need original case.
-			// However current input logic forces UpperCase. let's stick to simple "1234".
-
-			if (hash === PLAYGROUND_HASH) {
-				// Success
-				await executeCommand(
-					{
-						logs: [
-							'> VERIFYING_HASH...',
-							'> ACCESS_GRANTED',
-							'> INITIALIZING_ENVIRONMENT...',
-							'> WELCOME_ADMINISTRATOR',
-						],
-						barSize: 40,
-						duration: 1500,
-						redirect: '/playground',
-						onBeforeRedirect: () => {
-							localStorage.setItem('playground_access', 'granted')
-						},
-					},
-					lang,
-				)
-			} else {
-				// Failed
-				await executeCommand(
-					{
-						logs: [
-							'> VERIFYING_HASH...',
-							'> ACCESS_DENIED',
-							'> INCORRECT_PASSWORD',
-							'> TERMINATING_SESSION...',
-						],
-						duration: 1000,
-						redirect: 'none', // Special case to just reset
-					},
-					lang,
-				)
-
-				// Reset terminal to ready state (hacky via reload or just reset)
-				// For now, redirect 'none' will just end. We need to reset UI.
-				isPasswordMode = false
-				hiddenInput.value = ''
-				if (typeTarget) typeTarget.textContent = ''
-				if (commandLine) commandLine.style.display = 'flex'
-				// Restore cursor
-				hiddenInput.focus()
-				isExecuting = false
-
-				// Add a new prompt line
-				await typeLog('> _')
-			}
-			return
-		}
-
-		// --- NORMAL COMMAND LOGIC ---
-
-		if (input === 'RUN PLAYGROUND.EXE') {
-			isExecuting = true
-			hiddenInput.blur() // Temporarily blur to stop typing
-			if (commandLine) commandLine.style.display = 'none'
-
-			// Log the prompt sequence
-			await typeLog('> INITIATING_SECURITY_PROTOCOL...')
-			await new Promise((r) => setTimeout(r, 500))
-			await typeLog('> ENTER PASSWORD:')
-
-			// Reset for password input
-			hiddenInput.value = ''
-			if (typeTarget) typeTarget.textContent = ''
-			if (commandLine) commandLine.style.display = 'flex'
-
-			isPasswordMode = true
-			isExecuting = false
-			hiddenInput.focus()
-			return
-		}
 
 		// Check for direct match (legacy/non-secret commands)
 		let command = commands[input]

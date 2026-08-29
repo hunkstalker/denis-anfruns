@@ -15,7 +15,6 @@ import { navItems } from '@i18n/navigation'
 // Importación de Iconos
 
 import SearchIcon from '@icons/search.svg'
-import PlaygroundIcon from '@icons/playground.svg'
 
 // Definición de las Props
 interface Props {
@@ -132,27 +131,8 @@ const menuItems = navItems.map(item => {
 								</li>
 							))
 					}
-					{/* Secret Playground Link */}
-					<li id='nav-playground-item' class='hidden'>
-						<Button
-							text='PLAYGROUND'
-							link='/playground'
-							class='flex w-auto items-center justify-center gap-2 !text-emerald-600 transition-colors hover:!bg-emerald-500/10 dark:!text-emerald-400 dark:hover:!bg-emerald-400/10'>
-							PLAYGROUND
-							<PlaygroundIcon class='size-5' />
-						</Button>
-					</li>
 				</ul>
 			</div>
-
-			<script>
-				// Check if user has unlocked the playground
-				const hasAccess = localStorage.getItem('playground_access') === 'granted'
-				const navItem = document.getElementById('nav-playground-item')
-				if (hasAccess && navItem) {
-					navItem.classList.remove('hidden')
-				}
-			</script>
 
 			<!-- Zona Derecha (Buscador, Idioma, Tema) -->
 			<div class='flex items-center gap-4 md:gap-6'>

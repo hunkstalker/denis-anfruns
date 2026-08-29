@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 Aquí és on molta gent es perd. Comencem a veure `<T>`, `interface`, `type`, `return T`... tot barrejat i sembla jeroglífic.
 
@@ -150,16 +149,8 @@ Defineix dues variables usant la interfície `ApiResponse` que acabem de veure a
 1. `acierto`: Ha de ser una resposta correcta amb `data` sent un `number` (ex: 42).
 2. `fallo`: Ha de ser una resposta amb `data` sent `string` (ex: "Error greu").
 
-import validationCode from './validation.ca.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-generics-interfaces"
-  showConsole={true}
-  defaultMuted={false}
-  height="500px"
-  files={{
-    'main.ts': `interface ApiResponse<Data> {
+```ts
+interface ApiResponse<Data> {
     status: number;
     message: string;
     data: Data;
@@ -173,7 +164,6 @@ import validationCode from './validation.ca.ts?raw';
 
 // 🧪 Comprova
 // console.log(acierto, fallo);
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).

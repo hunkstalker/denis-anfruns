@@ -13,7 +13,6 @@ lang: en
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 In Part 1 we saw that `const` creates **literal** types.
 If you write `const role = "admin"`, for TypeScript `role` is not just a simple `string`, but specifically `"admin"`.
@@ -76,39 +75,28 @@ The best part is not just the safety, it's the **developer experience**.
 
 **Try it yourself:** Place your cursor between the quotes and press Ctrl + Space in each one. In the first one there are no suggestions (it's a generic `string`). In the second one the editor suggests the valid options.
 
-import validationCode from './validation.en.ts?raw';
+```ts
+// no-types.ts
+function sendString(message: string) {
+    console.log("Message:", message);
+}
 
-<div className="mb-8">
-  <TSEditor
-    client:only="react"
-    height="480px"
-    showConsole={true}
-    allowAddFile={false}
-    validationCode={validationCode}
-    successSound="/audio/grunt-birthday-party-sound.mp3"
-    files={{
-      'no-types.ts': `// No autocomplete - accepts any string
-  function sendString(message: string) {
-      console.log("Message:", message);
-  }
+// Place cursor between quotes and press Ctrl + Space, you'll see NO suggestions
+sendString("");
 
-  // Place cursor between quotes and press Ctrl + Space, you'll see NO suggestions
-  sendString("");
-  `,
-      'with-types.ts': `// With autocomplete - only specific values
-  type Answer = "yes" | "no" | "maybe";
+// with-types.ts
+type Answer = "yes" | "no" | "maybe";
 
-  function sendAnswer(answer: Answer) {
-      console.log("Your answer:", answer);
-  }
+function sendAnswer(answer: Answer) {
+    console.log("Your answer:", answer);
+}
 
-  // Here you WILL get suggestions, plus TS already warns about an error,
-  // since an empty string is not a value we configured as valid
-  sendAnswer("");
-  `
-    }}
-/>
-</div>
+// Here you WILL get suggestions, plus TS already warns about an error,
+// since an empty string is not a value we configured as valid
+sendAnswer("");
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
 
 You don't have to go to the documentation to know what values it accepted. The type itself tells you what values it accepts.
 

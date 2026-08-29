@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useDragControls } from 'framer-motion'
 import { useStore } from '@nanostores/react'
 import { isMenuOpen } from '@stores/menuStore'
-import { ChevronDown, Shapes } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { FocusTrap } from 'focus-trap-react'
 
 interface MenuItem {
@@ -115,27 +115,8 @@ export default function MobileMenu({ items, lang = 'es' }: Props) {
 		return () => setMounted(false)
 	}, [])
 
-	// Manage items locally to append Playground if needed
+	// Manage items locally
 	const [menuItems, setMenuItems] = useState(items)
-
-	useEffect(() => {
-		const hasAccess = localStorage.getItem('playground_access') === 'granted'
-		if (hasAccess) {
-			setMenuItems((prev) => [
-				...prev,
-				{
-					label: (
-						<span className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
-							PLAYGROUND <Shapes className="size-4" />
-						</span>
-					),
-					link: '/playground',
-					active: window.location.pathname === '/playground',
-					enabled: true,
-				},
-			])
-		}
-	}, [])
 
 	// Bloquear scroll cuando el menú está abierto
 	useEffect(() => {

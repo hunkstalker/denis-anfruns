@@ -13,7 +13,6 @@ lang: en
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 In TypeScript there are two "Top Types" that can contain **any value**: `any` and `unknown`. Although they look similar, they are philosophically opposite.
 
@@ -127,17 +126,10 @@ Let's put `unknown` into practice. You have a function that receives unknown dat
 Your mission:
 1. Check if it is a `string`.
 2. If it is, return it in UPPERCASE.
-3. If it is NOT, throw an error saying exactly: `"Not text"`.
+3.  If it is NOT, throw an error saying exactly: `"Not text"`.
 
-import validationCode from './validation.en.ts?raw';
-
-<TSEditor
-  client:only="react"
-  validationCode={validationCode}
-  showConsole={true}
-  successSound="success"
-  files={{
-    'exercise.ts': `// 1. Add type unknown
+```ts
+// 1. Add type unknown
 
     function safeUpperCase(value: ...): string {
 
@@ -149,9 +141,10 @@ import validationCode from './validation.en.ts?raw';
   // JS TIP: to throw an error, use 'throw new Error();'
 
   return "ups"; 
-}`
-  }}
-/>
+}
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
 
 With this we close the advanced safety types block! Now your code will be much more robust. 🛡️
 

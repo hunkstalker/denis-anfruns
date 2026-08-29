@@ -13,7 +13,6 @@ lang: es
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 TypeScript viene con una "navaja suiza" de tipos predefinidos llamados **Utility Types**.
 Son Generics que toman un tipo y nos devuelven una versión modificada.
@@ -145,17 +144,8 @@ Tenemos una interfaz `Todo`. Usemos:
 2. `Pick` para definir una variable `preview` que solo tenga el título.
 3. `Record` para crear un `Catalogo` donde guardemos Todo por su ID (string).
 
-import validationCode from './validation.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-utility-types"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  height="850px"
-  files={{
-    'main.ts': `interface Todo {
+```ts
+interface Todo {
     id: number;
     title: string;
     description: string;
@@ -181,9 +171,8 @@ const testDiccionario: TodoDictionary = {
     "todo-1": { id: 1, title: "A", description: "D", completed: false },
     "urgente": { id: 2, title: "B", description: "D", completed: true }
 };
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 En la **Parte 10**, entraremos en territorio avanzado. Usaremos `infer` para que TypeScript "extraiga" tipos de lugares imposibles, como el tipo de retorno de una función.

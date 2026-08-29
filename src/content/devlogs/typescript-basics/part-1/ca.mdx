@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 export const age = new Date().getFullYear() - 1985
 
@@ -142,13 +141,8 @@ A la **Part 2**, mirarem com usar aquests tipus literals al nostre favor amb les
 
 ## Experimenta!
 
-Aquí tens un editor de TypeScript real corrent al teu navegador per provar el que has après.
+Aquí tens el punt de partida. Copia el codi i prova'l al [TypeScript Playground oficial](https://www.typescriptlang.org/play):
 
-<TSEditor
-  client:only="react"
-  showConsole={true}
-  files={{
-    'main.ts': `console.log("Hello world!");
-`
-  }}
-/>
+```ts
+console.log("Hello world!");
+```

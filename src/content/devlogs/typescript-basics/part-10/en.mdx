@@ -13,7 +13,6 @@ lang: en
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 Other people get lost here. We start seeing `<T>`, `interface`, `type`, `return T`... everything mixed up and it looks like hieroglyphics.
 
@@ -150,16 +149,8 @@ Define two variables using the `ApiResponse` interface we just saw above.
 1. `acierto` (success): Must be a correct response with `data` being a `number` (e.g., 42).
 2. `fallo` (failure): Must be a response with `data` being a `string` (e.g., "Critical error").
 
-import validationCode from './validation.en.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-generics-interfaces"
-  showConsole={true}
-  defaultMuted={false}
-  height="500px"
-  files={{
-    'main.ts': `interface ApiResponse<Data> {
+```ts
+interface ApiResponse<Data> {
     status: number;
     message: string;
     data: Data;
@@ -173,7 +164,6 @@ import validationCode from './validation.en.ts?raw';
 
 // 🧪 Check
 // console.log(acierto, fallo);
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).

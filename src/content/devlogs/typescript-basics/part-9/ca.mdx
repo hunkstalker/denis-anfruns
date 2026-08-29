@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 A la part anterior vam veure que `<T>` pot ser qualsevol cosa. A vegades, això és **massa flexible**.
 Què passa si volem que `T` tingui sí o sí una propietat `.length`?
@@ -114,16 +113,8 @@ const complex: RespostaAPI<number> = { data: 123, status: 200 }; // T és number
 
 Creem una funció `fusionar` que prengui dos objectes `obj1` i `obj2` i els combini. Tipem la funció usant dos generics `T` i `U`.
 
-import validationCode from './validation.ca.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-generics-constraints"
-  showConsole={false}
-  defaultMuted={true}
-  height="500px"
-  files={{
-    'main.ts': `// Repte: Modifica 'fusionar' perquè NOMÉS accepti objectes reals.
+```ts
+// Repte: Modifica 'fusionar' perquè NOMÉS accepti objectes reals.
 // 1. Afegeix generics <T, U> a la funció.
 // 2. Usa 'extends object' (en minúscula) per restringir-los. 
 //      -> Això bloquejarà números, strings i booleans.
@@ -143,7 +134,6 @@ console.log("Resultat:", resultat);
 // 🧪 Comprovació. Això és el que volem evitar, que es pugui colar un número.
 // Si en descomentar la línia de sota surt un error, has superat el repte!
 // fusionar(user, 123);
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).

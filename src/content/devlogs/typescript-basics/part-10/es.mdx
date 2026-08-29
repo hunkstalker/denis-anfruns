@@ -13,7 +13,6 @@ lang: es
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 Aquí es donde mucha gente se pierde. Empezamos a ver `<T>`, `interface`, `type`, `return T`... todo mezclado y parece jeroglífico.
 
@@ -133,17 +132,8 @@ const hookEnReact = <T,>(arg: T) => { ... };`,
 Creemos una interfaz `Respuesta<T>` con `datos: T` y `error: string | null`.
 Luego creemos un objeto que use esa interfaz con `number`.
 
-import validationCode from './validation.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-generics-wrapper"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  height="600px"
-  files={{
-    'main.ts': `// Reto: 
+```ts
+// Reto: 
 // 1. Define una interfaz genérica 'Respuesta' con:
 //    - el campo 'datos' que sea de tipo genérico
 //    - el campo 'error' que sea de tipo string | null
@@ -155,9 +145,8 @@ interface Respuesta...
 
 const acierto...
 const fallo...
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 En la **Parte 9**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacernos la vida más fácil.

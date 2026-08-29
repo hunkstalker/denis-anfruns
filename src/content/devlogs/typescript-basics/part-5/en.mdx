@@ -13,7 +13,6 @@ lang: en
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 Here is where TypeScript stops being "JavaScript with types" and becomes a superpower.
 Until now we have defined types manually. But what if we could **automatically generate types** from our code?
@@ -114,19 +113,10 @@ paint("yellow"); // ❌ Error`,
 
 ## Let's try it!
 
-Let's use the editor. Let's create a `config` object with various options. Let's use `typeof` to extract its type and create a function that receives that type.
+Let's use what we've learned. Let's create a `config` object with various options. Let's use `typeof` to extract its type and create a function that receives that type.
 
-import validationCode from './validation.en.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-typeof-keyof"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  height="700px"
-  files={{
-    'main.ts': `const config = {
+```ts
+const config = {
     theme: "dark",
     version: 2,
     debug: true
@@ -146,9 +136,8 @@ function getSetting(key: any) {
 // Tests (Do not touch this):
 getSetting("theme"); // ✅ Should work
 // getSetting("password"); // ❌ Should give error if uncommented
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
 
 In **Part 6** we will see **Generics**, the tool that allows us to create reusable components and functions that work with any type (the famous `<T>`).

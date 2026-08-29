@@ -13,7 +13,6 @@ lang: es
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 TypeScript es muy listo, pero a veces necesita "pistas" para saber exactamente de qué tipo es una variable en un momento dado. Este proceso de refinar un tipo amplio (como `string | number`) a uno más específico (como `string`) se llama **Narrowing**.
 
@@ -169,16 +168,8 @@ Cuando usas `is`, le dices al compilador "confía en mí". Si tu lógica dentro 
 *   Si es `string`: Devuélvelo en MAYÚSCULAS.
 *   Si es `number`: Devuélvelo con 2 decimales (usa `.toFixed(2)`).
 
-import validationCode from './validation.ts?raw';
-
-<TSEditor
-  client:only="react"
-  validationCode={validationCode}
-  successSound="success"
-  defaultMuted={false}
-  showConsole={true}
-  files={{
-    'exercise.ts': `function procesarInput(input: string | number) {
+```ts
+function procesarInput(input: string | number) {
   // TODO: Usa un Type Guard (typeof) aquí
   // 1. procesarInput debe devolver strings (MAYÚSCULAS)
   // 2. procesarInput debe devolver números (2 decimales)
@@ -186,8 +177,9 @@ import validationCode from './validation.ts?raw';
   return input; // ❌ Error: toUpperCase no existe en number
 
   // JS TIP: para devolver mayúsculas toUpperCase() y para devolver 2 decimales toFixed(2)
-}`
-  }}
-/>
+}
+```
+
+Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 El Narrowing es esencial para escribir código que sea flexible (acepte varios tipos) pero seguro (trate cada uno como corresponde). En el **siguiente capítulo**, veremos qué pasa cuando *realmente* no sabemos qué tipo nos llega... `unknown` vs `any`.

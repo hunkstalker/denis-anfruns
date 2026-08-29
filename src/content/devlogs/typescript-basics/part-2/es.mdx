@@ -13,7 +13,6 @@ lang: es
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 En la Parte 1 vimos que `const` crea tipos **literales**.
 Si escribimos `const rol = "admin"`, para TypeScript `rol` no es un simple `string`, sino que es específicamente `"admin"`.
@@ -76,38 +75,27 @@ Lo mejor de esto no es solo la seguridad, es la **experiencia de desarrollo**.
 
 **Vamos a probarlo:** Entre las comillas, pulsamos Ctrl + Espacio en cada una. En la primera no hay sugerencias (es un `string` genérico). En la segunda el editor te sugiere las opciones válidas.
 
-import validationCode from './validation.ts?raw';
+```ts
+// sin-tipos.ts
+function enviarString(mensaje: string) {
+    console.log("Mensaje:", mensaje);
+}
 
-<div className="mb-8">
-  <TSEditor
-    client:only="react"
-    height="480px"
-    showConsole={true}
-    allowAddFile={false}
-    validationCode={validationCode}
-    successSound="/audio/grunt-birthday-party-sound.mp3"
-    files={{
-      'sin-tipos.ts': `// Sin autocompletado - acepta cualquier string
-  function enviarString(mensaje: string) {
-      console.log("Mensaje:", mensaje);
-  }
+// Prueba entre las comillas y pulsa Ctrl + Espacio
+enviarString("");
 
-  // Prueba entre las comillas y pulsa Ctrl + Espacio
-  enviarString("");
-  `,
-      'con-tipos.ts': `// Con autocompletado - solo valores específicos
-  type Respuesta = "yes" | "no" | "maybe";
+// con-tipos.ts
+type Respuesta = "yes" | "no" | "maybe";
 
-  function enviarRespuesta(respuesta: Respuesta) {
-      console.log("Tu respuesta:", respuesta);
-  }
+function enviarRespuesta(respuesta: Respuesta) {
+    console.log("Tu respuesta:", respuesta);
+}
 
-  // Prueba entre las comillas y pulsa Ctrl + Espacio
-  enviarRespuesta("");
-  `
-    }}
-/>
-</div>
+// Prueba entre las comillas y pulsa Ctrl + Espacio
+enviarRespuesta("");
+```
+
+Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 No tenemos que ir a la documentación para saber qué valores aceptaba. El propio tipo nos dice qué valores acepta.
 

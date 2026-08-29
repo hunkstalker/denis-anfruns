@@ -13,7 +13,6 @@ lang: ca
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 Aquí és on TypeScript deixa de ser "JavaScript amb tipus" i es converteix en un superpoder.
 Fins ara hem definit tipus manualment. Però, i si poguéssim **generar els tipus automàticament** des del nostre codi?
@@ -114,19 +113,10 @@ paint("groc"); // ❌ Error`,
 
 ## Provem-ho!
 
-Usem l'editor. Creem un objecte `config` amb diverses opcions. Usem `typeof` per treure el seu tipus i creem una funció que rebi aquest tipus.
+Usem el que hem après. Creem un objecte `config` amb diverses opcions. Usem `typeof` per treure el seu tipus i creem una funció que rebi aquest tipus.
 
-import validationCode from './validation.ca.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-typeof-keyof"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  height="700px"
-  files={{
-    'main.ts': `const config = {
+```ts
+const config = {
     theme: "dark",
     version: 2,
     debug: true
@@ -146,9 +136,8 @@ function getSetting(key: any) {
 // Proves (No toquis això):
 getSetting("theme"); // ✅ Hauria de funcionar
 // getSetting("password"); // ❌ Hauria de donar error si descomentes
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 A la **Part 6** veurem els **Generics**, l'eina que ens permet crear components i funcions reutilitzables que funcionen amb qualsevol tipus (el famós `<T>`).

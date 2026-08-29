@@ -13,7 +13,6 @@ lang: es
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 En la parte anterior vimos Objetos. Ahora, ¿qué pasa si tenemos **muchos** objetos? Necesitamos una lista.
 
@@ -125,21 +124,13 @@ todoList.push("Leche"); // ❌ Error: Property 'push' does not exist on type 're
 
 ## ¡Probémoslo!
 
-Vamos a ensuciarnos las manos. Tienes dos retos abajo: uno para Arrays y otro para Tuplas. TypeScript te avisará de los errores mientras escribes, y al darle a "Run", validaremos si cumple los requisitos.
+Vamos a ensuciarnos las manos. Tienes dos retos abajo: uno para Arrays y otro para Tuplas. Prueba las soluciones en el [TypeScript Playground oficial](https://www.typescriptlang.org/play) para ver los errores.
 
 ### Ejercicio 1: Arrays
 Crea un array llamado `paises` que contenga al menos 3 nombres de países (strings). Intenta añadir un número al array para ver cómo se queja TypeScript.
 
-import validationArrays from './validation-arrays.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-arrays"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  files={{
-    'main.ts': `// 1. Crea un array de strings llamado 'paises'
+```ts
+// 1. Crea un array de strings llamado 'paises'
 // const paises...
 
 // 2. Añade países (descomenta y completa)
@@ -149,10 +140,9 @@ import validationArrays from './validation-arrays.ts?raw';
 // paises.push(123);
 
 // 4. Vuelve a comentar el push del punto anterior y dale a RUN
-`
-  }}
-  validationCode={validationArrays}
-/>
+```
+
+Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 ### Ejercicio 2: Tuplas
 Crea una tupla estricta llamada `usuario`. Debe tener exactamente 3 elementos en este orden:
@@ -160,20 +150,11 @@ Crea una tupla estricta llamada `usuario`. Debe tener exactamente 3 elementos en
 2. `edad` (number)
 3. `esAdmin` (boolean)
 
-import validationTuples from './validation-tuples.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-tuples"
-  showConsole={true}
-  successSound="success"
-  defaultMuted={false}
-  files={{
-    'main.ts': `// Crea la tupla 'usuario' con tipo [string, number, boolean]
+```ts
+// Crea la tupla 'usuario' con tipo [string, number, boolean]
 // const usuario...
-`
-  }}
-  validationCode={validationTuples}
-/>
+```
+
+Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
 
 En la **Parte 5**, las cosas se ponen serias. Dejamos lo básico y entramos en la magia de TypeScript: aprenderemos a que TS **escriba los tipos por nosotros** usando `typeof` y `keyof`.

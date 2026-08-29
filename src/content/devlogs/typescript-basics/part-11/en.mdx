@@ -13,7 +13,6 @@ lang: en
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
-import TSEditor from '../../../../components/learn/TSEditor.tsx';
 
 TypeScript comes with a "Swiss Army Knife" of predefined types called **Utility Types**.
 They are Generics that take a type and return a modified version.
@@ -114,16 +113,8 @@ agenda["Maria"] = 987654;`,
 2. Create `TodoPreview` using `Pick` of `Todo` (only `title` and `completed`).
 3. Create `TodoDictionary` which is a `Record` where the key is `string` and the value is `Todo`.
 
-import validationCode from './validation.en.ts?raw';
-
-<TSEditor
-  client:only="react"
-  id="ex-utility-types"
-  showConsole={true}
-  defaultMuted={false}
-  height="600px"
-  files={{
-    'main.ts': `interface Todo {
+```ts
+interface Todo {
     title: string;
     description: string;
     completed: boolean;
@@ -144,7 +135,6 @@ const testDiccionario: TodoDictionary = {
 };
 
 console.log("Dictionary created successfully:", testDiccionario);
-`
-  }}
-  validationCode={validationCode}
-/>
+```
+
+Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
