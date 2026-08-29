@@ -28,6 +28,7 @@ Imaginemos que tenemos un usuario completo, pero para una actualización (PATCH)
     id: number;
     nombre: string;
     email: string;
+    password: string;
 }
 
 function actualizarUsuario(id: number, cambios: Partial<Usuario>) {
@@ -97,14 +98,12 @@ No sabemos si guardarás a "Pepe" o "María", pero sabemos que la estructura sie
 		label: 'TypeScript',
 		code: `// Un objeto normal requiere saber las claves de antemano
 // interface Agenda { pepe: number } // ❌ Poco práctico
-// Con Record, definimos el "molde" de la clave y el valor
-type Agenda = Record<string, number>;
 
-const misContactos: Agenda = {
-    "Pepe": 666555444,
-    "Maria": 612312312,
-    // "Juan": "hola" // ❌ Error: el valor debe ser number
-};`,
+// Con Record:
+const agenda: Record<string, number> = {};
+
+agenda["Pepe"] = 123456;
+agenda["Maria"] = 987654;`,
 		lang: 'typescript'
     }
 ]} />
@@ -137,12 +136,12 @@ agenda2.set("Pepe", 666555444); // ✅ TS te vigila que metas number
     }
 ]} />
 
-## ¡Probémoslo!
+### ¡Probémoslo!
 
 Tenemos una interfaz `Todo`. Usemos:
-1. `Partial` para definir una variable `update`.
-2. `Pick` para definir una variable `preview` que solo tenga el título.
-3. `Record` para crear un `Catalogo` donde guardemos Todo por su ID (string).
+1. Crea `TodoUpdate` usando `Partial` de `Todo`.
+2. Crea `TodoPreview` usando `Pick` de `Todo` (solo `title` y `completed`).
+3. Crea `TodoDictionary` que sea un `Record` donde la clave es `string` y el valor es `Todo`.
 
 ```ts
 interface Todo {
@@ -173,6 +172,6 @@ const testDiccionario: TodoDictionary = {
 };
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
-En la **Parte 10**, entraremos en territorio avanzado. Usaremos `infer` para que TypeScript "extraiga" tipos de lugares imposibles, como el tipo de retorno de una función.
+En la **Parte 12**, entraremos en territorio avanzado. Usaremos `infer` para que TypeScript "extraiga" tipos de lugares imposibles, como el tipo de retorno de una función.

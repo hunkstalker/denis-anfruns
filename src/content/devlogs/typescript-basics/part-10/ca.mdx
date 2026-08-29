@@ -60,18 +60,18 @@ interface ApiResponse<Data> {
 }
 
 // Definim els nostres models concrets
-interface Usuari { id: number; name: string; }
-interface Producte { sku: string; price: number; }
+interface User { id: number; name: string; }
+interface Product { sku: string; price: number; }
 
 // Combinem-los!
-type UserResponse = ApiResponse<Usuari>;
-type ProductResponse = ApiResponse<Producte>;
+type UserResponse = ApiResponse<User>;
+type ProductResponse = ApiResponse<Product>;
 
 function fetchUser(): UserResponse {
     return {
         status: 200,
         message: "OK",
-        data: { id: 1, name: "AliceDev" } // TS sap que data és Usuari
+        data: { id: 1, name: "AliceDev" } // TS sap que data és User
     };
 }`,
 		lang: 'typescript'
@@ -91,16 +91,18 @@ A vegades tenim Generics dins de Generics. És com passar una variable d'un avi 
     page: number;
 }
 
-// ApiResponse conté PaginatedResponse, que conté Usuari
-type UsersApi = ApiResponse<PaginatedResponse<Usuari>>;
+// ApiResponse conté PaginatedResponse, que conté User
+type UsersApi = ApiResponse<PaginatedResponse<User>>;
 
 // Sembla complex, però TS ho resol sol:
 // UsersApi = { 
 //   status: number,
-//   data: {
-//      items: Usuari[],
-//      total: number
-//   }
+//   message: string,
+//   data: { 
+//      items: User[], 
+//      total: number,
+//      page: number,
+//   } 
 // }`,
 		lang: 'typescript'
     }
@@ -143,6 +145,25 @@ Quan escrivim `T extends (infer U)[]`, estem preguntant a TS: *"El tipus T s'ass
 4. Retorna `U` (`string`).
 </Callout>
 
+## Generics en Funcions Fletxa
+
+Aquí la sintaxi pot arribar a espantar, especialment en arxius `.tsx` (React) on es torna més complexa.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Funció normal
+function identity<T>(arg: T): T { return arg; }
+
+// Funció fletxa
+const identityArrow = <T>(arg: T): T => arg;
+
+// ⚠️ En arxius .tsx (React), necessitem una coma perquè no cregui que és HTML
+const hookEnReact = <T,>(arg: T) => { ... };`,
+		lang: 'typescript'
+    }
+]} />
+
 ### Et toca!
 
 Defineix dues variables usant la interfície `ApiResponse` que acabem de veure a dalt.
@@ -166,4 +187,6 @@ interface ApiResponse<Data> {
 // console.log(acierto, fallo);
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
+
+A la **Part 11**, ens relaxarem una mica i veurem els **Utility Types** (`Partial`, `Pick`, `Omit`). Són tipus genèrics que TS ja porta de sèrie per fer-nos la vida més fàcil.

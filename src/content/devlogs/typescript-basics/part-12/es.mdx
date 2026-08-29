@@ -3,7 +3,7 @@ pubDate: '2025-12-25T10:00:00Z'
 tags: ['typescript', 'infer', 'advanced']
 draft: false
 new: true
-title: 'TypeScript #12: Advanced Inference (infer)'
+title: 'TypeScript #12: Inferencia Avanzada (infer)'
 description: La palabra clave más misteriosa de TypeScript. Aprende a extraer tipos desde dentro de otros tipos.
 series: typescript-basics
 seriesTitle: Fundamentos de TypeScript
@@ -41,7 +41,7 @@ type B = EsString<number>; // "No"`,
 <Callout type="tip" title='"Funciones de Tipos"'>
 	Si lo has pensado, estás en lo cierto: **Estás programando con tipos.**
 
-	*   `TypeName<T>` es la **función** (y `T` el parámetro).
+	*   `EsString<T>` es la **función** (y `T` el parámetro).
 	*   `extends ? :` es la **lógica** (el `if/else`).
 	*   El tipo resultante es el **return**.
 </Callout>
@@ -128,4 +128,6 @@ type Unpacked = UnpackArray<ArrayStrings>;
 // Debería ser 'string'
 ```
 
-En la **Parte 11** (y final), pondremos todo junto. Veremos patrones de diseño reales, sobrecarga de funciones y cómo crear tu propia mini-librería "Type-Safe".
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
+
+En la **Parte 13** (y final), pondremos todo junto. Veremos patrones de diseño reales, sobrecarga de funciones y cómo crear tu propia mini-librería "Type-Safe".

@@ -28,6 +28,7 @@ Imaginem que tenim un usuari complet, però per a una actualització (PATCH), no
     id: number;
     nom: string;
     email: string;
+    password: string;
 }
 
 function actualitzarUsuari(id: number, canvis: Partial<Usuari>) {
@@ -107,34 +108,70 @@ agenda["Maria"] = 987654;`,
     }
 ]} />
 
+<Callout type="tip" title="Per què no fer servir Map?">
+    En JavaScript modern existeix `Map`, que és un diccionari real. A TypeScript seria `Map<string, number>`.
+
+    Tanmateix, fem servir `Record` (Objectes) el 90% del temps perquè **els Objectes es converteixen a JSON automàticament**, mentre que els `Map` es perden en enviar-los a una API.
+</Callout>
+
+<CodeTabs items={[
+    {
+		label: 'Map vs Record',
+		code: `// --- Opció A: Record (Objecte de tota la vida) ---
+// Ideal per guardar a Base de Dades o enviar a Frontend
+type AgendaRecord = Record<string, number>;
+
+const agenda1: AgendaRecord = {
+    "Pepe": 666555444
+};
+
+// --- Opció B: Map (La forma "Pro") ---
+// Ideal per a lògica interna complexa (sets, gets, size...)
+type AgendaMap = Map<string, number>;
+
+const agenda2: AgendaMap = new Map();
+agenda2.set("Pepe", 666555444); // ✅ TS et vigila que posis number
+// agenda2.set("Juan", "hola"); // ❌ Error!`,
+		lang: 'typescript'
+    }
+]} />
+
 ### Som-hi!
 
+Tenim una interfície `Todo`. Farem servir:
 1. Crea `TodoUpdate` usant `Partial` de `Todo`.
 2. Crea `TodoPreview` usant `Pick` de `Todo` (només `title` i `completed`).
 3. Crea `TodoDictionary` que sigui un `Record` on la clau és `string` i el valor és `Todo`.
 
 ```ts
 interface Todo {
+    id: number;
     title: string;
     description: string;
     completed: boolean;
 }
 
-// 1. Partial
+// 1. Definim 'TodoUpdate' usant Partial (Tot opcional)
 // type TodoUpdate = ...
 
-// 2. Pick (Només title i completed)
+// 2. Definim 'TodoPreview' usant Pick (només title i completed)
 // type TodoPreview = ...
 
-// 3. Record (Diccionari ID -> Todo)
+// 3. Definim 'TodoDictionary' usant Record
+// Clau: string (l'ID), Valor: Todo
 // type TodoDictionary = ...
 
-// 🧪 Prova (Crea un objecte usant Record)
-const testDiccionario: TodoDictionary = {
-    "tasca-1": { title: "Aprendre TS", description: "Bàsic", completed: true }
-};
+// Proves (No tocar)
+const testUpdate: TodoUpdate = { title: "Només títol" }; // ✅
+const testPreview: TodoPreview = { title: "Veure", completed: false }; // ✅
 
-console.log("Diccionari creat amb èxit:", testDiccionario);
+// ✅ Hauria de permetre guardar Todo amb qualsevol clau string
+const testDiccionario: TodoDictionary = {
+    "todo-1": { id: 1, title: "A", description: "D", completed: false },
+    "urgent": { id: 2, title: "B", description: "D", completed: true }
+};
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
+
+A la **Part 12**, entrarem en territori avançat. Usarem `infer` perquè TypeScript "extregui" tipus de llocs impossibles, com el tipus de retorn d'una funció.

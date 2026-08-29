@@ -12,7 +12,6 @@ lang: es
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 Hasta ahora, nuestros tipos eran fijos. `string` es siempre `string`.
 Pero, ¿y si queremos crear una función o un componente que funcione con **cualquier tipo**, pero sin perder la seguridad?
@@ -114,7 +113,7 @@ const [user, setUser] = useState<Usuario | null>(null);`,
 
 Igual has pensado: *"¿Y si uso `string | number` en vez de `<T>`?"*
 
-```typescript
+```ts
 function echo(val: string | number): string | number { return val; }
 const res = echo("Hola"); // TS cree que 'res' es 'string | number' ❌
 // Perdiste la precisión: TS ya no sabe que es un string.
@@ -143,6 +142,6 @@ console.log("Número envuelto:", n);
 console.log("Texto envuelto:", s);
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
-En la **Parte 7**, subiremos el nivel. Veremos cómo **restringir** esos Generics (para que no valga "cualquier cosa") y cómo darles valores por defecto.
+En la **Parte 9**, subiremos el nivel. Veremos cómo **restringir** esos Generics (para que no valga "cualquier cosa") y cómo darles valores por defecto.

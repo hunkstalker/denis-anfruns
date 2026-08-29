@@ -98,18 +98,22 @@ S'usa quan volem treure les keys d'un **objecte/valor** que ja existeix (no d'un
     vermell: "#FF0000",
     verd: "#00FF00",
     blau: "#0000FF"
-};
+} as const; // 'as const' fa que siguin literals i readonly
 
-type ColorName = keyof typeof COLORS;
-// "vermell" | "verd" | "blau"
+// Volem un tipus que només permeti "vermell" | "verd" | "blau"
+type NomColor = keyof typeof COLORS;
 
-function paint(color: ColorName) { ... }
+function pinta(color: NomColor) { ... }
 
-paint("vermell"); // ✅
-paint("groc"); // ❌ Error`,
+pinta("vermell"); // ✅
+pinta("groc"); // ❌`,
 		lang: 'typescript'
     }
 ]} />
+
+<Callout type="tip" title="Nota Pro" filled>
+    El `as const` és vital aquí. Si no el posem, TS inferirà que les propietats són `string`, i `typeof` serà molt genèric. Amb `as const` li diem: "Això no canvia, és literal!".
+</Callout>
 
 ## Provem-ho!
 
@@ -138,6 +142,6 @@ getSetting("theme"); // ✅ Hauria de funcionar
 // getSetting("password"); // ❌ Hauria de donar error si descomentes
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
-A la **Part 6** veurem els **Generics**, l'eina que ens permet crear components i funcions reutilitzables que funcionen amb qualsevol tipus (el famós `<T>`).
+A la **Part 6** ho posarem en joc amb els **Type Guards & Narrowing**: veurem com utilitzar `typeof` i `instanceof` dins del cos d'una funció per estretar el tipus i saber exactament què rebem.

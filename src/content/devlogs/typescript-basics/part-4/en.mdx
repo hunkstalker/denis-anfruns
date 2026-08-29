@@ -12,7 +12,6 @@ lang: en
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 In the previous part we saw Objects. Now, what if we have **many** objects? We need a list.
 
@@ -88,20 +87,43 @@ To be clearer, here is a comparison between arrays and tuples:
 		label: 'TypeScript',
 		code: `// --- ARRAYS  ---
 // The order of the data doesn't matter
-const myArray1: (string | number)[] = ["TextArray1", 1]; ✅
-const myArray2: (string | number)[] = [5, "TextArray2"]; ✅
+const myArray1: (string | number)[] = ["TextArray1", 1]; // ✅
+const myArray2: (string | number)[] = [5, "TextArray2"]; // ✅
 
 // --- TUPLES ---
 // We tell TS: "This is fixed, the first is string, the second number"
-const myTuple1: [string, number] = ["TextTuple1", 1]; ✅
-const myTuple2: [string, number] = [5, "TextTuple2"]; ❌`,
+const myTuple1: [string, number] = ["TextTuple1", 1]; // ✅
+const myTuple2: [string, number] = [5, "TextTuple2"]; // ❌`,
 		lang: 'typescript'
     }
 ]} />
 
+### What are Tuples for?
+They are useful when we want to return multiple values from a function without creating an object.
+
+*   Coordinates: `[x, y]` -> `[number, number]`
+*   Ranges: `[start, end]` -> `[number, number]`
+*   States: `[loading, error, data]` -> `[boolean, Error | null, any]`
+
+## Read-only Arrays (`ReadonlyArray`)
+
+Just like with objects, we can make arrays immutable.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const todoList: readonly string[] = ["Buy bread"];
+
+todoList.push("Milk"); // ❌ Error: Property 'push' does not exist on type 'readonly string[]'.`,
+		lang: 'typescript'
+    }
+]} />
+
+Great for functional programming and avoiding side effects!
+
 ## Let's try it!
 
-Let's get our hands dirty. You have two challenges below: one for Arrays and one for Tuples. TypeScript will warn you of errors while you write, and when you hit "Run", we will validate if it meets the requirements.
+Let's get our hands dirty. You have two challenges below: one for Arrays and one for Tuples. Try the solutions in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a> to see the errors.
 
 ### Exercise 1: Arrays
 Create an array called `paises` containing at least 3 country names (strings). Try adding a number to the array to see how TypeScript complains.
@@ -119,7 +141,7 @@ Create an array called `paises` containing at least 3 country names (strings). T
 // 4. Comment out the push from the previous numbering again and hit RUN
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
 
 ### Exercise 2: Tuples
 Create a strict tuple called `usuario`. It must have exactly 3 elements in this order:
@@ -132,6 +154,6 @@ Create a strict tuple called `usuario`. It must have exactly 3 elements in this 
 // const usuario...
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
 
 In **Part 5**, things get serious. We leave the basics and enter the magic of TypeScript: we will learn to have TS **write the types for us** using `typeof` and `keyof`.

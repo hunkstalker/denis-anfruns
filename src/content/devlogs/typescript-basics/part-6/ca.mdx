@@ -112,10 +112,11 @@ Per a objectes construïts amb classes, `typeof` no serveix de gaire (tot és "o
   ]}
 />
 
-## 5. Type Predicates (`is`)
+## 5. Predicats de Tipus (`is`)
 
-Aquesta és la part més "Pro". Què passa si tenim una lògica de verificació personalitzada?
-Podem crear una funció que retorni un **Type Predicate**: `param is Type`.
+Què passa si vols reutilitzar una lògica de comprovació complexa? Pots crear les teves pròpies funcions de guarda usant l'operador `is`.
+
+La sintaxi clau és el tipus de retorn: `param is Type`.
 
 <CodeTabs
   items={[
@@ -124,7 +125,7 @@ Podem crear una funció que retorni un **Type Predicate**: `param is Type`.
       code: `interface Fish { swim: () => void }
 interface Bird { fly: () => void }
 
-// Narrowing Function
+// Funció de narrowing
 function isFish(pet: Fish | Bird): pet is Fish {
   return (pet as Fish).swim !== undefined;
 }
@@ -142,20 +143,29 @@ function move(pet: Fish | Bird) {
   ]}
 />
 
+<Callout type="warning" title="Poder i Responsabilitat">
+Quan fas servir `is`, li dius al compilador "confia en mi". Si la teva lògica dins la funció `isFish` està malament, TypeScript s'ho creurà i podries tenir errors en temps d'execució.
+</Callout>
+
 ## 6. Exercici: El Formatejador Universal
 
-Tens una funció que rep inputs segurs, però no saps si vindran com `string` o `number`. La teva feina és formatejar-los correctament sense que TypeScript es queixi.
+Et toca! Tinc una funció que rep un `input`. Pot ser un `string` o un `number`.
 
-Idealment fes ús de `typeof`
+*   Si és `string`: Retorna'l en MAJÚSCULES.
+*   Si és `number`: Retorna'l amb 2 decimals (usa `.toFixed(2)`).
 
 ```ts
-function procesarInput(input: string | number) {
+function processarInput(input: string | number) {
   // TODO: Usa un Type Guard (typeof) aquí
-  // 1. Si és string -> return string.toUpperCase()
-  // 2. Si és number -> return number.toFixed(2)
+  // 1. processarInput ha de retornar strings (MAJÚSCULES)
+  // 2. processarInput ha de retornar números (2 decimals)
   
   return input; // ❌ Error: toUpperCase no existeix en number
+
+  // JS TIP: per retornar majúscules usa toUpperCase() i per retornar 2 decimals usa toFixed(2)
 }
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
+
+El Narrowing és essencial per escriure codi que sigui flexible (accepti diversos tipus) però segur (tracti cada un com toca). Al **pròxim capítol**, veurem què passa quan *realment* no sabem quin tipus ens arriba... `unknown` vs `any`.

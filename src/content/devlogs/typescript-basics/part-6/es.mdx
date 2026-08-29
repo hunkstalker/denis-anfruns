@@ -99,30 +99,20 @@ Para objetos construidos con clases, `typeof` no sirve de mucho (todo es "object
 <CodeTabs
   items={[
     {
-      label: 'classes.ts',
-      code: `class Perro {
-  ladrar() { return "Guau!"; }
-}
-
-class Gato {
-  maullar() { return "Miau!"; }
-}
-
-function comunicar(mascota: Perro | Gato) {
-  if (mascota instanceof Perro) {
-    console.log(mascota.ladrar());
+      label: 'main.ts',
+      code: `function logValue(x: Date | string) {
+  if (x instanceof Date) {
+    console.log(x.toUTCString()); // x es Date
   } else {
-    console.log(mascota.maullar());
+    console.log(x.toUpperCase()); // x es string
   }
-}
-
-comunicar(new Perro());`,
+}`,
       lang: 'typescript'
     }
   ]}
 />
 
-## 5. Predicados de Tipo (Custom Type Guards)
+## 5. Predicados de Tipo (`is`)
 
 ¿Qué pasa si quieres reutilizar una lógica de comprobación compleja? Puedes crear tus propias funciones de guardia usando el operador `is`.
 
@@ -132,33 +122,29 @@ La sintaxis clave es el tipo de retorno: `param is Type`.
   items={[
     {
       label: 'main.ts',
-      code: `type Pez = { nadar: () => void };
-type Pajaro = { volar: () => void };
+      code: `interface Fish { swim: () => void }
+interface Bird { fly: () => void }
 
-// Función guardia personalizada
-function esPez(mascota: Pez | Pajaro): mascota is Pez {
-  return (mascota as Pez).nadar !== undefined;
+// Función de narrowing
+function isFish(pet: Fish | Bird): pet is Fish {
+  return (pet as Fish).swim !== undefined;
 }
 
-function mover(animal: Pez | Pajaro) {
-  if (esPez(animal)) {
-    // TypeScript confía en tu función: aquí es Pez
-    animal.nadar();
+// Uso
+function move(pet: Fish | Bird) {
+  if (isFish(pet)) {
+    pet.swim(); // TS sabe que es Fish
   } else {
-    // Aquí debe ser Pajaro
-    animal.volar();
+    pet.fly(); // TS sabe que TIENE que ser Bird
   }
-}
-
-const nemo = { nadar: () => console.log("Nadando...") };
-mover(nemo);`,
+}`,
       lang: 'typescript'
     }
   ]}
 />
 
 <Callout type="warning" title="Poder y Responsabilidad">
-Cuando usas `is`, le dices al compilador "confía en mí". Si tu lógica dentro de la función `esPez` está mal, TypeScript se lo creerá y podrías tener errores en tiempo de ejecución.
+Cuando usas `is`, le dices al compilador "confía en mí". Si tu lógica dentro de la función `isFish` está mal, TypeScript se lo creerá y podrías tener errores en tiempo de ejecución.
 </Callout>
 
 ## 6. Ejercicio: El Formateador Universal
@@ -180,6 +166,6 @@ function procesarInput(input: string | number) {
 }
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 El Narrowing es esencial para escribir código que sea flexible (acepte varios tipos) pero seguro (trate cada uno como corresponde). En el **siguiente capítulo**, veremos qué pasa cuando *realmente* no sabemos qué tipo nos llega... `unknown` vs `any`.

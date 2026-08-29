@@ -11,8 +11,7 @@ seriesDescription: Learn TypeScript from scratch, diving deep into concepts like
 lang: en
 ---
 
-import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro'
 
 In Part 1 we saw that `const` creates **literal** types.
 If you write `const role = "admin"`, for TypeScript `role` is not just a simple `string`, but specifically `"admin"`.
@@ -37,8 +36,8 @@ Imagine you have a function to paint a button.
 
 paintButton("blue"); // ✅ Good
 paintButton("potato 🥔"); // ✅ Good (but it shouldn't be, potato is not a color!)`,
-		lang: 'typescript'
-    }
+lang: 'typescript'
+}
 ]} />
 
 The problem here is that `string` is **too broad**. It accepts "blue", "red", and also "potato 🥔" or "asdfg".
@@ -46,7 +45,7 @@ The problem here is that `string` is **too broad**. It accepts "blue", "red", an
 ## Type Unions
 
 This is where the `|` (pipe) operator comes in. It reads as **"OR"**.
-We can tell TypeScript: *"The color can only be 'red' OR 'blue' OR 'green'"*.
+We can tell TypeScript: _"The color can only be 'red' OR 'blue' OR 'green'"_.
 
 <CodeTabs
   status="success"
@@ -56,16 +55,16 @@ We can tell TypeScript: *"The color can only be 'red' OR 'blue' OR 'green'"*.
     code: `type ButtonColor = "red" | "blue" | "green";
 
 function paintButton(color: ButtonColor) {
-    // ...
+// ...
 }
 
-paintButton("red");   // ✅ Perfect
-paintButton("green");  // ✅ Perfect
+paintButton("red"); // ✅ Perfect
+paintButton("green"); // ✅ Perfect
 paintButton("potato 🥔");
 // ❌ Error: Argument of type '"potato 🥔"' is not assignable to parameter of type 'ButtonColor'.`,
-    lang: 'typescript'
-    }
-  ]} />
+lang: 'typescript'
+}
+]} />
 
 Boom! 💥 You just eliminated an entire category of bugs. No one can pass an incorrect string to your function anymore.
 
@@ -73,30 +72,30 @@ Boom! 💥 You just eliminated an entire category of bugs. No one can pass an in
 
 The best part is not just the safety, it's the **developer experience**.
 
-**Try it yourself:** Place your cursor between the quotes and press Ctrl + Space in each one. In the first one there are no suggestions (it's a generic `string`). In the second one the editor suggests the valid options.
-
 ```ts
 // no-types.ts
 function sendString(message: string) {
-    console.log("Message:", message);
+	console.log('Message:', message)
 }
 
-// Place cursor between quotes and press Ctrl + Space, you'll see NO suggestions
-sendString("");
+// Try between the quotes and press Ctrl + Space
+sendString('')
 
 // with-types.ts
-type Answer = "yes" | "no" | "maybe";
+type Answer = 'yes' | 'no' | 'maybe'
 
 function sendAnswer(answer: Answer) {
-    console.log("Your answer:", answer);
+	console.log('Your answer:', answer)
 }
 
-// Here you WILL get suggestions, plus TS already warns about an error,
-// since an empty string is not a value we configured as valid
-sendAnswer("");
+// Try between the quotes and press Ctrl + Space
+sendAnswer('')
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+**Let's try it** in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>:
+1. **Copy the code** above and paste it into the Playground.
+2. Place your cursor between the quotes of `sendString('')` and press **Ctrl + Space**. You won't see any suggestions, because the parameter is a generic `string`.
+3. Do the same in `sendAnswer('')`. Autocomplete suggests **`'yes'`, `'no'`, and `'maybe'`**, because the type defines which values are valid. *(On macOS, if nothing shows up, try `Cmd + Space`).*
 
 You don't have to go to the documentation to know what values it accepted. The type itself tells you what values it accepts.
 
@@ -111,19 +110,19 @@ You can mix types if you want (although use it wisely):
 type ID = number | string;
 
 function findUser(id: ID) {
-    console.log("Finding user with ID:", id);
+console.log("Finding user with ID:", id);
 }
 
 findUser(123); // ✅
 findUser("abc-123"); // ✅`,
-  lang: 'typescript'
-  }
+lang: 'typescript'
+}
 ]} />
 
 ## Summary
 
-*   **Literal Types**: Exact values (`"red"`, `1`).
-*   **Unions (`|`)**: Combine types (`A | B` means A or B).
-*   Use it to avoid "Magic Strings" and get free autocomplete.
+- **Literal Types**: Exact values (`"red"`, `1`).
+- **Unions (`|`)**: Combine types (`A | B` means A or B).
+- Use it to avoid "Magic Strings" and get free autocomplete.
 
 In the next part we'll see how to **Type Objects** and Interfaces to stop passing anonymous objects without control through our application.

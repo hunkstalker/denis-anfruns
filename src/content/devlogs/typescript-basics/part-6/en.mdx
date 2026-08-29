@@ -94,7 +94,7 @@ Sometimes you don't need to know the exact type, only if the value exists (is no
 
 ## 4. `instanceof` Narrowing
 
-For objects built with classes, `typeof` is not very useful (everything is "object"). Here `instanceof` comes in using `new`.
+For objects built with classes, `typeof` is not very useful (everything is "object"). Here `instanceof` comes in.
 
 <CodeTabs
   items={[
@@ -114,8 +114,9 @@ For objects built with classes, `typeof` is not very useful (everything is "obje
 
 ## 5. Type Predicates (`is`)
 
-This is the most "Pro" part. What if we have a custom verification logic?
-We can create a function that returns a **Type Predicate**: `param is Type`.
+What if you want to reuse a complex verification logic? You can create your own guard functions using the `is` operator.
+
+The key syntax is the return type: `param is Type`.
 
 <CodeTabs
   items={[
@@ -142,20 +143,29 @@ function move(pet: Fish | Bird) {
   ]}
 />
 
+<Callout type="warning" title="Power and Responsibility">
+When you use `is`, you're telling the compiler "trust me". If your logic inside the `isFish` function is wrong, TypeScript will believe it and you could have runtime errors.
+</Callout>
+
 ## 6. Exercise: The Universal Formatter
 
-You have a function that receives safe inputs, but you don't know if they will come as `string` or `number`. Your job is to format them correctly without TypeScript complaining.
+Your turn! I have a function that receives an `input`. It can be a `string` or a `number`.
 
-Ideally make use of `typeof`
+*   If it is `string`: Return it in UPPERCASE.
+*   If it is `number`: Return it with 2 decimals (use `.toFixed(2)`).
 
 ```ts
-function procesarInput(input: string | number) {
+function processInput(input: string | number) {
   // TODO: Use a Type Guard (typeof) here
-  // 1. If it is string -> return string.toUpperCase()
-  // 2. If it is number -> return number.toFixed(2)
+  // 1. processInput must return strings (UPPERCASE)
+  // 2. processInput must return numbers (2 decimals)
   
   return input; // ❌ Error: toUpperCase does not exist on number
+
+  // JS TIP: to return uppercase use toUpperCase() and to return 2 decimals use toFixed(2)
 }
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
+
+Narrowing is essential for writing code that is flexible (accepts multiple types) but safe (treats each one accordingly). In the **next chapter**, we'll see what happens when we *really* don't know what type is coming... `unknown` vs `any`.

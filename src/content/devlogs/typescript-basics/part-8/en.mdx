@@ -12,7 +12,6 @@ lang: en
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 Until now, our types were fixed. `string` is always `string`.
 But, what if we want to create a function or component that works with **any type**, but without losing safety?
@@ -98,7 +97,7 @@ If we have used React, we have already used Generics without knowing it.
 
 <CodeTabs items={[
     {
-		label: 'tsx',
+		label: 'React',
 		code: `// useState is a Generic function: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]
 
 // Inference:
@@ -110,23 +109,39 @@ const [user, setUser] = useState<User | null>(null);`,
     }
 ]} />
 
+### Unions vs Generics
+
+You might have thought: *"What if I use `string | number` instead of `<T>`?"*
+
+```ts
+function echo(val: string | number): string | number { return val; }
+const res = echo("Hello"); // TS thinks 'res' is 'string | number' ❌
+// You lost the precision: TS no longer knows it's a string.
+```
+
+With `<T>`, TS keeps the connection: it enters string -> it comes out string.
+
+---
+
 ### Let's try it!
 
-Create a function `envolver` (wrap) that **whatever you put in**, returns it inside an **array**.
+Create a function `wrap` that **whatever you put in**, returns it inside an **array**.
 If you put `10`, `[10]` comes out. If you put `"hello"`, `["hello"]` comes out.
 
 ```ts
-// Challenge: Create the generic function 'envolver'
+// Challenge: Create the generic function 'wrap'
 // It must receive a value of type T and return an array of T (T[])
 
-function envolver... // Implement your solution here
+function wrap... // Implement your solution here
 
 // 🧪 Tests (Do not touch this):
-const n = envolver(10);
-const s = envolver("hello");
+const n = wrap(10);
+const s = wrap("hello");
 
 console.log("Wrapped number:", n);
 console.log("Wrapped text:", s);
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
+
+In **Part 9**, we'll level up. We'll see how to **restrict** those Generics (so that "anything goes" doesn't apply) and how to give them default values.

@@ -12,7 +12,6 @@ lang: ca
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 Fins ara, els nostres tipus eren fixos. `string` és sempre `string`.
 Però, i si volem crear una funció o un component que funcioni amb **qualsevol tipus**, però sense perdre la seguretat?
@@ -98,7 +97,7 @@ Si hem usat React, ja hem usat Generics sense saber-ho.
 
 <CodeTabs items={[
     {
-		label: 'tsx',
+		label: 'React',
 		code: `// useState és una funció Genèrica: function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>]
 
 // Inferència:
@@ -110,23 +109,39 @@ const [user, setUser] = useState<Usuari | null>(null);`,
     }
 ]} />
 
+### Unions vs Generics
+
+Potser has pensat: *"¿I si faig servir `string | number` en lloc de `<T>`?"*
+
+```ts
+function echo(val: string | number): string | number { return val; }
+const res = echo("Hola"); // TS creu que 'res' és 'string | number' ❌
+// Has perdut la precisió: TS ja no sap que és un string.
+```
+
+Amb `<T>`, TS manté la connexió: entra string -> surt string.
+
+---
+
 ### Provem-ho!
 
-Crea una funció `envolver` que **posis el que posis**, t'ho retorni dins d'un **array**.
+Crea una funció `embolicar` que **posis el que posis**, t'ho retorni dins d'un **array**.
 Si poses `10`, surt `[10]`. Si poses `"hola"`, surt `["hola"]`.
 
 ```ts
-// Repte: Crea la funció genèrica 'envolver'
+// Repte: Crea la funció genèrica 'embolicar'
 // Ha de rebre un valor de tipus T i retornar un array de T (T[])
 
-function envolver... // Implementa aquí la teva solució
+function embolicar... // Implementa aquí la teva solució
 
 // 🧪 Proves (No toquis això):
-const n = envolver(10);
-const s = envolver("hola");
+const n = embolicar(10);
+const s = embolicar("hola");
 
 console.log("Número embolicat:", n);
 console.log("Text embolicat:", s);
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
+
+A la **Part 9**, pujarem de nivell. Veurem com **restringir** aquests Generics (perquè no valgui "qualsevol cosa") i com donar-los valors per defecte.

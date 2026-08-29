@@ -131,10 +131,9 @@ Your mission:
 ```ts
 // 1. Add type unknown
 
-    function safeUpperCase(value: ...): string {
+  function safeUpperCase(value: ...): string {
 
   // TODO: Implement logic here...
-
 
   // Remember: unknown forces you to check the type before using it
   // value.toUpperCase() will cause error if you don't apply Type Guard (chapter #6)
@@ -144,12 +143,12 @@ Your mission:
 }
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
 
 With this we close the advanced safety types block! Now your code will be much more robust. 🛡️
 
 ## Summary
 
 *   **`any`**: "I don't care, leave me alone". (Unsafe, avoid it).
-*   **`unknown`**: "I don't trust you, show me your ID". (Safe, forces verification).
-*   **`never`**: "This should not happen". (Used for unreachable code).
+*   **`unknown`**: "I don't know what this is, so I'll force you to check it". (Safe).
+*   **`never`**: "This should never happen". (Useful for ensuring exhaustive logic).

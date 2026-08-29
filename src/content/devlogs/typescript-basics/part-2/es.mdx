@@ -11,8 +11,7 @@ seriesDescription: Aprende TypeScript desde cero profundizando en conceptos como
 lang: es
 ---
 
-import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro'
 
 En la Parte 1 vimos que `const` crea tipos **literales**.
 Si escribimos `const rol = "admin"`, para TypeScript `rol` no es un simple `string`, sino que es específicamente `"admin"`.
@@ -37,8 +36,8 @@ Imaginemos que tenemos una función para pintar un botón.
 
 pintarBoton("azul"); // ✅ Bien
 pintarBoton("patata 🥔"); // ✅ Bien (pero no debería, ¡patata no es un color!)`,
-		lang: 'typescript'
-    }
+lang: 'typescript'
+}
 ]} />
 
 El problema aquí es que `string` es **demasiado amplio**. Admite "azul", "rojo", y también "patata 🥔" o "asdfg".
@@ -46,7 +45,7 @@ El problema aquí es que `string` es **demasiado amplio**. Admite "azul", "rojo"
 ## La Unión de Tipos
 
 Aquí es donde entra el operador `|` (pipe). Se lee como **"O"**.
-Podemos decirle a TypeScript: *"El color solo puede ser 'rojo' O 'azul' O 'verde'"*.
+Podemos decirle a TypeScript: _"El color solo puede ser 'rojo' O 'azul' O 'verde'"_.
 
 <CodeTabs
   status="success"
@@ -56,16 +55,16 @@ Podemos decirle a TypeScript: *"El color solo puede ser 'rojo' O 'azul' O 'verde
     code: `type ColorBoton = "rojo" | "azul" | "verde";
 
 function pintarBoton(color: ColorBoton) {
-    // ...
+// ...
 }
 
-pintarBoton("rojo");   // ✅ Perfecto
-pintarBoton("verde");  // ✅ Perfecto
+pintarBoton("rojo"); // ✅ Perfecto
+pintarBoton("verde"); // ✅ Perfecto
 pintarBoton("patata 🥔");
 // ❌ Error: Argument of type '"patata 🥔"' is not assignable to parameter of type 'ColorBoton'.`,
-    lang: 'typescript'
-    }
-  ]} />
+lang: 'typescript'
+}
+]} />
 
 ¡Bum! 💥 Acabamos de eliminar una categoría entera de bugs. Ya nadie puede pasar una cadena incorrecta a nuestra función.
 
@@ -73,29 +72,30 @@ pintarBoton("patata 🥔");
 
 Lo mejor de esto no es solo la seguridad, es la **experiencia de desarrollo**.
 
-**Vamos a probarlo:** Entre las comillas, pulsamos Ctrl + Espacio en cada una. En la primera no hay sugerencias (es un `string` genérico). En la segunda el editor te sugiere las opciones válidas.
-
 ```ts
 // sin-tipos.ts
 function enviarString(mensaje: string) {
-    console.log("Mensaje:", mensaje);
+	console.log('Mensaje:', mensaje)
 }
 
 // Prueba entre las comillas y pulsa Ctrl + Espacio
-enviarString("");
+enviarString('')
 
 // con-tipos.ts
-type Respuesta = "yes" | "no" | "maybe";
+type Respuesta = 'yes' | 'no' | 'maybe'
 
 function enviarRespuesta(respuesta: Respuesta) {
-    console.log("Tu respuesta:", respuesta);
+	console.log('Tu respuesta:', respuesta)
 }
 
 // Prueba entre las comillas y pulsa Ctrl + Espacio
-enviarRespuesta("");
+enviarRespuesta('')
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+**Vamos a probarlo** en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>:
+1. **Copia el código** de arriba y pégalo en el Playground.
+2. Coloca el cursor entre las comillas de `enviarString('')` y pulsa **Ctrl + Espacio**. No verás sugerencias, porque el parámetro es un `string` genérico.
+3. Haz lo mismo en `enviarRespuesta('')`. El autocompletado te sugiere **`'yes'`, `'no'` y `'maybe'`**, porque el tipo define qué valores son válidos. *(En macOS, si no aparece nada, prueba con `Cmd + Espacio`).*
 
 No tenemos que ir a la documentación para saber qué valores aceptaba. El propio tipo nos dice qué valores acepta.
 
@@ -110,20 +110,20 @@ Podemos mezclar tipos si queremos (aunque usémoslo con cabeza):
 type ID = number | string;
 
 function buscarUsuario(id: ID) {
-    console.log("Buscando usuario con ID:", id);
+console.log("Buscando usuario con ID:", id);
 }
 
 buscarUsuario(123); // ✅
 buscarUsuario("abc-123"); // ✅`,
-  lang: 'typescript'
-  }
+lang: 'typescript'
+}
 ]} />
 
 ## Resumen
 
-*   **Tipos Literales**: Valores exactos (`"rojo"`, `1`).
-*   **Uniones (`|`)**: Combinar tipos (`A | B` significa A o B).
-*   Usémoslo para evitar "Magic Strings" y ganar autocompletado gratis.
+- **Tipos Literales**: Valores exactos (`"rojo"`, `1`).
+- **Uniones (`|`)**: Combinar tipos (`A | B` significa A o B).
+- Usémoslo para evitar "Magic Strings" y ganar autocompletado gratis.
 
-En la próxima parte veremos cómo **Tipar Objetos** e Interfaces para dejar de pasar objetos 
+En la próxima parte veremos cómo **Tipar Objetos** e Interfaces para dejar de pasar objetos
 anónimos sin control por nuestra aplicación.

@@ -12,7 +12,6 @@ lang: es
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 En la parte anterior vimos Objetos. Ahora, ¿qué pasa si tenemos **muchos** objetos? Necesitamos una lista.
 
@@ -88,13 +87,13 @@ Para ser más claros, aquí tienes una comparación entre arrays y tuplas:
 		label: 'TypeScript',
 		code: `// --- ARRAYS  ---
 // Da lo mismo el orden de los datos
-const miArray1: (string | number)[] = ["TextoArray1", 1]; ✅
-const miArray2: (string | number)[] = [5, "TextoArray2"]; ✅
+const miArray1: (string | number)[] = ["TextoArray1", 1]; // ✅
+const miArray2: (string | number)[] = [5, "TextoArray2"]; // ✅
 
 // --- TUPLAS ---
 // Le decimos a TS: "Esto es fijo, el primero es string, el segundo number"
-const miTupla1: [string, number] = ["TextoTupla1", 1]; ✅
-const miTupla2: [string, number] = [5, "TextoTupla2"]; ❌`,
+const miTupla1: [string, number] = ["TextoTupla1", 1]; // ✅
+const miTupla2: [string, number] = [5, "TextoTupla2"]; // ❌`,
 		lang: 'typescript'
     }
 ]} />
@@ -124,7 +123,7 @@ todoList.push("Leche"); // ❌ Error: Property 'push' does not exist on type 're
 
 ## ¡Probémoslo!
 
-Vamos a ensuciarnos las manos. Tienes dos retos abajo: uno para Arrays y otro para Tuplas. Prueba las soluciones en el [TypeScript Playground oficial](https://www.typescriptlang.org/play) para ver los errores.
+Vamos a ensuciarnos las manos. Tienes dos retos abajo: uno para Arrays y otro para Tuplas. Prueba las soluciones en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a> para ver los errores.
 
 ### Ejercicio 1: Arrays
 Crea un array llamado `paises` que contenga al menos 3 nombres de países (strings). Intenta añadir un número al array para ver cómo se queja TypeScript.
@@ -142,7 +141,7 @@ Crea un array llamado `paises` que contenga al menos 3 nombres de países (strin
 // 4. Vuelve a comentar el push del punto anterior y dale a RUN
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 ### Ejercicio 2: Tuplas
 Crea una tupla estricta llamada `usuario`. Debe tener exactamente 3 elementos en este orden:
@@ -155,6 +154,6 @@ Crea una tupla estricta llamada `usuario`. Debe tener exactamente 3 elementos en
 // const usuario...
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 En la **Parte 5**, las cosas se ponen serias. Dejamos lo básico y entramos en la magia de TypeScript: aprenderemos a que TS **escriba los tipos por nosotros** usando `typeof` y `keyof`.

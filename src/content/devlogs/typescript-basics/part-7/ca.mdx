@@ -98,12 +98,12 @@ L'ús més potent de `never` és assegurar-te que has cobert tots els casos poss
   items={[
     {
       label: 'main.ts',
-      code: `type Estat = "Carregant" | "Exit" | "Error";
+      code: `type Estat = "Carregant" | "Èxit" | "Error";
 
 function getMissatge(s: Estat) {
   switch (s) {
     case "Carregant": return "⏳";
-    case "Exit": return "✅";
+    case "Èxit": return "✅";
     case "Error": return "❌";
     default:
       // Si demà afegeixes "Inactiu" a Estat, 
@@ -131,10 +131,9 @@ La teva missió:
 ```ts
 // 1. Afegeix el type unknown
 
-    function safeUpperCase(value: ...): string {
+  function safeUpperCase(value: ...): string {
 
   // TODO: Implementa la lògica aquí...
-
 
   // Recorda: unknown t'obliga a comprovar el tipus abans d'usar-lo
   // value.toUpperCase() provocarà un error si no apliques Type Guard (capítol #6)
@@ -144,12 +143,12 @@ La teva missió:
 }
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 Amb això tanquem el bloc de tipus avançats de seguretat! Ara el teu codi serà molt més robust. 🛡️
 
 ## Resum
 
 *   **`any`**: "M'és igual tot, deixa'm en pau". (Insegur, evita'l).
-*   **`unknown`**: "No em refio de tu, ensenya'm el teu DNI". (Segur, obliga a verificar).
-*   **`never`**: "Això no hauria de passar". (Usat per a codi inabastable).
+*   **`unknown`**: "No sé què és això, així que t'obligaré a comprovar-ho". (Segur).
+*   **`never`**: "Això no hauria de passar mai". (Útil per assegurar lògica exhaustiva).

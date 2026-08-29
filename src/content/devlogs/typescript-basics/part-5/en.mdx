@@ -98,18 +98,22 @@ It is used when we want to get the keys of an **object/value** that already exis
     red: "#FF0000",
     green: "#00FF00",
     blue: "#0000FF"
-};
+} as const; // 'as const' makes them literals and readonly
 
+// We want a type that only allows "red" | "green" | "blue"
 type ColorName = keyof typeof COLORS;
-// "red" | "green" | "blue"
 
 function paint(color: ColorName) { ... }
 
 paint("red"); // ✅
-paint("yellow"); // ❌ Error`,
+paint("yellow"); // ❌`,
 		lang: 'typescript'
     }
 ]} />
+
+<Callout type="tip" title="Pro Note" filled>
+    The `as const` is vital here. If we don't add it, TS will infer that properties are `string`, and `typeof` will be very generic. With `as const`, we tell it: "This does not change, it's literal!".
+</Callout>
 
 ## Let's try it!
 
@@ -138,6 +142,6 @@ getSetting("theme"); // ✅ Should work
 // getSetting("password"); // ❌ Should give error if uncommented
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
 
-In **Part 6** we will see **Generics**, the tool that allows us to create reusable components and functions that work with any type (the famous `<T>`).
+In **Part 6** we'll put this into play with **Type Guards & Narrowing**: we'll see how to use `typeof` and `instanceof` inside a function body to narrow the type and know exactly what we receive.

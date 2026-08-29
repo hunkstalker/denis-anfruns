@@ -14,7 +14,7 @@ lang: en
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
 import Callout from '../../../../components/mdx/Callout.astro';
 
-Other people get lost here. We start seeing `<T>`, `interface`, `type`, `return T`... everything mixed up and it looks like hieroglyphics.
+Many people get lost here. We start seeing `<T>`, `interface`, `type`, `return T`... everything mixed up and it looks like hieroglyphics.
 
 Let's untangle it step by step.
 
@@ -97,10 +97,12 @@ type UsersApi = ApiResponse<PaginatedResponse<User>>;
 // It seems complex, but TS resolves it alone:
 // UsersApi = { 
 //   status: number,
-//   data: {
-//      items: User[],
-//      total: number
-//   }
+//   message: string,
+//   data: { 
+//      items: User[], 
+//      total: number,
+//      page: number,
+//   } 
 // }`,
 		lang: 'typescript'
     }
@@ -143,11 +145,30 @@ When we write `T extends (infer U)[]`, we are asking TS: *"Does the type T look 
 4. It returns `U` (`string`).
 </Callout>
 
+## Generics in Arrow Functions
+
+The syntax here can get scary, especially in `.tsx` (React) files where it becomes more complex.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Normal function
+function identity<T>(arg: T): T { return arg; }
+
+// Arrow function
+const identityArrow = <T>(arg: T): T => arg;
+
+// ⚠️ In .tsx (React) files, we need a comma so TS doesn't think it's HTML
+const hookEnReact = <T,>(arg: T) => { ... };`,
+		lang: 'typescript'
+    }
+]} />
+
 ### Your turn!
 
 Define two variables using the `ApiResponse` interface we just saw above.
-1. `acierto` (success): Must be a correct response with `data` being a `number` (e.g., 42).
-2. `fallo` (failure): Must be a response with `data` being a `string` (e.g., "Critical error").
+1. `acierto`: Must be a correct response with `data` being a `number` (e.g., 42).
+2. `fallo`: Must be a response with `data` being a `string` (e.g., "Critical error").
 
 ```ts
 interface ApiResponse<Data> {
@@ -166,4 +187,6 @@ interface ApiResponse<Data> {
 // console.log(acierto, fallo);
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
+
+In **Part 11**, we'll relax a bit and look at the **Utility Types** (`Partial`, `Pick`, `Omit`). They are generic types that TS already ships with to make our lives easier.

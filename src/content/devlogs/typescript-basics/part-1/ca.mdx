@@ -11,8 +11,7 @@ seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com in
 lang: ca
 ---
 
-import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro'
 
 export const age = new Date().getFullYear() - 1985
 
@@ -20,35 +19,37 @@ El primer pel que començarem és entendre que **TypeScript és llest. No cal ex
 
 ## La Inferència de Tipus
 
-Molts devs (com jo) que venen de llenguatges fortament tipats (com C, Java o C# antics) és normal que estiguem acostumats a la idea de tipar-ho tot.
+Molts devs que venen de llenguatges fortament tipats (com C, Java o C# antics) és normal que estiguem acostumats a la idea de tipar-ho tot.
 
 <CodeTabs
-  status="error"
-  items={[
-    {
-		label: 'example.ts',
-		code: `// ❌ Redundant (Boilerplate innecessari)
+	status="error"
+	items={[
+		{
+			label: 'example.ts',
+			code: `// ❌ Redundant (Boilerplate innecessari)
 const userName: string = "Arnau";
 const userAge: number = ${age};
 const isAdmin: boolean = true;`,
-		lang: 'typescript'
-    }
-]} />
+			lang: 'typescript',
+		},
+	]}
+/>
 
 TypeScript ja sap que "Arnau" és un string. No cal que l'hi juris.
 
 <CodeTabs
-  status="success"
-  items={[
-  {
-    label: 'example.ts',
-    code: `// ✅ Perfecte (Net i llegible)
+	status="success"
+	items={[
+		{
+			label: 'example.ts',
+			code: `// ✅ Perfecte (Net i llegible)
 const userName = "Arnau"; // TS infereix: string (o literal "Arnau", veurem això després)
 const userAge = ${age};       // TS infereix: number
 const isAdmin = true;     // TS infereix: boolean`,
-    lang: 'typescript'
-    }
-  ]} />
+			lang: 'typescript',
+		},
+	]}
+/>
 
 Això es diu **Inferència de Tipus**. Deixes que TS dedueixi el tipus pel valor inicial.
 
@@ -57,6 +58,7 @@ Això es diu **Inferència de Tipus**. Deixes que TS dedueixi el tipus pel valor
 Aquí és on la cosa es posa interessant i on TS brilla.
 
 ### Amb `let` (Variables mutables)
+
 Quan uses `let`, TS assumeix que canviaràs el valor, així que infereix el tipus primitiu "general".
 
 <CodeTabs items={[
@@ -66,27 +68,30 @@ Quan uses `let`, TS assumeix que canviaràs el valor, així que infereix el tipu
 let status = "pending";
 
 status = "success"; // ✅ Bé
-status = "error";   // ✅ Bé
+status = "error"; // ✅ Bé
 
-status = 123;       // ❌ Si ho intentes et retornarà un error.
+status = 123; // ❌ Si ho intentes et retornarà un error.
 // No pots ficar un número en un string.`,
-  lang: 'typescript'
-  }
+lang: 'typescript'
+}
 ]} />
 
 ### Amb `const` (Constants)
+
 Quan uses `const`, TS sap que aquest valor **mai canviarà**. Així que pot ser molt més específic.
 
-<CodeTabs items={[
-  {
-    label: 'TypeScript',
-    code: `const method = "GET";
+<CodeTabs
+	items={[
+		{
+			label: 'TypeScript',
+			code: `const method = "GET";
 // TS diu: "Això no és només un string. És L'string 'GET'".
 // El tipus literal és "GET".
 `,
-  lang: 'typescript'
-  }
-]} />
+			lang: 'typescript',
+		},
+	]}
+/>
 
 Això sembla una ximpleria ara, però és la base per entendre per què a vegades TS es queixa que `"GET"` no és assignable a `string` (o viceversa) en configuracions complexes.
 
@@ -96,17 +101,19 @@ Llavors, si TS ho infereix, mai és necessari posar tipus? No, hi ha casos on é
 
 1.  **Quan la inferència falla o és molt àmplia**:
 
-Des del meu punt de vista amb poca experiència, deixaria que TS infereixi any (o el posaria jo mateix) en casos en què no sé el que passarà, sigui per errors o que la resposta pugui ser molt àmplia.
+Des del nostre punt de vista, deixaríem que TS infereixi any (o el posaríem nosaltres mateixos) en casos en què no sabem el que passarà, sigui per errors o que la resposta pugui ser molt àmplia.
 
-<CodeTabs items={[
-  {
-    label: 'TypeScript',
-    code: `// TS infereix 'any' si no està configurat en mode 'strict' (que t'obliga a anotar tipus sempre)
+<CodeTabs
+	items={[
+		{
+			label: 'TypeScript',
+			code: `// TS infereix 'any' si no està configurat en mode 'strict' (que t'obliga a anotar tipus sempre)
 let data; 
 data = fetchSomething(); // Pots passar-li el que vulguis i TS no es queixa.`,
-    lang: 'typescript'
-  }
-]} />
+			lang: 'typescript',
+		},
+	]}
+/>
 
 Però ull amb any, perquè li estàs traient a TS tot el seu propòsit. L'ideal seria no veure't obligat a utilitzar-lo.
 
@@ -122,10 +129,10 @@ function greet(person) {
 
 // ✅ Aquí defineixes el contracte
 function greet(person: string) {
-    ...
-}`, 
-    lang: 'typescript'
-  }
+...
+}`,
+lang: 'typescript'
+}
 ]} />
 
 3.  **Per definir contractes de retorn explícits**:
@@ -133,16 +140,16 @@ function greet(person: string) {
 
 ## Resum de la Part 1
 
-*   **Menys és més**: Si TS pot inferir-ho, no ho escriguis. El teu codi serà més net.
-*   **Variable (`let`)** = Tipus General (`string`, `number`).
-*   **Constant (`const`)** = Tipus Literal (El valor exacte).
+- **Menys és més**: Si TS pot inferir-ho, no ho escriguis. El teu codi serà més net.
+- **Variable (`let`)** = Tipus General (`string`, `number`).
+- **Constant (`const`)** = Tipus Literal (El valor exacte).
 
-A la **Part 2**, mirarem com usar aquests tipus literals al nostre favor amb les **Unions**, i com dir-li a TS: *"Aquesta variable només pot ser 'admin' o 'user', res més"*.
+A la **Part 2**, mirarem com usar aquests tipus literals al nostre favor amb les **Unions**, i com dir-li a TS: _"Aquesta variable només pot ser 'admin' o 'user', res més"_.
 
 ## Experimenta!
 
-Aquí tens el punt de partida. Copia el codi i prova'l al [TypeScript Playground oficial](https://www.typescriptlang.org/play):
+Aquí tens el punt de partida. Copia el codi i prova'l a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>:
 
 ```ts
-console.log("Hello world!");
+console.log('Hello world!')
 ```

@@ -41,7 +41,7 @@ type B = IsString<number>; // "No"`,
 <Callout type="tip" title='"Type Functions"'>
 	If you thought about it, you are right: **You are programming with types.**
 
-	*   `TypeName<T>` is the **function** (and `T` the parameter).
+	*   `IsString<T>` is the **function** (and `T` the parameter).
 	*   `extends ? :` is the **logic** (the `if/else`).
 	*   The resulting type is the **return**.
 </Callout>
@@ -98,8 +98,35 @@ type PromiseResponse = Promise<{ id: number; name: string }>;
 // Solution with infer:
 type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
 
-// Magic:
-type ResponseType = UnpackPromise<PromiseResponse>;`,
+type ResponseType = UnpackPromise<PromiseResponse>;
+// Result: { id: number; name: string }
+// TS inferred what was INSIDE the promise and called it 'U'.`,
 		lang: 'typescript'
     }
 ]} />
+
+## Let's try it!
+
+Let's create an `UnpackArray<T>` type that extracts the type from an array. `UnpackArray<string[]>` should return `string`.
+
+<Callout type="tip" title="Why does it return string and not array?">
+  Look at the `extends (infer U)[]` condition.
+  We're asking: *"Is `T` an Array of something (`U`)?"*.
+
+  If `T` is `string[]`, then that "something" (`U`) is `string`.
+  We're extracting the type of data that's **inside** the array!
+</Callout>
+
+```ts
+type UnpackArray<T> = T extends (infer U)[] ? U : T;
+
+type ArrayStrings = string[];
+type Unpacked = UnpackArray<ArrayStrings>;
+
+// Check if it works (hover over Unpacked)
+// It should be 'string'
+```
+
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
+
+In the **final part** (13), we'll put it all together. We'll see real design patterns, function overloads, and how to create your own "Type-Safe" mini-library.

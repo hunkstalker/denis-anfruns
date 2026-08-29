@@ -41,7 +41,7 @@ type B = EsString<number>; // "No"`,
 <Callout type="tip" title='"Funcions de Tipus"'>
 	Si ho has pensat, tens raó: **Estàs programant amb tipus.**
 
-	*   `TypeName<T>` és la **funció** (i `T` el paràmetre).
+	*   `EsString<T>` és la **funció** (i `T` el paràmetre).
 	*   `extends ? :` és la **lògica** (l'`if/else`).
 	*   El tipus resultant és el **return**.
 </Callout>
@@ -90,16 +90,44 @@ Imaginem que tenim una `Promise<Usuari>`, però volem obtenir el tipus `Usuari` 
     {
 		label: 'exemple.ts',
 		code: `// Tenim això:
-type RespostaPromesa = Promise<{ id: number; nom: string }>;
+type RespostaPromesa = Promise<{ id: number; name: string }>;
 
 // Volem això:
-// { id: number; nom: string }
+// { id: number; name: string }
 
 // Solució amb infer:
 type UnpackPromise<T> = T extends Promise<infer U> ? U : T;
 
-// Màgia:
-type TipusResposta = UnpackPromise<RespostaPromesa>;`,
+type TipusResposta = UnpackPromise<RespostaPromesa>;
+// Resultat: { id: number; name: string }
+// TS va inferir el que hi havia DINS de la promesa i el va anomenar 'U'.`,
 		lang: 'typescript'
     }
 ]} />
+
+## Provem-ho!
+
+Creem un tipus `UnpackArray<T>` que n'extregui el tipus d'un array.
+`UnpackArray<string[]>` hauria de retornar `string`.
+
+<Callout type="tip" title="Per què retorna string i no array?">
+  Fixeu-vos en la condició `extends (infer U)[]`.
+  Li estem preguntant: *"És `T` un Array d'alguna cosa (`U`)?"*.
+  
+  Si `T` és `string[]`, aleshores aquesta "cosa" (`U`) és `string`.
+  Estem extraient el tipus de dada que hi ha **dins** de l'array!
+</Callout>
+
+```ts
+type UnpackArray<T> = T extends (infer U)[] ? U : T;
+
+type ArrayStrings = string[];
+type Unpacked = UnpackArray<ArrayStrings>;
+
+// Comprova si funciona (hover sobre Unpacked)
+// Hauria de ser 'string'
+```
+
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
+
+A la **Part 13** (i final), ho posarem tot junt. Veurem patrons de disseny reals, sobrecàrrega de funcions i com crear la teva pròpia mini-llibreria "Type-Safe".

@@ -12,7 +12,6 @@ lang: ca
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 A la part anterior vam veure Objectes. Ara, què passa si tenim **molts** objectes? Necessitem una llista.
 
@@ -25,10 +24,10 @@ Hi ha dues formes de definir un array a TypeScript. Ambdues són idèntiques, é
   items={[
     {
 		label: 'TypeScript',
-		code: `// Opción A: Tipus[] (La més comuna)
+		code: `// Opció A: Tipus[] (La més comuna)
 const skills: string[] = ["React", "Astro", "TypeScript"];
 
-// Opción B: Array<Tipus> (Sintaxis Genèrica)
+// Opció B: Array<Tipus> (Sintaxi Genèrica)
 const years: Array<number> = [2020, 2021, 2022];
 
 // Array d'Objectes (usant la interfície de la part anterior)
@@ -57,7 +56,7 @@ L'exemple més famós és el hook `useState` de React:
 <CodeTabs items={[
     {
 		label: 'React (Exemple)',
-		code: `// useState retorna una tuple: [valor, funcio]
+		code: `// useState retorna una tuple: [valor, funció]
 // posició 0 sempre és l'estat (string)
 // posició 1 sempre és el setter (funció)
 const [name, setName] = useState("Alice");`,
@@ -88,20 +87,43 @@ Per ser més clars, aquí tens una comparació entre arrays i tuples:
 		label: 'TypeScript',
 		code: `// --- ARRAYS  ---
 // Tant li fa l'ordre de les dades
-const miArray1: (string | number)[] = ["TextArray1", 1]; ✅
-const miArray2: (string | number)[] = [5, "TextArray2"]; ✅
+const miArray1: (string | number)[] = ["TextArray1", 1]; // ✅
+const miArray2: (string | number)[] = [5, "TextArray2"]; // ✅
 
 // --- TUPLES ---
 // Li diem a TS: "Això és fix, el primer és string, el segon number"
-const miTupla1: [string, number] = ["TextTupla1", 1]; ✅
-const miTupla2: [string, number] = [5, "TextTupla2"]; ❌`,
+const miTupla1: [string, number] = ["TextTupla1", 1]; // ✅
+const miTupla2: [string, number] = [5, "TextTupla2"]; // ❌`,
 		lang: 'typescript'
     }
 ]} />
 
+### Per a què serveixen les Tuples?
+Són útils quan volem retornar múltiples valors d'una funció sense crear un objecte.
+
+*   Coordenades: `[x, y]` -> `[number, number]`
+*   Rangs: `[inici, fi]` -> `[number, number]`
+*   Estats: `[loading, error, data]` -> `[boolean, Error | null, any]`
+
+## Arrays de Lectura (`ReadonlyArray`)
+
+Igual que amb els objectes, podem fer arrays immutables.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `const todoList: readonly string[] = ["Comprar pa"];
+
+todoList.push("Llet"); // ❌ Error: Property 'push' does not exist on type 'readonly string[]'.`,
+		lang: 'typescript'
+    }
+]} />
+
+Fantàstic per a programació funcional i evitar efectes secundaris!
+
 ## Provem-ho!
 
-Embrutem-nos les mans. Tens dos reptes a sota: un per Arrays i un altre per Tuples. Prova les solucions al [TypeScript Playground oficial](https://www.typescriptlang.org/play) per veure els errors.
+Embrutem-nos les mans. Tens dos reptes a sota: un per Arrays i un altre per Tuples. Prova les solucions a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a> per veure els errors.
 
 ### Exercici 1: Arrays
 Crea un array anomenat `paises` que contingui almenys 3 noms de països (strings). Intenta afegir un número a l'array per veure com es queixa TypeScript.
@@ -119,7 +141,7 @@ Crea un array anomenat `paises` que contingui almenys 3 noms de països (strings
 // 4. Torna a comentar el push del punt anterior i dóna-li a RUN
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 ### Exercici 2: Tuples
 Crea una tuple estricta anomenada `usuario`. Ha de tenir exactament 3 elements en aquest ordre:
@@ -132,6 +154,6 @@ Crea una tuple estricta anomenada `usuario`. Ha de tenir exactament 3 elements e
 // const usuario...
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 A la **Part 5**, les coses es posen series. Deixem el bàsic i entrem en la màgia de TypeScript: aprendrem a que TS **escrigui els tipus per nosaltres** usant `typeof` i `keyof`.

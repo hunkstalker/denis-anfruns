@@ -12,7 +12,6 @@ lang: ca
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 Fins ara hem vist tipus primitius (`string`, `number`, `boolean`). Però el món real funciona amb **objectes**.
 Usuaris, Productes, Comandes... tots són objectes amb múltiples propietats.
@@ -135,7 +134,7 @@ Anem a posar a prova el que has après. Has de definir una interfície i crear u
 
 1.  Defineix una interfície anomenada `Videojoc` amb:
     *   `titol` (string)
-    *   `any` (number)
+    *   `year` (number)
     *   `plataforma` (opcional, string)
 2.  Crea un objecte constant anomenat `jocPreferit` que implementi aquesta interfície.
 3.  Les dades han de ser exactament: **"The Legend of Zelda"**, any **1986**.
@@ -153,6 +152,6 @@ const jocPreferit = {
 console.log("Resultat:", jocPreferit);
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 A la **Part 4**, veurem què passa quan tenim molts objectes iguals... és a dir, **Arrays**.

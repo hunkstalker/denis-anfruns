@@ -92,7 +92,7 @@ Esto es ideal para respuestas de APIs externas o `JSON.parse()`, donde *realment
 
 ### Exhaustiveness Checking (El truco pro)
 
-El uso más potente de `never` es asegurarte de que has cubierto todos los casos posibles en un `switch` o `ion`.
+El uso más potente de `never` es asegurarte de que has cubierto todos los casos posibles en un `switch` o `unión`.
 
 <CodeTabs
   items={[
@@ -131,10 +131,9 @@ Tu misión:
 ```ts
 // 1. Añade el type unknown
 
-    function safeUpperCase(value: ...): string {
+  function safeUpperCase(value: ...): string {
 
   // TODO: Implementa la lógica aquí...
-
 
   // Recuerda: unknown te obliga a comprobar el tipo antes de usarlo
   // value.toUpperCase() provocará un error si no aplicas Type Guard (capítulo #6)
@@ -144,7 +143,7 @@ Tu misión:
 }
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
 ¡Con esto cerramos el bloque de tipos avanzados de seguridad! Ahora tu código será mucho más robusto. 🛡️
 

@@ -12,7 +12,6 @@ lang: es
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 En la parte anterior vimos que `<T>` puede ser cualquier cosa. A veces, eso es **demasiado flexible**.
 ¿Qué pasa si queremos que `T` tenga sí o sí una propiedad `.length`?
@@ -97,25 +96,19 @@ Esto es muy útil para no obligar al usuario a escribir el tipo siempre.
 		code: `// Si no pasamos T, asumiré que es 'string'
 interface RespuestaAPI<T = string> {
     data: T;
-    error: boolean;
+    status: number;
 }
 
 // Uso sin pasar tipo (usa el default)
-const respuestaSimple: RespuestaAPI = {
-    data: "Todo ok", // T es string
-    error: false
-};
+const simple: RespuestaAPI = { data: "Todo ok", status: 200 }; // T es string
 
 // Uso especificando tipo
-const respuestaCompleja: RespuestaAPI<number> = {
-    data: 200, // T es number
-    error: false
-};`,
+const compleja: RespuestaAPI<number> = { data: 123, status: 200 }; // T es number`,
 		lang: 'typescript'
     }
 ]} />
 
-## ¡Probémoslo!
+### ¡Probémoslo!
 
 Creemos una función `fusionar` que tome dos objetos `obj1` y `obj2` y los combine. Tipemos la función usando dos generics `T` y `U`.
 
@@ -142,6 +135,6 @@ console.log("Resultado:", resultado);
 // fusionar(user, 123);
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
-En la **Parte 8**, abordaremos una de las mayores confusiones: **Generics en Interfaces vs en Tipos**, y cómo pasar tipos de padres a hijos (prop drilling de tipos).
+En la **Parte 10**, abordaremos una de las mayores confusiones: **Generics en Interfaces vs en Tipos**, y cómo pasar tipos de padres a hijos (prop drilling de tipos).

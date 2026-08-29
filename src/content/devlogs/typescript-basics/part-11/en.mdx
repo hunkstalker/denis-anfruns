@@ -28,6 +28,7 @@ Imagine we have a complete user, but for an update (PATCH), we only send the fie
     id: number;
     name: string;
     email: string;
+    password: string;
 }
 
 function updateUser(id: number, changes: Partial<User>) {
@@ -107,34 +108,70 @@ agenda["Maria"] = 987654;`,
     }
 ]} />
 
+<Callout type="tip" title="Why not use Map?">
+    In modern JavaScript there is `Map`, which is a real dictionary. In TypeScript it would be `Map<string, number>`.
+
+    However, we use `Record` (Objects) 90% of the time because **Objects are converted to JSON automatically**, while `Map`s get lost when sending them to an API.
+</Callout>
+
+<CodeTabs items={[
+    {
+		label: 'Map vs Record',
+		code: `// --- Option A: Record (Plain object) ---
+// Ideal for saving to a Database or sending to the Frontend
+type AgendaRecord = Record<string, number>;
+
+const agenda1: AgendaRecord = {
+    "Pepe": 666555444
+};
+
+// --- Option B: Map (The "Pro" way) ---
+// Ideal for complex internal logic (sets, gets, size...)
+type AgendaMap = Map<string, number>;
+
+const agenda2: AgendaMap = new Map();
+agenda2.set("Pepe", 666555444); // ✅ TS watches that you pass a number
+// agenda2.set("Juan", "hola"); // ❌ Error!`,
+		lang: 'typescript'
+    }
+]} />
+
 ### Hands on!
 
+We have a `Todo` interface. Let's use:
 1. Create `TodoUpdate` using `Partial` of `Todo`.
 2. Create `TodoPreview` using `Pick` of `Todo` (only `title` and `completed`).
 3. Create `TodoDictionary` which is a `Record` where the key is `string` and the value is `Todo`.
 
 ```ts
 interface Todo {
+    id: number;
     title: string;
     description: string;
     completed: boolean;
 }
 
-// 1. Partial
+// 1. Define 'TodoUpdate' using Partial (Everything optional)
 // type TodoUpdate = ...
 
-// 2. Pick (Only title and completed)
+// 2. Define 'TodoPreview' using Pick (only title and completed)
 // type TodoPreview = ...
 
-// 3. Record (Dictionary ID -> Todo)
+// 3. Define 'TodoDictionary' using Record
+// Key: string (the ID), Value: Todo
 // type TodoDictionary = ...
 
-// 🧪 Test (Create an object using Record)
-const testDiccionario: TodoDictionary = {
-    "task-1": { title: "Learn TS", description: "Basics", completed: true }
-};
+// Tests (Do not touch this)
+const testUpdate: TodoUpdate = { title: "Title only" }; // ✅
+const testPreview: TodoPreview = { title: "View", completed: false }; // ✅
 
-console.log("Dictionary created successfully:", testDiccionario);
+// ✅ Should allow saving Todo with any string key
+const testDiccionario: TodoDictionary = {
+    "todo-1": { id: 1, title: "A", description: "D", completed: false },
+    "urgent": { id: 2, title: "B", description: "D", completed: true }
+};
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
+
+In **Part 12**, we'll enter advanced territory. We'll use `infer` so TypeScript can "extract" types from impossible places, like the return type of a function.

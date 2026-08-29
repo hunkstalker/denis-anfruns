@@ -11,8 +11,7 @@ seriesDescription: Aprèn TypeScript des de zero aprofundint en conceptes com in
 lang: ca
 ---
 
-import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
+import CodeTabs from '../../../../components/mdx/CodeTabs.astro'
 
 A la Part 1 vam veure que `const` crea tipus **literals**.
 Si escrius `const rol = "admin"`, per a TypeScript `rol` no és un simple `string`, sinó que és específicament `"admin"`.
@@ -37,8 +36,8 @@ Imagina que tens una funció per pintar un botó.
 
 pintarBoto("blau"); // ✅ Bé
 pintarBoto("patata 🥔"); // ✅ Bé (però no hauria, patata no és un color!)`,
-		lang: 'typescript'
-    }
+lang: 'typescript'
+}
 ]} />
 
 El problema aquí és que `string` és **massa ampli**. Admet "blau", "vermell", i també "patata 🥔" o "asdfg".
@@ -46,7 +45,7 @@ El problema aquí és que `string` és **massa ampli**. Admet "blau", "vermell",
 ## La Unió de Tipus
 
 Aquí és on entra l'operador `|` (pipe). Es llegeix com **"O"**.
-Podem dir-li a TypeScript: *"El color només pot ser 'vermell' O 'blau' O 'verd'"*.
+Podem dir-li a TypeScript: _"El color només pot ser 'vermell' O 'blau' O 'verd'"_.
 
 <CodeTabs
   status="success"
@@ -56,16 +55,16 @@ Podem dir-li a TypeScript: *"El color només pot ser 'vermell' O 'blau' O 'verd'
     code: `type ColorBoto = "vermell" | "blau" | "verd";
 
 function pintarBoto(color: ColorBoto) {
-    // ...
+// ...
 }
 
-pintarBoto("vermell");   // ✅ Perfecte
-pintarBoto("verd");  // ✅ Perfecte
+pintarBoto("vermell"); // ✅ Perfecte
+pintarBoto("verd"); // ✅ Perfecte
 pintarBoto("patata 🥔");
 // ❌ Error: Argument of type '"patata 🥔"' is not assignable to parameter of type 'ColorBoto'.`,
-    lang: 'typescript'
-    }
-  ]} />
+lang: 'typescript'
+}
+]} />
 
 Bum! 💥 Acabes d'eliminar una categoria sencera de bugs. Ja ningú pot passar una cadena incorrecta a la teva funció.
 
@@ -73,30 +72,30 @@ Bum! 💥 Acabes d'eliminar una categoria sencera de bugs. Ja ningú pot passar 
 
 El millor d'això no és només la seguretat, és l'**experiència de desenvolupament**.
 
-**Prova-ho tu mateix:** Posa't entre les cometes i prem Ctrl + Espai a cadascuna. A la primera no hi ha suggeriments (és un `string` genèric). A la segona l'editor et suggereix les opcions vàlides.
-
 ```ts
 // sense-tipus.ts
 function enviarString(missatge: string) {
-    console.log("Missatge:", missatge);
+	console.log('Missatge:', missatge)
 }
 
-// Posa't entre les cometes i prem Ctrl + Espai, veuràs que NO et surten suggeriments
-enviarString("");
+// Posa't entre les cometes i prem Ctrl + Espai
+enviarString('')
 
 // amb-tipus.ts
-type Resposta = "yes" | "no" | "maybe";
+type Resposta = 'yes' | 'no' | 'maybe'
 
 function enviarResposta(resposta: Resposta) {
-    console.log("La teva resposta:", resposta);
+	console.log('La teva resposta:', resposta)
 }
 
-// Aquí SÍ et sortiran suggeriments, a més TS ja t'avisa d'un error,
-// ja que un string buit no és un valor que haguem configurat com a vàlid
-enviarResposta("");
+// Posa't entre les cometes i prem Ctrl + Espai
+enviarResposta('')
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+**Provem-ho** a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>:
+1. **Copia el codi** de dalt i enganxa'l al Playground.
+2. Posa el cursor entre les cometes de `enviarString('')` i prem **Ctrl + Espai**. No veuràs suggeriments, perquè el paràmetre és un `string` genèric.
+3. Fes el mateix a `enviarResposta('')`. L'autocompletat et suggereix **`'yes'`, `'no'` i `'maybe'`**, perquè el tipus defineix quins valors són vàlids. *(Al macOS, si no surt res, prova amb `Cmd + Espai`).*
 
 No has d'anar a la documentació per saber quins valors acceptava. El propi tipus et diu quins valors accepta.
 
@@ -111,19 +110,19 @@ Pots barrejar tipus si vols (encara que utilitza-ho amb cap):
 type ID = number | string;
 
 function buscarUsuari(id: ID) {
-    console.log("Buscant usuari amb ID:", id);
+console.log("Buscant usuari amb ID:", id);
 }
 
 buscarUsuari(123); // ✅
 buscarUsuari("abc-123"); // ✅`,
-  lang: 'typescript'
-  }
+lang: 'typescript'
+}
 ]} />
 
 ## Resum
 
-*   **Tipus Literals**: Valors exactes (`"vermell"`, `1`).
-*   **Unions (`|`)**: Combinar tipus (`A | B` vol dir A o B).
-*   Utilitza-ho per evitar "Magic Strings" i guanyar autocompletat gratis.
+- **Tipus Literals**: Valors exactes (`"vermell"`, `1`).
+- **Unions (`|`)**: Combinar tipus (`A | B` vol dir A o B).
+- Utilitza-ho per evitar "Magic Strings" i guanyar autocompletat gratis.
 
 A la propera part veurem com **Tipar Objectes** i Interfícies per deixar de passar objectes anònims sense control per la nostra aplicació.

@@ -12,7 +12,6 @@ lang: en
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 In the previous part we saw that `<T>` can be anything. Sometimes, that is **too flexible**.
 What if we want `T` to have a `.length` property yes or yes?
@@ -136,4 +135,6 @@ console.log("Result:", result);
 // merge(user, 123);
 ```
 
-Copy the code and try it in the [official TypeScript Playground](https://www.typescriptlang.org/play).
+Copy the code and try it in <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">official TypeScript Playground</a>.
+
+In **Part 10**, we'll address one of the biggest confusions: **Generics in Interfaces vs in Types**, and how to pass types from parents to children (prop drilling of types).

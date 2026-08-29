@@ -108,6 +108,43 @@ type UsersApi = ApiResponse<PaginatedResponse<User>>;
     }
 ]} />
 
+## Avanzado: `infer` (Funciones de Tipos)
+
+Esto ya es nivel cinturón negro, pero solo para que sepas que existe.
+Puedes crear un Tipo que "extraiga" tipos de otros tipos usando `infer`.
+
+<CodeTabs items={[
+    {
+		label: 'TypeScript',
+		code: `// Un tipo que extrae el tipo de dentro de un Array
+type UnpackArray<T> = T extends (infer U)[] ? U : T;
+
+type StringArray = string[];
+type JustString = UnpackArray<StringArray>; 
+// Resultado: string`,
+		lang: 'typescript'
+    }
+]} />
+
+<Callout type="warning" title="Insight: Funciones de Tipos">
+¿Te das cuenta de lo que acabamos de hacer? `UnpackArray<T>` es literalmente una función.
+Recibe un argumento (`T`).
+Hace un `if` (`extends`).
+Devuelve un resultado (`U` o `T`).
+
+¡El sistema de tipos de TypeScript ES un lenguaje de programación en sí mismo! 🤯
+</Callout>
+
+<Callout type="tip" title="¿Por qué UnpackArray devuelve string?">
+**Explicación detallada de `infer U`**:
+Cuando escribimos `T extends (infer U)[]`, le estamos preguntando a TS: *"¿El tipo T se parece a un Array de algo? Si es así, captura ese 'algo' y llámalo U"*.
+
+1. Pasamos `string[]` como `T`.
+2. TS compara `string[]` contra `(infer U)[]`.
+3. Deduce que `U` debe ser `string`.
+4. Devuelve `U` (`string`).
+</Callout>
+
 ## Generics en Funciones Flecha
 
 La sintaxis aquí puede llegar a asustar, especialmente en archivos `.tsx` (React) y donde se vuelve más complejo.
@@ -127,26 +164,29 @@ const hookEnReact = <T,>(arg: T) => { ... };`,
     }
 ]} />
 
-## ¡Probémoslo!
+### Tu turno
 
-Creemos una interfaz `Respuesta<T>` con `datos: T` y `error: string | null`.
-Luego creemos un objeto que use esa interfaz con `number`.
+Define dos variables usando la interfaz `ApiResponse` que vimos arriba.
+1. `acierto`: Debe ser una respuesta correcta con `data` siendo un `number` (ej: 42).
+2. `fallo`: Debe ser una respuesta con `data` siendo `string` (ej: "Error grave").
 
 ```ts
-// Reto: 
-// 1. Define una interfaz genérica 'Respuesta' con:
-//    - el campo 'datos' que sea de tipo genérico
-//    - el campo 'error' que sea de tipo string | null
-// 2. Crea un objeto 'acierto' que use nuestra interface genérica con datos=42
-// 3. Crea un objeto 'fallo' que use nuestra interface genérica con datos="Ups"
+interface ApiResponse<Data> {
+    status: number;
+    message: string;
+    data: Data;
+}
 
-// Escribe tu código aquí:
-interface Respuesta...
+// 1. Crea 'acierto' aquí (data es number)
+// const acierto...
 
-const acierto...
-const fallo...
+// 2. Crea 'fallo' aquí (data es string)
+// const fallo...
+
+// 🧪 Comprueba
+// console.log(acierto, fallo);
 ```
 
-Copia el código y pruébalo en el [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el código y pruébalo en <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
 
-En la **Parte 9**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacernos la vida más fácil.
+En la **Parte 11**, vamos a relajarnos un poco y ver los **Utility Types** (`Partial`, `Pick`, `Omit`). Son tipos genéricos que TS ya trae de serie para hacernos la vida más fácil.

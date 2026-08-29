@@ -12,7 +12,6 @@ lang: ca
 ---
 
 import CodeTabs from '../../../../components/mdx/CodeTabs.astro';
-import Callout from '../../../../components/mdx/Callout.astro';
 
 A la part anterior vam veure que `<T>` pot ser qualsevol cosa. A vegades, això és **massa flexible**.
 Què passa si volem que `T` tingui sí o sí una propietat `.length`?
@@ -124,7 +123,7 @@ function fusionar(obj1: any, obj2: any) {
     return { ...obj1, ...obj2 };
 }
 
-const user = { nombre: "AliceDev" };
+const user = { nom: "AliceDev" };
 const settings = { theme: "dark" };
 
 // ✅ Cas d'èxit (això funcionarà sempre):
@@ -136,4 +135,6 @@ console.log("Resultat:", resultat);
 // fusionar(user, 123);
 ```
 
-Copia el codi i prova-ho al [TypeScript Playground oficial](https://www.typescriptlang.org/play).
+Copia el codi i prova-ho a <a href="https://www.typescriptlang.org/play" target="_blank" rel="noopener noreferrer">TypeScript Playground oficial</a>.
+
+A la **Part 10**, abordarem una de les confusions més grans: **Generics en Interfícies vs en Tipus**, i com passar tipus de pares a fills (prop drilling de tipus).
